@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.>
+#include <math.h>
+
+
+
+int main()
+{
+	int num;
+	int tempNum;
+	int digit;
+	char* numStr[16];
+	printf("Enter an integer");
+	scanf("%d", num);
+	tempNum = abs(num);
+	while (tempNum / 10 > 0) 
+	{
+		digit = tempNum % 10;
+		
+	}
+	return 1;
+}
