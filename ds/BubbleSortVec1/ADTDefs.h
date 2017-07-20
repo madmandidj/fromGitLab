@@ -1,3 +1,5 @@
+
+
 /*
 Filename: 		ADTDefs.h 
 Description:	Abstract Data Type errors
