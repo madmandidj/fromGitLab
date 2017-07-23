@@ -80,18 +80,15 @@ static void PrintErrResult(char* _testName, ADTErr _err, ADTErr _passErr)
 
 int main()
 {
-	printf("\n");
-	/*
     ADTErr errResult;
     Hash* hash;
     size_t size = 10;
     int data = 24;
     printf("\n");
     hash = HashCreate(size);
-    errResult = HashInsert(hash, data);
+    // errResult = HashInsert(hash, data);
     PrintHash(hash);
     HashDestroy(hash);
-    */
     printf("\n");
 	return 0;
 }

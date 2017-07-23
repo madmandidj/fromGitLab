@@ -31,6 +31,7 @@ API FUNCTIONS
 Hash* 	HashCreate(const size_t _size)
 {
 	Hash* hash;
+	// int* tempData;
 	size_t newSize;
 	if (0 == _size)
 	{
@@ -43,11 +44,18 @@ Hash* 	HashCreate(const size_t _size)
 	{
 		return NULL;
 	}
+	// tempData = (int*) calloc(0, newSize * sizeof(int));
 	hash->m_data = (int*) calloc(newSize, sizeof(int));
+	// hash->m_data = (int*) malloc(newSize * sizeof(int));
 	if (NULL == hash->m_data)
 	{
 		return NULL;
 	}
+	// if (NULL == tempData)
+	// {
+	// 	return NULL;
+	// }
+	// hash->m_data = tempData;
 	hash->m_originalSize = _size;
 	hash->m_hashSize = newSize;
 	hash->m_maxCollisions = 0;
@@ -81,7 +89,7 @@ ADTErr	HashInsert(Hash* _hash, int _data)
 	{
 		errResult = ERR_NOT_INITIALIZED;
 	}
-	else if (_hash->m_numberOfInsertions == _hash->m_originalSize)
+	else if (_hash->m_numberOfInsertions == _hash->m_hashSize)
 	{
 		errResult = ERR_HASH_FULL;
 	}
@@ -161,32 +169,12 @@ ADTErr HashRemove(Hash* _hash, int _data)
 			if (_hash->m_data[foundIndex] == _data)
 			{
 				_hash->m_data[foundIndex] = -1;
-				--hash->m_numberOfInsertions;
 				errResult = ERR_OK;
 				break;
 			}
 		}
 	}
 	return errResult;
-}
-
-size_t 	HashCapacity(const Hash* _hash)
-{
-	if (NULL == _hash)
-	{
-		return 0;
-	}
-	return m_hashSize;
-}
-
-double	HashAverageCollisions(const Hash* _hash)
-{
-	float floatResult;
-	if (NULL == _hash)
-	{
-		return 0;
-	}
-	return _hash->m_totalCollisions / hash->m_numberOfInsertions;
 }
 
 

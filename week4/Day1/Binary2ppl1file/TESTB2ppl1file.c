@@ -16,7 +16,7 @@ int main() {
 		return -1;
 	}
 	while(1) {
-		printf("Please enter name and age of a person (enter 0 to stop): ");
+		printf("Please enter name anf age of a person: ");
 		scanf("%s%d", name, &age);
 		if (age < 1) 
 		{

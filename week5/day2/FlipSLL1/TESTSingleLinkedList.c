@@ -724,26 +724,6 @@ static void TestListGetTailRec()
 	printf("Test number %d result = %d\n", testNum, result);
 }
 
-static void TesFlipSLL()
-{
-	int result = 1;
-	Person pArr[10];
-	int pNum = 10;
-	Person* tail = NULL;
-	Person* head = NULL;
-	Person* item = NULL;
-	InitPersonArr(pArr, pNum);
-	++testNum;
-	head = ListInsertByKey(head, pArr[8].m_id, pArr+8); 
-	head = ListInsertByKey(head, pArr[7].m_id, pArr+7);
-	head = ListInsertByKey(head, pArr[4].m_id, pArr+4);
-	tail = ListGetTailRec(head);
-	if (tail !=  pArr+7)
-	{
-		result = 0;
-	}
-}
-
 
 int main()
 {
