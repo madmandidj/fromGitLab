@@ -110,6 +110,72 @@ static void EndRecWithOutSwap(Vector* _vec, size_t _begin, size_t _end, size_t _
 	return;
 }
 
+
+static int Partition(Vector* _vec, size_t _begin, size_t _end)
+{
+	/*
+		Set pivot, left and right indeces
+		FindNextBigOrEnd
+		FindNextSmallOrBegin	
+		if (leftInd < rightInd)
+		{
+			SwapBigAndSmallThenIcrement
+		}
+		
+	*/
+	size_t pivotInd;
+	int pivotVal;
+	size_t leftInd = _begin + 1;
+	int	leftVal;
+	size_t rightInd = _end;
+	int	rightVal;
+	pivotInd = _begin;
+	pivotVal = GetVecVal(_vec, pivotInd);
+	leftVal = GetVecVal(_vec, leftInd);
+	rightVal = GetVecVal(_vec, rightInd);
+	while (leftInd <= rightInd)
+	{
+		//FindNextBigOrEnd(_vec, pivotVal, &leftVal, &leftInd, _end);
+		FindNextBigOrEnd(_vec, pivotVal, &leftVal, &leftInd, rightInd);
+		//FindNextSmallOrBegin(_vec, pivotVal, &rightVal, &rightInd, _begin);
+		FindNextSmallOrBegin(_vec, pivotVal, &rightVal, &rightInd, leftInd);
+		if (leftInd <= rightInd)
+		{
+			SwapBigAndSmallThenIcrement(_vec, &rightVal, &rightInd, &leftVal, &leftInd);
+		}
+		if (leftInd > rightInd)
+		{
+			//if (pivotVal >= rightVal)
+			//{
+				SwapVecVals(_vec, pivotInd, rightInd);
+			//}
+			break;
+		}
+	}
+	return rightInd;
+}
+
+
+static void QuickRec(Vector* _vec, size_t _begin, size_t _end)
+{
+	size_t pInd;
+	if (_end - _begin <= 1)
+	{
+		return;
+	}
+	else
+	{
+		pInd = Partition(_vec, _begin, _end);
+		QuickRec(_vec, _begin, pInd-1);
+		QuickRec(_vec, pInd+1, _end);
+	}
+	return;
+}
+
+
+
+
+/*
 static void QuickRec(Vector* _vec, size_t _begin, size_t _end)
 {
 	size_t pivotInd;
@@ -128,11 +194,6 @@ static void QuickRec(Vector* _vec, size_t _begin, size_t _end)
 		pivotVal = GetVecVal(_vec, pivotInd);
 		leftVal = GetVecVal(_vec, leftInd);
 		rightVal = GetVecVal(_vec, rightInd);
-		/* 
-			rightInd and leftInd might be redundant 
-			check that all conditions are needed and not redundant
-		*/
-		/*while (leftInd <= rightInd && leftInd <= _end && rightInd >= _begin)*/
 		while (leftInd <= rightInd)
 		{
 			FindNextBigOrEnd(_vec, pivotVal, &leftVal, &leftInd, _end);
@@ -160,7 +221,7 @@ static void QuickRec(Vector* _vec, size_t _begin, size_t _end)
 	}
 	return;
 }
-
+*/
 /************ 
 API FUNCTIONS 
 ************/
