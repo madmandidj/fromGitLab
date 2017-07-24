@@ -1,0 +1,5 @@
+24/07/17:
+---------
+1. Finish Quick Sort with partition function. consolidate sort funcs into one file.
+2. Finish Hash set
+3. Consolidate all data structures in one folder. make sure they are proper and working.
