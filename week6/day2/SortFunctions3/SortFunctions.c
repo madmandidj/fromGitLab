@@ -108,6 +108,7 @@ ADTErr BubbleSort(Vector* _v)
 			isSorted = 1;
 			for (bubbleIndex = 0; bubbleIndex < bubbleLength - 1; ++bubbleIndex)
 			{
+				/* TODO: Adapt this function to receive as parameter shouldSwap func */
 				swapOccured = CheckAndPerformSwap(_v, bubbleIndex, BUBBLE_MODE);
 				if (1 == swapOccured)
 				{
@@ -152,6 +153,7 @@ ADTErr ShakeSort(Vector* _v)
 			/* Shake sort right */
 			for (shakeIndexR = indexOffset; shakeIndexR < shakeLength - 1; ++shakeIndexR)
 			{
+				/* TODO: Adapt this function to receive as parameter shouldSwap func */
 				swapOccured = CheckAndPerformSwap(_v, shakeIndexR, BUBBLE_MODE);
 				if (1 == swapOccured)
 				{
@@ -169,6 +171,7 @@ ADTErr ShakeSort(Vector* _v)
 			/* Shake sort left */
 			for (shakeIndexL = shakeIndexR-1; shakeIndexL >= vecItemsNum - shakeLength; --shakeIndexL)
 			{
+				/* TODO: Adapt this function to receive as parameter shouldSwap func */
 				swapOccured = CheckAndPerformSwap(_v, shakeIndexL, SHAKE_MODE);
 				/* TODO: stop sort is redundant */
 				if (1 == swapOccured)
