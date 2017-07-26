@@ -31,21 +31,29 @@ PASSED: TestSelectionSortNULLVec
 Sorted: 1, PASSED: TestSelectionSortEmptyVec
 Sorted: 1, PASSED: TestSelectionSort10Items
 Sorted: 1, PASSED: TestSelectionSort100Items
+PASSED: TestMergeSortRecNULLVec
+Sorted: 1, PASSED: TestMergeSortRec1Item
+Sorted: 1, PASSED: TestMergeSortRec2Item
+Sorted: 1, PASSED: TestMergeSortRec10Item
+Sorted: 1, PASSED: TestMergeSortRec10Item
 
 PERFORMANCE TESTS:
-Time elapsed for TestBubbleSort1000: 0.016876
-Time elapsed for TestBubbleSort10000: 1.777121
-Time elapsed for TestBubbleSort50000: 57.088264
-Time elapsed for TestShakeSort1000: 0.015822
-Time elapsed for TestShakeSort10000: 1.859558
-Time elapsed for TestShakeSort50000: 46.876583
-Time elapsed for TestInsertSort1000: 0.025480
-Time elapsed for TestInsertSort10000: 1.400413
-Time elapsed for TestInsertSort50000: 32.078415
-Time elapsed for TestShellSort1000: 0.008228
-Time elapsed for TestShellSort10000: 0.865086
-Time elapsed for TestShellSort50000: 25.846329
-Time elapsed for TestSelectionSort1000: 0.004854
-Time elapsed for TestSelectionSort10000: 0.511204
-Sorted: 1, Time elapsed for TestSelectionSort50000: 12.344562
+Time elapsed for TestBubbleSort1000: 0.019379
+Time elapsed for TestBubbleSort10000: 1.800825
+Time elapsed for TestBubbleSort50000: 44.852470
+Time elapsed for TestShakeSort1000: 0.014016
+Time elapsed for TestShakeSort10000: 1.582772
+Time elapsed for TestShakeSort50000: 36.562206
+Time elapsed for TestInsertSort1000: 0.006362
+Time elapsed for TestInsertSort10000: 0.783484
+Time elapsed for TestInsertSort50000: 18.969135
+Time elapsed for TestShellSort1000: 0.004770
+Time elapsed for TestShellSort10000: 0.525543
+Time elapsed for TestShellSort50000: 14.738805
+Time elapsed for TestSelectionSort1000: 0.003826
+Time elapsed for TestSelectionSort10000: 0.464204
+Time elapsed for TestSelectionSort50000: 10.767377
+Time elapsed for TestMergeSort1000: 0.000233
+Time elapsed for TestMergeSort10000: 0.002762
+Time elapsed for TestMergeSort50000: 0.015331
 

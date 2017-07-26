@@ -311,7 +311,7 @@ ADTErr SelectionSort(Vector* _vec)
 
 void Merge(Vector* _vec, int* _mergeArr, size_t _beginL, size_t _endL, size_t _beginR, size_t _endR)
 {
-	/* indexL and indexR are redundant */
+	/* indexL and indexR are redundant? */
 	size_t indexL = _beginL;
 	size_t indexR = _beginR;
 	size_t insertIndex = _beginL - 1;
@@ -367,7 +367,7 @@ void MergeRec(Vector* _vec, int* _mergeArr, size_t _begin, size_t _end)
 	size_t endL;
 	size_t beginR;
 	/* Check _end < _begin because they are size_t so will be huge number when subtracted*/
-	if (_end - _begin < 1 || _end < _begin)
+	if (_end < _begin + 1)
 	{
 		return;
 	}
@@ -406,6 +406,45 @@ ADTErr MergeSortRec(Vector* _vec)
 	}
 	mergeArr = malloc(end * sizeof(int));
 	MergeRec(_vec, mergeArr, begin, end);
+	free(mergeArr);
+	return ERR_OK;
+}
+
+void MergeIter(Vector* _vec, int* _mergeArr, size_t _numOfItems)
+{
+	size_t endL;
+	size_t beginL = 1;
+	size_t endL = 2;
+	size_t beginR = 3;
+	size_t endR = 4;
+	size_t curL;
+	int curGap = 1;
+	while (curGap != _numOfItems)
+	{
+		
+		Merge(_vec, _mergeArr, _begin, endL, beginR, _end);
+	}
+	
+}
+
+ADTErr MergeSort(Vector* _vec)
+{
+	/* TODO: Vector API still returns int here, although should be size_t*/
+	int* mergeArr; 
+	size_t begin = 1;
+	int numOfItems;
+	
+	if (NULL == _vec)
+	{
+		return ERR_NOT_INITIALIZED;
+	}
+	VectorItemsNum(_vec, &numOfItems);
+	if (numOfItems < 2)
+	{
+		return ERR_OK;
+	}
+	mergeArr = malloc(numOfItems * sizeof(int));
+	MergeIter(_vec, mergeArr, begin, numOfItems);
 	free(mergeArr);
 	return ERR_OK;
 }
