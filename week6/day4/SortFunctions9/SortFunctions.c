@@ -309,56 +309,77 @@ ADTErr SelectionSort(Vector* _vec)
 	return ERR_OK;
 }
 
+static void FillOriginalVector(Vector* _vec, int* _mergeArr, size_t _beginL, size_t _endR)
+{
+	size_t index;
+	for (index = _beginL; index <= _endR; ++index)
+	{
+		VectorSet(_vec, index, _mergeArr[index - 1]);
+	}
+	return;
+}
+
+static void FillTail(Vector* _vec, int* _mergeArr, size_t _indexL, size_t _indexR, size_t _endL, size_t _endR, size_t _insertIndex, int* _leftVal, int* _rightVal)
+{
+	while(_indexL <= _endL)
+	{
+		_mergeArr[_insertIndex] = *_leftVal;
+		++_insertIndex;
+		++_indexL;
+		VectorGet(_vec, _indexL, _leftVal);
+	}
+	while(_indexR <= _endR)
+	{
+		_mergeArr[_insertIndex] = *_rightVal;
+		++_insertIndex;
+		++_indexR;
+		VectorGet(_vec, _indexR, _rightVal);
+	}
+	return;
+}
+
+static void DoMerge(Vector* _vec, int* _mergeArr, size_t* _indexL, size_t* _indexR, size_t _endL, size_t _endR, size_t* _insertIndex, int* _leftVal, int* _rightVal)
+{
+	while (*_indexL <= _endL && *_indexR <= _endR)
+	{
+		VectorGet(_vec, *_indexL, _leftVal);
+		VectorGet(_vec, *_indexR, _rightVal);
+		if (*_leftVal < *_rightVal)
+		{
+			_mergeArr[*_insertIndex] = *_leftVal;
+			++*_insertIndex;
+			++*_indexL;
+		}
+		else if (*_leftVal > *_rightVal)
+		{
+			_mergeArr[*_insertIndex] = *_rightVal;
+			++*_insertIndex;
+			++*_indexR;
+		}
+		else
+		{
+			_mergeArr[*_insertIndex] = *_leftVal;
+			++*_insertIndex;
+			++*_indexL;
+			_mergeArr[*_insertIndex] = *_rightVal;
+			++*_insertIndex;
+			++*_indexR;
+		}
+	}
+	return;
+}
+
 void Merge(Vector* _vec, int* _mergeArr, size_t _beginL, size_t _endL, size_t _beginR, size_t _endR)
 {
-	/* indexL and indexR are redundant? */
+	/* TODO: indexL and indexR are redundant? TRIED this and it ruined results */
 	size_t indexL = _beginL;
 	size_t indexR = _beginR;
 	size_t insertIndex = _beginL - 1;
 	int leftVal;
 	int rightVal;
-	while (indexL <= _endL && indexR <= _endR)
-	{
-		VectorGet(_vec, indexL, &leftVal);
-		VectorGet(_vec, indexR, &rightVal);
-		if (leftVal < rightVal)
-		{
-			_mergeArr[insertIndex] = leftVal;
-			++insertIndex;
-			++indexL;
-		}
-		else if (leftVal > rightVal)
-		{
-			_mergeArr[insertIndex] = rightVal;
-			++insertIndex;
-			++indexR;
-		}
-		else
-		{
-			_mergeArr[insertIndex] = leftVal;
-			++insertIndex;
-			++indexL;
-			_mergeArr[insertIndex] = rightVal;
-			++insertIndex;
-			++indexR;
-		}
-	}
-	while(indexL <= _endL)
-	{
-		_mergeArr[insertIndex] = leftVal;
-		++insertIndex;
-		++indexL;
-	}
-	while(indexR <= _endR)
-	{
-		_mergeArr[insertIndex] = rightVal;
-		++insertIndex;
-		++indexR;
-	}
-	for (indexL = _beginL; indexL <= _endR; ++indexL)
-	{
-		VectorSet(_vec, indexL, _mergeArr[indexL - 1]);
-	}
+	DoMerge(_vec, _mergeArr, &indexL, &indexR, _endL, _endR, &insertIndex, &leftVal, &rightVal);
+	FillTail(_vec, _mergeArr, indexL, indexR, _endL, _endR, insertIndex, &leftVal, &rightVal);
+	FillOriginalVector(_vec, _mergeArr, _beginL, _endR);
 	return;
 }
 
@@ -381,9 +402,7 @@ void MergeRec(Vector* _vec, int* _mergeArr, size_t _begin, size_t _end)
 		endL = (_begin + _end - 1) / 2;
 		beginR = (_begin + _end + 1) / 2;
 	}
-	/* Recursive call to left */
 	MergeRec(_vec, _mergeArr, _begin, endL);
-	/* Recursive call to right */
 	MergeRec(_vec, _mergeArr, beginR, _end);
 	Merge(_vec, _mergeArr, _begin, endL, beginR, _end);
 }
@@ -405,27 +424,48 @@ ADTErr MergeSortRec(Vector* _vec)
 		return ERR_OK;
 	}
 	mergeArr = malloc(end * sizeof(int));
+	if (NULL == mergeArr)
+	{
+		return ERR_NOT_INITIALIZED;
+	}
 	MergeRec(_vec, mergeArr, begin, end);
 	free(mergeArr);
 	return ERR_OK;
 }
-/*
+
 
 void MergeIter(Vector* _vec, int* _mergeArr, size_t _numOfItems)
 {
-	size_t endL;
-	size_t beginL = 1;
-	size_t endL = 2;
-	size_t beginR = 3;
-	size_t endR = 4;
-	size_t curL;
-	int curGap = 1;
-	while (curGap != _numOfItems)
+	size_t beginL = 0;
+	size_t endL = 0;
+	size_t beginR = 0;
+	size_t endR = 0;
+	size_t curIndex = 0;
+	size_t groupSize = 0;
+	for (groupSize = 1; groupSize <= _numOfItems - 1; groupSize = 2 * groupSize)
 	{
-		
-		Merge(_vec, _mergeArr, _begin, endL, beginR, _end);
+		for(curIndex = 0; curIndex < _numOfItems - 1; curIndex += 2 * groupSize)
+		{
+			beginL = curIndex;
+			endL = curIndex + groupSize - 1;
+			beginR = curIndex + groupSize;
+			if (curIndex + 2 * groupSize - 1 < _numOfItems -1)
+			//if (curIndex + 2 * groupSize < _numOfItems -1)
+			{
+				endR = curIndex + 2 * groupSize - 1;
+			}
+			else
+			{
+				endR = _numOfItems - 1;
+			}
+			if (beginR > endR)
+			{
+				beginR = endR;
+			}
+			Merge(_vec, _mergeArr, beginL+1, endL+1, beginR+1, endR+1);
+		}
 	}
-	
+	return;
 }
 
 
@@ -435,7 +475,6 @@ ADTErr MergeSort(Vector* _vec)
 	int* mergeArr; 
 	size_t begin = 1;
 	int numOfItems;
-	
 	if (NULL == _vec)
 	{
 		return ERR_NOT_INITIALIZED;
@@ -446,11 +485,15 @@ ADTErr MergeSort(Vector* _vec)
 		return ERR_OK;
 	}
 	mergeArr = malloc(numOfItems * sizeof(int));
-	MergeIter(_vec, mergeArr, begin, numOfItems);
+	if (NULL == mergeArr)
+	{
+		return ERR_NOT_INITIALIZED;
+	}
+	MergeIter(_vec, mergeArr, numOfItems);
 	free(mergeArr);
 	return ERR_OK;
 }
 
-*/
+
 
 

@@ -309,14 +309,77 @@ ADTErr SelectionSort(Vector* _vec)
 	return ERR_OK;
 }
 
+static void FillOriginalVector(Vector* _vec, int* _mergeArr, size_t _beginL, size_t _endR)
+{
+	size_t index;
+	for (index = _beginL; index <= _endR; ++index)
+	{
+		VectorSet(_vec, index, _mergeArr[index - 1]);
+	}
+	return;
+}
+
+static void FillTail(Vector* _vec, int* _mergeArr, size_t _indexL, size_t _indexR, size_t _endL, size_t _endR, size_t _insertIndex, int* _leftVal, int* _rightVal)
+{
+	while(_indexL <= _endL)
+	{
+		_mergeArr[_insertIndex] = *_leftVal;
+		++_insertIndex;
+		++_indexL;
+		VectorGet(_vec, _indexL, _leftVal);
+	}
+	while(_indexR <= _endR)
+	{
+		_mergeArr[_insertIndex] = *_rightVal;
+		++_insertIndex;
+		++_indexR;
+		VectorGet(_vec, _indexR, _rightVal);
+	}
+	return;
+}
+
+static void DoMerge(Vector* _vec, int* _mergeArr, size_t* _indexL, size_t* _indexR, size_t _endL, size_t _endR, size_t* _insertIndex, int* _leftVal, int* _rightVal)
+{
+	while (*_indexL <= _endL && *_indexR <= _endR)
+	{
+		VectorGet(_vec, *_indexL, leftVal);
+		VectorGet(_vec, *_indexR, _rightVal);
+		if (*leftVal < *_rightVal)
+		{
+			_mergeArr[*_insertIndex] = *leftVal;
+			++*_insertIndex;
+			++*_indexL;
+		}
+		else if (*leftVal > *_rightVal)
+		{
+			_mergeArr[*_insertIndex] = *_rightVal;
+			++*_insertIndex;
+			++*_indexR;
+		}
+		else
+		{
+			_mergeArr[*_insertIndex] = *leftVal;
+			++*_insertIndex;
+			++*_indexL;
+			_mergeArr[*_insertIndex] = *_rightVal;
+			++*_insertIndex;
+			++*_indexR;
+		}
+	}
+	return;
+}
+
 void Merge(Vector* _vec, int* _mergeArr, size_t _beginL, size_t _endL, size_t _beginR, size_t _endR)
 {
-	/* indexL and indexR are redundant? */
+	/* TODO: indexL and indexR are redundant? TRIED this and it ruined results */
 	size_t indexL = _beginL;
 	size_t indexR = _beginR;
 	size_t insertIndex = _beginL - 1;
 	int leftVal;
 	int rightVal;
+	
+	DoMerge(_vec, _mergeArr, &_indexL, &_indexR, _endL, _endR, &_insertIndex, &_leftVal, &_rightVal)
+	/*
 	while (indexL <= _endL && indexR <= _endR)
 	{
 		VectorGet(_vec, indexL, &leftVal);
@@ -343,22 +406,33 @@ void Merge(Vector* _vec, int* _mergeArr, size_t _beginL, size_t _endL, size_t _b
 			++indexR;
 		}
 	}
+	*/
+	FillTail(_vec, _mergeArr, indexL, indexR, _endL, _endR, insertIndex, &leftVal, &rightVal)
+	
+	/*
 	while(indexL <= _endL)
 	{
 		_mergeArr[insertIndex] = leftVal;
 		++insertIndex;
 		++indexL;
+		VectorGet(_vec, indexL, &leftVal);
 	}
 	while(indexR <= _endR)
 	{
 		_mergeArr[insertIndex] = rightVal;
 		++insertIndex;
 		++indexR;
+		VectorGet(_vec, indexR, &rightVal);
 	}
+	*/
+	
+	FillOriginalVector(_vec, _mergeArr, _beginL, _endR);
+	/*
 	for (indexL = _beginL; indexL <= _endR; ++indexL)
 	{
 		VectorSet(_vec, indexL, _mergeArr[indexL - 1]);
 	}
+	*/
 	return;
 }
 
