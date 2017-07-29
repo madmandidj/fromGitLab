@@ -1239,9 +1239,9 @@ static void TestRadixSort10Items()
     int isSorted;
     int radix = 10;
     size_t numOfItems = 10;
-    int maxDigits;
+    int maxDigits = 0;
     vec = InitVec(numOfItems);
-    maxDigits = FindMaxDigits(vec, maxDigits, radix);
+    maxDigits = FindMaxDigits(vec, numOfItems, radix);
     errResult = RadixSort(vec, maxDigits);
     isSorted = CheckIfSortedAscend(vec);
     printf("Sorted: %d, ", isSorted);

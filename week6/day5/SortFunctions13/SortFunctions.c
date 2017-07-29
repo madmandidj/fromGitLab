@@ -586,7 +586,6 @@ ADTErr CountingSort(Vector* _vec, int _maxValue)
 	int* sortedArr;
 	int* rangeArr; 
 	int numOfItems;
-	int maxRange;
 	if (NULL == _vec)
 	{
 		return ERR_NOT_INITIALIZED;
@@ -626,10 +625,10 @@ static void ExtractCurDigit(Vector* _vec, int* digArr, int _numOfItems, int _nDi
 	size_t index;
 	int vecVal;
 	int digitIndex = 0;
-	for (index = 1; index < _numOfItems; ++index)
+	for (index = 1; index <= _numOfItems; ++index)
 	{
 		VectorGet(_vec, index, &vecVal);
-		for (digitIndex = 0; digitIndex <= _curDigit; ++index)
+		for (digitIndex = 1; digitIndex <= _curDigit; ++digitIndex)
 		{
 			if (digitIndex < _curDigit)
 			{
@@ -644,11 +643,35 @@ static void ExtractCurDigit(Vector* _vec, int* digArr, int _numOfItems, int _nDi
 	return;
 }
 
+static int FindMaxDigits(Vector* _vec, int _numOfItems, int _radix)
+{
+	int vecIndex;
+	int maxDigits = 0;
+	int curDigits = 1;
+	int curVal;
+	for (vecIndex = 1; vecIndex <= _numOfItems; ++vecIndex)
+	{
+		curDigits = 1;
+		VectorGet(_vec, vecIndex, &curVal);
+		while (curVal / _radix > 0)
+		{
+			++curDigits;
+			curVal /= _radix;
+		}
+		if (curDigits > maxDigits)
+		{
+			maxDigits = curDigits;
+		}
+	}
+	return maxDigits;
+}
+
 ADTErr RadixSort(Vector* _vec, int _nDigits)
 {
 	int numOfItems;
 	int radix = 10;
 	int curDigit = 1;
+	int maxDigits;
 	int* rangeArr;
 	int* digArr;
 	int* sortedArr;
@@ -680,6 +703,8 @@ ADTErr RadixSort(Vector* _vec, int _nDigits)
 	while (curDigit <= _nDigits)
 	{
 		ExtractCurDigit(_vec, digArr, numOfItems, _nDigits, curDigit, radix);
+		maxDigits = FindMaxDigits(_vec, numOfItems, 10);
+		CountingSort(_vec, _maxValue); /* adapt counting function to sort _vec by digArr */
 		/* extract LSD then FillAndProcessRange to rangeArr */
 		/* populate sortedArr with sorted values according to index */
 		/* replace contents of original vector */
