@@ -1,3 +1,11 @@
+/*
+Filename: 		StrHomework.c 
+Description:	Implementation of String Functions
+Created: 		01/08/17
+Created by:		Eyal Alon
+Last modified: 	02/08/17
+Modified by:	Eyal Alon
+*/
 #include <stdio.h>
 #include "StrHomework.h"
 
@@ -165,6 +173,10 @@ char* StrCopyRec(char* _destination, const char* _source)
 {
 	size_t index = 0;
 	char* result;
+	if (NULL == _destination || NULL == _source)
+	{
+		return NULL;
+	}
 	result = MyStrCopyRec(_destination, _source, index);
 	return result;
 }
@@ -174,7 +186,7 @@ char* StrCopy(char* _destination, const char* _source)
 	size_t index = 0;
 	if (NULL == _destination || NULL == _source)
 	{
-		return 0;
+		return NULL;
 	}
 	while (_source[index] != '\0')
 	{
@@ -205,7 +217,7 @@ char* StrCopy(char* _destination, const char* _source)
  STRNCOPY ITERATIVE AND RECURSIVE
 */
 
-char* MyStrNCopyRec(char* _destination, const char* _source, size_t _num, size_t _index)
+static char* MyStrNCopyRec(char* _destination, const char* _source, size_t _num, size_t _index)
 {
 	char* result;
 	if (_source[_index] == '\0' || _index < _num)
@@ -219,12 +231,14 @@ char* MyStrNCopyRec(char* _destination, const char* _source, size_t _num, size_t
 	return result;
 }
 
-
-
 char* StrNCopyRec(char* _destination, const char* _source, size_t _num)
 {
 	size_t index = 0;
 	char* result;
+	if (NULL == _destination || NULL == _source || _num == 0)
+	{
+		return NULL;
+	}
 	result = MyStrNCopyRec(_destination, _source, _num, index);
 	return result;
 }
@@ -232,9 +246,9 @@ char* StrNCopyRec(char* _destination, const char* _source, size_t _num)
 char* StrNCopy(char* _destination, const char* _source, size_t _num)
 {
 	size_t index = 0;
-	if (NULL == _destination || NULL == _source)
+	if (NULL == _destination || NULL == _source || _num == 0)
 	{
-		return 0;
+		return NULL;
 	}
 	while (_source[index] != '\0' && index < _num)
 	{
@@ -265,7 +279,7 @@ char* StrNCopy(char* _destination, const char* _source, size_t _num)
 
 
 /*
- STRNCONCAT ITERATIVE AND RECURSIVE
+ STRNCONCAT 
 */
 
 char* StrConcat(char* _destination, const char* _source)
@@ -274,7 +288,7 @@ char* StrConcat(char* _destination, const char* _source)
 	size_t sourceIndex = 0;
 	if (NULL == _destination || NULL == _source)
 	{
-		return 0;
+		return NULL;
 	}
 	while (_destination[destIndex] != '\0')
 	{
@@ -307,7 +321,7 @@ char* StrConcat(char* _destination, const char* _source)
 
 
 /*
- STRNCONCAT ITERATIVE AND RECURSIVE
+ STRSUBSTRING
 */
 
 
@@ -318,7 +332,7 @@ char* StrSubString(const char* _str, const char* _search)
 	size_t foundIndex = 0;
 	if (NULL == _str || NULL == _search)
 	{
-		return 0;
+		return NULL;
 	}
 	
 	while (_str[strIndex] != '\0')
@@ -335,6 +349,8 @@ char* StrSubString(const char* _str, const char* _search)
 				{
 					break;
 				}
+				++strIndex;
+				++searchIndex;
 			}
 			if (_search[searchIndex] == '\0')
 			{
