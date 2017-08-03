@@ -14,6 +14,7 @@ Modified by:	Eyal Alon
 /* 
 Determines if item1 and item2 should be swapped.
 This function is written by the user and provided as parameter to GenericBubbleSort
+returns 1 if swap needed. 0 if no swap needed.
 */
 typedef int(*SortMethod)(const void* _item1, const void* _item2);
 

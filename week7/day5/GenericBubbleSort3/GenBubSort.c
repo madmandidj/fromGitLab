@@ -46,6 +46,7 @@ static void GenericSwap(void* _leftItem, void* _rightItem, void* _tempItem, size
 
 ADTErr GenericBubbleSort(void* _data, size_t _nItems, size_t _itemSize, SortMethod _func)
 {
+	/*TODO: init pointers = NULL */
 	void* tempItem;
 	size_t index;
 	int isSorted = 0;
@@ -66,6 +67,8 @@ ADTErr GenericBubbleSort(void* _data, size_t _nItems, size_t _itemSize, SortMeth
 		isSorted = 1;
 		for(index = 0; index < _nItems-1; ++index)
 		{
+			/* TODO: following lines are too long. can make them smaller */
+			/* TODO: define TRUE = 1 and FALSE = 0 */
 			isSwapNeeded = _func(((char*)_data + _itemSize * index), ((char*)_data + _itemSize * index + _itemSize));
 			if (isSwapNeeded == 1)
 			{
