@@ -1,11 +1,1 @@
-24/07/17:
----------
-1. Finish Quick Sort with partition function. consolidate sort funcs into one file.
-2. Finish Hash set
-3. Consolidate all data structures in one folder.
-4. Check that all data structures are working properly.
 
-25/07/17:
----------
-1. summarize the OS classes
-2. do best/worst case performance tests for sort algorithms
