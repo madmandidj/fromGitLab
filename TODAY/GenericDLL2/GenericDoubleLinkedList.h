@@ -9,6 +9,9 @@
  * @author Author Eyal Alon (eyal171@yahoo.com) 
 */
 
+/*
+TODO: Triple check function briefs, descriptions, parameters, returns, retvals.
+*/
 
 #include <stdlib.h>
 
@@ -50,7 +53,7 @@ List* ListCreate(void);
  *
  * @return void
 */
-void ListDestroy(List** _list, UserActionFunc _destoryFunc);
+void ListDestroy(List** _list, UserActionFunc _destroyFunc);
 
 /**
  * @brief The function push data to the head of the list.

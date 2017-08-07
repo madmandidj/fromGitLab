@@ -9,7 +9,13 @@ Modified by:	Eyal Alon
 
 #include <stdio.h>
 #include "GenericDoubleLinkedList.h"
-#define MAGIC_NUM 0x00002000; /* Generic DLL Magic Num is 0x00002000*/
+#define MAGIC_NUM 0x00002000 /* Generic DLL Magic Num is 0x00002000*/
+#define TRUE 1
+#define FALSE 0
+
+/*
+TODO: factorize all functions
+*/
 
 typedef struct Node Node;
 
@@ -27,16 +33,11 @@ struct List
 	Node m_tail;
 };
 
-/* 
-Static functions to add:
-Create Node
-Insert Node
-Remove Node
-Delete Node
-Check NULL
-Check Data (use void pointer to make generic)
-Check Empty
-*/
+
+
+
+
+
 
 
 
@@ -65,23 +66,26 @@ List* 	ListCreate(void)
 
 
 
+
+
+
 /******
 LIST DESTROY
 ******/
-void ListDestroy(List** _list, UserActionFunc _destoryFunc)
+void ListDestroy(List** _list, UserActionFunc _destroyFunc)
 {
 	Node* curN;
 	
-	if (NULL != *_list  && MAGIC_NUM == *_list->m_magicNum)
+	if (NULL != _list && NULL != *_list && MAGIC_NUM == (*_list)->m_magicNum)
 	{
-		if (*_list->m_head.m_next != &(*_list->m_tail))
+		if ((*_list)->m_head.m_next != &((*_list)->m_tail))
 		{
-			curN = *_list->m_head.m_next;
-			while(curN->m_next != &(*_list->m_tail))
+			curN = (*_list)->m_head.m_next;
+			while(curN->m_next != &((*_list)->m_tail))
 			{
 				if (_destroyFunc != NULL)
 				{
-					_destoryFunc(curN->m_data);
+					_destroyFunc(curN->m_data, NULL);
 				}
 				curN = curN->m_next;
 				free(curN->m_prev);
@@ -89,16 +93,18 @@ void ListDestroy(List** _list, UserActionFunc _destoryFunc)
 			}
 			if (_destroyFunc != NULL)
 			{
-				_destoryFunc(curN->m_data);
+				_destroyFunc(curN->m_data, NULL);
 			}
 			free(curN);
 		}
-		*_list->m_magicNum = 0;
+		(*_list)->m_magicNum = 0;
 		free(*_list);
 		*_list = NULL;
 	}
 	return;
 }
+
+
 
 
 
@@ -132,10 +138,6 @@ ListErrors	ListPushHead(List* _list, void* _data)
 	}
 	return LIST_OK;
 }
-
-
-
-
 
 
 
@@ -179,6 +181,7 @@ ListErrors	ListPushTail(List* _list, void* _data)
 
 
 
+
 /******
 LIST POP HEAD
 ******/
@@ -193,7 +196,7 @@ ListErrors ListPopHead(List* _list, void* *_data)
 			*_data = _list->m_head.m_next->m_data;
 			freeNode = _list->m_head.m_next;
 			_list->m_head.m_next->m_next->m_prev = &(_list->m_head);
-			_list->m_head.m_next =  _list->m_head.m_next->m_next;
+			_list->m_head.m_next = _list->m_head.m_next->m_next;
 			free(freeNode);
 		}
 		else
@@ -207,8 +210,6 @@ ListErrors ListPopHead(List* _list, void* *_data)
 	}
 	return LIST_OK;
 }
-
-
 
 
 
@@ -255,7 +256,6 @@ ListErrors ListPopTail(List* _list, void* *_data)
 
 
 
-
 /******
 LIST COUNT ITEMS
 ******/
@@ -288,20 +288,19 @@ size_t	ListCountItems(const List* _list)
 
 
 
-
 /******
 LIST IS EMPTY
 ******/
 int		ListIsEmpty(const List* _list)
 {
-	int result = 1;
-	if (NULL == _list)
+	int result = TRUE;
+	if (NULL == _list || MAGIC_NUM != _list->m_magicNum)
 	{
 		result = -1;
 	}
 	else if (_list->m_head.m_next != &(_list->m_tail))
 	{
-		result = 0;
+		result = FALSE;
 	}
 	return result;
 }
@@ -315,26 +314,132 @@ int		ListIsEmpty(const List* _list)
 
 
 /******
-LIST PRINT
+LIST FIND FIRST FORWARD
 ******/
-void	ListPrint(List* _list)
+ListErrors FindFirstForward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item)
 {
 	Node* curN;
-	if (NULL != _list)
+	int isFound = FALSE;
+	if (NULL == _list || NULL == _predicateFunc || NULL == _item || MAGIC_NUM != _list->m_magicNum)
 	{
-		if (_list->m_head.m_next != &(_list->m_tail))
-		{
-			curN = _list->m_head.m_next;
-			while(curN->m_next != &(_list->m_tail))
-			{
-				printf("%d\n", curN->m_data);
-				curN = curN->m_next;
-			}
-			printf("%d\n", curN->m_data);
-		}
+		return LIST_UNINITIALIZED;
 	}
-	return;
+	if (_list->m_head.m_next == &(_list->m_tail))
+	{
+		return LIST_IS_EMPTY;
+	}
+	curN = _list->m_head.m_next;
+	while(curN->m_next != &(_list->m_tail))
+	{
+		isFound = _predicateFunc(curN->m_data, _context);
+		if (isFound)
+		{
+			*_item = curN->m_data;
+			return LIST_OK;
+		}
+		curN = curN->m_next;
+	}
+	*_item = NULL;
+	return LIST_ITEM_NOT_FOUND;
 }
+
+
+
+
+
+
+
+
+
+/******
+LIST FIND FIRST BACKWARD
+******/
+ListErrors FindFirstBackward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item)
+{
+	Node* curN;
+	int isFound = FALSE;
+	if (NULL == _list || NULL == _predicateFunc || NULL == _item || MAGIC_NUM != _list->m_magicNum)
+	{
+		return LIST_UNINITIALIZED;
+	}
+	if (_list->m_head.m_next == &(_list->m_tail))
+	{
+		return LIST_IS_EMPTY;
+	}
+	curN = _list->m_tail.m_prev;
+	while(curN->m_prev != &(_list->m_head))
+	{
+		isFound = _predicateFunc(curN->m_data, _context);
+		if (isFound)
+		{
+			*_item = curN->m_data;
+			return LIST_OK;
+		}
+		curN = curN->m_prev;
+	}
+	*_item = NULL;
+	return LIST_ITEM_NOT_FOUND;
+}
+
+
+
+
+
+
+
+
+
+/******
+LIST FOR EACH 
+******/
+static size_t CheckListForEachParams(const List* _list, UserActionFunc _action)
+{
+	if (NULL == _list || NULL == _action || MAGIC_NUM != _list->m_magicNum)
+	{
+		return 0;
+	}
+	return 1;
+}
+
+static size_t DoListForEach(const List* _list, UserActionFunc _action, void* _context)
+{
+	size_t actionCount = 0;
+	int result = 0;
+	Node* curN;
+	if (_list->m_head.m_next != &_list->m_tail)
+	{
+		curN = _list->m_head.m_next;
+		while(curN->m_next != &_list->m_tail)
+		{
+			result = _action(curN->m_data, _context);
+			if (result == 0)
+			{
+				return actionCount;
+			}
+			++actionCount;
+			curN = curN->m_next;
+		}
+		result = _action(curN->m_data, _context);
+		if (result == 0)
+		{
+			return actionCount;
+		}
+		++actionCount;
+	}
+	return actionCount;
+}
+
+size_t ListForEach(const List* _list, UserActionFunc _action, void* _context)
+{
+	if (CheckListForEachParams(_list, _action) == 0)
+	{
+		return 0;
+	}
+	return DoListForEach(_list, _action, _context);
+}
+
+
+
 
 
 
