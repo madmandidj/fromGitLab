@@ -3,7 +3,7 @@ Filename: 		TestGenericDoubleLinkedList.c
 Description:	Tests for generic DLL API
 Created: 		06/08/17
 Created by:		Eyal Alon
-Last modified: 	06/08/17
+Last modified: 	07/08/17
 Modified by:	Eyal Alon
 */
 
@@ -22,11 +22,10 @@ struct Person
 	Person**	m_family;
 };
 
-/* 
-TODO: debug pop head and pop tail tests. according to debugger: free(arr) (line 419) is where the problem is.
-TODO: add Person struct and appropriate tests. 
-TODO: add test list destroy that uses action.
-*/
+
+
+
+
 
 /*
 	INITIALIZE FUNCTIONS
@@ -130,26 +129,25 @@ int PrintElementInt(int* _intPtr, void* _context)
 {
     if (NULL == _intPtr)
     {
-        printf("NULL\n");
+        printf("\tNULL\n");
     }
     else
     {
-        printf("%d\n", *_intPtr);
+        printf("\t%d\n", *_intPtr);
     }
     return 1;
 }
 
 int	ElementPersonPrint(Person* _prs, size_t _index, void* _context)
 {
-	printf("Index = %u, \tName = %s, \tAge = %u\n", _index, _prs->m_name, _prs->m_age);
-	printf("Family1 = %u, \tName = %s, \tAge = %u\n", _index, _prs->m_family[0]->m_name, _prs->m_family[0]->m_age);
-	printf("Family2 = %u, \tName = %s, \tAge = %u\n", _index, _prs->m_family[1]->m_name, _prs->m_family[1]->m_age);
+	printf("\tName = 	\t%s, \tAge = %u\n", _prs->m_name, _prs->m_age);
+	printf("\tFamily1 = \t%s, \tAge = %u\n", _prs->m_family[0]->m_name, _prs->m_family[0]->m_age);
+	printf("\tFamily2 = \t%s, \tAge = %u\n", _prs->m_family[1]->m_name, _prs->m_family[1]->m_age);
 	return 1;
 }
 
 void ElementDestroyPerson(Person* _item, void* _context)
 {
-	// Person* perItem = (Person*) _item;
 	if (NULL != _item && NULL != _item->m_family)
 	{
 		free(_item->m_family);
@@ -271,7 +269,6 @@ LIST PUSH HEAD TESTS
 static void TestListPushHeadIntNULLList()
 {
     ListErrors err;
-    int* data;
     int* arr;
     size_t index;
     size_t numOfInts = 10;
@@ -280,8 +277,7 @@ static void TestListPushHeadIntNULLList()
     {
         arr[index] = (int)index;
     }
-    data = &arr[5];
-    err = ListPushHead(NULL, data);
+    err = ListPushHead(NULL, arr + 5);
     PrintErrResult("TestListPushHeadNULLList", err, LIST_UNINITIALIZED);
     free(arr);
     return;
@@ -388,7 +384,6 @@ LIST PUSH TAIL TESTS
 static void TestListPushTailIntNULLList()
 {
     ListErrors err;
-    int* data;
     int* arr;
     size_t index;
     size_t numOfInts = 10;
@@ -397,8 +392,7 @@ static void TestListPushTailIntNULLList()
     {
         arr[index] = (int)index;
     }
-    data = &arr[5];
-    err = ListPushTail(NULL, data);
+    err = ListPushTail(NULL, arr + 5);
     PrintErrResult("TestListPushTailIntNULLList", err, LIST_UNINITIALIZED);
     free(arr);
     return;
@@ -502,12 +496,34 @@ static void TestListPushHeadTailHeadTailInt()
 /******
 LIST POP HEAD TESTS
 ******/
-static void TestListPopHeadInt()
+static void TestListPopHeadIntNULLList()
 {
     List* list;
     ListErrors err;
+    int* data = NULL;
+    list = ListCreate();
+    err = ListPopHead(NULL, (void**) &data);
+    PrintErrResult("TestListPopHeadIntNULLList", err, LIST_UNINITIALIZED);
+    ListDestroy(&list, NULL);
+    return;
+}
+
+static void TestListPopHeadIntNULLData()
+{
+    List* list;
+    ListErrors err;
+    list = ListCreate();
+    err = ListPopHead(list, NULL);
+    PrintErrResult("TestListPopHeadIntNULLData", err, LIST_UNINITIALIZED);
+    ListDestroy(&list, NULL);
+    return;
+}
+
+static void TestListPopHeadIntCheckVal()
+{
+    List* list;
     int* arr;
-    int data = 0;
+    int* data = NULL;
     size_t index;
     size_t numOfInts = 10;
     arr = (int*) malloc(numOfInts * sizeof(int));
@@ -520,10 +536,30 @@ static void TestListPopHeadInt()
     ListPushTail(list, arr + 3);
     ListPushHead(list, arr + 2);
     ListPushTail(list, arr + 1);
-    err = ListPopHead(list, (void**) &data);
-    PrintErrResult("TestListPopHeadInt", err, LIST_OK);
+    ListPopHead(list, (void**) &data);
+    if (2 == *data)
+    {
+        printf("PASS: TestListPopHeadIntCheckVal, value correct\n");
+    }
+    else
+    {
+        printf("FAIL: TestListPopHeadIntCheckVal, value incorrect\n");
+    }
     ListDestroy(&list, NULL);
     free(arr);
+    return;
+}
+
+static void TestListPopHeadIntEmptyList()
+{
+    List* list;
+    ListErrors err;
+    int* data = NULL;
+
+    list = ListCreate();
+    err = ListPopHead(list, (void**) &data);
+    PrintErrResult("TestListPopHeadIntEmptyList", err, LIST_IS_EMPTY);
+    ListDestroy(&list, NULL);
     return;
 }
 
@@ -538,12 +574,35 @@ static void TestListPopHeadInt()
 /******
 LIST POP TAIL TESTS
 ******/
-static void TestListPopTailInt()
+static void TestListPopTailIntNULLList()
+{
+    List* list;
+    ListErrors err;
+    int* data = NULL;
+    list = ListCreate();
+    err = ListPopTail(NULL, (void**) &data);
+    PrintErrResult("TestListPopTailIntNULLList", err, LIST_UNINITIALIZED);
+    ListDestroy(&list, NULL);
+    return;
+}
+
+static void TestListPopTailIntNULLData()
+{
+    List* list;
+    ListErrors err;
+    list = ListCreate();
+    err = ListPopTail(list, NULL);
+    PrintErrResult("TestListPopTailIntNULLData", err, LIST_UNINITIALIZED);
+    ListDestroy(&list, NULL);
+    return;
+}
+
+static void TestListPopTailIntCheckVal()
 {
     List* list;
     ListErrors err;
     int* arr;
-    int data = 0;
+    int* data = NULL;
     size_t index;
     size_t numOfInts = 10;
     arr = (int*) malloc(numOfInts * sizeof(int));
@@ -557,12 +616,24 @@ static void TestListPopTailInt()
     ListPushHead(list, arr + 2);
     ListPushTail(list, arr + 1);
     err = ListPopTail(list, (void**) &data);
-    ListForEach(list, (UserActionFunc) PrintElementInt, NULL);
-    PrintErrResult("TestListPopTailInt", err, LIST_OK);
+    PrintErrResult("TestListPopTailIntCheckVal", err, LIST_OK);
     ListDestroy(&list, NULL);
     free(arr);
     return;
 }
+
+static void TestListPopTailIntEmptyList()
+{
+    List* list;
+    ListErrors err;
+    int* data = NULL;
+    list = ListCreate();
+    err = ListPopTail(list, (void**) &data);
+    PrintErrResult("TestListPopTailIntEmptyList", err, LIST_IS_EMPTY);
+    ListDestroy(&list, NULL);
+    return;
+}
+
 
 
 
@@ -843,7 +914,6 @@ LIST FOR EACH TESTS
 static void TestListForEachPrintInt()
 {
     List* list;
-    ListErrors err;
     int* arr;
     size_t index;
     size_t numOfInts = 10;
@@ -858,7 +928,7 @@ static void TestListForEachPrintInt()
     ListPushTail(list, arr + 3);
     ListPushTail(list, arr + 2);
     ListPushTail(list, arr + 1);
-    err = ListPushTail(list, arr);
+    ListPushTail(list, arr);
     actionCount = ListForEach(list, (UserActionFunc) PrintElementInt, NULL);
     if (5 == actionCount)
     {
@@ -926,10 +996,14 @@ int main()
     TestListPushTailIntOneItem();
     TestListPushTailIntFiveItem();
     TestListPushHeadTailHeadTailInt();
-    /*
-    TestListPopHeadInt();
-    TestListPopTailInt();
-    */
+    TestListPopHeadIntNULLList();
+    TestListPopHeadIntNULLData();
+    TestListPopHeadIntCheckVal();
+    TestListPopHeadIntEmptyList();
+    TestListPopTailIntNULLList();
+    TestListPopTailIntNULLData();
+    TestListPopTailIntCheckVal();
+    TestListPopTailIntEmptyList();
     TestListCountItemsInt();
     TestListIsEmptyIntNotEmpty();
     TestListIsEmptyIntIsEmpty();
@@ -938,10 +1012,6 @@ int main()
     TestListFindFirstBackwardIntFound();
     TestListFindFirstBackwardIntNotFound();
     TestListPushHeadPersonFiveItemWithDestroy();
-
-
-
-
     TestListForEachPrintInt();
     TestListForEachPrintPerson();
     printf("\n");

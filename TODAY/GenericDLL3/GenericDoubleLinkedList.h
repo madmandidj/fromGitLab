@@ -10,7 +10,7 @@
 */
 
 /*
-TODO: Triple check function briefs, descriptions, parameters, returns, retvals.
+TODO: Update function briefs, descriptions, parameters, returns, retvals.
 */
 
 #include <stdlib.h>

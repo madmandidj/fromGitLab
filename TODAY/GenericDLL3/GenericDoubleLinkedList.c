@@ -3,7 +3,7 @@ Filename: 		GenericDoubleLinkedList.c
 Description:	Implementation of generic DLL API
 Created: 		06/08/17
 Created by:		Eyal Alon
-Last modified: 	06/08/17
+Last modified: 	07/08/17
 Modified by:	Eyal Alon
 */
 

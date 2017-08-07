@@ -3,7 +3,7 @@ Filename: 		GenericDoubleLinkedList.c
 Description:	Implementation of generic DLL API
 Created: 		06/08/17
 Created by:		Eyal Alon
-Last modified: 	06/08/17
+Last modified: 	07/08/17
 Modified by:	Eyal Alon
 */
 
@@ -83,11 +83,11 @@ void ListDestroy(List** _list, UserActionFunc _destroyFunc)
 			curN = (*_list)->m_head.m_next;
 			while(curN->m_next != &((*_list)->m_tail))
 			{
+				curN = curN->m_next;
 				if (_destroyFunc != NULL)
 				{
-					_destroyFunc(curN->m_data, NULL);
+					_destroyFunc(curN->m_prev->m_data, NULL);
 				}
-				curN = curN->m_next;
 				free(curN->m_prev);
 				
 			}
