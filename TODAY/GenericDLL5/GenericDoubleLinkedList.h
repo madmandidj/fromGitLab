@@ -3,8 +3,8 @@
 
 /** 
  * @brief Create a Generic Double Linked List data type
- * that stores pointer to user provided elements of generic type
- * The Double Linked List is heap allocated and can grow and shrink on demand.
+ * that stores opaque data type provided by user
+ * The Double Linked List is dynamically allocated and can grow and shrink on demand.
  * 
  * @author Author Eyal Alon (eyal171@yahoo.com) 
 */
@@ -90,7 +90,7 @@ ListErrors ListPushTail(List* _list, void* _data);
  * @return error code.
  * @retval LIST_OK on success.
  * @retval LIST_UNINITIALIZED if _list NULL.
- * @retval ERR_LIST_IS_EMPTY if the list is empty.
+ * @retval LIST_IS_EMPTY if the list is empty.
 */
 ListErrors ListPopHead(List* _list, void* *_data);
 
@@ -103,7 +103,7 @@ ListErrors ListPopHead(List* _list, void* *_data);
  * @return error code.
  * @retval LIST_OK on success.
  * @retval LIST_UNINITIALIZED if _list NULL.
- * @retval ERR_LIST_IS_EMPTY if the list is empty.
+ * @retval LIST_IS_EMPTY if the list is empty.
 */
 ListErrors ListPopTail(List* _list, void* *_data);
 
@@ -142,6 +142,7 @@ int ListIsEmpty(const List* _list);
  * @return error code.
  * @retval LIST_OK on success.
  * @retval LIST_UNINITIALIZED if _list NULL.
+ * @retval LIST_IS_EMPTY if no items in list
 */
 ListErrors FindFirstForward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item);
 
@@ -158,6 +159,7 @@ ListErrors FindFirstForward(const List* _list, PredicateFunc _predicateFunc, voi
  * @return error code.
  * @retval LIST_OK on success.
  * @retval LIST_UNINITIALIZED if _list NULL.
+ * @retval LIST_IS_EMPTY if no items in list
 */
 ListErrors FindFirstBackward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item);
 

@@ -15,6 +15,13 @@ Modified by:	Eyal Alon
 
 /*
 TODO: factorize all functions
+TODO: add invalid argument error
+TODO: static functions that deal with node allocation shouldnt return errors. errors should be returned from api functions
+TODO: #define IS_A_LIST(L) ((L) && (L)->m_magicNum == LIST_MAGIC) 
+TODO: #define IS_EMPTY(L) (LIST_FIRST((L)) == LIST_END((L))))
+TODO: #define LIST_FIRST(L) ((L)->m_head.m_next)
+TODO: #define LIST_LAST(L) ((L)->m_tail.m_prev)
+TODO: #define LIST_END(L) (&(L)->m_tail)
 */
 
 typedef struct Node Node;
@@ -81,6 +88,41 @@ void ListDestroy(List** _list, UserActionFunc _destroyFunc)
 		if ((*_list)->m_head.m_next != &((*_list)->m_tail))
 		{
 			curN = (*_list)->m_head.m_next;
+			while(curN != &((*_list)->m_tail))
+			{
+				curN = curN->m_next;
+				if (_destroyFunc != NULL)
+				{
+					_destroyFunc(curN->m_prev->m_data, NULL);
+				}
+				free(curN->m_prev);
+				
+			}
+			/*
+			if (_destroyFunc != NULL)
+			{
+				_destroyFunc(curN->m_data, NULL);
+			}
+			free(curN);
+			*/
+		}
+		(*_list)->m_magicNum = 0;
+		free(*_list);
+		*_list = NULL;
+	}
+	return;
+}
+
+/*
+void ListDestroy(List** _list, UserActionFunc _destroyFunc)
+{
+	Node* curN;
+	
+	if (NULL != _list && NULL != *_list && MAGIC_NUM == (*_list)->m_magicNum)
+	{
+		if ((*_list)->m_head.m_next != &((*_list)->m_tail))
+		{
+			curN = (*_list)->m_head.m_next;
 			while(curN->m_next != &((*_list)->m_tail))
 			{
 				curN = curN->m_next;
@@ -103,7 +145,7 @@ void ListDestroy(List** _list, UserActionFunc _destroyFunc)
 	}
 	return;
 }
-
+*/
 
 
 
@@ -269,12 +311,12 @@ size_t	ListCountItems(const List* _list)
 		if (_list->m_head.m_next != &(_list->m_tail))
 		{
 			curN = _list->m_head.m_next;
-			while(curN->m_next != &(_list->m_tail))
+			while(curN != &(_list->m_tail))
 			{
 				++nItems;
 				curN = curN->m_next;
 			}
-			++nItems;
+			/* ++nItems; */
 		}
 	}
 	return nItems;
@@ -329,7 +371,7 @@ ListErrors FindFirstForward(const List* _list, PredicateFunc _predicateFunc, voi
 		return LIST_IS_EMPTY;
 	}
 	curN = _list->m_head.m_next;
-	while(curN->m_next != &(_list->m_tail))
+	while(curN != &(_list->m_tail))
 	{
 		isFound = _predicateFunc(curN->m_data, _context);
 		if (isFound)
@@ -343,6 +385,34 @@ ListErrors FindFirstForward(const List* _list, PredicateFunc _predicateFunc, voi
 	return LIST_ITEM_NOT_FOUND;
 }
 
+/*
+ListErrors FindFirstForward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item)
+{
+	Node* curN;
+	int isFound = FALSE;
+	if (NULL == _list || NULL == _predicateFunc || NULL == _item || MAGIC_NUM != _list->m_magicNum)
+	{
+		return LIST_UNINITIALIZED;
+	}
+	if (_list->m_head.m_next == &(_list->m_tail))
+	{
+		return LIST_IS_EMPTY;
+	}
+	curN = _list->m_head.m_next;
+	while(curN->m_next != &(_list->m_tail))
+	{
+		isFound = _predicateFunc(curN->m_data, _context);
+		if (isFound)
+		{
+			*_item = curN->m_data;
+			return LIST_OK;
+		}
+		curN = curN->m_next;
+	}
+	*_item = NULL;
+	return LIST_ITEM_NOT_FOUND;
+}
+*/
 
 
 
@@ -354,6 +424,34 @@ ListErrors FindFirstForward(const List* _list, PredicateFunc _predicateFunc, voi
 /******
 LIST FIND FIRST BACKWARD
 ******/
+ListErrors FindFirstBackward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item)
+{
+	Node* curN;
+	int isFound = FALSE;
+	if (NULL == _list || NULL == _predicateFunc || NULL == _item || MAGIC_NUM != _list->m_magicNum)
+	{
+		return LIST_UNINITIALIZED;
+	}
+	if (_list->m_head.m_next == &(_list->m_tail))
+	{
+		return LIST_IS_EMPTY;
+	}
+	curN = _list->m_tail.m_prev;
+	while(curN != &(_list->m_head))
+	{
+		isFound = _predicateFunc(curN->m_data, _context);
+		if (isFound)
+		{
+			*_item = curN->m_data;
+			return LIST_OK;
+		}
+		curN = curN->m_prev;
+	}
+	*_item = NULL;
+	return LIST_ITEM_NOT_FOUND;
+}
+
+/*
 ListErrors FindFirstBackward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item)
 {
 	Node* curN;
@@ -380,7 +478,7 @@ ListErrors FindFirstBackward(const List* _list, PredicateFunc _predicateFunc, vo
 	*_item = NULL;
 	return LIST_ITEM_NOT_FOUND;
 }
-
+*/
 
 
 
@@ -401,6 +499,7 @@ static size_t CheckListForEachParams(const List* _list, UserActionFunc _action)
 	return 1;
 }
 
+/*
 static size_t DoListForEach(const List* _list, UserActionFunc _action, void* _context)
 {
 	size_t actionCount = 0;
@@ -425,6 +524,37 @@ static size_t DoListForEach(const List* _list, UserActionFunc _action, void* _co
 			return actionCount;
 		}
 		++actionCount;
+	}
+	return actionCount;
+}
+*/
+
+static size_t DoListForEach(const List* _list, UserActionFunc _action, void* _context)
+{
+	size_t actionCount = 0;
+	int result = 0;
+	Node* curN;
+	if (_list->m_head.m_next != &_list->m_tail)
+	{
+		curN = _list->m_head.m_next;
+		while(curN != &_list->m_tail)
+		{
+			result = _action(curN->m_data, _context);
+			if (result == 0)
+			{
+				return actionCount;
+			}
+			++actionCount;
+			curN = curN->m_next;
+		}
+		/*
+		result = _action(curN->m_data, _context);
+		if (result == 0)
+		{
+			return actionCount;
+		}
+		++actionCount;
+		*/
 	}
 	return actionCount;
 }
