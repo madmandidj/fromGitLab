@@ -517,7 +517,7 @@ static void TestListPopHeadIntNULLData()
     ListErrors err;
     list = ListCreate();
     err = ListPopHead(list, NULL);
-    PrintErrResult("TestListPopHeadIntNULLData", err, LIST_UNINITIALIZED);
+    PrintErrResult("TestListPopHeadIntNULLData", err, LIST_INV_ARG);
     ListDestroy(&list, NULL);
     return;
 }
@@ -595,7 +595,7 @@ static void TestListPopTailIntNULLData()
     ListErrors err;
     list = ListCreate();
     err = ListPopTail(list, NULL);
-    PrintErrResult("TestListPopTailIntNULLData", err, LIST_UNINITIALIZED);
+    PrintErrResult("TestListPopTailIntNULLData", err, LIST_INV_ARG);
     ListDestroy(&list, NULL);
     return;
 }
@@ -983,6 +983,65 @@ static void TestListForEachPrintPerson()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/******
+LIST ITERATOR BEGIN TESTS
+******/
+static void TestListItrBeginNULLList()
+{
+    List* list;
+    int* arr;
+    size_t index;
+    size_t numOfInts = 10;
+    ListItr listItr;
+    arr = (int*) malloc(numOfInts * sizeof(int));
+    for (index = 0; index < numOfInts; ++index)
+    {
+        arr[index] = (int)index;
+    }
+    list = ListCreate();
+    ListPushHead(list, arr + 4);
+    ListPushTail(list, arr + 3);
+    ListPushHead(list, arr + 2);
+    ListPushTail(list, arr + 1);
+    listItr = ListItrBegin(NULL);
+    if (NULL == listItr)
+    {
+        printf("PASS: TestListItrBeginNULLList\n");
+    }
+    else
+    {
+        printf("FAIL: TestListItrBeginNULLList\n");
+    }
+    ListDestroy(&list, NULL);
+    free(arr);
+    return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 int main()
 {
     printf("\n");
@@ -1017,6 +1076,22 @@ int main()
     TestListPushHeadPersonFiveItemWithDestroy();
     TestListForEachPrintInt();
     TestListForEachPrintPerson();
+    
+    
+    TestListItrBeginNULLList();
+
+
+
+
+
+
+
+
+
+
+
+
+
     printf("\n");
     return 0;
 }

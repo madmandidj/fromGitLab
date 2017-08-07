@@ -12,6 +12,12 @@ Modified by:	Eyal Alon
 #define MAGIC_NUM 0x00002000 /* Generic DLL Magic Num is 0x00002000*/
 #define TRUE 1
 #define FALSE 0
+#define IS_A_LIST(L) ((L) && (L)->m_magicNum == MAGIC_NUM) 
+#define IS_EMPTY(L) (LIST_FIRST((L)) == LIST_END((L))))
+#define LIST_FIRST(L) ((L)->m_head.m_next)
+#define LIST_LAST(L) ((L)->m_tail.m_prev)
+#define LIST_END(L) (&(L)->m_tail)
+
 
 /*
 TODO: factorize all functions
@@ -83,7 +89,7 @@ void ListDestroy(List** _list, UserActionFunc _destroyFunc)
 {
 	Node* curN;
 	
-	if (NULL != _list && NULL != *_list && MAGIC_NUM == (*_list)->m_magicNum)
+	if (NULL != _list && NULL != *_list && (*_list)->m_magicNum)
 	{
 		if ((*_list)->m_head.m_next != &((*_list)->m_tail))
 		{
@@ -119,7 +125,8 @@ ListErrors	ListPushHead(List* _list, void* _data)
 {
 	Node* node;
 	
-	if (NULL != _list && MAGIC_NUM == _list->m_magicNum)
+	/*if (NULL != _list && MAGIC_NUM == _list->m_magicNum)*/
+	if (IS_A_LIST(_list))
 	{
 		node = malloc(sizeof(Node));
 		if (NULL == node)
@@ -154,7 +161,8 @@ ListErrors	ListPushTail(List* _list, void* _data)
 {
 	Node* node;
 	
-	if (NULL != _list && MAGIC_NUM == _list->m_magicNum)
+/*	if (NULL != _list && MAGIC_NUM == _list->m_magicNum)  */
+	if (IS_A_LIST(_list))
 	{
 		node = malloc(sizeof(Node));
 		if (NULL == node)
@@ -188,8 +196,12 @@ LIST POP HEAD
 ListErrors ListPopHead(List* _list, void* *_data)
 {
 	Node* freeNode;
-	
-	if (NULL != _list && NULL != _data && MAGIC_NUM == _list->m_magicNum)
+	if (NULL == _data)
+	{
+		return LIST_INV_ARG;
+	}
+	/* if (NULL != _list && NULL != _data && MAGIC_NUM == _list->m_magicNum) */
+	if (IS_A_LIST(_list))
 	{
 		if (_list->m_head.m_next != &(_list->m_tail))
 		{
@@ -226,7 +238,12 @@ ListErrors ListPopTail(List* _list, void* *_data)
 {
 	Node* freeNode;
 	
-	if (NULL != _list && NULL != _data && MAGIC_NUM == _list->m_magicNum)
+	if (NULL == _data)
+	{
+		return LIST_INV_ARG;
+	}
+	/*if (NULL != _list && NULL != _data && MAGIC_NUM == _list->m_magicNum)*/
+	if (IS_A_LIST(_list))
 	{
 		if (_list->m_head.m_next != &(_list->m_tail))
 		{
@@ -457,9 +474,9 @@ ListItr ListItrBegin(const List* _list)
 {
 	if (NULL == _list)
 	{
-		
+		return NULL;
 	}
-	return (ListItr) _list
+	return (ListItr) _list->m_head.m_next;
 }
 
 
