@@ -1,7 +1,7 @@
 #ifndef __LIST_H__
 #define __LIST_H__
 
-#include "GenericDoubleLinkedList.h"
+#include "list.h"
 
 /*
 TODO: Update function briefs, descriptions, parameters, returns, retvals.

@@ -3,6 +3,16 @@
 
 
 #include "list_itr.h"
+/* typedef struct Person Person; */
+
+typedef struct Person Person;
+struct Person
+{
+	size_t 		m_age;
+	char 		m_name[64];
+	size_t 		m_famSize;
+	Person**	m_family;
+};
 
 /*
 TODO: Update function briefs, descriptions, parameters, returns, retvals.
@@ -40,9 +50,48 @@ typedef int (*LessFunction)(void* _a, void* _b);
  *
  * @param _a : element to test
  * @param _b : element to test against
- * @return none zero if _a == _b
+ * @return non zero if _a == _b
  */
 typedef int (*EqualsFunction)(void* _a, void* _b);
+
+
+
+
+/*
+TODO: add details
+*/
+int PrintElementInt(int* _intPtr, void* _context);
+
+/*
+TODO: add details
+*/
+int	ElementPersonPrint(Person* _prs, size_t _index, void* _context);
+
+/*
+TODO: add details
+*/
+void ElementDestroyPerson(Person* _item, void* _context);
+
+/*
+TODO: add details
+*/
+int IsIntFoundInElementData(int* _intPtr, int* _key);
+
+/*
+TODO: add details
+*/
+int LessThanInt(int* _a, int* _b);
+
+/*
+TODO: add details
+*/
+int IsEqualsInt(int* _a, int* _b);
+
+
+
+
+
+
 
 /** 
  * @brief Finds the first element in a range satsifying a predicate

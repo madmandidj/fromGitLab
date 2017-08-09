@@ -3,30 +3,46 @@ Filename: 		GenericDoubleLinkedList.c
 Description:	Implementation of generic DLL API
 Created: 		06/08/17
 Created by:		Eyal Alon
-Last modified: 	07/08/17
+Last modified: 	08/08/17
 Modified by:	Eyal Alon
 */
 
 #include <stdio.h>
 #include "list_itr.h"
-#define MAGIC_NUM 0x00002000 /* Generic DLL Magic Num is 0x00002000*/
+/*****
+GENERAL MACROS
+*****/
 #define TRUE 1
 #define FALSE 0
-#define IS_A_LIST(L) ((L) && (L)->m_magicNum == MAGIC_NUM) 
-#define IS_EMPTY(L) (LIST_FIRST((L)) == LIST_END((L))))
-#define LIST_FIRST(L) ((L)->m_head.m_next)
-#define LIST_LAST(L) ((L)->m_tail.m_prev)
-#define LIST_BEGIN(L) (&(L)->m_head)
-#define LIST_END(L) (&(L)->m_tail)
-#define NODE_NEXT(N) ((N)->m_next)
-#define NODE_PREV(N) ((N)->m_prev)
-#define NODE_DATA(N) ((N)->m_data)
-#define IS_NULL(A) (NULL == (A))
+#define INVALID -1
+#define IS_NULL(A) 		(NULL == (A))
+#define IS_FALSE(I)		(NULL == (I))
+/*****
+LIST MACROS
+*****/
+#define MAGIC_NUM 0x00002000 /* Generic DLL Magic Num is 0x00002000*/
+#define IS_A_LIST(L) 	((L) &&  MAGIC_NUM == (L)->m_magicNum) 
+#define IS_LIST_EMPTY(L)	(LIST_FIRST((L)) == LIST_END((L)))
+#define LIST_FIRST(L) 	((L)->m_head.m_next)
+#define LIST_LAST(L) 	((L)->m_tail.m_prev)
+#define LIST_BEGIN(L) 	(&(L)->m_head)
+#define LIST_END(L) 	(&(L)->m_tail)
+/*****
+NODE MACROS
+*****/
+#define NODE_NEXT(N) 	((N)->m_next)
+#define NODE_PREV(N) 	((N)->m_prev)
+#define NODE_DATA(N) 	((N)->m_data)
+/*****
+ITERATOR MACROS
+*****/
+#define ITR_NEXT(I) (((Node*)(I))->m_next)
+#define ITR_PREV(I) (((Node*)(I))->m_prev)
+#define ITR_DATA(I) (((Node*)(I))->m_data)
 
 
 /*
 TODO: factorize all functions
-TODO: finish macrofy of all functions
 TODO: static functions that deal with node allocation shouldnt return errors. errors should be returned from api functions
 TODO: change all == checks so that constant is on left side
 */
@@ -70,10 +86,10 @@ static void InitList(List* _list)
 
 List* ListCreate(void)
 {
-	List* list;
+	List* list = NULL;
 	
 	list = malloc(sizeof(List));
-	if (NULL == list)
+	if (IS_NULL(list))
 	{
 		return NULL;
 	}
@@ -100,9 +116,9 @@ static void DestroyNodes(List** _list, UserActionFunc _destroyFunc)
 	while(curN != LIST_END(*_list))
 	{
 		curN = NODE_NEXT(curN);
-		if (_destroyFunc != NULL)
+		if (!IS_NULL(_destroyFunc))
 		{
-			_destroyFunc(NODE_DATA(NODE_PREV(curN)), NULL);
+			_destroyFunc(NODE_PREV(curN)->m_data, NULL);
 		}
 		free(NODE_PREV(curN));
 	}
@@ -134,13 +150,20 @@ void ListDestroy(List** _list, UserActionFunc _destroyFunc)
 /******
 LIST PUSH HEAD
 ******/
+static Node* CreateNode()
+{
+	Node* node;
+	node = malloc(sizeof(Node));
+	return node;
+}
+
 static void DoPushHead(List* _list, void* _data, Node* _node)
 {
 	NODE_DATA(_node) = _data;
 	NODE_NEXT(_node) = LIST_FIRST(_list);
 	NODE_PREV(_node) = LIST_BEGIN(_list);
-	NODE_NEXT(NODE_PREV(_node)) = _node;
-	NODE_PREV(NODE_NEXT(_node)) = _node;
+	NODE_PREV(_node)->m_next = _node;
+	NODE_NEXT(_node)->m_prev = _node;
 	return;	
 }
 
@@ -150,8 +173,7 @@ ListErrors	ListPushHead(List* _list, void* _data)
 	
 	if (IS_A_LIST(_list))
 	{
-		node = malloc(sizeof(Node));
-		if (NULL == node)
+		if (!(node = CreateNode()))
 		{
 			return LIST_ALLOCATION_FAILED;
 		}
@@ -180,8 +202,8 @@ static void DoPushTail(List* _list, void* _data, Node* _node)
 	NODE_DATA(_node) = _data;
 	NODE_PREV(_node) = LIST_LAST(_list);
 	NODE_NEXT(_node) = LIST_END(_list);
-	NODE_PREV(NODE_NEXT(_node)) = _node;
-	NODE_NEXT(NODE_PREV(_node)) = _node;
+	NODE_NEXT(_node)->m_prev = _node;
+	NODE_PREV(_node)->m_next = _node;
 	return;
 }
 
@@ -191,8 +213,7 @@ ListErrors	ListPushTail(List* _list, void* _data)
 	
 	if (IS_A_LIST(_list))
 	{
-		node = malloc(sizeof(Node));
-		if (NULL == node)
+		if (!(node = CreateNode()))
 		{
 			return LIST_ALLOCATION_FAILED;
 		}
@@ -220,10 +241,10 @@ static void DoPopHead(List* _list, void* *_data)
 {
 	Node* freeNode;
 
-	*_data = NODE_DATA(LIST_FIRST(_list));
+	*_data = LIST_FIRST(_list)->m_data;
 	freeNode = LIST_FIRST(_list);
-	NODE_PREV(NODE_NEXT(LIST_FIRST(_list))) = LIST_BEGIN(_list);
-	LIST_FIRST(_list) = NODE_NEXT(LIST_FIRST(_list));
+	LIST_FIRST(_list)->m_next->m_prev = LIST_BEGIN(_list);
+	LIST_FIRST(_list) = LIST_FIRST(_list)->m_next;
 	free(freeNode);
 	return;
 }
@@ -236,7 +257,7 @@ ListErrors ListPopHead(List* _list, void* *_data)
 	}
 	if (IS_A_LIST(_list))
 	{
-		if (LIST_FIRST(_list) != LIST_END(_list))
+		if (!IS_LIST_EMPTY(_list))
 		{
 			DoPopHead(_list, _data);
 		}
@@ -267,10 +288,10 @@ static void DoPopTail(List* _list, void* *_data)
 {
 	Node* freeNode;
 
-	*_data = NODE_DATA(LIST_LAST(_list));
+	*_data = LIST_LAST(_list)->m_data;
 	freeNode = LIST_LAST(_list);
-	NODE_NEXT(NODE_PREV(LIST_LAST(_list))) = LIST_END(_list);
-	LIST_LAST(_list) = NODE_PREV(LIST_LAST(_list));
+	LIST_LAST(_list)->m_prev->m_next = LIST_END(_list);
+	LIST_LAST(_list) = LIST_LAST(_list)->m_prev;
 	free(freeNode);
 	return;
 }
@@ -283,7 +304,7 @@ ListErrors ListPopTail(List* _list, void* *_data)
 	}
 	if (IS_A_LIST(_list))
 	{
-		if (LIST_FIRST(_list) != LIST_END(_list))
+		if (!IS_LIST_EMPTY(_list))
 		{
 			DoPopTail(_list, _data);
 		}
@@ -315,14 +336,14 @@ size_t	ListCountItems(const List* _list)
 	Node* curN;
 	size_t nItems = 0;
 
-	if (IS_A_LIST(_list) && (LIST_FIRST(_list) != LIST_END(_list)))
+	if (IS_A_LIST(_list) && !IS_LIST_EMPTY(_list))
 	{
-			curN = LIST_FIRST(_list);
-			while(curN != LIST_END(_list))
-			{
-				++nItems;
-				curN = NODE_NEXT(curN);
-			}
+		curN = LIST_FIRST(_list);
+		while(curN != LIST_END(_list))
+		{
+			++nItems;
+			curN = NODE_NEXT(curN);
+		}
 	}
 	return nItems;
 }
@@ -341,11 +362,12 @@ LIST IS EMPTY
 int		ListIsEmpty(const List* _list)
 {
 	int result = TRUE;
+
 	if (!IS_A_LIST(_list))
 	{
-		result = -1;
+		result = INVALID;
 	}
-	else if (LIST_FIRST(_list) != LIST_END(_list))
+	else if (!IS_LIST_EMPTY(_list))
 	{
 		result = FALSE;
 	}
@@ -363,6 +385,23 @@ int		ListIsEmpty(const List* _list)
 /******
 LIST FIND FIRST FORWARD
 ******/
+static  ListErrors CheckFindFirstParam(const List* _list, PredicateFunc _predicateFunc, void* *_item)
+{
+	if (!IS_A_LIST(_list))
+	{
+		return LIST_UNINITIALIZED;
+	}
+	if (IS_NULL(_predicateFunc) || IS_NULL(_item) )
+	{
+		return LIST_INV_ARG;
+	}
+	if (LIST_FIRST(_list) == LIST_END(_list))
+	{
+		return LIST_IS_EMPTY;
+	}
+	return LIST_OK;
+}
+
 static int DoFindFirstForward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item)
 {
 	Node* curN;
@@ -385,19 +424,13 @@ static int DoFindFirstForward(const List* _list, PredicateFunc _predicateFunc, v
 
 ListErrors FindFirstForward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item)
 {
-	if (!IS_A_LIST(_list))
+	ListErrors err;
+
+	if (LIST_OK != (err = CheckFindFirstParam(_list, _predicateFunc, _item)))
 	{
-		return LIST_UNINITIALIZED;
+		return err;
 	}
-	if (IS_NULL(_predicateFunc) || IS_NULL(_item) )
-	{
-		return LIST_INV_ARG;
-	}
-	if (LIST_FIRST(_list) == LIST_END(_list))
-	{
-		return LIST_IS_EMPTY;
-	}
-	if (DoFindFirstForward(_list, _predicateFunc, _context, _item))
+	else if (DoFindFirstForward(_list, _predicateFunc, _context, _item))
 	{
 		return LIST_OK;
 	}
@@ -434,21 +467,16 @@ static int DoFindFirstBackward(const List* _list, PredicateFunc _predicateFunc, 
 	*_item = NULL;
 	return FALSE;
 }
+
 ListErrors FindFirstBackward(const List* _list, PredicateFunc _predicateFunc, void* _context, void* *_item)
 {
-	if (!IS_A_LIST(_list))
+	ListErrors err;
+
+	if (LIST_OK != (err = CheckFindFirstParam(_list, _predicateFunc, _item)))
 	{
-		return LIST_UNINITIALIZED;
+		return err;
 	}
-	if (IS_NULL(_predicateFunc) || IS_NULL(_item) )
-	{
-		return LIST_INV_ARG;
-	}
-	if (LIST_FIRST(_list) == LIST_END(_list))
-	{
-		return LIST_IS_EMPTY;
-	}
-	if (DoFindFirstBackward(_list, _predicateFunc, _context, _item))
+	else if (DoFindFirstBackward(_list, _predicateFunc, _context, _item))
 	{
 		return LIST_OK;
 	}
@@ -552,21 +580,20 @@ ListItr ListItrEnd(const List* _list)
 
 
 
-
 /******
 LIST ITERATOR GET
 ******/
 void* ListItrGet(ListItr _itr)
 {
-	if (NULL == _itr)
+	if (IS_NULL(_itr))
 	{
 		return NULL;
 	}
-	if (NODE_NEXT(((Node*)_itr)) == NULL)
+	if (ITR_NEXT(_itr) == NULL)
 	{
 		return NULL;
 	}
-	return NODE_DATA(((Node*)_itr));
+	return ITR_DATA(_itr);
 }
 
 
@@ -580,16 +607,16 @@ LIST ITERATOR SET
 void* ListItrSet(ListItr _itr, void* _element)
 {
 	void* returnData;
-	if (NULL == _itr)
+	if (IS_NULL(_itr))
 	{
 		return NULL;
 	}
-	if (NODE_NEXT(((Node*)_itr)) == NULL)
+	if (ITR_NEXT(_itr) == NULL)
 	{
 		return NULL;
 	}
-	returnData = NODE_DATA(((Node*)_itr));
-	NODE_DATA(((Node*)_itr)) = _element;
+	returnData = ITR_DATA(_itr);
+	ITR_DATA(_itr) = _element;
 	return returnData;
 }
 
@@ -601,15 +628,15 @@ LIST ITERATOR PREV
 ******/
 ListItr ListItrPrev(ListItr _itr)
 {
-	if (NULL == _itr)
+	if (IS_NULL(_itr))
 	{
 		return NULL;
 	}
-	if (NULL == NODE_PREV(NODE_PREV(((Node*)_itr))))
+	if (NULL == ITR_PREV(_itr)->m_prev)
 	{
 		return ((Node*)_itr);
 	}
-	return NODE_PREV(((Node*)_itr));
+	return ITR_PREV(_itr);
 }
 
 
@@ -621,15 +648,15 @@ LIST ITERATOR NEXT
 ******/
 ListItr ListItrNext(ListItr _itr)
 {
-	if (NULL == _itr)
+	if (IS_NULL(_itr))
 	{
 		return NULL;
 	}
-	if (NODE_NEXT(((Node*)_itr)) == NULL)
+	if (NULL == ITR_NEXT(_itr))
 	{
 		return ((Node*)_itr);
 	}
-	return NODE_NEXT(((Node*)_itr));
+	return ITR_NEXT(_itr);
 }
 
 
@@ -645,7 +672,7 @@ LIST ITERATOR EQUALS
 ******/
 int ListItrEquals(const ListItr _a, const ListItr _b)
 {
-	if (NULL == _a || NULL == _b)
+	if (IS_NULL(_a) || IS_NULL(_a))
 	{
 		return FALSE;
 	}
@@ -667,6 +694,15 @@ int ListItrEquals(const ListItr _a, const ListItr _b)
 /******
 LIST ITERATOR INSERT BEFORE
 ******/
+static void DoItrInsertBefore(ListItr _itr, Node* _node)
+{
+	NODE_PREV(_node) = ITR_PREV(_itr);
+	NODE_NEXT(_node) = ((Node*)_itr);
+	ITR_PREV(_itr)->m_next = _node;
+	ITR_PREV(_itr) = _node;
+	return;
+}
+
 ListItr ListItrInsertBefore(ListItr _itr, void* _element)
 {
 	Node* node;
@@ -675,16 +711,12 @@ ListItr ListItrInsertBefore(ListItr _itr, void* _element)
 	{
 		return NULL;
 	}
-	node = malloc(sizeof(Node));
-	if (IS_NULL(node))
+	if (!(node = CreateNode()))
 	{
 		return NULL;
 	}
 	NODE_DATA(node) = _element;
-	NODE_PREV(node) = NODE_PREV(((Node*)_itr));
-	NODE_NEXT(node) = ((Node*)_itr);
-	NODE_NEXT(NODE_PREV(((Node*)_itr))) = node;
-	NODE_PREV(((Node*)_itr)) = node;
+	DoItrInsertBefore(_itr, node);
 	return (ListItr) node;
 }
 
@@ -695,19 +727,25 @@ ListItr ListItrInsertBefore(ListItr _itr, void* _element)
 /******
 LIST ITERATOR REMOVE
 ******/
+static void DoRemove(ListItr _itr)
+{
+	ITR_NEXT(_itr)->m_prev = ITR_PREV(_itr);
+	ITR_PREV(_itr)->m_next = ITR_NEXT(_itr);
+	return;
+}
+
 void* ListItrRemove(ListItr _itr)
 {
-	void* data;
+	void* data = NULL;
 	Node* node;
 	
-	if (IS_NULL(_itr) || NULL == NODE_NEXT(((Node*)_itr)))
+	if (IS_NULL(_itr) || NULL == ITR_NEXT(_itr))
 	{
 		return NULL;
 	}
+	data = ITR_DATA(_itr);
 	node = _itr;
-	data = NODE_DATA(((Node*)_itr));
-	NODE_PREV(NODE_NEXT(((Node*)_itr))) = NODE_PREV(((Node*)_itr));
-	NODE_NEXT(NODE_PREV(((Node*)_itr))) = NODE_NEXT(((Node*)_itr));
+	DoRemove(_itr);
 	free(node);
 	return data;
 }

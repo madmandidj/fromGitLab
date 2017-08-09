@@ -13,24 +13,29 @@ Modified by:	Eyal Alon
 #define TRUE 1
 #define FALSE 0
 
-typedef struct Person Person;
-struct Person
-{
-	size_t 		m_age;
-	char 		m_name[64];
-	size_t 		m_famSize;
-	Person**	m_family;
-};
-
-
-
-
 
 
 
 /*
 	INITIALIZE FUNCTIONS
 */
+static int* InitIntArr(size_t _numOfInts)
+{
+    int* arr;
+    size_t index;
+
+    arr = malloc(_numOfInts * sizeof(int));
+    if (NULL == arr)
+    {
+        return NULL;
+    }
+    for (index = 0; index < _numOfInts; ++index)
+    {
+        arr[index] = (int)index;
+    }
+    return arr;
+}
+
 static void InitPersArr(Person* _arr)
 {
 	size_t numOfPersons = 5;
@@ -66,8 +71,6 @@ static void InitPersArr(Person* _arr)
 	_arr[1].m_family[1] = &_arr[4];
 	return;
 }
-
-
 
 
 
@@ -124,131 +127,18 @@ static void PrintErrResult(char* _testName, ListErrors _err, ListErrors _passErr
 
 
 
-/******
-USER ACTION FUNCTIONS
-******/
-int PrintElementInt(int* _intPtr, void* _context)
-{
-    if (NULL == _intPtr)
-    {
-        printf("\tNULL\n");
-    }
-    else
-    {
-        printf("\t%d\n", *_intPtr);
-    }
-    return 1;
-}
-
-int	ElementPersonPrint(Person* _prs, size_t _index, void* _context)
-{
-	printf("\tName = 	\t%s, \tAge = %u\n", _prs->m_name, _prs->m_age);
-	printf("\tFamily1 = \t%s, \tAge = %u\n", _prs->m_family[0]->m_name, _prs->m_family[0]->m_age);
-	printf("\tFamily2 = \t%s, \tAge = %u\n", _prs->m_family[1]->m_name, _prs->m_family[1]->m_age);
-	return 1;
-}
-
-void ElementDestroyPerson(Person* _item, void* _context)
-{
-	if (NULL != _item && NULL != _item->m_family)
-	{
-		free(_item->m_family);
-	}
-	return;
-}
-
-
-
-
-
-
-
-/******
-PREDICATE FUNCTIONS
-******/
-int IsIntFoundInElementData(int* _intPtr, int* _key)
-{
-    if (NULL == _intPtr || NULL == _key)
-    {
-        return FALSE;
-    }
-    if (*_intPtr == *_key)
-    {
-        return TRUE;
-    }
-    return FALSE;
-}
-
-
-
-
-
-
-
-/******
-LESS FUNCTIONS
-******/
-int LessThanInt(int* _a, int* _b)
-{
-    if (NULL == _a || NULL == _b)
-    {
-        return FALSE;
-    }
-    if (*_a < *_b)
-    {
-        return TRUE;
-    }
-    return FALSE;
-}
-
-
-
-
-
-
-
-/******
-LIST ITERATE SORT FUNCTION
-******/
-/*
-    TODO: add check to see that begin is placed before end
-    TODO: write swap function
-*/
-/*
-void ListItr_Sort(ListItr _begin, ListItr _end, LessFunction _less)
-{
-    ListItr a;
-    ListItr b;
-    int isSorted = FALSE;
-    int swapOccured = FALSE;
-    
-    a = _begin;
-    b = ListItrNext(a);
-    while (!isSorted)
-    {
-        while (b != _end)
-        {
-            if (_less(a, b))
-            {
-
-            }
-        }
-    }
-}
-*/
-
-
-
-
-
 
 
 /******
 LIST CREATE TESTS
 ******/
+/*
+TODO: add test to check that magic num changed to correct value
+*/
 static void TestListCreate()
 {
     List* list;
+
     list = ListCreate();
     if (NULL != list)
     {
@@ -281,6 +171,7 @@ static void TestListDestroyNULLList()
 static void TestListDestroyNULLAction()
 {
     List* list;
+
     list = ListCreate();
     ListDestroy(&list, NULL);
     if (NULL == list)
@@ -297,6 +188,7 @@ static void TestListDestroyNULLAction()
 static void TestListDestroyDoubleDestroy()
 {
     List* list;
+
     list = ListCreate();
     ListDestroy(&list, NULL);
     ListDestroy(&list, NULL);
@@ -313,10 +205,6 @@ static void TestListDestroyDoubleDestroy()
 
 
 
-
-
-
-
 /******
 LIST PUSH HEAD TESTS
 ******/
@@ -324,13 +212,9 @@ static void TestListPushHeadIntNULLList()
 {
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     err = ListPushHead(NULL, arr + 5);
     PrintErrResult("TestListPushHeadNULLList", err, LIST_UNINITIALIZED);
     free(arr);
@@ -342,13 +226,9 @@ static void TestListPushHeadIntNULLData()
     List* list;
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     err = ListPushHead(list, NULL);
     PrintErrResult("TestListPushHeadIntNULLData", err, LIST_OK);
@@ -362,13 +242,9 @@ static void TestListPushHeadIntOneItem()
     List* list;
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     err = ListPushHead(list, arr + 5);
     PrintErrResult("TestListPushHeadIntOneItem", err, LIST_OK);
@@ -382,13 +258,9 @@ static void TestListPushHeadIntFiveItem()
     List* list;
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushHead(list, arr + 3);
@@ -407,6 +279,7 @@ static void TestListPushHeadPersonFiveItemWithDestroy()
 	ListErrors err;
 	size_t numOfPersons = 5;
 	Person* arr;
+
 	arr = malloc(numOfPersons * sizeof(Person));
 	if (NULL == arr)
 	{
@@ -438,13 +311,9 @@ static void TestListPushTailIntNULLList()
 {
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     err = ListPushTail(NULL, arr + 5);
     PrintErrResult("TestListPushTailIntNULLList", err, LIST_UNINITIALIZED);
     free(arr);
@@ -456,13 +325,9 @@ static void TestListPushTailIntNULLData()
     List* list;
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     err = ListPushTail(list, NULL);
     PrintErrResult("TestListPushTailIntNULLData", err, LIST_OK);
@@ -476,13 +341,9 @@ static void TestListPushTailIntOneItem()
     List* list;
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     err = ListPushTail(list, arr + 5);
     PrintErrResult("TestListPushTailIntOneItem", err, LIST_OK);
@@ -496,13 +357,9 @@ static void TestListPushTailIntFiveItem()
     List* list;
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushTail(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -520,13 +377,9 @@ static void TestListPushHeadTailHeadTailInt()
     List* list;
     ListErrors err;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -552,6 +405,7 @@ static void TestListPopHeadIntNULLList()
     List* list;
     ListErrors err;
     int* data = NULL;
+
     list = ListCreate();
     err = ListPopHead(NULL, (void**) &data);
     PrintErrResult("TestListPopHeadIntNULLList", err, LIST_UNINITIALIZED);
@@ -563,6 +417,7 @@ static void TestListPopHeadIntNULLData()
 {
     List* list;
     ListErrors err;
+
     list = ListCreate();
     err = ListPopHead(list, NULL);
     PrintErrResult("TestListPopHeadIntNULLData", err, LIST_INV_ARG);
@@ -575,13 +430,9 @@ static void TestListPopHeadIntCheckVal()
     List* list;
     int* arr;
     int* data = NULL;
-    size_t index;
     size_t numOfInts = 10;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -628,6 +479,7 @@ static void TestListPopTailIntNULLList()
     List* list;
     ListErrors err;
     int* data = NULL;
+
     list = ListCreate();
     err = ListPopTail(NULL, (void**) &data);
     PrintErrResult("TestListPopTailIntNULLList", err, LIST_UNINITIALIZED);
@@ -639,6 +491,7 @@ static void TestListPopTailIntNULLData()
 {
     List* list;
     ListErrors err;
+
     list = ListCreate();
     err = ListPopTail(list, NULL);
     PrintErrResult("TestListPopTailIntNULLData", err, LIST_INV_ARG);
@@ -652,13 +505,9 @@ static void TestListPopTailIntCheckVal()
     ListErrors err;
     int* arr;
     int* data = NULL;
-    size_t index;
     size_t numOfInts = 10;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+    
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -676,6 +525,7 @@ static void TestListPopTailIntEmptyList()
     List* list;
     ListErrors err;
     int* data = NULL;
+
     list = ListCreate();
     err = ListPopTail(list, (void**) &data);
     PrintErrResult("TestListPopTailIntEmptyList", err, LIST_IS_EMPTY);
@@ -695,6 +545,7 @@ LIST COUNT ITEMS TESTS
 static void TestListCountItemsIntNULLList()
 {
     size_t listNItems;
+
     listNItems = ListCountItems(NULL);
     if (0 == listNItems)
     {
@@ -712,13 +563,9 @@ static void TestListCountItemsIntZeroItems()
     List* list;
     size_t listNItems;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     listNItems = ListCountItems(list);
     if (0 == listNItems)
@@ -739,13 +586,9 @@ static void TestListCountItemsInt()
     List* list;
     size_t listNItems;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -777,6 +620,7 @@ LIST IS EMPTY TESTS
 static void TestListIsEmptyIntNULLList()
 {
     int listIsEmpty;
+
     listIsEmpty = ListIsEmpty(NULL);
     if (-1 == listIsEmpty)
     {
@@ -794,13 +638,9 @@ static void TestListIsEmptyIntNotEmpty()
     List* list;
     int listIsEmpty;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -825,13 +665,9 @@ static void TestListIsEmptyIntIsEmpty()
     List* list;
     int listIsEmpty;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     listIsEmpty = ListIsEmpty(list);
     if (1 == listIsEmpty)
@@ -861,14 +697,10 @@ static void TestListFindFirstForwardIntFound()
     List* list;
     int* arr;
     int key = 3;
-    size_t index;
     size_t numOfInts = 10;
     int* item;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushTail(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -894,14 +726,10 @@ static void TestListFindFirstForwardIntNotFound()
     List* list;
     int* arr;
     int key = 12;
-    size_t index;
     size_t numOfInts = 10;
     int* item;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushTail(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -936,14 +764,10 @@ static void TestListFindFirstBackwardIntFound()
     List* list;
     int* arr;
     int key = 3;
-    size_t index;
     size_t numOfInts = 10;
     int* item;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushTail(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -969,14 +793,10 @@ static void TestListFindFirstBackwardIntNotFound()
     List* list;
     int* arr;
     int key = 12;
-    size_t index;
     size_t numOfInts = 10;
     int* item;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushTail(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1010,14 +830,10 @@ static void TestListForEachPrintInt()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     size_t actionCount;
-    arr = malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushTail(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1044,6 +860,7 @@ static void TestListForEachPrintPerson()
 	size_t numOfPersons = 5;
 	Person* arr;
     size_t actionCount;
+
 	arr = malloc(numOfPersons * sizeof(Person));
 	if (NULL == arr)
 	{
@@ -1086,14 +903,10 @@ static void TestListItrBeginNULLList()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1129,14 +942,10 @@ static void TestListItrEndNULLList()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1172,14 +981,10 @@ static void TestListItrGetNULLItr()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     int* data;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1203,15 +1008,12 @@ static void TestListItrGetEndItr()
 {
     List* list;
     int* arr;
-    size_t index;
+    
     size_t numOfInts = 10;
     ListItr listItr;
     int* data;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1236,15 +1038,11 @@ static void TestListItrGetValue()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr;
     int* data;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1282,15 +1080,11 @@ static void TestListItrPrevValue()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr;
     int* data;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1329,15 +1123,11 @@ static void TestListItrNextValue()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr;
     int* data;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1375,16 +1165,12 @@ static void TestListItrEqualsSame()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr1;
     ListItr listItr2;
     int isEqual = FALSE;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1412,16 +1198,12 @@ static void TestListItrEqualsDifferent()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr1;
     ListItr listItr2;
     int isEqual = FALSE;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1461,16 +1243,12 @@ static void TestListItrSetValue()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr1;
     int* data;
     int* getResult;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1511,15 +1289,11 @@ static void TestListItrInsertBefore()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr1;
     int* getResult;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1559,15 +1333,11 @@ static void TestListItrRemove()
 {
     List* list;
     int* arr;
-    size_t index;
     size_t numOfInts = 10;
     ListItr listItr1;
     int* data;
-    arr = (int*) malloc(numOfInts * sizeof(int));
-    for (index = 0; index < numOfInts; ++index)
-    {
-        arr[index] = (int)index;
-    }
+
+    arr = InitIntArr(numOfInts);
     list = ListCreate();
     ListPushHead(list, arr + 4);
     ListPushTail(list, arr + 3);
@@ -1593,6 +1363,96 @@ static void TestListItrRemove()
 
 
 
+
+
+/******
+LIST ITERATOR COUNT IF
+******/
+static void TestListItrCountIf()
+{
+    List* list;
+    int* arr;
+    size_t numOfInts = 10;
+    ListItr listItr1;
+    ListItr listItr2;
+    int data;
+    size_t count;
+    data = 1;
+
+    arr = InitIntArr(numOfInts);
+    list = ListCreate();
+    ListPushHead(list, arr + 4);
+    ListPushTail(list, arr + 1);
+    ListPushTail(list, arr + 1);
+    ListPushTail(list, arr + 7);
+    ListPushTail(list, arr + 1);
+    ListPushTail(list, arr + 2);
+    ListPushTail(list, arr);
+    ListPushTail(list, arr + 3);
+    ListPushTail(list, arr + 1);
+    ListPushTail(list, arr + 1);
+    listItr1 = ListItrBegin(list);
+    listItr2 = ListItrEnd(list);
+    listItr2 = ListItrPrev(listItr2);
+    listItr2 = ListItrPrev(listItr2);
+    count = ListItr_CountIf(listItr1, listItr2, (PredicateFunction) IsIntFoundInElementData, &data);
+    if (3 == count)
+    {
+        printf("PASS: TestListItrCountIf\n");
+    }
+    else
+    {
+        printf("FAIL: TestListItrCountIf\n");
+    }
+    ListDestroy(&list, NULL);
+    free(arr);
+    return;
+}
+
+
+
+
+
+
+
+
+
+/******
+LIST ITERATOR SORT
+******/
+static void TestListItrSort()
+{
+    List* list;
+    int* arr;
+    
+    size_t numOfInts = 10;
+    ListItr listItr1;
+    ListItr listItr2;
+    int data;
+    data = 1;
+    
+    arr = InitIntArr(numOfInts);
+    list = ListCreate();
+    ListPushHead(list, arr + 4);
+    ListPushTail(list, arr + 1);
+    ListPushTail(list, arr + 5);
+    ListPushTail(list, arr + 7);
+    ListPushTail(list, arr + 4);
+    ListPushTail(list, arr + 2);
+    ListPushTail(list, arr);
+    ListPushTail(list, arr + 3);
+    ListPushTail(list, arr + 8);
+    ListPushTail(list, arr + 9);
+    ListForEach(list, (UserActionFunc) PrintElementInt, NULL);
+    listItr1 = ListItrBegin(list);
+    listItr2 = ListItrEnd(list);
+    ListItr_Sort(listItr1, listItr2, (LessFunction) LessThanInt);
+    printf("\n");
+    ListForEach(list, (UserActionFunc) PrintElementInt, NULL);
+    ListDestroy(&list, NULL);
+    free(arr);
+    return;
+}
 
 
 
@@ -1687,6 +1547,12 @@ int main()
     /* LIST ITR REMOVE */
     TestListItrRemove();
     
+    /* LIST ITR COUNT IF */
+    TestListItrCountIf();
+
+    /* LIST ITR SORT */
+    TestListItrSort();
+
     printf("\n");
     return 0;
 }
