@@ -16,8 +16,8 @@ TREE MACROS
 *****/
 #define MAGIC_NUM 		0x00003000 /* Generic BST Magic Num is 0x00003000*/
 #define IS_A_TREE(T) 	((T) &&  MAGIC_NUM == (T)->m_magicNum)
-#define TREE_ROOT(T) 	((T)->m_root->m_left)
-#define TREE_END(T) 	((T)->m_root)
+#define TREE_ROOT(T) 	((T)->m_sentinel->m_left)
+#define TREE_END(T) 	((T)->m_sentinel)
 /*****
 NODE MACROS
 *****/
@@ -37,9 +37,9 @@ struct Node
 
 struct BSTree
 {
-	Node* m_root;
+	int m_magicNum; /* magic num should be first so that if someone "dores" than the magicnum will be affected first. */
+	Node* m_sentinel; /* Change to sentinel */
     LessComparator m_lessFunction;
-	int m_magicNum;
 };
 
 /*****
@@ -54,8 +54,8 @@ static BSTree* DoBSTreeCreate()
 	{
 		return NULL;
 	}
-	tree->m_root = malloc(sizeof(Node));
-	if (IS_NULL(tree->m_root))
+	tree->m_sentinel = malloc(sizeof(Node));
+	if (IS_NULL(tree->m_sentinel))
 	{
 		return NULL;
 	}
@@ -65,9 +65,9 @@ static BSTree* DoBSTreeCreate()
 static void BSTreeInit(BSTree* _tree, LessComparator _less)
 {
 	assert(!IS_NULL(_tree) && !IS_NULL(_less));
-	_tree->m_root->m_father = NULL;
-	_tree->m_root->m_right = NULL;
-	TREE_ROOT(_tree) = NULL;
+	_tree->m_sentinel->m_father = NULL;
+	_tree->m_sentinel->m_right = NULL;
+	_tree->m_sentinel->m_left = NULL;
 	_tree->m_lessFunction = _less;
 	_tree->m_magicNum = MAGIC_NUM;
 	return;
@@ -105,7 +105,7 @@ static void TreeDestroyRec(Node* _node, DestroyFunction _destroyFunction)
 	}
 	TreeDestroyRec(_node->m_left, _destroyFunction);
 	TreeDestroyRec(_node->m_right, _destroyFunction);
-	if (!IS_NULL(_destroyFunction))
+	if (!IS_NULL(_destroyFunction)) /* to improve efficiency make two functions .. one with dstroy and one without */
 	{
 		_destroyFunction(_node);
 	}
@@ -229,7 +229,7 @@ BSTreeItr BSTreeInsert(BSTree* _tree, void* _item)
 		{
 			return NULL;
 		}
-		TREE_ROOT(_tree)->m_father = _tree->m_root;
+		TREE_ROOT(_tree)->m_father = _tree->m_sentinel;
 		TREE_ROOT(_tree)->m_left = NULL;
 		TREE_ROOT(_tree)->m_right = NULL;
 	}
@@ -303,7 +303,7 @@ BSTreeItr BSTreeItrEnd(const BSTree* _tree)
 	{
 		return NULL;
 	}
-	return (BSTreeItr)_tree->m_root;
+	return (BSTreeItr)_tree->m_sentinel;
 }
 
 
@@ -317,23 +317,47 @@ BSTree ITR EQUALS
 /*****
 BSTree ITR NEXT
 *****/
+static BSTreeItr FindDeepestLeft(BSTreeItr _it)
+{
+	while(NULL != ((Node*)_it)->m_left)
+	{
+		_it = ((Node*)_it)->m_left;
+	}
+	return _it;
+}
+
+static BSTreeItr FindFirstRightFather(BSTreeItr _it)
+{
+	while((Node*)_it != ((Node*)_it)->m_father->m_left)
+	{
+		_it = ((Node*)_it)->m_father;
+	}
+	_it = ((Node*)_it)->m_father;
+	return _it;
+}
+
 BSTreeItr BSTreeItrNext(BSTreeItr _it)
 {
+
 	if (IS_NULL(_it)) 
 	{
 		return NULL;
 	}
 	if (((Node*)_it)->m_right != NULL)
 	{
-		return (BSTreeItr)((Node*)_it)->m_right;
+		_it = FindDeepestLeft(((Node*)_it)->m_right);
 	}
-	while((Node*)_it != ((Node*)_it)->m_father->m_left)
+	else
 	{
-		_it = ((Node*)_it)->m_father;
+		_it = FindFirstRightFather(_it);
 	}
-	_it = ((Node*)_it)->m_father->m_father;
-	return (BSTreeItr)_it;
+	return _it;
 }
+
+
+
+
+
 /*****
 BSTree ITR PREV
 *****/
@@ -358,7 +382,39 @@ void* BSTreeItrGet(BSTreeItr _it)
 /*****
 BSTree FOR EACH
 *****/
+static void InOrderTraverse(Node* _node, void* _context, ActionFunction _action)
+{
+	if (NULL == _node)
+	{
+		return;
+	}
+	InOrderTraverse(_node->m_left, _context, _action);
+	_action(_node, _context);
+	InOrderTraverse(_node->right, _context, _action);
+	
+	//TreePrintRecIn(_node->m_left);
+	//printf("%d\n", _node->m_data);
+	//TreePrintRecIn(_node->m_right);
+	return;
+}
 
+BSTreeItr BSTreeForEach(const BSTree* _tree, TreeTraversalMode _mode, ActionFunction _action, void* _context)
+{
+	if(!IS_A_TREE(_tree) || IS_NULL(_mode || IS_NULL(_action)))
+	{
+		if (NULL != TREE_ROOT(T))
+		{
+			switch (_traverseMode)
+			{
+			case BSTREE_TRAVERSAL_INORDER:
+				InOrderTraverse(TREE_ROOT(T), _context, _action);
+				break;
+			}
+		}
+		return NULL;
+	}
+	
+}
 
 
 

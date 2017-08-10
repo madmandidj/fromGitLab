@@ -110,6 +110,23 @@ int IntLessComparator(int* _left, int* _right)
 
 
 
+
+
+
+/*****
+ACTION FUNCTIONS
+*****/
+int PrintItrInt(int* _element, void* _context)
+{
+	printf("%d\n", *_element);
+	return;
+}
+
+
+
+
+
+
 /*****
 BSTREE CREATE TESTS
 *****/
@@ -270,6 +287,7 @@ void TestBSTreeItrNextToEnd()
     {
         printf("NOT at end\n");
     }
+    BSTreeForEach(BSTreeItrBegin(tree), PrintItrInt, NULL);
     // data = BSTreeItrGet(itr);
     
     BSTreeDestroy(tree, NULL);
