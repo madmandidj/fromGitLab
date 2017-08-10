@@ -12,13 +12,16 @@
  *  The tree is implemented using a sentinel. 
  *  The first node in the tree is the sentinel left subtree.
  *
- *  @author Muhammad Zahalqa  (MuhammadZ@experis.co.il)
+ *  @author Eyal Alon  (Eyal Alon)
  * 
  *  @bug No known bugs.
  */
 
 typedef struct BSTree  BSTree;
+
 typedef void*  BSTreeItr;
+
+typedef void (*DestroyFunction)(void* _item);
 
 typedef int (*LessComparator)(void* _left, void* _right);
 
@@ -46,8 +49,18 @@ typedef enum
     BSTREE_TRAVERSAL_INORDER,
     BSTREE_TRAVERSAL_POSTORDER,
     BSTREE_TRAVERSAL_DEPTH_FIRST,
-    BSTREE_TRAVERSAL_BREADTH_FIRST,
+    BSTREE_TRAVERSAL_BREADTH_FIRST
 } TreeTraversalMode;
+
+typedef enum
+{
+    TREE_OK,
+    TREE_UNINITIALIZED,
+    TREE_ALLOCATION_FAILED,
+    TREE_IS_EMPTY,
+    TREE_ITEM_NOT_FOUND,
+    TREE_INV_ARG
+} TreeError;
 
 /** 
  * @brief Create a binary search tree
@@ -59,7 +72,7 @@ typedef enum
  * @return a pointer to the newly created tree.
  * @retval NULL on failure due to allocation failure or NULL function pointer given
  */
-BSTree* BSTree_Create(LessComparator _less);
+BSTree* BSTreeCreate(LessComparator _less);
 
 /** 
  * @brief Destroy tree
@@ -70,10 +83,10 @@ BSTree* BSTree_Create(LessComparator _less);
  * @params _tree : A previously created Tree ADT returned via BSTreeCreate
  * @params _destroyer : A function to destroy the data in the tree (may be NULL if unnecessary)
  */
-void  BSTree_Destroy(BSTree* _tree, void (*_destroyer)(void*));
+void  BSTreeDestroy(BSTree* _tree, DestroyFunction _destroyFunction);
 
 /** 
- * @brief Add an element to tree if it'snot already there
+ * @brief Add an element to tree if it's not already there
  * Insert element to binary tree, using the tree's comparison function
  * Average time complexity O(log n).
  * Worst: O(n)
@@ -83,7 +96,7 @@ void  BSTree_Destroy(BSTree* _tree, void (*_destroyer)(void*));
  * @return iterator pointing to the item added or iterator to end on failure
  * @warning don't allow duplicates
  */
-BSTreeItr BSTree_Insert(BSTree* _tree, void* _item);
+BSTreeItr BSTreeInsert(BSTree* _tree, void* _item);
 
 /** 
  * @brief Search the first element for which the given predicate returns 0
@@ -95,7 +108,7 @@ BSTreeItr BSTree_Insert(BSTree* _tree, void* _item);
  * @param _params : Predicate parameters
  * @return an iterator pointing to the first data found, to end of tree if not found or NULL on NULL input
  */
-BSTreeItr BSTree_FindFirst(const BSTree* _tree, PredicateFunction _predicate, void* _context);
+BSTreeItr BSTreeFindFirst(const BSTree* _tree, PredicateFunction _predicate, void* _context);
 
 /** 
  * @brief Get an in-order itertator to the tree's begin 
@@ -103,15 +116,16 @@ BSTreeItr BSTree_FindFirst(const BSTree* _tree, PredicateFunction _predicate, vo
  * @param _tree : tree to create iterator from
  * @return an iterator pointing at the tree's begin or end if tree is empty 
  */
-BSTreeItr BSTreeItr_Begin(const BSTree* _tree);
+BSTreeItr BSTreeItrBegin(const BSTree* _tree);
 
 /** 
  * @brief Get itertator to the tree's end (in order)
  *
  * @param _tree : tree to create iterator from
  * @return an iterator pointing at the tree's end
+ * @retval NULL if tree is invalid
  */
-BSTreeItr BSTreeItr_End(const BSTree* _tree);
+BSTreeItr BSTreeItrEnd(const BSTree* _tree);
 
 /** 
  * @brief Compare two iterators
@@ -120,7 +134,7 @@ BSTreeItr BSTreeItr_End(const BSTree* _tree);
  * @return : 0 if are not the same 
  *           any none zero value if iterators are the same
  */
-int BSTreeItr_Equals(BSTreeItr _a, BSTreeItr _b);
+int BSTreeItrEquals(BSTreeItr _a, BSTreeItr _b);
 
 /** 
  * @brief Get itertator to the next element from current iterator
@@ -129,7 +143,7 @@ int BSTreeItr_Equals(BSTreeItr _a, BSTreeItr _b);
  * @params _it : A tree iterator
  * @returns an iterator pointing at the next element after _it or end iterator.
  */
-BSTreeItr BSTreeItr_Next(BSTreeItr _it);
+BSTreeItr BSTreeItrNext(BSTreeItr _it);
 
 /** 
  * @brief Get itertator to the previous element from current iterator
@@ -138,7 +152,7 @@ BSTreeItr BSTreeItr_Next(BSTreeItr _it);
  * @return an iterator pointing at the previous element
  * or to the beginning if _it points to the beginning
  */
-BSTreeItr BSTreeItr_Prev(BSTreeItr _it);
+BSTreeItr BSTreeItrPrev(BSTreeItr _it);
 
 /** 
  * @brief Removes element from tree
@@ -148,7 +162,7 @@ BSTreeItr BSTreeItr_Prev(BSTreeItr _it);
  * @param _it : A tree iterator
  * @return removed item or null on failure
  */
-void* BSTreeItr_Remove(BSTreeItr _it);
+void* BSTreeItrRemove(BSTreeItr _it);
 
 /** 
  * @brief Get element stored at tree position pointed to by iterator
@@ -157,7 +171,7 @@ void* BSTreeItr_Remove(BSTreeItr _it);
  * @param _it : A tree iterator
  * @return the item the iterator points at or null if _it as at end
  */
-void* BSTreeItr_Get(BSTreeItr _it);
+void* BSTreeItrGet(BSTreeItr _it);
 
 /** 
  * @brief Performs an action function on every element in tree, by given traversal mode
@@ -170,7 +184,6 @@ void* BSTreeItr_Get(BSTreeItr _it);
  * @params _context : Context for the _action function
  * @return Iterator refering to the tree end or the element where iteration stopped
  */
-BSTreeItr BSTree_ForEach(const BSTree* _tree, TreeTraversalMode _mode,
-                 ActionFunction _action, void* _context);
+BSTreeItr BSTreeForEach(const BSTree* _tree, TreeTraversalMode _mode, ActionFunction _action, void* _context);
 
 #endif /* __BSTREE_H__ */
