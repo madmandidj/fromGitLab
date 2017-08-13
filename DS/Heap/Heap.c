@@ -41,7 +41,10 @@ struct Heap
 	LessThanComparator m_pfLess;
 };
 
-
+/*
+TODO: add prototypes of static functions. then order of file is: API functions then static functions
+TODO: comments above static functions
+*/
 
 /*****
 HEAP BUILD
@@ -182,6 +185,21 @@ static void DoSwap(Heap* _heap, size_t _index1, size_t _index2, void* _element1,
 	return;
 }
 /*******************************/
+/*
+static void HeapifyRec(Heap* _heap, size_t _index)
+{
+	size_t maxIndex;
+	
+	if (_index > LAST_FATHER(_heap))
+	{
+		
+	}
+}
+
+TODO: get the rest from erez
+*/
+
+
 static int Heapify(Heap* _heap, size_t _heapifyIndex)
 {
 	size_t indexArr[3];
@@ -191,6 +209,9 @@ static int Heapify(Heap* _heap, size_t _heapifyIndex)
 	
 	assert(IS_A_HEAP(_heap));
 
+	/*
+	TODO: can change this condition to check if index is larger than last father
+	*/
 	if (_heapifyIndex >= _heap->m_heapSize || 0 >= _heapifyIndex)
 	{
 		return TRUE;

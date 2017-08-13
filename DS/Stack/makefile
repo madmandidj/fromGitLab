@@ -28,22 +28,21 @@
 FLAGS = -ansi -pedantic -Wall -Wconversion
 INC_PATH = ../../inc/
 LIB_PATH = ../../lib/
-VECTOR_PATH = ../Vector/
+LIST_PATH = ../DoubleLinkedList/
 
-
-
-testheap.out: VECTOR TestHeap.c $(LIB_PATH)libheap.a $(LIB_PATH)libvector.a 
-	gcc $(FLAGS) -o testheap.out TestHeap.c -L$(LIB_PATH) -lheap -L$(LIB_PATH) -lvector
-
-VECTOR: 
-	make -C $(VECTOR_PATH)
-
-../../lib/libheap.a: Heap.o 
-	ar -cvq $(LIB_PATH)libheap.a Heap.o
+teststack.out: TestStack.c $(LIB_PATH)libstack.a $(LIB_PATH)liblist.a
+	gcc $(FLAGS) -o teststack.out TestStack.c -L$(LIB_PATH) -lstack -L$(LIB_PATH) -llist
 	
-Heap.o: Heap.c $(INC_PATH)Heap.h
-	 gcc $(FLAGS) -c Heap.c
+Stack.c: Stack.c $(INC_PATH)list.h
+
+../../lib/libstack.a: Stack.o
+	ar -cvq $(LIB_PATH)libstack.a Stack.o
+	
+../../lib/liblist.a: list.o
+	ar -cvq $(LIB_PATH)liblist.a list.o
+	
+Stack.o: Stack.c $(INC_PATH)Stack.h
+	 gcc $(FLAGS) -c Stack.c
 
 clean:
-	make -C $(VECTOR_PATH) clean
-	rm testheap.out $(LIB_PATH)libheap.a Heap.o
+	rm $(LIB_PATH)libstack.a stack.o teststack.out $(LIB_PATH)liblist.a $(LIST_PATH)list.o
