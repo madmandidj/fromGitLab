@@ -8,9 +8,9 @@ Modified by:	Eyal Alon
 */
 
 /* #include "GenericVector.h" */
-#include "../../inc/GenericVector.h"
 #include <stdlib.h>
-#define MAGIC_NUM 1717 
+#include "../../inc/GenericVector.h"
+#define MAGIC_NUM 0x000EC10B 
 #define NOT_MAGIC_NUM 2222 
 #define TRUE 1
 #define FALSE 0
