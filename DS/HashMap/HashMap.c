@@ -13,8 +13,8 @@
 
 typedef struct Data
 {
-	void* m_key;
-	void* m_val;
+	const void* m_key;
+	const void* m_val;
 }Data;
 
 struct HashMap
@@ -31,6 +31,12 @@ struct HashMap
 
 
 
+
+
+
+/**************
+HASH MAP CREATE
+**************/
 static size_t CalcHashSize(size_t _num)
 {
     int isPrime = 0;
@@ -53,32 +59,23 @@ static size_t CalcHashSize(size_t _num)
     return _num;
 }
 
-
-
-HashMap* HashMapCreate(size_t _capacity, HashFunction _hashFunc, EqualityFunction _keysEqualFunc)
+static HashMap* AllocateHashMap(size_t _hashSize)
 {
-	HashMap* hashMap;
-	size_t hashSize;
+	HashMap* hashMap = NULL;
 	size_t index;
-	
-	if (0 == _capacity || IS_NULL(_hashFunc) || IS_NULL(_keysEqualFunc))
+
+	if (!(hashMap = malloc(sizeof(HashMap))))
 	{
 		return NULL;
 	}
 	
-	if (!(hashMap = malloc(sizeof(HashMap*))))
-	{
-		return NULL;
-	}
-	
-	hashSize = CalcHashSize(_capacity);
-	if (!(hashMap->m_buckets = malloc(hashSize * sizeof(List*))))
+	if (!(hashMap->m_buckets = malloc(_hashSize * sizeof(List*))))
 	{
 		free(hashMap);
 		return NULL;
 	}
 	
-	for (index = 0; index < hashSize; ++index)
+	for (index = 0; index < _hashSize; ++index)
 	{
 		if (!(hashMap->m_buckets[index] = ListCreate()))
 		{
@@ -94,35 +91,67 @@ HashMap* HashMapCreate(size_t _capacity, HashFunction _hashFunc, EqualityFunctio
 			return NULL;
 		}
 	}
-	
-	hashMap->m_magicNum = HASHMAP_MAGIC_NUM;
-	hashMap->m_hashSize = hashSize;
-	hashMap->m_hashFunc = _hashFunc;
-	hashMap->m_keysEqualFunc = _keysEqualFunc;
+	return hashMap;
+}
+
+static void InitHashMap(HashMap* _hashMap, HashFunction _hashFunc, EqualityFunction _keysEqualFunc, size_t _hashSize)
+{
+	_hashMap->m_magicNum = HASHMAP_MAGIC_NUM;
+	_hashMap->m_hashSize = _hashSize;
+	_hashMap->m_hashFunc = _hashFunc;
+	_hashMap->m_keysEqualFunc = _keysEqualFunc;
 	#ifndef NDEBUG
-	hashMap->m_mapStats.m_pairs = 0;
-	hashMap->m_mapStats.m_collisions = 0;
-	hashMap->m_mapStats.m_buckets = hashSize;
-	hashMap->m_mapStats.m_chains = 0;
-	hashMap->m_mapStats.m_maxChainLength = 0;
-	hashMap->m_mapStats.m_averageChainLength = 0;
+	_hashMap->m_mapStats.m_pairs = 0;
+	_hashMap->m_mapStats.m_collisions = 0;
+	_hashMap->m_mapStats.m_buckets = _hashSize;
+	_hashMap->m_mapStats.m_chains = 0;
+	_hashMap->m_mapStats.m_maxChainLength = 0;
+	_hashMap->m_mapStats.m_averageChainLength = 0;
 	#endif /* NDEBUG */
+	return;
+}
+
+
+HashMap* HashMapCreate(size_t _capacity, HashFunction _hashFunc, EqualityFunction _keysEqualFunc)
+{
+	HashMap* hashMap;
+	size_t hashSize;
+	
+	if (0 == _capacity || IS_NULL(_hashFunc) || IS_NULL(_keysEqualFunc))
+	{
+		return NULL;
+	}
+	
+	hashSize = CalcHashSize(_capacity);
+	if (!(hashMap = AllocateHashMap(hashSize)))
+	{
+		return NULL;
+	}
+	
+	InitHashMap(hashMap, _hashFunc, _keysEqualFunc, hashSize);
 	return hashMap;
 }
 
 
 
-void HashMapDestroy(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valDestroyFunc)
+
+
+
+
+
+
+
+
+
+/**************
+HASH MAP DESTROY
+**************/
+static void DestroyBuckets(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valDestroyFunc)
 {
 	size_t index;
 	ListItr nodeSentinel;
 	ListItr nodeItr;
 	Data* data;
-	
-	if (IS_NULL(_map) || !IS_A_HASHMAP(*_map))
-	{
-		return;
-	}
 	
 	for (index = 0; index < (*_map)->m_hashSize; ++index)
 	{
@@ -133,28 +162,91 @@ void HashMapDestroy(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valD
 			data = (Data*) ListItrGet(nodeItr);
 			if (!IS_NULL(_keyDestroyFunc))
 			{
-				_keyDestroyFunc(data->m_key);
+				_keyDestroyFunc((void*)data->m_key);
 			}
 			if (!IS_NULL(_valDestroyFunc))
 			{
-				_valDestroyFunc(data->m_val);
+				_valDestroyFunc((void*)data->m_val);
 			}
 			nodeItr = ListItrNext(nodeItr);
 		}
 		ListDestroy(&((*_map)->m_buckets[index]), NULL);
 	}
+	return;
+}
+
+void HashMapDestroy(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valDestroyFunc)
+{
+
+	if (IS_NULL(_map) || !IS_A_HASHMAP(*_map))
+	{
+		return;
+	}
+	
+	DestroyBuckets(_map, _keyDestroyFunc, _valDestroyFunc);
 	free((*_map)->m_buckets);
 	free(*_map);
 	*_map = NULL;
 }
 
-MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
+
+
+
+
+
+
+
+
+
+/**************
+HASH MAP INSERT
+**************/
+static size_t CalculateBucketIndex(HashMap* _map, const void* _key)
 {
 	size_t hashFuncResult;
-	size_t bucketIndex;
+	
+	hashFuncResult = _map->m_hashFunc(_key);
+	return hashFuncResult % _map->m_hashSize;
+}
+
+static ListItr FindKeyDuplicateInBucket(HashMap* _map, const void* _key, size_t _bucketIndex)
+{
 	ListItr nodeItr;
 	ListItr nodeSentinel;
+	Data* itrData;
+	
+	nodeSentinel = ListItrEnd(_map->m_buckets[_bucketIndex]);
+	nodeItr = ListItrBegin(_map->m_buckets[_bucketIndex]);
+	while(nodeItr != nodeSentinel)
+	{
+		itrData = (Data*) ListItrGet(nodeItr);
+		if (_map->m_keysEqualFunc((void*)itrData->m_key, _key))
+		{
+			return nodeItr;
+		}
+		nodeItr = ListItrNext(nodeItr);
+	}
+	return NULL;
+}
+
+static MapResult CreateAndInsertElement(HashMap* _map, const void* _key, const void* _value, size_t _bucketIndex)
+{
 	Data* data;
+	
+	if (!(data = malloc(sizeof(Data))))
+	{
+		return MAP_ALLOCATION_ERROR;
+	}
+	data->m_key = _key;
+	data->m_val = _value;
+	ListPushHead(_map->m_buckets[_bucketIndex], (void*) data);
+	return MAP_SUCCESS;
+}
+
+MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
+{
+	size_t bucketIndex;
+	size_t chainLength;
 
 	if (!IS_A_HASHMAP(_map))
 	{
@@ -165,106 +257,183 @@ MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
 		return MAP_KEY_NULL_ERROR;
 	}
 
-	hashFuncResult = _map->m_hashFunc(_key);
-	bucketIndex = hashFuncResult % _map->m_hashSize;
-	nodeSentinel = ListItrEnd(_map->m_buckets[bucketIndex]);
-	nodeItr = ListItrBegin(_map->m_buckets[bucketIndex]);
-	while(nodeItr != nodeSentinel)
+	bucketIndex = CalculateBucketIndex(_map, _key);
+	
+	if (FindKeyDuplicateInBucket(_map, _key, bucketIndex))
 	{
-		data = (Data*) ListItrGet(nodeItr);
-		if (_map->m_keysEqualFunc((void*)data->m_key, _key))
-		{
-			return MAP_KEY_DUPLICATE_ERROR;
-		}
-		nodeItr = ListItrNext(nodeItr);
+		return MAP_KEY_DUPLICATE_ERROR;
 	}
-	if (!(data = malloc(sizeof(Data))))
+	
+	if (MAP_ALLOCATION_ERROR == CreateAndInsertElement(_map, _key, _value, bucketIndex))
 	{
 		return MAP_ALLOCATION_ERROR;
 	}
-	ListPushHead(_map->m_buckets[bucketIndex], (void*) data);
+	
+	#ifndef NDEBUG
+	++_map->m_mapStats.m_pairs;
+	chainLength = ListCountItems(_map->m_buckets[_bucketIndex]);
+	if (1 == chainLength)
+	{
+		++_map->m_mapStats.m_chains;
+	}
+	if (1 < chainLength)
+	{
+		++_map->m_mapCollisions;
+	}
+/*	if (_map->m_mapStats.m_maxChainLength < chainLength)*/
+/*	{*/
+/*		_map->m_mapStats.m_maxChainLength = chainLength;*/
+/*	}*/
+	_map->m_mapStats.m_averageChainLength = _map->m_mapStats.m_pairs / _map->m_mapStats.m_buckets;
+	#endif */ /* NDEBUG */
 	return MAP_SUCCESS;
 }
 
-MapResult HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue)
-{
-	size_t hashFuncResult;
-	size_t bucketIndex;
-	ListItr nodeItr;
-	ListItr nodeSentinel;
-	Data* data;
 
-	if (!IS_A_HASHMAP(_map))
-	{
-		return MAP_UNINITIALIZED_ERROR;
-	}
-	if (IS_NULL(_pKey))
-	{
-		return MAP_KEY_NULL_ERROR;
-	}
 
-	hashFuncResult = _map->m_hashFunc(_key);
-	bucketIndex = hashFuncResult % _map->m_hashSize;
-	for (index = 0; index < (*_map)->m_hashSize; ++index)
-	{
-		nodeSentinel = ListItrEnd(_map->m_buckets[bucketIndex]);
-		nodeItr = ListItrBegin(_map->m_buckets[bucketIndex]);
-		while(nodeItr != nodeSentinel)
-		{
-			data = (Data*)ListItrGet(nodeItr);
-			if (_map->m_keysEqualFunc((void*)data->m_key, _key))
-			{
-				*_pKey = data->m_key;
-				*_pVal = data->m_val;
-				/*
-				Need to free key-val pair?
-				*/
-				ListItrRemove(nodeItr);
-				return MAP_SUCCESS;
-			}
-			nodeItr = ListItrNext(nodeItr);
-		}
-	}
-	return MAP_KEY_NOT_FOUND_ERROR;
-}
 
+
+
+
+
+/**************
+HASH MAP FIND
+**************/
 MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValue)
 {
-	size_t hashFuncResult;
 	size_t bucketIndex;
-	ListItr nodeItr;
-	ListItr nodeSentinel;
-	Data* data;
+	ListItr itrFound = NULL;
 
 	if (!IS_A_HASHMAP(_map))
 	{
 		return MAP_UNINITIALIZED_ERROR;
 	}
-	if (IS_NULL(_pKey))
+	
+	if (IS_NULL(_searchKey))
 	{
 		return MAP_KEY_NULL_ERROR;
 	}
-
-	hashFuncResult = _map->m_hashFunc(_key);
-	bucketIndex = hashFuncResult % _map->m_hashSize;
-	for (index = 0; index < (*_map)->m_hashSize; ++index)
+	
+	bucketIndex = CalculateBucketIndex((HashMap*)_map, _searchKey);
+	
+	if ((itrFound = FindKeyDuplicateInBucket((HashMap*)_map, _searchKey, bucketIndex)))
 	{
-		nodeSentinel = ListItrEnd(_map->m_buckets[bucketIndex]);
-		nodeItr = ListItrBegin(_map->m_buckets[bucketIndex]);
-		while(nodeItr != nodeSentinel)
-		{
-			data = (Data*)ListItrGet(nodeItr);
-			if (_map->m_keysEqualFunc((void*)data->m_key, _key))
-			{
-				*_pKey = data->m_key;
-				*_pVal = data->m_val;
-				return MAP_SUCCESS;
-			}
-			nodeItr = ListItrNext(nodeItr);
-		}
+		*_pValue = (void*)((Data*)itrFound)->m_val;
+		return MAP_SUCCESS; 
 	}
 	return MAP_KEY_NOT_FOUND_ERROR;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**************
+HASH MAP REMOVE
+**************/
+MapResult HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue)
+{
+	size_t bucketIndex;
+	ListItr itrFound = NULL;
+	Data* removedData;
+
+	if (!IS_A_HASHMAP(_map))
+	{
+		return MAP_UNINITIALIZED_ERROR;
+	}
+	
+	if (IS_NULL(_searchKey))
+	{
+		return MAP_KEY_NULL_ERROR;
+	}
+	
+	bucketIndex = CalculateBucketIndex((HashMap*)_map, _searchKey);
+	
+	if ((itrFound = FindKeyDuplicateInBucket((HashMap*)_map, _searchKey, bucketIndex)))
+	{
+		removedData = (Data*)ListItrRemove(itrFound);
+		*_pKey = removedData->m_key;
+		*_pValue = removedData->m_val;
+		#ifndef NDEBUG
+		--_map->m_mapStats.m_pairs;
+		chainLength = ListCountItems(_map->m_buckets[_bucketIndex]);
+		if (0 == chainLength)
+		{
+			--_map->m_mapStats.m_chains;
+		}
+		if (1 < chainLength)
+		{
+			--_map->m_mapCollisions;
+		}
+/*		if (_map->m_mapStats.m_maxChainLength < chainLength)*/
+/*		{*/
+/*			_map->m_mapStats.m_maxChainLength = chainLength;*/
+/*		}*/
+		_map->m_mapStats.m_averageChainLength = _map->m_mapStats.m_pairs / _map->m_mapStats.m_buckets;
+		#endif */ /* NDEBUG */
+		return MAP_SUCCESS; 
+	}
+	return MAP_KEY_NOT_FOUND_ERROR;
+}
+
+
+
+
+
+/**************
+HASH MAP FOR EACH
+**************/
+size_t HashMapForEach(const HashMap* _map, KeyValueActionFunction _action, void* _context)
+{
+	size_t index;
+	size_t count = 0;
+	
+	for (index = 0; _map->m_hashSize; ++index)
+	{
+/*		if(!ListForEach(_map->m_buckets[index], _action, _context))*/
+/*		{*/
+/*			return count;*/
+/*		}*/
+/*		++count;*/
+	}
+	return count;
+}
+
+
+
+
+/**************
+HASH MAP GET STATISTICS
+**************/
+MapStats HashMapGetStatistics(const HashMap* _map)
+{
+	MapStats mapStats;
+	
+	if (!IS_A_MAP(_map))
+	{
+		return NULL;
+	}
+	
+	if (_map->m_mapStats.m_maxChainLength < chainLength)
+	{
+		_map->m_mapStats.m_maxChainLength = chainLength;
+	}
+}
+
+
+
+
+
+
+
 
 /*
 
