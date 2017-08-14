@@ -1,4 +1,4 @@
-FLAGS = -ansi -pedantic -Wall -Wconversion
+FLAGS = -ansi -pedantic -Wall -Wconversion -g
 INC_PATH = ../../inc/
 LIB_PATH = ../../lib/
 LIST_PATH = ../DoubleLinkedList/

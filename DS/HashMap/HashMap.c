@@ -148,39 +148,133 @@ void HashMapDestroy(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valD
 	*_map = NULL;
 }
 
+MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
+{
+	size_t hashFuncResult;
+	size_t bucketIndex;
+	ListItr nodeItr;
+	ListItr nodeSentinel;
+	Data* data;
+
+	if (!IS_A_HASHMAP(_map))
+	{
+		return MAP_UNINITIALIZED_ERROR;
+	}
+	if (IS_NULL(_key))
+	{
+		return MAP_KEY_NULL_ERROR;
+	}
+
+	hashFuncResult = _map->m_hashFunc(_key);
+	bucketIndex = hashFuncResult % _map->m_hashSize;
+	nodeSentinel = ListItrEnd(_map->m_buckets[bucketIndex]);
+	nodeItr = ListItrBegin(_map->m_buckets[bucketIndex]);
+	while(nodeItr != nodeSentinel)
+	{
+		data = (Data*) ListItrGet(nodeItr);
+		if (_map->m_keysEqualFunc((void*)data->m_key, _key))
+		{
+			return MAP_KEY_DUPLICATE_ERROR;
+		}
+		nodeItr = ListItrNext(nodeItr);
+	}
+	if (!(data = malloc(sizeof(Data))))
+	{
+		return MAP_ALLOCATION_ERROR;
+	}
+	ListPushHead(_map->m_buckets[bucketIndex], (void*) data);
+	return MAP_SUCCESS;
+}
+
+MapResult HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue)
+{
+	size_t hashFuncResult;
+	size_t bucketIndex;
+	ListItr nodeItr;
+	ListItr nodeSentinel;
+	Data* data;
+
+	if (!IS_A_HASHMAP(_map))
+	{
+		return MAP_UNINITIALIZED_ERROR;
+	}
+	if (IS_NULL(_pKey))
+	{
+		return MAP_KEY_NULL_ERROR;
+	}
+
+	hashFuncResult = _map->m_hashFunc(_key);
+	bucketIndex = hashFuncResult % _map->m_hashSize;
+	for (index = 0; index < (*_map)->m_hashSize; ++index)
+	{
+		nodeSentinel = ListItrEnd(_map->m_buckets[bucketIndex]);
+		nodeItr = ListItrBegin(_map->m_buckets[bucketIndex]);
+		while(nodeItr != nodeSentinel)
+		{
+			data = (Data*)ListItrGet(nodeItr);
+			if (_map->m_keysEqualFunc((void*)data->m_key, _key))
+			{
+				*_pKey = data->m_key;
+				*_pVal = data->m_val;
+				/*
+				Need to free key-val pair?
+				*/
+				ListItrRemove(nodeItr);
+				return MAP_SUCCESS;
+			}
+			nodeItr = ListItrNext(nodeItr);
+		}
+	}
+	return MAP_KEY_NOT_FOUND_ERROR;
+}
+
+MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValue)
+{
+	size_t hashFuncResult;
+	size_t bucketIndex;
+	ListItr nodeItr;
+	ListItr nodeSentinel;
+	Data* data;
+
+	if (!IS_A_HASHMAP(_map))
+	{
+		return MAP_UNINITIALIZED_ERROR;
+	}
+	if (IS_NULL(_pKey))
+	{
+		return MAP_KEY_NULL_ERROR;
+	}
+
+	hashFuncResult = _map->m_hashFunc(_key);
+	bucketIndex = hashFuncResult % _map->m_hashSize;
+	for (index = 0; index < (*_map)->m_hashSize; ++index)
+	{
+		nodeSentinel = ListItrEnd(_map->m_buckets[bucketIndex]);
+		nodeItr = ListItrBegin(_map->m_buckets[bucketIndex]);
+		while(nodeItr != nodeSentinel)
+		{
+			data = (Data*)ListItrGet(nodeItr);
+			if (_map->m_keysEqualFunc((void*)data->m_key, _key))
+			{
+				*_pKey = data->m_key;
+				*_pVal = data->m_val;
+				return MAP_SUCCESS;
+			}
+			nodeItr = ListItrNext(nodeItr);
+		}
+	}
+	return MAP_KEY_NOT_FOUND_ERROR;
+}
+
 /*
+
+
 MapResult HashMapRehash(HashMap *_map, size_t newCapacity)
 {
 	
 	ReHashCheckParams();
 	CreateNewHashMap();
 	InsertAllElements();
-	
-}
-
-MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
-{
-	
-	InsertCheckParams();
-	FindInsertPlace();
-	DoInsert();
-	
-}
-
-MapResult HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue)
-{
-	
-	RemoveCheckParams();
-	FindRemovePlace();
-	DoRemove();
-	
-}
-
-MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValue)
-{
-	
-	FindCheckParams();
-	DoFind();
 	
 }
 */
