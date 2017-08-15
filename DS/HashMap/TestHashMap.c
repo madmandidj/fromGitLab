@@ -94,11 +94,13 @@ void TestHashMapCreate()
 	{
 		printf("value found\n");
 	}
-	// mapResult = HashMapRemove(map, keyArr + 7, (void**)&pKey, (void**)&pValue);
-	// if (mapResult == MAP_KEY_NOT_FOUND_ERROR)
-	// {
-	// 	printf("key not found\n");
-	// }
+	
+	mapResult = HashMapRemove(map, keyArr + 7, (void**)&pKey, (void**)&pValue);
+	if (mapResult == MAP_KEY_NOT_FOUND_ERROR)
+	{
+	printf("key not found\n");
+	}
+	
 	HashMapForEach(map, (KeyValueActionFunction) PrintKeysAndValuesInt, NULL);
 	mapStats = HashMapGetStatistics(map);
 	printf("pairs: %u\n", mapStats.m_pairs);
@@ -108,12 +110,14 @@ void TestHashMapCreate()
 	printf("m_maxChainLength: %u\n", mapStats.m_maxChainLength);
 	printf("m_averageChainLength: %u\n", mapStats.m_averageChainLength);
 	printf("\n");
+	
 	mapResult = HashMapRehash(map, 9);
 	if (mapResult == MAP_SUCCESS)
 	{
 		printf("Rehash success\n");
 	}
 	HashMapForEach(map, (KeyValueActionFunction) PrintKeysAndValuesInt, NULL);
+
 	mapStats = HashMapGetStatistics(map);
 	printf("pairs: %u\n", mapStats.m_pairs);
 	printf("m_collisions: %u\n", mapStats.m_collisions);

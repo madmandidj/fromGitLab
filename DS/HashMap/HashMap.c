@@ -513,12 +513,13 @@ MapResult HashMapRehash(HashMap *_map, size_t newCapacity)
 		while(nodeItr != nodeSentinel)
 		{
 			/*
-			TODO: have a problem here. Remove might not be working properly.
+			TODO: change remove to pop head and change while condition to list not empty
 			*/
 			data = (Data*)ListItrRemove(nodeItr);
 			insertIndex = CalculateBucketIndex(_map->m_hashFunc, data->m_key, newHashSize);
 			ListPushHead(newBuckets[insertIndex], (void*) data);
-			nodeItr = ListItrNext(nodeItr);
+/*			nodeItr = ListItrNext(nodeItr);*/
+			nodeItr = ListItrBegin(_map->m_buckets[index]);
 		}
 	}
 	free(_map->m_buckets);

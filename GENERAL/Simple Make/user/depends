@@ -1,0 +1,1 @@
+m.o: m.c ../inc/b.h ../inc/a.h

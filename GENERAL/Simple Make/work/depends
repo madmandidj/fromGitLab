@@ -1,0 +1,3 @@
+a.o: a.c ../inc/a.h
+m.o: m.c ../inc/b.h ../inc/a.h
+b.o: b.c ../inc/b.h ../inc/a.h
