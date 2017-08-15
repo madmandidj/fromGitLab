@@ -50,11 +50,18 @@ static size_t CalcHashSize(size_t _num)
         {
             if (_num % i == 0)
             {
-                isPrime = 0;
+				isPrime = 0;
                 break;
-            }
-        }
-        ++_num;
+			}
+		}
+		if (isPrime == 0)
+		{
+			++_num;
+		}
+		else
+		{
+			break;
+		}
     }
     return _num;
 }
@@ -201,12 +208,12 @@ void HashMapDestroy(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valD
 /**************
 HASH MAP INSERT
 **************/
-static size_t CalculateBucketIndex(HashMap* _map, const void* _key)
+static size_t CalculateBucketIndex(HashFunction _hashFunc, const void* _key, size_t _hashSize)
 {
 	size_t hashFuncResult;
 	
-	hashFuncResult = _map->m_hashFunc(_key);
-	return hashFuncResult % _map->m_hashSize;
+	hashFuncResult = _hashFunc(_key);
+	return hashFuncResult % _hashSize;
 }
 
 static ListItr FindKeyDuplicateInBucket(HashMap* _map, const void* _key, size_t _bucketIndex)
@@ -257,8 +264,8 @@ MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
 		return MAP_KEY_NULL_ERROR;
 	}
 
-	bucketIndex = CalculateBucketIndex(_map, _key);
-	
+	bucketIndex = CalculateBucketIndex(_map->m_hashFunc, _key, _map->m_hashSize);
+
 	if (FindKeyDuplicateInBucket(_map, _key, bucketIndex))
 	{
 		return MAP_KEY_DUPLICATE_ERROR;
@@ -271,21 +278,17 @@ MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
 	
 	#ifndef NDEBUG
 	++_map->m_mapStats.m_pairs;
-	chainLength = ListCountItems(_map->m_buckets[_bucketIndex]);
+	chainLength = ListCountItems(_map->m_buckets[bucketIndex]);
 	if (1 == chainLength)
 	{
 		++_map->m_mapStats.m_chains;
 	}
 	if (1 < chainLength)
 	{
-		++_map->m_mapCollisions;
+		++_map->m_mapStats.m_collisions;
 	}
-/*	if (_map->m_mapStats.m_maxChainLength < chainLength)*/
-/*	{*/
-/*		_map->m_mapStats.m_maxChainLength = chainLength;*/
-/*	}*/
 	_map->m_mapStats.m_averageChainLength = _map->m_mapStats.m_pairs / _map->m_mapStats.m_buckets;
-	#endif */ /* NDEBUG */
+	#endif  /* NDEBUG */
 	return MAP_SUCCESS;
 }
 
@@ -314,7 +317,7 @@ MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValu
 		return MAP_KEY_NULL_ERROR;
 	}
 	
-	bucketIndex = CalculateBucketIndex((HashMap*)_map, _searchKey);
+	bucketIndex = CalculateBucketIndex(_map->m_hashFunc, _searchKey, _map->m_hashSize);
 	
 	if ((itrFound = FindKeyDuplicateInBucket((HashMap*)_map, _searchKey, bucketIndex)))
 	{
@@ -342,6 +345,7 @@ HASH MAP REMOVE
 MapResult HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, void** _pValue)
 {
 	size_t bucketIndex;
+	size_t chainLength = 0;
 	ListItr itrFound = NULL;
 	Data* removedData;
 
@@ -355,30 +359,29 @@ MapResult HashMapRemove(HashMap* _map, const void* _searchKey, void** _pKey, voi
 		return MAP_KEY_NULL_ERROR;
 	}
 	
-	bucketIndex = CalculateBucketIndex((HashMap*)_map, _searchKey);
+	bucketIndex = CalculateBucketIndex(_map->m_hashFunc, _searchKey, _map->m_hashSize);
 	
 	if ((itrFound = FindKeyDuplicateInBucket((HashMap*)_map, _searchKey, bucketIndex)))
 	{
+		/*
+		TODO: have a problem here. when using rehash i found that an element data was NULL.
+		*/
 		removedData = (Data*)ListItrRemove(itrFound);
-		*_pKey = removedData->m_key;
-		*_pValue = removedData->m_val;
+		*_pKey = (void*)removedData->m_key;
+		*_pValue = (void*)removedData->m_val;
 		#ifndef NDEBUG
 		--_map->m_mapStats.m_pairs;
-		chainLength = ListCountItems(_map->m_buckets[_bucketIndex]);
+		chainLength = ListCountItems(_map->m_buckets[bucketIndex]);
 		if (0 == chainLength)
 		{
 			--_map->m_mapStats.m_chains;
 		}
 		if (1 < chainLength)
 		{
-			--_map->m_mapCollisions;
+			--_map->m_mapStats.m_collisions;
 		}
-/*		if (_map->m_mapStats.m_maxChainLength < chainLength)*/
-/*		{*/
-/*			_map->m_mapStats.m_maxChainLength = chainLength;*/
-/*		}*/
 		_map->m_mapStats.m_averageChainLength = _map->m_mapStats.m_pairs / _map->m_mapStats.m_buckets;
-		#endif */ /* NDEBUG */
+		#endif /* NDEBUG */
 		return MAP_SUCCESS; 
 	}
 	return MAP_KEY_NOT_FOUND_ERROR;
@@ -395,14 +398,29 @@ size_t HashMapForEach(const HashMap* _map, KeyValueActionFunction _action, void*
 {
 	size_t index;
 	size_t count = 0;
+	ListItr nodeSentinel;
+	ListItr nodeItr;
+	Data* data;
 	
-	for (index = 0; _map->m_hashSize; ++index)
+	if (IS_NULL(_map) || IS_NULL(_action))
 	{
-/*		if(!ListForEach(_map->m_buckets[index], _action, _context))*/
-/*		{*/
-/*			return count;*/
-/*		}*/
-/*		++count;*/
+		return 0;
+	}
+
+	for (index = 0; index < _map->m_hashSize; ++index)
+	{
+		nodeSentinel = ListItrEnd(_map->m_buckets[index]);
+		nodeItr = ListItrBegin(_map->m_buckets[index]);
+		while(nodeItr != nodeSentinel)
+		{
+			data = (Data*) ListItrGet(nodeItr);
+			if (!(_action(data->m_key, (void*)data->m_val, _context)))
+			{
+				return count;
+			}
+			++count;
+			nodeItr = ListItrNext(nodeItr);
+		}
 	}
 	return count;
 }
@@ -413,19 +431,33 @@ size_t HashMapForEach(const HashMap* _map, KeyValueActionFunction _action, void*
 /**************
 HASH MAP GET STATISTICS
 **************/
+static void GetMaxChainLength(HashMap* _map)
+{
+	size_t index;
+	size_t maxChainLength = 0;
+	size_t chainLength = 0;
+
+	for (index = 0; index < _map->m_hashSize; ++index)
+	{
+		chainLength = ListCountItems(_map->m_buckets[index]);
+		if (chainLength > maxChainLength)
+		{
+			maxChainLength = chainLength;
+		}
+	}
+	_map->m_mapStats.m_maxChainLength = maxChainLength;
+}
 MapStats HashMapGetStatistics(const HashMap* _map)
 {
-	MapStats mapStats;
+	MapStats dummyMap;
 	
-	if (!IS_A_MAP(_map))
+	if (!IS_A_HASHMAP(_map))
 	{
-		return NULL;
+		return dummyMap;
 	}
-	
-	if (_map->m_mapStats.m_maxChainLength < chainLength)
-	{
-		_map->m_mapStats.m_maxChainLength = chainLength;
-	}
+
+	GetMaxChainLength((HashMap*)_map);
+	return _map->m_mapStats;
 }
 
 
@@ -435,18 +467,65 @@ MapStats HashMapGetStatistics(const HashMap* _map)
 
 
 
-/*
 
 
 MapResult HashMapRehash(HashMap *_map, size_t newCapacity)
 {
+	List** newBuckets;
+	size_t newHashSize;
+	size_t index;
+	size_t insertIndex;
+	ListItr nodeSentinel;
+	ListItr nodeItr;
+	Data* data;
+
+	if(!IS_A_HASHMAP(_map))
+	{
+		return MAP_UNINITIALIZED_ERROR;
+	}
+
+	newHashSize = CalcHashSize(newCapacity);
+
+	if (!(newBuckets = malloc(newHashSize * sizeof(List*))))
+	{
+		return MAP_ALLOCATION_ERROR;
+	}
 	
-	ReHashCheckParams();
-	CreateNewHashMap();
-	InsertAllElements();
-	
+	for (index = 0; index < newHashSize; ++index)
+	{
+		if (!(newBuckets[index] = ListCreate()))
+		{
+			--index;
+			while (index != 0)
+			{
+				ListDestroy(&(newBuckets[index]), NULL);
+				--index;
+			}
+			free(newBuckets);
+			return MAP_ALLOCATION_ERROR;
+		}
+	}
+
+	for (index = 0; index < _map->m_hashSize; ++index)
+	{
+		nodeSentinel = ListItrEnd(_map->m_buckets[index]);
+		nodeItr = ListItrBegin(_map->m_buckets[index]);
+		while(nodeItr != nodeSentinel)
+		{
+			/*
+			TODO: have a problem here. Remove might not be working properly.
+			*/
+			data = (Data*)ListItrRemove(nodeItr);
+			insertIndex = CalculateBucketIndex(_map->m_hashFunc, data->m_key, newHashSize);
+			ListPushHead(newBuckets[insertIndex], (void*) data);
+			nodeItr = ListItrNext(nodeItr);
+		}
+	}
+	free(_map->m_buckets);
+	_map->m_buckets = newBuckets;
+	return MAP_SUCCESS;
 }
-*/
+
 size_t HashMapSize(const HashMap* _map)
 {
 	if (!IS_A_HASHMAP(_map))

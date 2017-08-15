@@ -62,7 +62,7 @@ void HashMapDestroy(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valD
  * @brief Adjust map capacity and rehash all key/value pairs
  * @param[in] _map - exisiting map
  * @param[in] _newCapacity - new capacity shall be rounded to nearest larger prime number.
- * @return MAP_SUCCESS or MAP_ALLOCATION_ERROR
+ * @return MAP_SUCCESS or MAP_ALLOCATION_ERROR or MAP_UNINITIALIZED_ERROR
  */
 MapResult HashMapRehash(HashMap *_map, size_t newCapacity);
 
