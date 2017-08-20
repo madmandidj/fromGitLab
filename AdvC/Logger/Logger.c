@@ -8,25 +8,48 @@
 #define NANO_TO_MILLI(N) ((N)/ 1000000)
 
 
-Log* g_log = NULL;
+enum LogLevel {
+    T = 0,
+    D,
+    I,
+    W,
+    E,
+    C,
+    S,
+    F
+};
 
 
 
-
-/*
-TODO: Static Function Description
-*/
-static Log* LogCreate()
+typedef struct Logger
 {
-	g_log = fopen("default_log.txt", "a");
+	FILE* m_logger;
+	LogLevel m_level;
+	char* m_moduleName;
+	int m_pid;
+}Logger;
 
+
+
+static void ReadConfig(char* _configName
+
+static Logger* LogCreate(char* _configName)
+{
+	Logger* logger;
+	if (!(logger = calloc(1, sizeof(Logger))))
+	{
+		return NULL;
+	}
+	ReadConfig()
+	g_log = fopen("default_log.txt", "a");
+	
 	return g_log;
 }
 
 
 
 
-void LogDestroy(Log** _log)
+void LogDestroy(Logger** _log)
 {
 	if (NULL == _log)
 	{
@@ -53,9 +76,9 @@ static void LogClose()
 
 
 
-Log* GetLog()
+Logger* GetLog(char* _configName)
 {
-	Log* tempLog;
+	* tempLog;
 	if (NULL == g_log)
 	{
 		tempLog = LogCreate();
@@ -88,7 +111,7 @@ static void GetTime (char* _timeStr)
 
 
 
-void LogWrite(Log* _log, char* _fileName, const char* _funcName, int _lineNum, char _level, char* _moduleName, char* _message)
+void LogWrite(Logger* _log, char* _fileName, const char* _funcName, int _lineNum, char _level, char* _moduleName, char* _message)
 {
 	char timeStr[128];
 	pid_t pid;

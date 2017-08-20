@@ -1,24 +1,14 @@
 #ifndef __CONFIGMODULE_H__
 #define __CONFIGMODULE_H__
 
-typedef struct LogType
+
+typedef struct Configger
 {
-	Log* m_log;
-	LogLevel m_level;
-	char* m_moduleName;
-}LogType;
+	int m_level;
+	char* m_logName;
+}Configger;
 
-enum LogLevel {
-    T = 0,
-    D,
-    I,
-    W,
-    E,
-    C,
-    S,
-    F
-};
-
+Configger* ReadConfig(char* _configFile);
 
 
 
