@@ -1,3 +1,10 @@
+4 conditions for deadlock:
+A. mutual exclusion
+B. hold and wait - process can request new resource before releasing old one
+C. No preemption - resource must be explicitly released by the process
+D. Circular wait
+
+
 CPU
 ----
 The CPU executes instruction read from memory. Two categories of instructions:

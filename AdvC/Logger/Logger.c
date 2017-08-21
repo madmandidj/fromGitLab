@@ -5,58 +5,49 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "Logger.h"
+#include "ConfigModule.h"
 #define NANO_TO_MILLI(N) ((N)/ 1000000)
 
+Log* g_log;
 
-enum LogLevel {
-    T = 0,
-    D,
-    I,
-    W,
-    E,
-    C,
-    S,
-    F
+
+
+
+struct Log
+{
+	FILE* m_log;
+	LogLevel m_level;
+	int m_pid;
 };
 
 
-
-typedef struct Logger
+static Log* LogCreate(char* _configName)
 {
-	FILE* m_logger;
-	LogLevel m_level;
-	char* m_moduleName;
-	int m_pid;
-}Logger;
-
-
-
-static void ReadConfig(char* _configName
-
-static Logger* LogCreate(char* _configName)
-{
-	Logger* logger;
-	if (!(logger = calloc(1, sizeof(Logger))))
+	Configger configger;
+	if (!(g_log = calloc(1, sizeof(Log))))
 	{
 		return NULL;
 	}
-	ReadConfig()
-	g_log = fopen("default_log.txt", "a");
-	
+	ReadConfig(_configName, &configger);
+	g_log->m_log = fopen(configger->m_logName, "a");
+	g_log->m_level = configger->m_level;
+	g_log->m_pid = getpid();
+	atexit(LogClose);
 	return g_log;
 }
 
 
 
 
-void LogDestroy(Logger** _log)
+void LogDestroy(Log** _log)
 {
 	if (NULL == _log)
 	{
 		return;
 	}
 	
-	fclose(*_log);
+	fclose(*_log->m_log);
+	free(*_log)
 	*_log = NULL;
 	return;
 }
@@ -76,15 +67,13 @@ static void LogClose()
 
 
 
-Logger* GetLog(char* _configName)
+Log* GetLog(char* _configName)
 {
-	* tempLog;
 	if (NULL == g_log)
 	{
-		tempLog = LogCreate();
+		g_log = LogCreate();
 	}
-	atexit(LogClose);
-	return tempLog;
+	return g_log;
 }
 
 
@@ -111,7 +100,7 @@ static void GetTime (char* _timeStr)
 
 
 
-void LogWrite(Logger* _log, char* _fileName, const char* _funcName, int _lineNum, char _level, char* _moduleName, char* _message)
+void LogWrite(Log* _log, char* _fileName, const char* _funcName, int _lineNum, char _level, char* _moduleName, char* _message)
 {
 	char timeStr[128];
 	pid_t pid;
