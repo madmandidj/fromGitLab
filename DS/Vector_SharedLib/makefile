@@ -3,6 +3,7 @@ testVector.out: TESTGenericVector.c ../../lib/libVector.so.1.0
 
 ../../lib/libVector.so.1.0: GenericVector.o
 	gcc -shared -Wl,-soname,libVector.so.1 -o libVector.so.1.0 GenericVector.o
+#	gcc -shared -Wl,-install_name,libVector.so.1 -o libVector.so.1.0 GenericVector.o
 	ln -sf libVector.so.1.0 libVector.so.1
 	mv libVector.so.1.0 ../../lib
 	mv libVector.so.1 ../../lib

@@ -28,10 +28,6 @@ struct Person
 
 
 
-
-
-
-
 /*
 	ELEMENT DESTROY FUNCTIONS
 */
@@ -50,10 +46,6 @@ void ElementDestroyPerson(void* _item)
 	}
 	return;
 }
-
-
-
-
 
 
 
@@ -86,7 +78,6 @@ int	VectorElementPersonYodofy(Person* _prs, size_t _index, char* _context)
 	}
 	return 1;
 }
-
 
 
 
@@ -177,6 +168,47 @@ static void PrintErrResult(char* _testName, ADTErr _err, ADTErr _passErr)
 
 
 
+/*
+	INIT PERSON STRUCT ARRAY FUNCTION
+*/
+static void InitPersArr(Person* _arr)
+{
+	size_t numOfPersons = 5;
+	size_t numOfFamily = 2;
+	size_t index;
+	size_t indexDealloc;
+	size_t indexFam;
+	char* names[] = {"Eyal\0", "Yodo\0", "Erez\0", "Eli\0", "Hana\0"};
+	size_t ages[] = {101, 999, 23, 21, 17};
+	for (index = 0; index < numOfPersons; ++index)
+	{
+		_arr[index].m_famSize = numOfFamily;
+		_arr[index].m_age = ages[index];
+		strcpy(_arr[index].m_name, names[index]);
+		_arr[index].m_family = malloc(numOfFamily * sizeof(Person));
+		if (NULL == _arr[index].m_family)
+		{
+			for (indexDealloc = index-1; indexDealloc > 0; --indexDealloc)
+			{
+				free(_arr[index].m_family);
+			}
+			free(_arr);
+			return;
+		}
+		for (indexFam = 0; indexFam < numOfFamily; ++indexFam)
+		{
+			_arr[index].m_family[indexFam] = &_arr[indexFam];
+		}
+	}
+	_arr[0].m_family[0] = &_arr[1];
+	_arr[0].m_family[1] = &_arr[2];
+	_arr[1].m_family[0] = &_arr[3];
+	_arr[1].m_family[1] = &_arr[4];
+	return;
+}
+
+
+
 
 
 
@@ -217,10 +249,6 @@ UNIT(TestVecCreateSizeTenExtBlockTwo)
 	ASSERT_THAT(NULL != vec);
 	VecDestroy(&vec, NULL);
 END_UNIT
-
-
-
-
 
 
 
@@ -275,11 +303,6 @@ END_UNIT
 
 
 
-
-
-
-
-
 /*
 	VECTOR APPEND TESTS
 */
@@ -299,22 +322,19 @@ UNIT(TestVecAppendNULLVec)
 END_UNIT
 
 
-
-static void TestVecAppendNULLItem()
-{
+UNIT(TestVecAppendNULLItem)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 10;
 	size_t extBlock = 2;
 	vec = VecCreate(initSize, extBlock);
 	errResult = VecAppend(vec, NULL);
-	PrintErrResult("TestVecAppendNULLItem", errResult, ERR_OK);
+	ASSERT_THAT(errResult == ERR_OK);
 	VecDestroy(&vec, NULL);
-	return;
-}
+END_UNIT
 
-static void TestVecAppendOneItem()
-{
+
+UNIT(TestVecAppendOneItem)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 10;
@@ -329,14 +349,13 @@ static void TestVecAppendOneItem()
 	}
 	vec = VecCreate(initSize, extBlock);
 	errResult = VecAppend(vec, (void*)(arr + 25));
-	PrintErrResult("TestVecAppendOneItem", errResult, ERR_OK);
+	ASSERT_THAT(errResult == ERR_OK);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecAppendTwoItem()
-{
+
+UNIT(TestVecAppendTwoItem)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 10;
@@ -352,14 +371,13 @@ static void TestVecAppendTwoItem()
 	vec = VecCreate(initSize, extBlock);
 	VecAppend(vec, (void*)(arr + 25));
 	errResult = VecAppend(vec, (void*)(arr + 26));
-	PrintErrResult("TestVecAppendTwoItem", errResult, ERR_OK);
+	ASSERT_THAT(errResult == ERR_OK);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecAppendExtendBlock()
-{
+
+UNIT(TestVecAppendExtendBlock)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 1;
@@ -375,14 +393,13 @@ static void TestVecAppendExtendBlock()
 	vec = VecCreate(initSize, extBlock);
 	VecAppend(vec, (void*)(arr + 25));
 	errResult = VecAppend(vec, (void*)(arr + 26));
-	PrintErrResult("TestVecAppendExtendBlock", errResult, ERR_OK);
+	ASSERT_THAT(errResult == ERR_OK);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecAppendOverflow()
-{
+
+UNIT(TestVecAppendOverflow)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 1;
@@ -398,50 +415,13 @@ static void TestVecAppendOverflow()
 	vec = VecCreate(initSize, extBlock);
 	VecAppend(vec, (void*)(arr + 25));
 	errResult = VecAppend(vec, (void*)(arr + 26));
-	PrintErrResult("TestVecAppendOverflow", errResult, ERR_OVERFLOW);
+	ASSERT_THAT(errResult == ERR_OVERFLOW);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void InitPersArr(Person* _arr)
-{
-	size_t numOfPersons = 5;
-	size_t numOfFamily = 2;
-	size_t index;
-	size_t indexDealloc;
-	size_t indexFam;
-	char* names[] = {"Eyal\0", "Yodo\0", "Erez\0", "Eli\0", "Hana\0"};
-	size_t ages[] = {101, 999, 23, 21, 17};
-	for (index = 0; index < numOfPersons; ++index)
-	{
-		_arr[index].m_famSize = numOfFamily;
-		_arr[index].m_age = ages[index];
-		strcpy(_arr[index].m_name, names[index]);
-		_arr[index].m_family = malloc(numOfFamily * sizeof(Person));
-		if (NULL == _arr[index].m_family)
-		{
-			for (indexDealloc = index-1; indexDealloc > 0; --indexDealloc)
-			{
-				free(_arr[index].m_family);
-			}
-			free(_arr);
-			return;
-		}
-		for (indexFam = 0; indexFam < numOfFamily; ++indexFam)
-		{
-			_arr[index].m_family[indexFam] = &_arr[indexFam];
-		}
-	}
-	_arr[0].m_family[0] = &_arr[1];
-	_arr[0].m_family[1] = &_arr[2];
-	_arr[1].m_family[0] = &_arr[3];
-	_arr[1].m_family[1] = &_arr[4];
-	return;
-}
 
-static void TestVecAppendPersonsWithoutElementDestroy()
-{
+UNIT(TestVecAppendPersonsWithoutElementDestroy)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 10;
@@ -463,18 +443,17 @@ static void TestVecAppendPersonsWithoutElementDestroy()
 	VecAppend(vec, (void*)&arr[3]);
 	VecAppend(vec, (void*)&arr[4]);
 	errResult = VecGet(vec, 1, &itemRemoved);
-	PrintErrResult("TestVecAppendPersonsWithoutElementDestroy", errResult, ERR_OK);
+	ASSERT_THAT(errResult == ERR_OK);
 	for (index = 0; index < numOfPersons; ++index)
 	{
 		free(arr[index].m_family);
 	}
-	free(arr);
 	VecDestroy(&vec, NULL);
-	return;
-}
+	free(arr);
+END_UNIT
 
-static void TestVecAppendPersonsWithElementDestroy()
-{
+
+UNIT(TestVecAppendPersonsWithElementDestroy)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 10;
@@ -495,14 +474,9 @@ static void TestVecAppendPersonsWithElementDestroy()
 	VecAppend(vec, (void*)&arr[3]);
 	VecAppend(vec, (void*)&arr[4]);
 	errResult = VecGet(vec, 1, &itemRemoved);
-	PrintErrResult("TestVecAppendPersonsWithElementDestroy", errResult, ERR_OK);
-	VecDestroy(&vec, ElementDestroyPerson);
-	return;
-}
-
-
-
-
+	ASSERT_THAT(errResult == ERR_OK);
+	VecDestroy(&vec, NULL);
+END_UNIT
 
 
 
@@ -513,17 +487,15 @@ static void TestVecAppendPersonsWithElementDestroy()
 /*
 	VECTOR REMOVE TESTS
 */
-static void TestVecRemoveNULLVec()
-{
+UNIT(TestVecRemoveNULLVec)
 	ADTErr errResult;
 	void* itemRemoved;
 	errResult = VecRemove(NULL, &itemRemoved);
-	PrintErrResult("TestVecRemoveNULLVec", errResult, ERR_NOT_INITIALIZED);
-	return;
-}
+	ASSERT_THAT(errResult == ERR_NOT_INITIALIZED);
+END_UNIT
 
-static void TestVecRemoveNULLPValue()
-{
+
+UNIT(TestVecRemoveNULLPValue)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 10;
@@ -541,14 +513,13 @@ static void TestVecRemoveNULLPValue()
 	VecAppend(vec, (void*)(arr + 25));
 	VecRemove(vec, &itemRemoved);
 	errResult = VecRemove(vec, NULL);
-	PrintErrResult("TestVecRemoveNULLPValue", errResult, ERR_NOT_INITIALIZED);
+	ASSERT_THAT(errResult == ERR_NOT_INITIALIZED);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecRemoveOneItem()
-{
+
+UNIT(TestVecRemoveOneItem)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 10;
@@ -565,21 +536,13 @@ static void TestVecRemoveOneItem()
 	vec = VecCreate(initSize, extBlock);
 	VecAppend(vec, (void*)(arr + 25));
 	errResult = VecRemove(vec, &itemRemoved);
-	if (25 == *(int*)itemRemoved)
-	{
-		PrintErrResult("TestVecRemoveOneItem, Value CORRECT", errResult, ERR_OK);
-	}
-	else
-	{
-		PrintErrResult("TestVecRemoveOneItem, Value INCORRECT", errResult, ERR_OK);
-	}
+	ASSERT_THAT(25 == *(int*)itemRemoved);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecRemoveUnderflow()
-{
+
+UNIT(TestVecRemoveUnderflow)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 10;
@@ -597,14 +560,13 @@ static void TestVecRemoveUnderflow()
 	VecAppend(vec, (void*)(arr + 25));
 	VecRemove(vec, &itemRemoved);
 	errResult = VecRemove(vec, &itemRemoved);
-	PrintErrResult("TestVecRemoveUnderflow", errResult, ERR_UNDERFLOW);
+	ASSERT_THAT(errResult == ERR_UNDERFLOW);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecRemoveExtBlock()
-{
+
+UNIT(TestVecRemoveExtBlock)
 	Vector* vec;
 	ADTErr errResult;
 	size_t initSize = 1;
@@ -627,14 +589,10 @@ static void TestVecRemoveExtBlock()
 	VecRemove(vec, &itemRemoved);
 	VecRemove(vec, &itemRemoved);
 	errResult = VecRemove(vec, &itemRemoved);
-	PrintErrResult("TestVecRemoveExtBlock", errResult, ERR_OK);
+	ASSERT_THAT(errResult == ERR_OK);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
-
-
-
+END_UNIT
 
 
 
@@ -646,23 +604,14 @@ static void TestVecRemoveExtBlock()
 /*
 	VECTOR ITEMS NUM TESTS
 */
-static void TestVecSizeNULLVec()
-{
+UNIT(TestVecSizeNULLVec)
 	size_t result;
 	result = VecSize(NULL);
-	if (0 == result)
-	{
-		printf("PASS: TestVecSizeNULLVec\n");
-	}
-	else
-	{
-		printf("FAIL: TestVecSizeNULLVec\n");
-	}
-	return;
-}
+	ASSERT_THAT(0 == result);
+END_UNIT
 
-static void TestVecSizeTenItems()
-{
+
+UNIT(TestVecSizeTenItems)
 	Vector* vec;
 	size_t initSize = 10;
 	size_t extBlock = 2;
@@ -687,22 +636,10 @@ static void TestVecSizeTenItems()
 	VecAppend(vec, (void*)(arr + 25));
 	VecAppend(vec, (void*)(arr + 26));
 	numOfItems = VecSize(vec);
-	if (10 == numOfItems)
-	{
-		printf("PASS: TestVecSizeTenItems\n");
-	}
-	else
-	{
-		printf("FAIL: TestVecSizeTenItems\n");
-	}
+	ASSERT_THAT(10 == numOfItems);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
-
-
-
-
+END_UNIT
 
 
 
@@ -713,23 +650,14 @@ static void TestVecSizeTenItems()
 /*
 	VECTOR CAPACITY TESTS
 */
-static void TestVecCapacityNULLVec()
-{
+UNIT(TestVecCapacityNULLVec)
 	size_t capacity;
 	capacity = VecCapacity(NULL);
-	if (0 == capacity)
-	{
-		printf("PASS: TestVecCapacityNULLVec\n");
-	}
-	else
-	{
-		printf("FAIL: TestVecCapacityNULLVec\n");
-	}
-	return;
-}
+	ASSERT_THAT(0 == capacity);
+END_UNIT
 
-static void TestVecCapacityTenItems()
-{
+
+UNIT(TestVecCapacityTenItems)
 	Vector* vec;
 	size_t initSize = 10;
 	size_t extBlock = 2;
@@ -754,21 +682,13 @@ static void TestVecCapacityTenItems()
 	VecAppend(vec, (void*)(arr + 25));
 	VecAppend(vec, (void*)(arr + 26));
 	capacity = VecCapacity(vec);
-	if (10 == capacity)
-	{
-		printf("PASS: TestVecCapacityTenItems\n");
-	}
-	else
-	{
-		printf("FAIL: TestVecCapacityTenItems\n");
-	}
+	ASSERT_THAT(10 == capacity);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecCapacityExtUp()
-{
+
+UNIT(TestVecCapacityExtUp)
 	Vector* vec;
 	size_t initSize = 10;
 	size_t extBlock = 2;
@@ -795,21 +715,13 @@ static void TestVecCapacityExtUp()
 	VecAppend(vec, (void*)(arr + 5));
 	VecAppend(vec, (void*)(arr + 6));
 	capacity = VecCapacity(vec);
-	if (12 == capacity)
-	{
-		printf("PASS: TestVecCapacityExtUp\n");
-	}
-	else
-	{
-		printf("FAIL: TestVecCapacityExtUp\n");
-	}
+	ASSERT_THAT(12 == capacity);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecCapacityExtDown()
-{
+
+UNIT(TestVecCapacityExtDown)
 	Vector* vec;
 	size_t initSize = 10;
 	size_t extBlock = 2;
@@ -840,23 +752,10 @@ static void TestVecCapacityExtDown()
 	VecRemove(vec, &removedItem);
 	VecRemove(vec, &removedItem);
 	VecRemove(vec, &removedItem);
-	capacity = VecCapacity(vec);
-	if (10 == capacity)
-	{
-		printf("PASS: TestVecCapacityExtDown\n");
-	}
-	else
-	{
-		printf("FAIL: TestVecCapacityExtDown\n");
-	}
+	ASSERT_THAT(10 == capacity);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
-
-
-
-
+END_UNIT
 
 
 
@@ -867,17 +766,15 @@ static void TestVecCapacityExtDown()
 /*
 	VECTOR GET TESTS
 */
-static void TestVecGetNULLVec()
-{
+UNIT(TestVecGetNULLVec)
 	ADTErr errResult;
 	void* itemVal;
 	errResult = VecGet(NULL, 5, &itemVal);
-	PrintErrResult("TestVecGetNULLVec", errResult, ERR_NOT_INITIALIZED);
-	return;
-}
+	ASSERT_THAT(errResult == ERR_NOT_INITIALIZED);
+END_UNIT
 
-static void TestVecGetNULLPVal()
-{
+
+UNIT(TestVecGetNULLPVal)
 	ADTErr errResult;
 	Vector* vec;
 	size_t initSize = 10;
@@ -902,14 +799,13 @@ static void TestVecGetNULLPVal()
 	VecAppend(vec, (void*)(arr + 25));
 	VecAppend(vec, (void*)(arr + 49));
 	errResult = VecGet(vec, 10, NULL);
-	PrintErrResult("TestVecGetNULLPVal", errResult, ERR_NOT_INITIALIZED);
+	ASSERT_THAT(errResult == ERR_NOT_INITIALIZED);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecGetVal()
-{
+
+UNIT(TestVecGetVal)
 	Vector* vec;
 	size_t initSize = 10;
 	size_t extBlock = 2;
@@ -934,21 +830,13 @@ static void TestVecGetVal()
 	VecAppend(vec, (void*)(arr + 25));
 	VecAppend(vec, (void*)(arr + 49));
 	VecGet(vec, 10, &itemVal);
-	if (49 == *(int*)itemVal)
-	{
-		printf("PASS: TestVecGetVal\n");
-	}
-	else
-	{
-		printf("FAIL: TestVecGetVal\n");
-	}
+	ASSERT_THAT(49 == *(int*)itemVal);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
+END_UNIT
 
-static void TestVecGetWrongIndex()
-{
+
+UNIT(TestVecGetWrongIndex)
 	ADTErr errResult;
 	Vector* vec;
 	size_t initSize = 10;
@@ -974,15 +862,10 @@ static void TestVecGetWrongIndex()
 	VecAppend(vec, (void*)(arr + 25));
 	VecAppend(vec, (void*)(arr + 49));
 	errResult = VecGet(vec, 11, &itemVal);
-	PrintErrResult("TestVecGetWrongIndex", errResult, ERR_WRONG_INDEX);
+	ASSERT_THAT(errResult == ERR_WRONG_INDEX);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
-
-
-
-
+END_UNIT
 
 
 
@@ -993,17 +876,15 @@ static void TestVecGetWrongIndex()
 /*
 	VECTOR SET TESTS
 */
-static void TestVecSetNULLVec()
-{
+UNIT(TestVecSetNULLVec)
 	int itemVal = 10;
 	ADTErr errResult;
 	errResult = VecSet(NULL, 11, &itemVal);
-	PrintErrResult("TestVecSetNULLVec", errResult, ERR_NOT_INITIALIZED);
-	return;
-}
+	ASSERT_THAT(errResult == ERR_NOT_INITIALIZED);
+END_UNIT
 
-static void TestVecSetNULLValue()
-{
+
+UNIT(TestVecSetNULLValue)
 	Vector* vec;
 	size_t initSize = 10;
 	size_t extBlock = 2;
@@ -1028,247 +909,78 @@ static void TestVecSetNULLValue()
 	VecAppend(vec, (void*)(arr + 25));
 	VecAppend(vec, (void*)(arr + 49));
 	errResult = VecSet(vec, 8, NULL);
-	PrintErrResult("TestVecSetNULLValue", errResult, ERR_OK);
+	ASSERT_THAT(errResult == ERR_OK);
 	VecDestroy(&vec, NULL);
 	free(arr);
-	return;
-}
-
-static void TestVecSetVal()
-{
-	Vector* vec;
-	size_t initSize = 10;
-	size_t extBlock = 2;
-	size_t numOfInts = 50;
-	size_t index;
-	int* arr;
-	int item = 666;
-	void* itemVal;
-	arr = malloc(numOfInts * sizeof(int));
-	for (index = 0; index < numOfInts; ++index)
-	{
-		arr[index] = (int)index;
-	}
-	vec = VecCreate(initSize, extBlock);
-	VecAppend(vec, (void*)(arr + 25));
-	VecAppend(vec, (void*)(arr + 26));
-	VecAppend(vec, (void*)(arr + 27));
-	VecAppend(vec, (void*)(arr + 25));
-	VecAppend(vec, (void*)(arr + 26));
-	VecAppend(vec, (void*)(arr + 25));
-	VecAppend(vec, (void*)(arr + 26));
-	VecAppend(vec, (void*)(arr + 27));
-	VecAppend(vec, (void*)(arr + 25));
-	VecAppend(vec, (void*)(arr + 49));
-	VecSet(vec, 9, (void*)&item);
-	VecGet(vec, 9, &itemVal);
-	if (666 == *(int*)itemVal)
-	{
-		printf("PASS: TestVecSetVal\n");
-	}
-	else
-	{
-		printf("FAIL: TestVecSetVal\n");
-	}
-	VecDestroy(&vec, NULL);
-	free(arr);
-	return;
-}
-
-static void TestVecSetWrongIndex()
-{
-	ADTErr errResult;
-	Vector* vec;
-	size_t initSize = 10;
-	size_t extBlock = 2;
-	size_t numOfInts = 50;
-	size_t index;
-	int* arr;
-	void* itemVal;
-	arr = malloc(numOfInts * sizeof(int));
-	for (index = 0; index < numOfInts; ++index)
-	{
-		arr[index] = (int)index;
-	}
-	vec = VecCreate(initSize, extBlock);
-	VecAppend(vec, (void*)(arr + 25));
-	VecAppend(vec, (void*)(arr + 26));
-	VecAppend(vec, (void*)(arr + 27));
-	VecAppend(vec, (void*)(arr + 25));
-	VecAppend(vec, (void*)(arr + 26));
-	VecAppend(vec, (void*)(arr + 25));
-	VecAppend(vec, (void*)(arr + 26));
-	VecAppend(vec, (void*)(arr + 27));
-	VecAppend(vec, (void*)(arr + 25));
-	VecAppend(vec, (void*)(arr + 49));
-	errResult = VecSet(vec, 11, &itemVal);
-	PrintErrResult("TestVecSetWrongIndex", errResult, ERR_WRONG_INDEX);
-	VecDestroy(&vec, NULL);
-	free(arr);
-	return;
-}
+END_UNIT
 
 
 
 
-
-
-
-
-
-
-
-/*
-	VECTOR ELEMENT ACTION TESTS
-*/
-static void TestVectorElementNULLVec()
-{
-	size_t actionCalledCount;
-	char yodoString[] = "YODO";
-	actionCalledCount = VecForEach(NULL, (VectorElementAction)VectorElementPersonYodofy, yodoString);
-	if (0 == actionCalledCount)
-	{
-		printf("PASS: TestVectorElementNULLVec\n");
-	}
-	else
-	{
-		printf("FAIL: TestVectorElementNULLVec\n");
-	}
-	return;
-}
-
-static void TestVectorElementNULLFunc()
-{
-	Vector* vec;
-	size_t initSize = 10;
-	size_t extBlock = 2;
-	size_t numOfPersons = 5;
-	Person* arr;
-	size_t actionCalledCount = 0;
-	char yodoString[] = "YODO";
-	arr = malloc(numOfPersons * sizeof(Person));
-	if (NULL == arr)
-	{
-		return;
-	}
-	InitPersArr(arr);
-	vec = VecCreate(initSize, extBlock);
-	VecAppend(vec, (void*)&arr[0]);
-	VecAppend(vec, (void*)&arr[1]);
-	VecAppend(vec, (void*)&arr[2]);
-	VecAppend(vec, (void*)&arr[3]);
-	VecAppend(vec, (void*)&arr[4]);
-	actionCalledCount = VecForEach(vec, NULL, yodoString);
-	if (0 == actionCalledCount)
-	{
-		printf("PASS: TestVectorElementNULLFunc\n");
-	}
-	else
-	{
-		printf("FAIL: TestVectorElementNULLFunc\n");
-	}
-	VecDestroy(&vec, ElementDestroyPerson);
-	return;
-}
-
-static void TestVectorElementPersonYodofy()
-{
-	Vector* vec;
-	size_t initSize = 10;
-	size_t extBlock = 2;
-	size_t numOfPersons = 5;
-	Person* arr;
-	size_t actionCalledCount = 0;
-	char yodoString[] = "YODO";
-	arr = malloc(numOfPersons * sizeof(Person));
-	if (NULL == arr)
-	{
-		return;
-	}
-	InitPersArr(arr);
-	vec = VecCreate(initSize, extBlock);
-	VecAppend(vec, (void*)&arr[0]);
-	VecAppend(vec, (void*)&arr[1]);
-	VecAppend(vec, (void*)&arr[2]);
-	VecAppend(vec, (void*)&arr[3]);
-	VecAppend(vec, (void*)&arr[4]);
-	actionCalledCount = VecForEach(vec, (VectorElementAction) VectorElementPersonYodofy, yodoString);
-	VecForEach(vec, (VectorElementAction) VectorElementPersonPrint, NULL);
-	if (5 == actionCalledCount)
-	{
-		printf("PASS: TestVectorElementPersonYodofy\n");
-	}
-	else
-	{
-		printf("FAIL: TestVectorElementPersonYodofy\n");
-	}
-	VecDestroy(&vec, ElementDestroyPerson);
-	return;
-}
 
 
 
 
 
 TEST_SUITE(framework test)
+
 	TEST(TestVecCreateZeroSizeZeroExtBlock)
 	TEST(TestVecCreateSizeZero)
 	TEST(TestVecCreateExtBlockZero)
 	TEST(TestVecCreateSizeTenExtBlockTwo)
+
 	TEST(TestVecDestroyWithOutElementDestroy)
 	TEST(TestVecDestroyWithElementDestroy)
 	TEST(TestVecDestroyDoubleDestroy)
+
 	TEST(TestVecAppendNULLVec)
+	TEST(TestVecAppendNULLItem)
+	TEST(TestVecAppendOneItem)
+	TEST(TestVecAppendTwoItem)
+	TEST(TestVecAppendExtendBlock)
+	TEST(TestVecAppendOverflow)
+	TEST(TestVecAppendPersonsWithoutElementDestroy)
+	TEST(TestVecAppendPersonsWithElementDestroy)
+
+	TEST(TestVecRemoveNULLVec)
+	TEST(TestVecRemoveNULLPValue)
+	TEST(TestVecRemoveOneItem)
+	TEST(TestVecRemoveUnderflow)
+	TEST(TestVecRemoveExtBlock)
+
+	TEST(TestVecRemoveExtBlock)
+	TEST(TestVecSizeTenItems)
+
+	TEST(TestVecCapacityNULLVec)
+	TEST(TestVecCapacityTenItems)
+	TEST(TestVecCapacityExtUp)
+
+	TEST(TestVecGetNULLVec)
+	TEST(TestVecGetNULLPVal)
+	TEST(TestVecGetVal)
+	TEST(TestVecGetWrongIndex)
+
+	TEST(TestVecSetNULLVec)
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+	TEST()
+
+
+
+
 END_SUITE
 
-
-
-
-
-
-/*
-int main()
-{
-	printf("\n");
-	TestVecCreateZeroSizeZeroExtBlock();
-	TestVecCreateSizeZero();
-	TestVecCreateExtBlockZero();
-	TestVecCreateSizeTenExtBlockTwo();
-	TestVecDestroyWithOutElementDestroy();
-	TestVecDestroyWithElementDestroy();
-	TestVecDestroyDoubleDestroy();
-	TestVecAppendNULLVec();
-	TestVecAppendNULLItem();
-	TestVecAppendOneItem();
-	TestVecAppendTwoItem();
-	TestVecAppendExtendBlock();
-	TestVecAppendOverflow();
-	TestVecAppendPersonsWithoutElementDestroy();
-	TestVecAppendPersonsWithElementDestroy();
-	TestVecRemoveNULLVec();
-	TestVecRemoveNULLPValue();
-	TestVecRemoveOneItem();
-	TestVecRemoveUnderflow();
-	TestVecRemoveExtBlock();
-	TestVecSizeNULLVec();
-	TestVecSizeTenItems();
-	TestVecCapacityNULLVec();
-	TestVecCapacityTenItems();
-	TestVecCapacityExtUp();
-	TestVecCapacityExtDown();
-	TestVecGetNULLVec();
-	TestVecGetNULLPVal();
-	TestVecGetVal();
-	TestVecGetWrongIndex();
-	TestVecSetNULLVec();
-	TestVecSetNULLValue();
-	TestVecSetVal();
-	TestVecSetWrongIndex();
-	TestVectorElementNULLVec();
-	TestVectorElementNULLFunc();
-	TestVectorElementPersonYodofy();
-	printf("\n");
-	return 0;
-}
-*/
 
