@@ -20,14 +20,25 @@ struct Log
 	int m_pid;
 };
 
-/*
-TODO: Static Function Description
-TODO: add declaration to top of file so can move this underenath
-*/
-static void LogClose()
+
+static void LogClose();
+void LogDestroy(Log** _log);
+static Log* LogCreate(char* _configName);
+
+
+Log* GetLog(char* _configName)
 {
-	LogDestroy(&g_log);
-	return;
+	if (NULL == _configName)
+	{
+		return NULL;
+	}
+	
+	if (NULL == g_log)
+	{
+		g_log = LogCreate(_configName);
+	}
+	
+	return g_log;
 }
 
 static Log* LogCreate(char* _configName)
@@ -54,7 +65,15 @@ static Log* LogCreate(char* _configName)
 }
 
 
-
+/*
+TODO: Static Function Description
+TODO: add declaration to top of file so can move this underenath
+*/
+static void LogClose()
+{
+	LogDestroy(&g_log);
+	return;
+}
 
 void LogDestroy(Log** _log)
 {
@@ -63,8 +82,8 @@ void LogDestroy(Log** _log)
 		return;
 	}
 	
-	fclose(*_log->m_log);
-	free(*_log)
+	fclose((*_log)->m_log);
+	free(*_log);
 	*_log = NULL;
 	return;
 }
@@ -77,14 +96,7 @@ void LogDestroy(Log** _log)
 
 
 
-Log* GetLog(char* _configName)
-{
-	if (NULL == g_log)
-	{
-		g_log = LogCreate();
-	}
-	return g_log;
-}
+
 
 
 
@@ -125,7 +137,7 @@ void LogWrite(Log* _log, char* _fileName, const char* _funcName, int _lineNum, c
 	}
 	
 	GetTime(timeStr);
-	fprintf(_log, "%s %d %lu %c %s %s@%s:%d %s\n", timeStr, pid, tid, _level, _moduleName, _funcName, _fileName, _lineNum, _message);
+	fprintf(_log->m_log, "%s %d %lu %c %s %s@%s:%d %s\n", timeStr, pid, tid, _level, _moduleName, _funcName, _fileName, _lineNum, _message);
 	return;
 }
 

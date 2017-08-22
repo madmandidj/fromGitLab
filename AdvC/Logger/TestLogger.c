@@ -5,7 +5,7 @@
 int main()
 {
 	Log* log;
-	log = GetLog();
+	log = GetLog("LConfig.txt");
 	WRITELOG(log, 'I', "LogMod", "TestMsg");
 	return 0;
 }

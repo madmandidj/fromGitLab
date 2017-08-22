@@ -27,10 +27,12 @@ void GetConfig(char* _configFile, Configger* _configger)
 	{
 		return;
 	}
-	
+	/*
+	TODO: put fgets in while condition
+	*/
 	while(!feof(fdConf))
 	{
-		fgets(line, 128, fdConf);
+/*		fgets(line, 128, fdConf);*/
 		sscanf(line, "[%[^ =] = %[^\n]", tokName, tokVal);
 		if (!strcmp(tokName, "Level"))
 		{
@@ -38,11 +40,6 @@ void GetConfig(char* _configFile, Configger* _configger)
 			{
 				_configger->m_level = 0;
 			}
-			// if (tokVal == LOG_TRACE)
-			// {
-			// 	_configger->m_level = 'T';
-			// }
-			
 		}
 		else if (!strcmp(tokName, "File"))
 		{
