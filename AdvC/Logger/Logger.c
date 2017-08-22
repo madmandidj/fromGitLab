@@ -16,10 +16,19 @@ Log* g_log;
 struct Log
 {
 	FILE* m_log;
-	LogLevel m_level;
+	char m_level;
 	int m_pid;
 };
 
+/*
+TODO: Static Function Description
+TODO: add declaration to top of file so can move this underenath
+*/
+static void LogClose()
+{
+	LogDestroy(&g_log);
+	return;
+}
 
 static Log* LogCreate(char* _configName)
 {
@@ -28,9 +37,17 @@ static Log* LogCreate(char* _configName)
 	{
 		return NULL;
 	}
-	ReadConfig(_configName, &configger);
-	g_log->m_log = fopen(configger->m_logName, "a");
-	g_log->m_level = configger->m_level;
+	GetConfig(_configName, &configger);
+	g_log->m_log = fopen(configger.m_logName, "a");
+	switch (configger.m_level)
+	{
+		case 0:
+			g_log->m_level = 'T';
+			break;
+		default:
+			break;
+	}
+	// g_log->m_level = configger.m_level;
 	g_log->m_pid = getpid();
 	atexit(LogClose);
 	return g_log;
@@ -55,14 +72,7 @@ void LogDestroy(Log** _log)
 
 
 
-/*
-TODO: Static Function Description
-*/
-static void LogClose()
-{
-	LogDestroy(&g_log);
-	return;
-}
+
 
 
 

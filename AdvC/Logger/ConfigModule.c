@@ -10,7 +10,9 @@ void GetConfig(char* _configFile, Configger* _configger)
 	char tokName[64];
 	char tokVal[64];
 	char hashSymbol;
-	
+	// LogLevel levels[9] ={LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR, LOG_CRITICAL, LOG_SEVERE, LOG_FATAL, LOG_NONE};
+	size_t index;
+
 	fdConf = fopen(_configFile, "r");
 	
 	
@@ -32,7 +34,15 @@ void GetConfig(char* _configFile, Configger* _configger)
 		sscanf(line, "[%[^ =] = %[^\n]", tokName, tokVal);
 		if (!strcmp(tokName, "Level"))
 		{
-			strcpy(_configger->m_level, tokVal);
+			if (!strcmp(tokVal, "LOG_TRACE"))
+			{
+				_configger->m_level = 0;
+			}
+			// if (tokVal == LOG_TRACE)
+			// {
+			// 	_configger->m_level = 'T';
+			// }
+			
 		}
 		else if (!strcmp(tokName, "File"))
 		{

@@ -5,7 +5,7 @@
 
 typedef struct Configger
 {
-	char m_level[128];
+	int m_level;
 	char m_logName[128];
 }Configger;
 
