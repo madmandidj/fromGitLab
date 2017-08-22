@@ -86,89 +86,6 @@ int	VectorElementPersonYodofy(Person* _prs, size_t _index, char* _context)
 
 
 /*
-	ADTERR PRINT FUNCTION
-*/
-static void PrintErrResult(char* _testName, ADTErr _err, ADTErr _passErr)
-{
-    char errString[64];
-    if (_err == _passErr)
-    {
-        printf("PASS: %s\n", _testName);
-    }
-    else
-    {
-        if (_err == ERR_OK)
-        {
-            strcpy(errString, "ERR_OK");
-        }
-        else if (_err == ERR_GENERAL)
-        {
-           strcpy(errString, "ERR_GENERAL");
-        }
-        else if (_err == ERR_NOT_INITIALIZED)
-        {
-           strcpy(errString, "ERR_NOT_INITIALIZED");
-        }
-        else if (_err == ERR_ALLOCATION_FAILED)
-        {
-           strcpy(errString, "ERR_ALLOCATION_FAILED");
-        }
-        else if (_err == ERR_REALLOCATION_FAILED)
-        {
-           strcpy(errString, "ERR_REALLOCATION_FAILED"); 
-        }
-        else if (_err == ERR_UNDERFLOW)
-        {
-           strcpy(errString, "ERR_UNDERFLOW"); 
-        }
-        else if (_err == ERR_OVERFLOW)
-        {
-           strcpy(errString, "ERR_OVERFLOW");
-        }
-        else if (_err == ERR_WRONG_INDEX)
-        {
-           strcpy(errString, "ERR_WRONG_INDEX"); 
-        }
-        else if (_err == ERR_EMPTY)
-        {
-           strcpy(errString, "ERR_EMPTY"); 
-        }
-        else if (_err == ERR_FULL)
-        {
-           strcpy(errString, "ERR_FULL"); 
-        }
-        else if (_err == ERR_EMPTY_LIST)
-        {
-           strcpy(errString, "ERR_EMPTY_LIST"); 
-        }
-        else if (_err == ERR_EMPTY_HEAP)
-        {
-           strcpy(errString, "ERR_EMPTY_HEAP"); 
-        }
-		else if (_err == ERR_INVALID_ITEMSIZE)
-        {
-           strcpy(errString, "ERR_INVALID_ITEMSIZE"); 
-        }
-		else if (_err == ERR_ZERO_ITEMS)
-        {
-           strcpy(errString, "ERR_ZERO_ITEMS"); 
-        }
-		else
-		{
-			strcpy(errString, "ERR_UNDEFINED");
-		}
-        printf("FAIL: %s %s\n", _testName, errString);
-    }
-    return;
-}
-
-
-
-
-
-
-
-/*
 	INIT PERSON STRUCT ARRAY FUNCTION
 */
 static void InitPersArr(Person* _arr)
@@ -431,10 +348,12 @@ UNIT(TestVecAppendPersonsWithoutElementDestroy)
 	Person* arr;
 	void* itemRemoved;
 	arr = malloc(numOfPersons * sizeof(Person));
+	/*
 	if (NULL == arr)
 	{
 		return;
 	}
+	*/
 	InitPersArr(arr);
 	vec = VecCreate(initSize, extBlock);
 	VecAppend(vec, (void*)&arr[0]);
@@ -462,10 +381,12 @@ UNIT(TestVecAppendPersonsWithElementDestroy)
 	Person* arr;
 	void* itemRemoved;
 	arr = malloc(numOfPersons * sizeof(Person));
+	/*
 	if (NULL == arr)
 	{
 		return;
 	}
+	*/
 	InitPersArr(arr);
 	vec = VecCreate(initSize, extBlock);
 	VecAppend(vec, (void*)&arr[0]);
@@ -521,7 +442,6 @@ END_UNIT
 
 UNIT(TestVecRemoveOneItem)
 	Vector* vec;
-	ADTErr errResult;
 	size_t initSize = 10;
 	size_t extBlock = 2;
 	size_t numOfInts = 50;
@@ -535,7 +455,7 @@ UNIT(TestVecRemoveOneItem)
 	}
 	vec = VecCreate(initSize, extBlock);
 	VecAppend(vec, (void*)(arr + 25));
-	errResult = VecRemove(vec, &itemRemoved);
+	VecRemove(vec, &itemRemoved);
 	ASSERT_THAT(25 == *(int*)itemRemoved);
 	VecDestroy(&vec, NULL);
 	free(arr);
@@ -752,6 +672,7 @@ UNIT(TestVecCapacityExtDown)
 	VecRemove(vec, &removedItem);
 	VecRemove(vec, &removedItem);
 	VecRemove(vec, &removedItem);
+	capacity = VecCapacity(vec);
 	ASSERT_THAT(10 == capacity);
 	VecDestroy(&vec, NULL);
 	free(arr);
@@ -954,6 +875,7 @@ TEST_SUITE(framework test)
 	TEST(TestVecCapacityNULLVec)
 	TEST(TestVecCapacityTenItems)
 	TEST(TestVecCapacityExtUp)
+	TEST(TestVecCapacityExtDown)
 
 	TEST(TestVecGetNULLVec)
 	TEST(TestVecGetNULLPVal)
@@ -961,6 +883,7 @@ TEST_SUITE(framework test)
 	TEST(TestVecGetWrongIndex)
 
 	TEST(TestVecSetNULLVec)
+	/*
 	TEST()
 	TEST()
 	TEST()
@@ -977,7 +900,7 @@ TEST_SUITE(framework test)
 	TEST()
 	TEST()
 	TEST()
-
+	*/
 
 
 

@@ -12,4 +12,4 @@ GenericVector.o: GenericVector.c ../../inc/ADTDefs.h ../../inc/GenericVector.h
 	gcc -Wall -fPIC -c *.c -I ../../inc
 
 clean:
-	rm testVector.out GenericVector.o TESTGenericVector.o ../../lib/libVector.so.1.0 ../../lib/libVector.so.1
+	rm testVector.out GenericVector.o ../../lib/libVector.so.1.0 ../../lib/libVector.so.1
