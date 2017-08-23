@@ -836,6 +836,144 @@ UNIT(TestVecSetNULLValue)
 END_UNIT
 
 
+UNIT(TestVecSetVal)
+	Vector* vec;
+	size_t initSize = 10;
+	size_t extBlock = 2;
+	size_t numOfInts = 50;
+	size_t index;
+	int* arr;
+	int item = 666;
+	void* itemVal;
+	arr = malloc(numOfInts * sizeof(int));
+	for (index = 0; index < numOfInts; ++index)
+	{
+		arr[index] = (int)index;
+	}
+	vec = VecCreate(initSize, extBlock);
+	VecAppend(vec, (void*)(arr + 25));
+	VecAppend(vec, (void*)(arr + 26));
+	VecAppend(vec, (void*)(arr + 27));
+	VecAppend(vec, (void*)(arr + 25));
+	VecAppend(vec, (void*)(arr + 26));
+	VecAppend(vec, (void*)(arr + 25));
+	VecAppend(vec, (void*)(arr + 26));
+	VecAppend(vec, (void*)(arr + 27));
+	VecAppend(vec, (void*)(arr + 25));
+	VecAppend(vec, (void*)(arr + 49));
+	VecSet(vec, 9, (void*)&item);
+	VecGet(vec, 9, &itemVal);
+	ASSERT_THAT(666 == *(int*)itemVal);
+	VecDestroy(&vec, NULL);
+	free(arr);
+END_UNIT
+
+
+UNIT(TestVecSetWrongIndex)
+	ADTErr errResult;
+	Vector* vec;
+	size_t initSize = 10;
+	size_t extBlock = 2;
+	size_t numOfInts = 50;
+	size_t index;
+	int* arr;
+	void* itemVal;
+	arr = malloc(numOfInts * sizeof(int));
+	for (index = 0; index < numOfInts; ++index)
+	{
+		arr[index] = (int)index;
+	}
+	vec = VecCreate(initSize, extBlock);
+	VecAppend(vec, (void*)(arr + 25));
+	VecAppend(vec, (void*)(arr + 26));
+	VecAppend(vec, (void*)(arr + 27));
+	VecAppend(vec, (void*)(arr + 25));
+	VecAppend(vec, (void*)(arr + 26));
+	VecAppend(vec, (void*)(arr + 25));
+	VecAppend(vec, (void*)(arr + 26));
+	VecAppend(vec, (void*)(arr + 27));
+	VecAppend(vec, (void*)(arr + 25));
+	VecAppend(vec, (void*)(arr + 49));
+	errResult = VecSet(vec, 11, &itemVal);
+	ASSERT_THAT(errResult == ERR_WRONG_INDEX);
+	VecDestroy(&vec, NULL);
+	free(arr);
+END_UNIT
+
+
+
+
+
+
+
+/*
+	VECTOR ELEMENT ACTION TESTS
+*/
+UNIT(TestVectorElementNULLVec)
+	size_t actionCalledCount;
+	char yodoString[] = "YODO";
+	actionCalledCount = VecForEach(NULL, (VectorElementAction)VectorElementPersonYodofy, yodoString);
+	ASSERT_THAT(0 == actionCalledCount);
+END_UNIT
+
+
+UNIT(TestVectorElementNULLFunc)
+	Vector* vec;
+	size_t initSize = 10;
+	size_t extBlock = 2;
+	size_t numOfPersons = 5;
+	Person* arr;
+	size_t actionCalledCount = 0;
+	char yodoString[] = "YODO";
+	arr = malloc(numOfPersons * sizeof(Person));
+	/*
+	if (NULL == arr)
+	{
+		return;
+	}
+	*/
+	InitPersArr(arr);
+	vec = VecCreate(initSize, extBlock);
+	VecAppend(vec, (void*)&arr[0]);
+	VecAppend(vec, (void*)&arr[1]);
+	VecAppend(vec, (void*)&arr[2]);
+	VecAppend(vec, (void*)&arr[3]);
+	VecAppend(vec, (void*)&arr[4]);
+	actionCalledCount = VecForEach(vec, NULL, yodoString);
+	ASSERT_THAT(0 == actionCalledCount);
+	VecDestroy(&vec, ElementDestroyPerson);
+END_UNIT
+
+
+UNIT(TestVectorElementPersonYodofy)
+	Vector* vec;
+	size_t initSize = 10;
+	size_t extBlock = 2;
+	size_t numOfPersons = 5;
+	Person* arr;
+	size_t actionCalledCount = 0;
+	char yodoString[] = "YODO";
+	arr = malloc(numOfPersons * sizeof(Person));
+	/*
+	if (NULL == arr)
+	{
+		return;
+	}
+	*/
+	InitPersArr(arr);
+	vec = VecCreate(initSize, extBlock);
+	VecAppend(vec, (void*)&arr[0]);
+	VecAppend(vec, (void*)&arr[1]);
+	VecAppend(vec, (void*)&arr[2]);
+	VecAppend(vec, (void*)&arr[3]);
+	VecAppend(vec, (void*)&arr[4]);
+	actionCalledCount = VecForEach(vec, (VectorElementAction) VectorElementPersonYodofy, yodoString);
+	VecForEach(vec, (VectorElementAction) VectorElementPersonPrint, NULL);
+	ASSERT_THAT(5 == actionCalledCount);
+	VecDestroy(&vec, ElementDestroyPerson);
+END_UNIT
+
+
 
 
 
@@ -883,26 +1021,13 @@ TEST_SUITE(framework test)
 	TEST(TestVecGetWrongIndex)
 
 	TEST(TestVecSetNULLVec)
-	/*
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	TEST()
-	*/
-
-
+	TEST(TestVecSetNULLValue)
+	TEST(TestVecSetVal)
+	TEST(TestVecSetWrongIndex)
+	
+	TEST(TestVectorElementNULLVec)
+	TEST(TestVectorElementNULLFunc)
+	TEST(TestVectorElementPersonYodofy)
 
 END_SUITE
 

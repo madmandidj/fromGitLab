@@ -15,11 +15,6 @@ Modified by:	Eyal Alon
 #define TRUE 1
 #define FALSE 0
 
-/* 
-TODO: magic num should be used as specific identifier for vector, so can be used along with NULL checks. use address e.g.: 0x0
-Each data structure should have different magic num
-TODO: cast result of malloc() and realloc() appropriately
-*/
 
 struct Vector{
     void** 	m_items;			/* Void* array to hold generic item pointers */
