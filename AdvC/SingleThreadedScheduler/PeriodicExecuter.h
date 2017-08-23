@@ -5,10 +5,6 @@
 typedef int (*TaskFunction) (void* _context); 
 
 
-/**
- * @brief:
- * @openissues:	what is name? how do u actually use _clck_id?
- */
 PeriodicExecutor* PeriodicExecutorCreate(const char* _name, clockid_t ​_clk_id);
 
 void PeriodicExecutorDestroy(PeriodicExecutor* _executor);
