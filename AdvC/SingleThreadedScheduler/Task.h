@@ -1,16 +1,18 @@
 #ifndef __TASK_H__
 #define __TASK_H__
 
-typedef struct Task Task
+#include <time.h>
 
+typedef struct Task Task;
+typedef int (*TaskFunction)(void* _context);
 
-Task* TaskCreate(Task _task, void* _context, size_t _period_ms, const clockid_t m_clockID);
+Task* TaskCreate(TaskFunction _taskFunc, void* _context, int _periodMillis, const clockid_t _clockID);
 
 void TaskDestroy(Task* _task);
 
-void TaskCalculateNext(Task* _Task, const clockid_t m_clockID);
+void TaskGetNextRunTime(Task* _task, const clockid_t _clockID);
 
-int	TaskExecute(Task* _task);
+int	TaskExecute(Task* _task, const clockid_t _clockID);
 
 int	TaskCompare(Task* _task1, Task* _task2);
 

@@ -1,19 +1,23 @@
 #ifndef __MYTIME_H__
 #define __MYTIME_H__
 
+#include <time.h>
+
 typedef struct Time Time;
 
-Time* TimeCreate(int _milliSecs); /* better to save here as usec / nsec ?? */
+Time* TimeCreate(); 
 
 void TimeDestroy(Time* _time);
 
-void TimeGetCurrent(const clockid_t _clockID, Time* _time);
+void TimeSetPeriod(Time* _time, int _milliSecs);
+
+void TimeAdd(Time* _result, const Time* _added);
 
 int	TimeCompare(const Time* _time1, const Time* _time2);
 
-void TimeSleepUntil(const Time* _time);
+void TimeGetCurrent(Time* _time, const clockid_t _clockID);
 
-void TimeAdd(Time* _result, const Time* _added);
+void TimeSleepUntil(const Time* _time, const clockid_t _clockID);
 
 
 #endif /* #ifndef __MYTIME_H__ */

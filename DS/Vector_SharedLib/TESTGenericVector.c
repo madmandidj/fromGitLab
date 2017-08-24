@@ -981,7 +981,7 @@ END_UNIT
 
 
 
-TEST_SUITE(framework test)
+TEST_SUITE(Generic Vector)
 
 	TEST(TestVecCreateZeroSizeZeroExtBlock)
 	TEST(TestVecCreateSizeZero)

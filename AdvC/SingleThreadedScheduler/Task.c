@@ -1,94 +1,100 @@
+
 #include "Task.h"
+#include "MyTime.h"
+#include <stdlib.h>
 
 struct Task
 {
 	TaskFunction	m_taskFunc;
-	void*		m_context;
-	Time		m_nextTime;
-	Time		m_interval;
-	/* TODO: Finish time needed here? if not, then calculate nextTime immediately upon end of execution */
+	void*			m_context;
+	Time*			m_nextRunTime;
+	Time*			m_runPeriod;
 };
 
 
-Task* TaskCreate(Task _task, void* _context, size_t _period_ms, const clockid_t m_clockID)
-{
-	/*
-	
-	Check valid params (TODO: What is minimum period possible?)
-	
-	Create task
-	check create success
-	
-	set m_taskFunc
-	
-	set m_context
-	
-	calculate period in usec
-	create
-	set m_interval
-	
-	call TaskCalculateNext(), place into m_nextTime
-	
-	return Task*
+Task* TaskCreate(TaskFunction _taskFunc, void* _context, int _periodMillis, const clockid_t _clockID)
+{	
+	Task* task;	
+	Time* timePeriod;
 		
-	*/
+	if (!_taskFunc)
+	{
+		return NULL;
+	}
+	
+	if (!(task = malloc(sizeof(Task))))
+	{
+		return NULL;
+	}
+	
+	task->m_taskFunc = _taskFunc;
+	task->m_context = _context;
+	
+	if (!(task->m_runPeriod = TimeCreate()))
+	{
+		return NULL;
+	}
+	TimeSetPeriod(task->m_runPeriod, _periodMillis);
+	
+	if (!(task->m_nextRunTime = TimeCreate()))
+	{
+		return NULL;
+	}
+	TaskGetNextRunTime(task, _clockID);
+	
+	return task;
 }
 
 
 void TaskDestroy(Task* _task)
 {
-	/*
+	if (!_task)
+	{
+		return;
+	}
 	
-	check valid params
+	TimeDestroy(_task->m_runPeriod);
+	TimeDestroy(_task->m_nextRunTime);
+	free(_task);
 	
-	free(_task)
-	
-	return
-	*/
+	return;
 }
 
 
-void TaskCalculateNext(Task* _Task, const clockid_t m_clockID)
+void TaskGetNextRunTime(Task* _task, const clockid_t _clockID)
 {
-	/*
+	if (!_task)
+	{
+		return;
+	}
 	
-	check valid param
+	TimeGetCurrent(_task->m_nextRunTime, CLOCK_REALTIME);
+	TimeAdd(_task->m_nextRunTime, _task->m_runPeriod);
 	
-	TimeAdd(last finish time, interval)
-	
-	return
-	
-	*/
+	return;
 }
 
 
-int	TaskExecute(Task* _task)
+int	TaskExecute(Task* _task, const clockid_t _clockID)
 {
-	/*
+	if (!_task)
+	{
+		return 1;
+	}
 	
-	check valid param
-	
-	call task function
-	
-	TaskCalculateNext() (TODO: should this be done here)
-	
-	return TRUE if another execution needed, FALSE if not
-	
-	*/
+	TimeSleepUntil(_task->m_nextRunTime, _clockID);
+	return _task->m_taskFunc(_task->m_context);	
 }
 
 
 int	TaskCompare(Task* _task1, Task* _task2)
 {
-	/*
+	if (!_task1 || !_task2)
+	{
+		return -1;
+	}
 	
-	check valid params
-	
-	TimeCompare(nextTime1, nextTime2)
-	
-	returns TRUE if nextTime1 < nextTime2, FALSE if not
-	
-	*/
+	return TimeCompare(_task1->m_nextRunTime, _task2->m_nextRunTime);
 }
 
 
