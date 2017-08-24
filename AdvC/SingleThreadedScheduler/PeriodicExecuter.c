@@ -7,11 +7,11 @@ typedef Heap PriorityQueue;
 typedef struct PeriodicExecutor
 {
 	PriorityQueue*	m_priorityQ;
-	size_t			m_runCycles;
+	size_t			m_runCycles; /* TODO: is redundant? look at PErun()  */
 	int				m_pauseRequest;
 	const char*		m_name;
 	clockid_t		m_clockID;
-	/* add magic num? */
+	/* TODO: add magic num? */
 };
 
 
@@ -19,12 +19,12 @@ PeriodicExecutor* PeriodicExecutorCreate(const char* _name, clockid_t ​_clk_id
 {
 	/*
 	
-	check valid param (is _name mandatory?)
+	check valid param (TODO: is _name mandatory?)
 	
 	create periodic executer
 	check create success
 	
-	create priority queue
+	create priority queue (TODO: HeapBuild with TaskCompare as parameter?)
 	check create success
 	
 	set runCycles 0
@@ -46,7 +46,7 @@ void PeriodicExecutorDestroy(PeriodicExecutor* _executor)
 	
 	Destroy Time objects
 	Destroy Tasks
-	Destroy Priority Queue (can time and tasks be destroyed here as well?)
+	Destroy Priority Queue (TODO: can time and tasks be destroyed here as well? ANSWER: probably not)
 	Destroy Periodic executer
 	
 	Destroy 
@@ -74,6 +74,16 @@ size_t PeriodicExecutorRun(PeriodicExecutor* _executor)
 {
 	/*
 	
+	check valid param
+	
+	while PQ not empty
+		TaskExecute
+		increment run cycles count
+		
+		if pauseRequest
+			PeriodicExecutorPause
+	
+	return run cycles count
 	*/
 }
 
@@ -81,7 +91,14 @@ size_t PeriodicExecutorRun(PeriodicExecutor* _executor)
 size_t PeriodicExecutorPause(PeriodicExecutor* _executor)
 {
 	/*
-	
+		check valid param
+		
+		TODO: option to add additional task 
+		
+		TODO: how to get out of paused state?
+		
+		return size of PQ
+		
 	*/
 }
 

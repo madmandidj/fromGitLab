@@ -6,7 +6,7 @@ struct Task
 	void*		m_context;
 	Time		m_nextTime;
 	Time		m_interval;
-	/* Finish time needed here? */
+	/* TODO: Finish time needed here? if not, then calculate nextTime immediately upon end of execution */
 };
 
 
@@ -14,7 +14,7 @@ Task* TaskCreate(Task _task, void* _context, size_t _period_ms, const clockid_t 
 {
 	/*
 	
-	Check valid params (What is minimum period possible?)
+	Check valid params (TODO: What is minimum period possible?)
 	
 	Create task
 	check create success
@@ -69,6 +69,8 @@ int	TaskExecute(Task* _task)
 	check valid param
 	
 	call task function
+	
+	TaskCalculateNext() (TODO: should this be done here)
 	
 	return TRUE if another execution needed, FALSE if not
 	

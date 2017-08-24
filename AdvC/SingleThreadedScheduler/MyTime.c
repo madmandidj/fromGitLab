@@ -18,7 +18,7 @@ Time* TimeCreate(int _milliSecs)
 		return Time*
 		
 	else
-		m_time = _milliSecs
+		m_time = _milliSecs TODO: should store as usec?
 
 	return Time*
 	*/
@@ -46,7 +46,7 @@ void TimeGetCurrent(const clockid_t _clockID, Time* _time)
 	
 	get current time in nsec
 	
-	convert to usec
+	convert to usec /* TODO: can do this in timecreate and store as usec? */
 	
 	return
 		
@@ -76,7 +76,7 @@ void TimeSleepUntil(const Time* _time)
 	
 	Check valid param
 	
-	usleep  (usleep is obsolete, use nanosleep instead?)
+	usleep  (TODO: usleep is obsolete, use nanosleep instead?)
 	
 	return
 	
@@ -91,7 +91,7 @@ void TimeAdd(Time* _result, const Time* _added)
 	
 	check valid params
 	
-	_result += _added  (How to deal with carry value?)
+	_result += _added  (TODO: Need to take care of carry value)
 	
 	return 
 	

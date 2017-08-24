@@ -185,21 +185,6 @@ static void DoSwap(Heap* _heap, size_t _index1, size_t _index2, void* _element1,
 	return;
 }
 /*******************************/
-/*
-static void HeapifyRec(Heap* _heap, size_t _index)
-{
-	size_t maxIndex;
-	
-	if (_index > LAST_FATHER(_heap))
-	{
-		
-	}
-}
-
-TODO: get the rest from erez
-*/
-
-
 static int Heapify(Heap* _heap, size_t _heapifyIndex)
 {
 	size_t indexArr[3];
@@ -287,6 +272,7 @@ Vector* HeapDestroy(Heap** _heap)
 		free(*_heap);
 		*_heap = NULL;
 	}
+	/* TODO: API syas to return underlying vector. Am I actually returning underlying vector here? */
 	return vec;	
 }
 
