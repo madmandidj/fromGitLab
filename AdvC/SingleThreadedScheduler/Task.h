@@ -2,7 +2,7 @@
 #define __TASK_H__
 
 #include <time.h>
-
+#include <sys/types.h>
 typedef struct Task Task;
 typedef int (*TaskFunction)(void* _context);
 

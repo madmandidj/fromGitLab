@@ -1,77 +1,129 @@
 
+#include "PriorityQ.h"
+//#include "../../inc/GenericVector.h"
+#include "Task.h"
 #include "PeriodicExecuter.h"
-#include <stdlib.h>
+#include <string.h>
 
-typedef Heap PriorityQueue;
+#define PE_MAGICNUM 0xCDDDEEEE
 
-typedef struct PeriodicExecutor
+typedef struct PE
 {
-	PriorityQueue*	m_priorityQ;
-	size_t			m_runCycles; /* TODO: is redundant? look at PErun()  */
+	size_t 			m_magicNum;
+	PQ*				m_pq;
+	size_t			m_runCycles;
 	int				m_pauseRequest;
-	const char*		m_name;
+	char			m_name[64];
 	clockid_t		m_clockID;
-	/* TODO: add magic num? */
-};
+}PE;
 
 
-PeriodicExecutor* PeriodicExecutorCreate(const char* _name, clockid_t ​_clk_id)
+PE* PeriodicExecutor_Create(const char* _name, clockid_t _clk_id)
 {
-	/*
+	Vector* vec;
+	PE* pe;
 	
-	check valid param (TODO: is _name mandatory?)
+	if (!(pe = malloc(sizeof(PE))))
+	{
+		return NULL;
+	}
 	
-	create periodic executer
-	check create success
+	if (!(vec = VecCreate(10, 5)))
+	{
+		return NULL;
+	}
 	
-	create priority queue (TODO: HeapBuild with TaskCompare as parameter?)
-	check create success
+	if (!(pe->m_pq = PQBuild(vec, (LessThanComparator)TaskCompare)))
+	{
+		return NULL;
+	}
 	
-	set runCycles 0
-	set pauseRequest 0
-	set name
-	set clockID
-	
-	return PeriodicExecutor*
-	
-	*/
+	pe->m_runCycles = 0;
+	pe->m_pauseRequest = 0;
+	strcpy(pe->m_name, _name);
+	pe->m_clockID = _clk_id;
+	pe->m_magicNum = PE_MAGICNUM;
+
+	return pe;
 }
 
 
-void PeriodicExecutorDestroy(PeriodicExecutor* _executor)
+void PeriodicExecutor_Destroy(PE* _executor)
 {
-	/*
+	Task* task;
+	Vector* vec;
 	
-	check valid param
+	if (!_executor)
+	{
+		return;
+	}	
+
+	vec = PQDestroy(&(_executor->m_pq));
+	VecDestroy(&vec, (ElementDestroy)TaskDestroy);
+	_executor->m_magicNum = 0;
+	free(_executor);
 	
-	Destroy Time objects
-	Destroy Tasks
-	Destroy Priority Queue (TODO: can time and tasks be destroyed here as well? ANSWER: probably not)
-	Destroy Periodic executer
-	
-	Destroy 
-	
-	*/
+	return;
 }
 
 
-int PeriodicExecutorAdd(PeriodicExecutor* _executor, TaskFunction _task, void* _context, int _period_ms)
+int PeriodicExecutor_Add(PE* _executor, TaskFunction _taskFunc, void* _context, int _period_ms)
 {
-	/*
-	check valid params
+	Task* task;
 	
-	TaskCreate()
-	check create success
+	if (!_executor || !_taskFunc)
+	{
+		return 1;
+	}
 	
-	add task to PriorityQueue
+	if (!(task = TaskCreate(_taskFunc, _context, _period_ms, _executor->m_clockID)))
+	{
+		return 1;
+	}
 	
-	TODO: what does return value represent here?
-	*/
+	if (PQ_SUCCESS != PQInsert(_executor->m_pq, task))
+	{
+		return 1;
+	}
+	
+	return 0;
 }
 
 
-size_t PeriodicExecutorRun(PeriodicExecutor* _executor)
+size_t PeriodicExecutor_Run(PE* _executor)
 {
+	Task* task;
+	int result;
+	
+	if (!_executor)
+	{
+		return 0;
+	}
+	
+	_executor->m_pauseRequest = 0;
+	
+	while(0 < PQSize(_executor->m_pq))
+	{
+		task = PQExtract(_executor->m_pq);
+		result = TaskExecute(task, _executor->m_clockID);
+		++(_executor->m_runCycles);
+		if (0 == result)
+		{
+			TaskGetNextRunTime(task, _executor->m_clockID);
+			PQInsert(_executor->m_pq, task);
+		}
+		if (0 != _executor->m_pauseRequest)
+		{
+			break;
+		}
+	}
+	
+	return _executor->m_runCycles;
+	
+	
+	
+	
+	
 	/*
 	
 	check valid param
@@ -88,18 +140,16 @@ size_t PeriodicExecutorRun(PeriodicExecutor* _executor)
 }
 
 
-size_t PeriodicExecutorPause(PeriodicExecutor* _executor)
+size_t PeriodicExecutor_Pause(PE* _executor)
 {
-	/*
-		check valid param
-		
-		TODO: option to add additional task 
-		
-		TODO: how to get out of paused state?
-		
-		return size of PQ
-		
-	*/
+	if (!_executor)
+	{
+		return 0;
+	}
+	
+	_executor->m_pauseRequest = 1;
+	
+	return PQSize(_executor->m_pq);
 }
 
 

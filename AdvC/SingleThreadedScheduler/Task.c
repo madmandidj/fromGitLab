@@ -15,7 +15,6 @@ struct Task
 Task* TaskCreate(TaskFunction _taskFunc, void* _context, int _periodMillis, const clockid_t _clockID)
 {	
 	Task* task;	
-	Time* timePeriod;
 		
 	if (!_taskFunc)
 	{
