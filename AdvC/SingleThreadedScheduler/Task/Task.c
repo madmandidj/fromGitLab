@@ -1,18 +1,18 @@
 
 #include "Task.h"
-#include "MyTime.h"
+#include "../MyTime/MyTime.h"
 #include <stdlib.h>
 
 struct Task
 {
-	TaskFunction	m_taskFunc;
+	RunFunction	m_taskFunc;
 	void*			m_context;
 	Time*			m_nextRunTime;
 	Time*			m_runPeriod;
 };
 
 
-Task* TaskCreate(TaskFunction _taskFunc, void* _context, int _periodMillis, const clockid_t _clockID)
+Task* TaskCreate(RunFunction _taskFunc, void* _context, int _periodMillis, const clockid_t _clockID)
 {	
 	Task* task;	
 		

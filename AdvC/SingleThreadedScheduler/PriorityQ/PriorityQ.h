@@ -1,7 +1,7 @@
 #ifndef __PRIORITY_QUEUE_H__
 #define __PRIORITY_QUEUE_H__
 
-#include "../../inc/Heap.h"
+#include "../../../inc/Heap.h"
 
 typedef enum PQResult 
 {

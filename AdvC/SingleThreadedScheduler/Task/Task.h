@@ -4,9 +4,9 @@
 #include <time.h>
 #include <sys/types.h>
 typedef struct Task Task;
-typedef int (*TaskFunction)(void* _context);
+typedef int (*RunFunction)(void* _context);
 
-Task* TaskCreate(TaskFunction _taskFunc, void* _context, int _periodMillis, const clockid_t _clockID);
+Task* TaskCreate(RunFunction _taskFunc, void* _context, int _periodMillis, const clockid_t _clockID);
 
 void TaskDestroy(Task* _task);
 

@@ -1,4 +1,4 @@
-#include "PeriodicExecuter.h"
+#include "PeriodicExecutor.h"
 #include "../../inc/mu_test.h"
 #include <stdio.h>
 #include <time.h>
@@ -54,8 +54,6 @@ UNIT(TestPeriodicExecutor_Run)
 	PE* pe;
 	size_t result;
 	int* rep1;
-	struct timespec start_t;
-	struct timespec end_t;
 	
 	rep1 = malloc(sizeof(int));
 	*rep1 = 1;
@@ -76,9 +74,6 @@ UNIT(TestPeriodicExecutor_RunTwoTasks)
 	PE* pe;
 	size_t result;
 	int* rep1;
-	int* rep2;
-	struct timespec start_t;
-	struct timespec end_t;
 	
 	rep1 = malloc(sizeof(int));
 	*rep1 = 1;
@@ -98,9 +93,6 @@ UNIT(TestPeriodicExecutor_RunTwoTasksWithPause)
 	PE* pe;
 	size_t result;
 	int* rep1;
-	int* rep2;
-	struct timespec start_t;
-	struct timespec end_t;
 	
 	rep1 = malloc(sizeof(int));
 	*rep1 = 1;
@@ -118,14 +110,12 @@ UNIT(TestPeriodicExecutor_RunTwoTasksWithPause)
 END_UNIT
 
 
-UNIT(TestPeriodicExecutor_RunTwoTasksWithTwoRepsAndPause)
+UNIT(TestPeriodicExecutor_RunTwoTasksWithFiveReps)
 
 	PE* pe;
 	size_t result;
 	int* rep1;
 	int* rep2;
-	struct timespec start_t;
-	struct timespec end_t;
 	
 	rep1 = malloc(sizeof(int));
 	*rep1 = 1;
@@ -143,41 +133,22 @@ UNIT(TestPeriodicExecutor_RunTwoTasksWithTwoRepsAndPause)
 	PeriodicExecutor_Add(pe, (TaskFunction)PauseTaskFunc, pe, 9000);
 
 
-	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
 	ASSERT_THAT(1 == result);
 	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
 	ASSERT_THAT(3 == result);
 	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
 	ASSERT_THAT(6 == result);
 	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
 	ASSERT_THAT(8 == result);
 	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
 	ASSERT_THAT(10 == result);
 	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
 	ASSERT_THAT(11 == result);
 	
 	
@@ -199,8 +170,6 @@ UNIT(TestPeriodicExecutor_RunFiveTasks)
 	int* rep1;
 	int* rep2;
 	int* rep3;
-	struct timespec start_t;
-	struct timespec end_t;
 	
 	rep1 = malloc(sizeof(int));
 	*rep1 = 1;
@@ -224,49 +193,30 @@ UNIT(TestPeriodicExecutor_RunFiveTasks)
 	PeriodicExecutor_Add(pe, (TaskFunction)PauseTaskFunc, pe, 18000);
 
 
-	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
 	ASSERT_THAT(1 == result);
 	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
 	ASSERT_THAT(3 == result);
 	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
 	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
-	printf("%u\n", result);
 	ASSERT_THAT(7 == result);
 	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
-	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
-	printf("%u\n", result); 
-	ASSERT_THAT(10 == result);
-	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
-	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
-	printf("%u\n", result); 
-	ASSERT_THAT(13 == result);
-	
-	clock_gettime(CLOCK_REALTIME, &(start_t));
-	result = PeriodicExecutor_Run(pe);
-	clock_gettime(CLOCK_REALTIME, &(end_t));
-	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
-	printf("%u\n", result); 
-	ASSERT_THAT(14 == result);
 
 	result = PeriodicExecutor_Run(pe);
-	printf("%u\n", result); 
+	ASSERT_THAT(10 == result);
+	
+	result = PeriodicExecutor_Run(pe);
+	ASSERT_THAT(13 == result);
+	
+	/*
+	clock_gettime(CLOCK_REALTIME, &(start_t));
+	result = PeriodicExecutor_Run(pe);
+	clock_gettime(CLOCK_REALTIME, &(end_t));
+	printf("run time sec:\t%lu, millisecs:\t%lu\n", end_t.tv_sec - start_t.tv_sec, (end_t.tv_nsec - start_t.tv_nsec) / 1000000 );
+	*/
+	result = PeriodicExecutor_Run(pe);
+	ASSERT_THAT(14 == result);
 	
 	PeriodicExecutor_Destroy(pe);
 	free(rep1);
@@ -279,14 +229,13 @@ END_UNIT
 
 
 TEST_SUITE(PQ Tests)
-	/*
+
 	TEST(TestPeriodicExecutor_Create)
 	TEST(TestPeriodicExecutor_Add)
 	TEST(TestPeriodicExecutor_Run)
 	TEST(TestPeriodicExecutor_RunTwoTasks)
 	TEST(TestPeriodicExecutor_RunTwoTasksWithPause)
-	TEST(TestPeriodicExecutor_RunTwoTasksWithTwoRepsAndPause)
-	*/
+	TEST(TestPeriodicExecutor_RunTwoTasksWithFiveReps)
 	TEST(TestPeriodicExecutor_RunFiveTasks)
 	
 END_SUITE

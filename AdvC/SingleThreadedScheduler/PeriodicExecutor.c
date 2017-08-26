@@ -1,13 +1,13 @@
 
-#include "PriorityQ.h"
-//#include "../../inc/GenericVector.h"
-#include "Task.h"
-#include "PeriodicExecuter.h"
+#include "./PriorityQ/PriorityQ.h"
+// #include "../../inc/GenericVector.h"
+#include "./Task/Task.h"
+#include "PeriodicExecutor.h"
 #include <string.h>
 
 #define PE_MAGICNUM 0xCDDDEEEE
 
-typedef struct PE
+struct PE
 {
 	size_t 			m_magicNum;
 	PQ*				m_pq;
@@ -15,7 +15,7 @@ typedef struct PE
 	int				m_pauseRequest;
 	char			m_name[64];
 	clockid_t		m_clockID;
-}PE;
+};
 
 
 PE* PeriodicExecutor_Create(const char* _name, clockid_t _clk_id)
@@ -50,7 +50,6 @@ PE* PeriodicExecutor_Create(const char* _name, clockid_t _clk_id)
 
 void PeriodicExecutor_Destroy(PE* _executor)
 {
-	Task* task;
 	Vector* vec;
 	
 	if (!_executor)

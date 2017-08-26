@@ -1,5 +1,5 @@
-#ifndef __PERIODIC_EXECUTER_H__
-#define __PERIODIC_EXECUTER_H__
+#ifndef __PERIODIC_EXECUTOR_H__
+#define __PERIODIC_EXECUTOR_H__
 
 #include <stdlib.h>
 #include <time.h>
@@ -18,7 +18,7 @@ size_t 	PeriodicExecutor_Run		(PE* _executor);
 
 size_t 	PeriodicExecutor_Pause		(PE* _executor);
 
-#endif /* #ifndef __PERIODIC_EXECUTER_H__ */
+#endif /* #ifndef __PERIODIC_EXECUTOR_H__ */
 
 
 
