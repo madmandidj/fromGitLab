@@ -1,5 +1,6 @@
 FLAGS = -g -ansi -pedantic -Wall -Wconversion -std=gnu99
 # -std=gnu99 flag is for clockid_t 
+
 INC_PATH = ../../inc/
 LIB_PATH = ../../lib/
 HEAP_PATH = ../../DS/Heap/
@@ -8,12 +9,12 @@ MY_TIME_PATH = ./MyTime/
 TASK_PATH = ./Task/
 PRIORITY_Q_PATH = ./PriorityQ/
 
-testPE.out: TestPeriodicExecutor.c $(LIB_PATH)libPE.a \
-									$(LIB_PATH)libPQ.a \
-									$(LIB_PATH)libHeap.a \
+testPE.out: TestPeriodicExecutor.c $(LIB_PATH)libHeap.a \
 									$(LIB_PATH)libVector.a \
-									$(LIB_PATH)libTask.a \
-									$(LIB_PATH)libMyTime.a 
+									$(LIB_PATH)libTask.a\
+									$(LIB_PATH)libMyTime.a\
+									$(LIB_PATH)libPE.a \
+									$(LIB_PATH)libPQ.a  
 									
 									
 	gcc $(FLAGS) -o testPE.out TestPeriodicExecutor.c -L$(LIB_PATH) -lPE \
@@ -28,20 +29,21 @@ testPE.out: TestPeriodicExecutor.c $(LIB_PATH)libPE.a \
 $(LIB_PATH)libPE.a: PeriodicExecutor.o 
 	ar -cvq $(LIB_PATH)libPE.a PeriodicExecutor.o
 	
-PeriodicExecutor.o: PeriodicExecutor.c PeriodicExecutor.h $(PRIORITY_Q_PATH)PriorityQ.h $(TASK_PATH)Task.h
+PeriodicExecutor.o: PeriodicExecutor.c PeriodicExecutor.h 
 	gcc $(FLAGS) -c PeriodicExecutor.c 
 	
 	
 # Priority Queue	
-$(LIB_PATH)libPQ.a: $(PRIORITY_Q_PATH)PriorityQ.o 
-	ar -cvq $(LIB_PATH)libPQ.a PriorityQ.o
+$(LIB_PATH)libPQ.a: $(PRIORITY_Q_PATH)PriorityQ.o $(PRIORITY_Q_PATH)PriorityQ.c $(PRIORITY_Q_PATH)PriorityQ.h
+	ar -cvq $(LIB_PATH)libPQ.a $(PRIORITY_Q_PATH)PriorityQ.o
 	
-$(PRIORITY_Q_PATH)PriorityQ.o: $(PRIORITY_Q_PATH)PriorityQ.c $(PRIORITY_Q_PATH)PriorityQ.h
+PriorityQ.o: $(PRIORITY_Q_PATH)PriorityQ.c $(PRIORITY_Q_PATH)PriorityQ.h
 	gcc $(FLAGS) -c $(PRIORITY_Q_PATH)PriorityQ.c 
+	#mv PriorityQ.o $(PRIORITY_Q_PATH)
 
 
 # Heap	
-$(LIB_PATH)libHeap.a: $(HEAP_PATH)Heap.o 
+$(LIB_PATH)libHeap.a: $(HEAP_PATH)Heap.o $(HEAP_PATH)Heap.c $(INC_PATH)Heap.h
 	ar -cvq $(LIB_PATH)libHeap.a $(HEAP_PATH)Heap.o
 	
 Heap.o: $(HEAP_PATH)Heap.c $(INC_PATH)Heap.h
@@ -49,7 +51,7 @@ Heap.o: $(HEAP_PATH)Heap.c $(INC_PATH)Heap.h
 
 
 # Vector
-$(LIB_PATH)libVector.a: $(VECTOR_PATH)GenericVector.o 
+$(LIB_PATH)libVector.a: $(VECTOR_PATH)GenericVector.o $(VECTOR_PATH)GenericVector.c $(INC_PATH)GenericVector.h
 	ar -cvq $(LIB_PATH)libVector.a $(VECTOR_PATH)GenericVector.o
 	
 GenericVector.o: $(VECTOR_PATH)GenericVector.c $(INC_PATH)GenericVector.h
@@ -57,7 +59,7 @@ GenericVector.o: $(VECTOR_PATH)GenericVector.c $(INC_PATH)GenericVector.h
 
 
 # Task
-$(LIB_PATH)libTask.a: $(TASK_PATH)Task.o
+$(LIB_PATH)libTask.a: $(TASK_PATH)Task.o $(TASK_PATH)Task.c $(TASK_PATH)Task.h 
 	ar -cvq $(LIB_PATH)libTask.a $(TASK_PATH)Task.o
 	
 Task.o: $(TASK_PATH)Task.c $(TASK_PATH)Task.h 
@@ -65,7 +67,7 @@ Task.o: $(TASK_PATH)Task.c $(TASK_PATH)Task.h
 
 
 # My Time
-$(LIB_PATH)libMyTime.a: $(MY_TIME_PATH)MyTime.o 
+$(LIB_PATH)libMyTime.a: $(MY_TIME_PATH)MyTime.o $(MY_TIME_PATH)MyTime.c $(MY_TIME_PATH)MyTime.h
 	ar -cvq $(LIB_PATH)libMyTime.a $(MY_TIME_PATH)MyTime.o
 	
 MyTime.o: $(MY_TIME_PATH)MyTime.c $(MY_TIME_PATH)MyTime.h
@@ -77,4 +79,4 @@ MyTime.o: $(MY_TIME_PATH)MyTime.c $(MY_TIME_PATH)MyTime.h
 clean:
 	rm testPE.out $(LIB_PATH)libPE.a $(LIB_PATH)libPQ.a $(LIB_PATH)libHeap.a \
 	$(LIB_PATH)libVector.a $(LIB_PATH)libTask.a $(LIB_PATH)libMyTime.a
-	rm PeriodicExecutor.o PriorityQ.o $(HEAP_PATH)Heap.o $(VECTOR_PATH)GenericVector.o $(TASK_PATH)Task.o $(MY_TIME_PATH)MyTime.o
+	rm PeriodicExecutor.o $(PRIORITY_Q_PATH)PriorityQ.o $(HEAP_PATH)Heap.o $(VECTOR_PATH)GenericVector.o $(TASK_PATH)Task.o $(MY_TIME_PATH)MyTime.o
