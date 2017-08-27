@@ -27,8 +27,7 @@ struct MyChunk
 MyBuf*	MyBufCreate(size_t _chunkSize, size_t _numOfChunks)
 {
 	MyBuf* myBuf;
-	MyChunk myChunk1; 
-	MyChunk myChunk2;
+	void* myChunk; 
 	
 	size_t sizeOfMyBuf;
 	size_t sizeOfMyChunk;
@@ -51,19 +50,17 @@ MyBuf*	MyBufCreate(size_t _chunkSize, size_t _numOfChunks)
 	myBuf->m_magicNum = MYBUF_MAGIC_NUM;
 	myBuf->m_chunkSize = _chunkSize;
 	myBuf->m_nextFreeChunk = (char*) myBuf + sizeOfMyBuf;
-	
-	
-	myChunk1.m_magicNum = MYCHUNK_MAGIC_NUM;
-	myChunk1.m_next = (char*) myBuf->m_nextFreeChunk + _chunkSize;
+	myChunk = myBuf->m_nextFreeChunk;
 
-	
 	for (index = 0; index < _numOfChunks - 1; ++index)
 	{
-		/*
-		(myChunk->m_next)->m_next = &(*myChunk) + sizeOfMyChunk;
-		*/
+		((MyChunk*)myChunk)->m_magicNum = MYCHUNK_MAGIC_NUM;
+		((MyChunk*)myChunk)->m_next = (char*) myChunk + _chunkSize;
+		myChunk = ((MyChunk*)myChunk)->m_next;
 	}
-	
+	/* myChunk = ((MyChunk*)myChunk)->m_next; */
+	((MyChunk*)myChunk)->m_magicNum = MYCHUNK_MAGIC_NUM;
+	((MyChunk*)myChunk)->m_next = NULL;
 	return myBuf;
 	/*
 		PSUEDO CODE:
@@ -117,12 +114,17 @@ void	MyBufDestroy(MyBuf* _myBuf)
 
 void*	MyMalloc(MyBuf* _myBuf)
 {
-	void* test = NULL;
+	void* myChunk;
+	if (NULL == _myBuf->m_nextFreeChunk)
+	{
+		return NULL;
+	}
+	
+	myChunk = _myBuf->m_nextFreeChunk;
+	_myBuf->m_nextFreeChunk = ((MyChunk*)_myBuf->m_nextFreeChunk)->m_next;
 	
 	
-	
-	
-	return test;
+	return myChunk;
 	/*
 		PSUEDO CODE:
 		************
