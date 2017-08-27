@@ -3,6 +3,11 @@
 
 #include <time.h>
 #include <sys/types.h>
+
+/*
+TODO: Add documentation for this module and functions
+*/
+
 typedef struct Task Task;
 typedef int (*RunFunction)(void* _context);
 

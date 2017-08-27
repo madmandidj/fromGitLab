@@ -1,0 +1,16 @@
+Phase A:
+	High level design:
+		what sub modules are there?
+		what is the public interface of the executor?
+	internal data structures to be used
+	
+Phase B:
+	High level design document
+	Control flow in pseudo code (does this contain sub modules?)
+	Module header file (is this suppose to be one header file?)
+	
+Phase C:
+	C Header file fully documented
+	C source code files
+	makefile that creates a lib and test
+	A test program with more than 5 tasks

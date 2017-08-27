@@ -3,6 +3,14 @@
 #include <time.h>
 #include <assert.h>
 
+/*
+TODO:
+struct PQ
+{
+	Heap* m_pq;
+};
+*/
+
 
 PQ* PQBuild(Vector* _vector, LessThanComparator _pfLess)
 {
@@ -14,6 +22,10 @@ PQ* PQBuild(Vector* _vector, LessThanComparator _pfLess)
 	
 	return pq;
 }
+
+
+
+
 
 
 

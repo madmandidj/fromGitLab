@@ -3,6 +3,10 @@
 
 #include <time.h>
 
+/*
+TODO: Add documentation for this module and functions
+*/
+
 typedef struct Time Time;
 
 Time* TimeCreate(); 

@@ -5,11 +5,15 @@
 
 struct Task
 {
-	RunFunction	m_taskFunc;
+	RunFunction		m_taskFunc;
 	void*			m_context;
 	Time*			m_nextRunTime;
 	Time*			m_runPeriod;
 };
+
+
+
+
 
 
 Task* TaskCreate(RunFunction _taskFunc, void* _context, int _periodMillis, const clockid_t _clockID)
@@ -45,6 +49,10 @@ Task* TaskCreate(RunFunction _taskFunc, void* _context, int _periodMillis, const
 }
 
 
+
+
+
+
 void TaskDestroy(Task* _task)
 {
 	if (!_task)
@@ -58,6 +66,10 @@ void TaskDestroy(Task* _task)
 	
 	return;
 }
+
+
+
+
 
 
 void TaskGetNextRunTime(Task* _task, const clockid_t _clockID)
@@ -74,6 +86,10 @@ void TaskGetNextRunTime(Task* _task, const clockid_t _clockID)
 }
 
 
+
+
+
+
 int	TaskExecute(Task* _task, const clockid_t _clockID)
 {
 	if (!_task)
@@ -84,6 +100,10 @@ int	TaskExecute(Task* _task, const clockid_t _clockID)
 	TimeSleepUntil(_task->m_nextRunTime, _clockID);
 	return _task->m_taskFunc(_task->m_context);	
 }
+
+
+
+
 
 
 int	TaskCompare(Task* _task1, Task* _task2)

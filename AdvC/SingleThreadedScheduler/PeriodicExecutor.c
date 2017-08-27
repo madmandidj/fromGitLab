@@ -1,6 +1,5 @@
 
 #include "./PriorityQ/PriorityQ.h"
-// #include "../../inc/GenericVector.h"
 #include "./Task/Task.h"
 #include "PeriodicExecutor.h"
 #include <string.h>
@@ -18,8 +17,15 @@ struct PE
 };
 
 
+
+
+
+
 PE* PeriodicExecutor_Create(const char* _name, clockid_t _clk_id)
 {
+	/*
+	TODO: should creation of vector be done in PQ scope?
+	*/
 	Vector* vec;
 	PE* pe;
 	
@@ -48,6 +54,10 @@ PE* PeriodicExecutor_Create(const char* _name, clockid_t _clk_id)
 }
 
 
+
+
+
+
 void PeriodicExecutor_Destroy(PE* _executor)
 {
 	Vector* vec;
@@ -56,7 +66,9 @@ void PeriodicExecutor_Destroy(PE* _executor)
 	{
 		return;
 	}	
-
+	/*
+	TODO: should destruction of vector be done in PQ scope?
+	*/
 	vec = PQDestroy(&(_executor->m_pq));
 	VecDestroy(&vec, (ElementDestroy)TaskDestroy);
 	_executor->m_magicNum = 0;
@@ -64,6 +76,10 @@ void PeriodicExecutor_Destroy(PE* _executor)
 	
 	return;
 }
+
+
+
+
 
 
 int PeriodicExecutor_Add(PE* _executor, TaskFunction _taskFunc, void* _context, int _period_ms)
@@ -87,6 +103,10 @@ int PeriodicExecutor_Add(PE* _executor, TaskFunction _taskFunc, void* _context, 
 	
 	return 0;
 }
+
+
+
+
 
 
 size_t PeriodicExecutor_Run(PE* _executor)
@@ -118,25 +138,11 @@ size_t PeriodicExecutor_Run(PE* _executor)
 	}
 	
 	return _executor->m_runCycles;
-	
-	
-	
-	
-	
-	/*
-	
-	check valid param
-	
-	while PQ not empty
-		TaskExecute
-		increment run cycles count
-		
-		if pauseRequest
-			PeriodicExecutorPause
-	
-	return run cycles count
-	*/
 }
+
+
+
+
 
 
 size_t PeriodicExecutor_Pause(PE* _executor)
@@ -150,22 +156,6 @@ size_t PeriodicExecutor_Pause(PE* _executor)
 	
 	return PQSize(_executor->m_pq);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

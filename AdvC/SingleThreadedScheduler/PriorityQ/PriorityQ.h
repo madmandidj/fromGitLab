@@ -4,6 +4,11 @@
 
 #include "../../../inc/Heap.h"
 
+/*
+TODO: Add documentation for this module and functions
+*/
+
+
 typedef enum PQResult 
 {
 	PQ_SUCCESS = 0,
@@ -12,10 +17,14 @@ typedef enum PQResult
 	PQ_INV_ARG
 }PQResult;
 
+
+
+/*
+TODO:
+change this to: typedef PQ PQ
+to avoid exposing implementation (Heap) to user
+*/
 typedef Heap PQ;
-
-//typedef int	(*LessThanComparator)(const void *_left, const void *_right);
-
 
 PQ* 			PQBuild(Vector* _vector, LessThanComparator _pfLess);
 

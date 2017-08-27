@@ -10,6 +10,10 @@ struct Time
 };
 
 
+
+
+
+
 Time* TimeCreate()
 {
 
@@ -120,8 +124,7 @@ void TimeSleepUntil(const Time* _time, const clockid_t _clockID)
 	{
 		return;
 	}
-	
-	/*nanosleep(&(_time->m_time), NULL);*/
+
 	clock_nanosleep(_clockID, TIMER_ABSTIME, &(_time->m_time), NULL);
 	
 	return;

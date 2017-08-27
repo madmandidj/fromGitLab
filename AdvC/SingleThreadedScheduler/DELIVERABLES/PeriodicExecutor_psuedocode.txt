@@ -1,0 +1,76 @@
+PE* PeriodicExecutor_Create(const char* _name, clockid_t _clk_id)
+{
+	allocate and verify PE
+	create and verify vector
+	create and verify PQ
+	initialize PE members
+	return PE
+}
+
+
+
+
+
+
+void PeriodicExecutor_Destroy(PE* _executor)
+{
+	check valid param
+	destroy PQ
+	destroy vector
+	reset magic num
+	free PE
+	return
+}
+
+
+
+
+
+int PeriodicExecutor_Add(PE* _executor, TaskFunction _taskFunc, void* _context, int _period_ms)
+{
+	check valid params
+	create and verify task
+	Insert task to PQ and verify
+	return 0 on success, 1 on fail
+}
+
+
+
+
+
+size_t PeriodicExecutor_Run(PE* _executor)
+{
+	check valid param
+	reset pause request flag
+	while (PQ not empty){
+		extract task
+		execute task
+		increment run cycles
+		if (task to be repeated){
+			Get task next run time
+			insert task to PQ
+		}
+		if (pause request flag){
+			exit while loop
+		}
+	}
+	return run cycles
+			
+}
+
+
+
+
+
+
+size_t PeriodicExecutor_Pause(PE* _executor)
+{
+	check valid param
+	set pause request PE member
+	return number of tasks in PQ
+}
+
+
+
+
+
