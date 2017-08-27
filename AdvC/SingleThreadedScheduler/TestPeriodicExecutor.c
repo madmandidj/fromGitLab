@@ -4,6 +4,10 @@
 #include <time.h>
 
 
+/*
+TODO: change CLOCK_REALTIME to CLOCK_PROCESS_CPUTIME_ID
+*/
+
 int NumOfRepsTaskFunc(unsigned int* _numOfReps)
 {
 	if (*_numOfReps > 1)
