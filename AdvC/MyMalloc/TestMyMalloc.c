@@ -5,6 +5,30 @@ int main()
 {
 	MyBuf* myBuf;
 	int* myPtr;
+	
+	myBuf = MyBufCreate(32, 4);
+	
+	myPtr = MyMalloc(myBuf);
+	
+	MyMallocFree(myBuf, myPtr);
+	
+	MyBufDestroy(myBuf);
+	return 0;
+}
+
+
+
+
+
+
+
+
+/*
+
+int main()
+{
+	MyBuf* myBuf;
+	int* myPtr;
 	int* generalPtr;
 	
 	myBuf = MyBufCreate(32, 4);
@@ -31,3 +55,5 @@ int main()
 	free(generalPtr);
 	return 0;
 }
+
+*/

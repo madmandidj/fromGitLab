@@ -3,6 +3,9 @@
 #define MYBUF_MAGIC_NUM 0xCABAD00D
 #define MYCHUNK_MAGIC_NUM 0xC011BEA8
 
+#define IS_A_MYBUF(B)		((B) && MYBUF_MAGIC_NUM == (B)->m_magicNum)
+#define IS_A_MYCHUNK(C)		((C) && MYCHUNK_MAGIC_NUM == (C)->m_magicNum)
+
 struct MyBuf
 {
 	unsigned int 	m_magicNum;
@@ -54,28 +57,12 @@ MyBuf*	MyBufCreate(size_t _chunkSize, size_t _numOfChunks)
 
 	for (index = 0; index < _numOfChunks - 1; ++index)
 	{
-		((MyChunk*)myChunk)->m_magicNum = MYCHUNK_MAGIC_NUM;
 		((MyChunk*)myChunk)->m_next = (char*) myChunk + _chunkSize;
 		myChunk = ((MyChunk*)myChunk)->m_next;
 	}
-	/* myChunk = ((MyChunk*)myChunk)->m_next; */
-	((MyChunk*)myChunk)->m_magicNum = MYCHUNK_MAGIC_NUM;
 	((MyChunk*)myChunk)->m_next = NULL;
+	
 	return myBuf;
-	/*
-		PSUEDO CODE:
-		************
-		
-		check valid params
-		Calculate actual malloc size for MyBuf
-		Allocate MyBuf
-		Initialize MyBuf members
-		for (numOfChunks)
-		{
-			Assign next to next chunk
-		}
-		return MyBuf*
-	*/
 }
 
 
@@ -84,7 +71,7 @@ MyBuf*	MyBufCreate(size_t _chunkSize, size_t _numOfChunks)
 
 void	MyBufDestroy(MyBuf* _myBuf)
 {
-	if (!_myBuf)
+	if (!IS_A_MYBUF(_myBuf))
 	{
 		return;
 	}
@@ -93,18 +80,6 @@ void	MyBufDestroy(MyBuf* _myBuf)
 	free(_myBuf);
 	
 	return;
-	
-	
-	
-	/*
-		PSUEDO CODE:
-		************
-		
-		check valid params
-		reset magic num
-		free(_mybuf)
-		return
-	*/
 }
 
 
@@ -115,29 +90,18 @@ void	MyBufDestroy(MyBuf* _myBuf)
 void*	MyMalloc(MyBuf* _myBuf)
 {
 	void* myChunk;
-	if (NULL == _myBuf->m_nextFreeChunk)
+	
+	if (!IS_A_MYBUF(_myBuf) || !_myBuf->m_nextFreeChunk)
 	{
 		return NULL;
 	}
 	
 	myChunk = _myBuf->m_nextFreeChunk;
+	((MyChunk*)myChunk)->m_magicNum = MYCHUNK_MAGIC_NUM;
 	_myBuf->m_nextFreeChunk = ((MyChunk*)_myBuf->m_nextFreeChunk)->m_next;
 	
 	
-	return myChunk;
-	/*
-		PSUEDO CODE:
-		************
-		
-		check valid params
-		if (!chunk available)
-		{
-			return NULL;
-		}
-		assign current free pionter to variable ptr
-		move free to next free position
-		return ptr
-	*/
+	return &((MyChunk*)myChunk)->m_data;
 }
 
 
@@ -147,25 +111,28 @@ void*	MyMalloc(MyBuf* _myBuf)
 
 
 
-void	MyMallocFree(MyBuf* _myBuf, MyChunk* _myChunk)
+void	MyMallocFree(MyBuf* _myBuf, void* _myChunk)
 {
-
-
-
-
-	/*
-		PSUEDO CODE:
-		************
-		
-		check valid params
-		if (Chunks available == num of chunks)
-		{
-			return;
-		}
-		set My_chunk next to point to free
-		set free to point to My_chunk
-		return 
-	*/
+	_myChunk = ((MyChunk*)_myChunk);
+	if (!IS_A_MYBUF(_myBuf) || !IS_A_MYCHUNK((MyChunk*)_myChunk))
+	{
+		return;
+	}
+	
+	((MyChunk*)_myChunk)->m_magicNum = 0;
+	
+	if (NULL == _myBuf->m_nextFreeChunk)
+	{
+		((MyChunk*)_myChunk)->m_next = NULL;
+		_myBuf->m_nextFreeChunk = _myChunk;
+	}
+	else
+	{
+		((MyChunk*)_myChunk)->m_next = _myBuf->m_nextFreeChunk;
+		_myBuf->m_nextFreeChunk = _myChunk;
+	}
+	
+	return;
 }
 
 

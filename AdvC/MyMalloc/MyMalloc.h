@@ -3,6 +3,17 @@
 
 #include <stdlib.h>
 
+/** 
+ *  @file MyMalloc.h
+ *  @brief My Malloc functionality
+ *	
+ *  @details  Buffer is allocated by parameters: chunk size (in bytes) and number of chunks
+ *
+ *  @author Eyal Alon  (eyal171@yahoo.com)
+ * 
+ *  @bug Zero bug approach 
+ */
+
 typedef struct MyBuf MyBuf;
 
 typedef struct MyChunk MyChunk;
@@ -13,7 +24,7 @@ void	MyBufDestroy(MyBuf* _myBuf);
 
 void*	MyMalloc(MyBuf* _myBuf);
 
-void	MyMallocFree(MyBuf* _myBuf, MyChunk* _myChunk);
+void	MyMallocFree(MyBuf* _myBuf, void* _myChunk);
 
 
 
