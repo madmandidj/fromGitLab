@@ -6,7 +6,7 @@ int main()
 	MyBuf* myBuf;
 	int* myPtr;
 	
-	myBuf = MyBufCreate(32, 4);
+	myBuf = MyBufCreate(1, 10);
 	
 	myPtr = MyMalloc(myBuf);
 	

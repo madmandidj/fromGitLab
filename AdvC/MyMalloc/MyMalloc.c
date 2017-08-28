@@ -6,6 +6,7 @@
 #define IS_A_MYBUF(B)		((B) && MYBUF_MAGIC_NUM == (B)->m_magicNum)
 #define IS_A_MYCHUNK(C)		((C) && MYCHUNK_MAGIC_NUM == (C)->m_magicNum)
 
+
 struct MyBuf
 {
 	unsigned int 	m_magicNum;
@@ -13,6 +14,15 @@ struct MyBuf
 	size_t			m_chunkSize;
 };
 
+
+/*
+struct MyBuf
+{
+	unsigned int 	m_magicNum;
+	MyChunk* 		m_nextFreeChunk;
+	size_t			m_chunkSize;
+};
+*/
 
 struct MyChunk
 {
@@ -52,6 +62,12 @@ MyBuf*	MyBufCreate(size_t _chunkSize, size_t _numOfChunks)
 
 	myBuf->m_magicNum = MYBUF_MAGIC_NUM;
 	myBuf->m_chunkSize = _chunkSize;
+	
+	/*
+	myBuf->m_nextFreeChunk = (char*) myBuf + sizeOfMyBuf;
+	myChunk = myBuf->m_nextFreeChunk;
+	*/
+	
 	myBuf->m_nextFreeChunk = (char*) myBuf + sizeOfMyBuf;
 	myChunk = myBuf->m_nextFreeChunk;
 
@@ -69,6 +85,7 @@ MyBuf*	MyBufCreate(size_t _chunkSize, size_t _numOfChunks)
 
 
 
+
 void	MyBufDestroy(MyBuf* _myBuf)
 {
 	if (!IS_A_MYBUF(_myBuf))
@@ -81,6 +98,7 @@ void	MyBufDestroy(MyBuf* _myBuf)
 	
 	return;
 }
+
 
 
 

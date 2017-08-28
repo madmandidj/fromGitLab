@@ -31,19 +31,4 @@ void	MyMallocFree(MyBuf* _myBuf, void* _myChunk);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif /* #ifndef __MY_MALLOC_H__ */
