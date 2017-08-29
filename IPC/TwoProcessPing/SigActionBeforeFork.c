@@ -19,11 +19,12 @@
 
 #define ONE_SECOND_USEC 1000000
 
+typedef void (*SigActionHandler)(int _sig, siginfo_t* _info, void* _ucontext);
 
 
 
 /** 
- * @brief sigaction handler function
+ * @brief Parent sigaction handler function
  *
  * @param[in]  int - signal number
  *
@@ -33,14 +34,34 @@
  * 
  * @return void
  */
-static void MyAction(int _sig, siginfo_t* _info, void* _ucontext)
+static void ParentAction(int _sig, siginfo_t* _info, void* _ucontext)
 {
-	write(0, "*** MyAction done\n", 19);
+	write(0, "*** ParentAction done\n", 19);
 	
 	return;
 }
 
 
+
+
+
+/** 
+ * @brief Child sigaction handler function
+ *
+ * @param[in]  int - signal number
+ *
+ * @param[in]  siginfo_t* - info regarding the signal
+ *
+ * @param[in]  void* -context (can be used?)
+ * 
+ * @return void
+ */
+static void ChildAction(int _sig, siginfo_t* _info, void* _ucontext)
+{
+	write(0, "*** ChildAction done\n", 19);
+	
+	return;
+}
 
 
 
@@ -75,7 +96,7 @@ static void ChildRoutine(const pid_t _pid)
 		usleep(ONE_SECOND_USEC);
 		
 		printf("** child sending signal to parent\n");
-		kill(getppid(), SIGUSR1);
+		kill(getppid(), SIGUSR2);
 		
 		printf("** child woke up\n");
 		return;
@@ -102,19 +123,19 @@ static void PrintElapsedTime(char* _string, struct timespec* _startTime)
 
 
 
-static void SigActionInit(struct sigaction* sa)
+static void SigActionInit(struct sigaction* _sa, SigActionHandler _func, int _signum)
 {
 	/*
 	If SA_SIGINFO flag is set, then the signal-catching function prototype is: void func(int, siginfo_t, void*);
 	If SA_SIGINFO flag is not set, then the signal-catching function proto is: void func(int signo); , using sa.sa_handler
 	*/
-	sa->sa_flags = SA_SIGINFO;
-	sa->sa_sigaction = MyAction;	
+	_sa->sa_flags = SA_SIGINFO;
+	_sa->sa_sigaction = _func;	
 	
 	/* 
 	Specify the action to be associated with SIGUSR1, and check for error ( == -1) 
 	*/
-	if (-1 == sigaction(SIGUSR1, &(*sa), NULL))
+	if (-1 == sigaction(_signum, &(*_sa), NULL))
 	{
 		perror("sigaction");
 		exit(1);
@@ -132,7 +153,8 @@ static void SigActionInit(struct sigaction* sa)
 
 int main()
 {
-	struct sigaction sa;
+	struct sigaction sa1;
+	struct sigaction sa2;
 	pid_t pid;
 	struct timespec startTime;
 	
@@ -143,7 +165,8 @@ int main()
 	/*
 	Initialize the signal action variable, and specify associated action
 	*/
-	SigActionInit(&sa);
+	SigActionInit(&sa1, ParentAction, SIGUSR1);
+	SigActionInit(&sa2, ChildAction, SIGUSR1);
 		
 	pid = fork();
 	
