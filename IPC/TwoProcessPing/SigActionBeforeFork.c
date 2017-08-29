@@ -7,28 +7,32 @@
 #include <time.h>					/*  timespec */
 #include <stdlib.h>					/* exit() */
 #include <assert.h>
-
-/****************************
-"unknown type name ‘siginfo_t’"
-*****************************
-These compile and run:
-#define _GNU_SOURCE
-#define _POSIX_C_SOURCE 199309L
-
-Thise doesnt:
-#define _XOPEN_SOURCE
-
-
- 
-TODO:
-Read more in errno.h and about errno
-man7.org/linux/man-pages/man7/signal-safety.7.html  - async signal safe functions as required by POSIX.1
-man7.org/linux/man-pages/man2/sigaction.2.html		- sigaction
-*/
+/** 
+ *  @file SigActionBeforeFork.h
+ *  @brief This program performs a "ping-pong" routine between a parent and child process using sigaction.
+ *		The action is specified prior to the fork.
+ *
+ *  @author Eyal Alon  (eyal171@yahoo.com)
+ * 
+ *  @bug No known bugs (but of course there are likely many)
+ */
 
 #define ONE_SECOND_USEC 1000000
 
 
+
+
+/** 
+ * @brief sigaction handler function
+ *
+ * @param[in]  int - signal number
+ *
+ * @param[in]  siginfo_t* - info regarding the signal
+ *
+ * @param[in]  void* -context (can be used?)
+ * 
+ * @return void
+ */
 static void MyAction(int _sig, siginfo_t* _info, void* _ucontext)
 {
 	write(0, "*** MyAction done\n", 19);
