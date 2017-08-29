@@ -1,0 +1,19 @@
+void GetSigs(int _argc, char** _argv, int* _sigs, useconds_t* _sleepTime)
+{
+    int opt;
+    while ((opt = getopt(_argc, _argv, "p:c:s:")) != -1)
+    {
+           switch(opt)
+           {
+                   case 'p':
+                       _sigs[PING] = atoi(optarg);
+                       break;
+                   case 'c':
+                       _sigs[PONG] = atoi(optarg);
+                       break;
+                   case 's':
+                   *_sleepTime = (useconds_t)atoi(optarg);
+                       break;
+           }
+    }
+}
