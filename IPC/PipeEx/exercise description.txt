@@ -1,0 +1,18 @@
+Exercise:1
+----------------
+- Send bytes from Producer (parent) to Consumer
+  (child)
+- Producer sends N messages,
+  Consumer reads in a forever loop
+- Use usleep() to simulate work load
+- Discover how different timing influence number
+  of reads
+
+
+Exercise: 2
+----------------
+- Create/Destroy special fifo file
+- Send bytes from Producer (Ping) to Consumer (Pong)
+- Ping sends N messages, Pong reads in a forever loop
+- Use usleep() to simulate work load
+- Discover how different timing influence number of reads
