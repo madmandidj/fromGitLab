@@ -83,7 +83,7 @@ static void ServerRoutine(pid_t _pid, int* _pipefd, Params _params)
 	int writeErr;
 	int fifoFd;
 	
-	/* Close server Rx */
+	/* Open server for Tx */
 	usleep(ONE_SECOND_USEC);
 	fifoFD = open(myFifo, O_WONLY);
 	
@@ -103,9 +103,9 @@ static void ServerRoutine(pid_t _pid, int* _pipefd, Params _params)
 		}
 	}
 	
-	/* Close server Tx */
-	printf("Server closing write side of pipe\n");
-	close(fifoFd);
+	/* Close FIFO */
+	printf("Server closing FIFO\n");
+	unlink(myFifo);
 	wait(NULL);
 	
 	return;
@@ -120,8 +120,8 @@ static void ClientRoutine(pid_t _pid, int* _pipefd, Params _params)
 	char buf[PIPE_BUF];	
 	ssize_t numRead;
 	
-	/* Close client Tx */
-	close(_pipefd[1]);
+	/* Open client for Rx */
+	fifoFD = open(myFifo, O_RONLY);
 	
 	for(;;)
 	{
