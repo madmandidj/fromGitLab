@@ -17,9 +17,9 @@ typedef struct msqid_ds msqid_ds;
 typedef struct Data
 {
 	pid_t 	m_pid;
-	char m_status;
-	char m_data1;
-	char m_data2;
+	int 	m_status;
+	int 	m_data1;
+	int 	m_data2;
 }Data;
 
 typedef struct MsgBuf
