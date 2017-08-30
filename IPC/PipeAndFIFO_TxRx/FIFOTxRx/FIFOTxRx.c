@@ -8,6 +8,8 @@
 #include <errno.h>					/* errno */
 #include <string.h>					/* strerror() */
 #include <stdlib.h>					/* exit() */
+#include <sys/types.h>				/* mkfifo() */
+#include <sys/stat.h>				/* mkfifo() */
 
 
 #define ONE_SECOND_USEC 1000000
@@ -57,13 +59,13 @@ static void DoGetOpt(int _argc, char* _argv[], size_t* _bufSize, size_t* _txCycl
 
 
 
-static void CreatePipe(int* _pipefd, int* _pipeErr)
+static void CreateFIFO(char* _myFifo, int* _fifoErr)
 {
-	if (ERR_VAL == (*_pipeErr = pipe(_pipefd)))
+	if (ERR_VAL == (*_fifoErr = mkfifo(_myFifo, 0666)))
 	{
-		printf("pipe() ERROR: %s\n", strerror(errno));
+		printf("mkfifo() ERROR: %s\n", strerror(errno));
 		exit(EXIT_FAILURE);
-		/*TODO: how to test error from pipe() ?*/
+		/*TODO: how to test error from mkfifo() ?*/
 	}
 		
 	return;
@@ -79,10 +81,11 @@ static void ServerRoutine(pid_t _pid, int* _pipefd, Params _params)
 	size_t curCycle;
 	int curChar;
 	int writeErr;
+	int fifoFd;
 	
 	/* Close server Rx */
 	usleep(ONE_SECOND_USEC);
-	close(_pipefd[0]);
+	fifoFD = open(myFifo, O_WONLY);
 	
 	for(curCycle = 0; curCycle < _params.m_txCycles; ++curCycle)
 	{
@@ -92,7 +95,7 @@ static void ServerRoutine(pid_t _pid, int* _pipefd, Params _params)
 		}
 		buf[curChar + 1] = '\0';
 		
-		writeErr = write(_pipefd[1], buf, _params.m_bufSize);
+		writeErr = write(fifoFD, buf, _params.m_bufSize);
 		if (writeErr <= 0) 
 		{
 			printf("Write error from server\n");
@@ -102,7 +105,7 @@ static void ServerRoutine(pid_t _pid, int* _pipefd, Params _params)
 	
 	/* Close server Tx */
 	printf("Server closing write side of pipe\n");
-	close(_pipefd[1]);
+	close(fifoFd);
 	wait(NULL);
 	
 	return;
@@ -144,15 +147,15 @@ static void ClientRoutine(pid_t _pid, int* _pipefd, Params _params)
 
 int main(int argc, char* argv[])
 {
-	int pipefd[2];
 	pid_t pid;
-	int pipeErr;
+	int fifoErr;
+	char* myFifo = "./";
 	Params params;
 	
 	
 	DoGetOpt(argc, argv, &params.m_bufSize, &params.m_txCycles);
 
-	CreatePipe(pipefd, &pipeErr);
+	CreateFIFO(myFifo, &fifoErr);
 	
 	pid = fork();
 	
