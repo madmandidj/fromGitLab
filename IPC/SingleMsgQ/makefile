@@ -1,9 +1,14 @@
-FLAGS = -g -ansi -pedantic -Wall -Wconversion -Werror -o MsgQServer.out
+FLAGS1 = -g -ansi -pedantic -Wall -Wconversion -Werror -o ServerMsgQ.out
+FLAGS2 = -g -ansi -pedantic -Wall -Wconversion -Werror -o ClientMsgQ.out
 
+all: ServerMsgQ.out ClientMsgQ.out
 
-MsgQServer.out: MsgQServer.c
-	gcc $(FLAGS) MsgQServer.c 
+ServerMsgQ.out: ServerMsgQ.c
+	gcc $(FLAGS1) ServerMsgQ.c 
+	
+ClientMsgQ.out: ClientMsgQ.c
+	gcc $(FLAGS2) ClientMsgQ.c 
 
 
 clean:
-	rm MsgQServer.out
+	rm ClientMsgQ.out ServerMsgQ.out

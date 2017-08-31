@@ -7,6 +7,8 @@
 #define MSG_SIZE 64
 #define TX_PRINT 0
 #define RX_PRINT 1
+#define SERVER_TO_CLIENT_CH 1
+#define CLIENT_TO_SERVER_CH 2
 
 
 
@@ -186,30 +188,7 @@ static void PrintMsg(MsgBuf* _msgBuf, Params* _params, int printMode, size_t ind
 
 
 
-static void InitServerMsg(MsgBuf* _msgBuf, int _msgChannel)
-{
-	_msgBuf->m_type = _msgChannel;
-	_msgBuf->m_data.m_pid = getpid();
-	_msgBuf->m_data.m_status = 50;
-	_msgBuf->m_data.m_data1 = 60;
-	_msgBuf->m_data.m_data2 = 70;
-	
-	return;
-}
 
-
-
-
-static void InitClientMsg(MsgBuf* _msgBuf, int _msgChannel)
-{
-	_msgBuf->m_type = _msgChannel;
-	_msgBuf->m_data.m_pid = getpid();
-	_msgBuf->m_data.m_status = 1;
-	_msgBuf->m_data.m_data1 = 1;
-	_msgBuf->m_data.m_data2 = 1;
-	
-	return;
-}
 
 
 
@@ -243,7 +222,7 @@ static void MsgRx(int _mqID, MsgBuf* _msgBuf, int _rxID, int _channel)
 {
 	ssize_t rcvErr;
 	
-	rcvErr = msgrcv(_mqID, &msgBuf, sizeof(Data), _channel, 0);
+	rcvErr = msgrcv(_mqID, &_msgBuf, sizeof(Data), _channel, 0);
 		
 	if (rcvErr == -1)
 	{
@@ -268,6 +247,20 @@ static void MsgRx(int _mqID, MsgBuf* _msgBuf, int _rxID, int _channel)
 
 
 
+static void InitServerMsg(MsgBuf* _msgBuf, int _msgChannel)
+{
+	_msgBuf->m_type = _msgChannel;
+	_msgBuf->m_data.m_pid = getpid();
+	_msgBuf->m_data.m_status = 50;
+	_msgBuf->m_data.m_data1 = 60;
+	_msgBuf->m_data.m_data2 = 70;
+	
+	return;
+}
+
+
+
+
 
 
 
@@ -280,32 +273,40 @@ static void ServerTx(int _mqID, MsgBuf* _msgBuf, Params* _params)
 	for (index = 0; index < _params->m_numOfMsgs; ++index)
 	{
 		MsgTx(_mqID, _msgBuf, 0);
+		
 		if (1 == _params->m_verbosityMode)
 		{
 			PrintMsg(_msgBuf, _params, TX_PRINT, index);
 		}
 		usleep((size_t)_params->m_speed);
 		
-		MsgRx(_mqID, rxMsg, 0, 2);
+		MsgRx(_mqID, &rxMsg, 0, 2);
 		if (1 == _params->m_verbosityMode)
 		{
-			PrintMsg(&txMsg, _params, RX_PRINT, numOfMsgRx++);
+			PrintMsg(&rxMsg, _params, RX_PRINT, numOfMsgRx++);
 		}
 		
 	}
-	
 	return;
 }
 
 
 
 
-
+static void InitClientMsg(MsgBuf* _msgBuf, int _msgChannel)
+{
+	_msgBuf->m_type = _msgChannel;
+	_msgBuf->m_data.m_pid = getpid();
+	_msgBuf->m_data.m_status = 1;
+	_msgBuf->m_data.m_data1 = 1;
+	_msgBuf->m_data.m_data2 = 1;
+	
+	return;
+}
 
 
 static void ClientRx(int _mqID, Params* _params)
 {
-	ssize_t rcvErr;
 	size_t numOfMsgRx = 0;
 	size_t numOfMsgTx = 0;
 	MsgBuf msgBuf;
@@ -315,16 +316,16 @@ static void ClientRx(int _mqID, Params* _params)
 	
 	for (;;)
 	{
-		MsgRx(_mqID, &msgBuf, 1, 1);
+		MsgRx(_mqID, &msgBuf, 0, 1);
 
-		if (1 == _params->m_verbosityMode && -1 != rcvErr)
+		if (1 == _params->m_verbosityMode)
 		{
 			PrintMsg(&msgBuf, _params, RX_PRINT, numOfMsgRx++);
 		}
 		
 		usleep((size_t)_params->m_speed);
 		
-		MsgTx(_mqID, txMsg, 1);
+		MsgTx(_mqID, &txMsg, 2);
 		
 		if (1 == _params->m_verbosityMode)
 		{
@@ -362,24 +363,19 @@ int main(int argc, char* argv[])
 	
 	if (0 == params.m_operationMode)
 	{
-		InitServerMsg(&msgBuf, 1);
+		InitServerMsg(&msgBuf, SERVER_TO_CLIENT_CH);
 		ServerTx(mqID, &msgBuf, &params);
 		printf("Server done\n");
 		DeleteMQ(mqID, &msqDs);
 		printf("Message Queue deleted\n");
 	}
+	
 	else if(1 == params.m_operationMode)
 	{
 		ClientRx(mqID, &params);
 		printf("Client done\n");
 	}
 	
-	
-	
-	
-	
-	
-
 	return 0;
 }
 
