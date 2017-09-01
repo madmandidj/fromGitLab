@@ -1,216 +1,41 @@
-#include "SingleMsgQ.h"
-#define ONE_SECOND_USEC 1000000
-#define TEN_SECOND_USEC 10000000
-#define ERR_VAL -1
-#define NUM_OF_LETTERS 26
-#define LOWER_A_ASCI 97
-#define MSG_SIZE 64
-#define TX_PRINT 0
-#define RX_PRINT 1
-#define SERVER_TO_CLIENT_CH 2
-#define CLIENT_TO_SERVER_CH 1
+#include "MyMsgQ.h"
 
-
-
-typedef struct Params
+static void InitServerMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 {
-	int 	m_createMQFlag;
-	int 	m_deleteMQFlag;
-	int 	m_numOfMsgs;
-	int 	m_eofMode;
-	int 	m_verbosityMode;
-	int 	m_speed;
-	char* 	m_ftokFilename;
-}Params;
-
-
-
-
-static void DoGetOpt(int _argc, char* _argv[], Params* _params)
-{
-	int opt;
+	_txMsg->m_channel = _msgChannel;
+	_txMsg->m_data.m_pid = getpid();
 	
-	while ((opt = getopt(_argc, _argv, "cd:n:e:v:s:f:o:")) != -1) {
-	   switch (opt) 
-	   {
-		case 'c':
-			_params->m_createMQFlag = 1;
-		   break;
-		   
-		case 'd':
-			msgctl(atoi(optarg), IPC_RMID, NULL);
-		   break;
-		   
-		case 'n':
-			_params->m_numOfMsgs = atoi(optarg);
-		   break;
-		   
-		case 'e':
-			_params->m_eofMode = atoi(optarg);
-		   break;
-		   
-		case 'v':
-			_params->m_verbosityMode = atoi(optarg);
-		   break;
-		   
-		case 's':
-			_params->m_speed = atoi(optarg);
-		   break;
-		   
-		case 'f':
-			_params->m_ftokFilename = optarg;
-		   break;
-		   	   		
-		default: 
-		fprintf(stderr, "Usage: %s [-c create] [-d destroy] [-n numOfMsgs] [-e EOFtype] \
-								   [-v verbosity] [-s speed] [-f filename]\n", _argv[0]);
-		exit(EXIT_FAILURE);
-	   }
-	}
-	
-	if (1 == _argc)
+	switch (_msgType)
 	{
-		_params->m_createMQFlag = 0;
-		_params->m_deleteMQFlag = 0;
-		_params->m_numOfMsgs = 1;
-		_params->m_eofMode = 0;
-		_params->m_verbosityMode = 0;
-		_params->m_speed = 1;
-		_params->m_ftokFilename = "SMQ";
-	}
-   
-	return;
-}
-
-
-
-
-
-
-
-static void CreateMQ(key_t* _mqKey, int* _mqID, Params* _params)
-{
-	*_mqKey = ftok(_params->m_ftokFilename, 1);
-	if (*_mqKey == -1)
-	{
-		printf("ftok() ERROR: %s\n", strerror(errno));
-		exit(EXIT_FAILURE);
-	}
-	
-	
-	*_mqID = msgget(*_mqKey, 0666 | IPC_CREAT); 
-	
-	if (-1 == *_mqID)
-	{
-		printf("ftok() ERROR: %s\n", strerror(errno));
-		/*TODO: destroyqueu before exit */
-		exit(EXIT_FAILURE);
-		
-	}
-
-	printf("Message Queue created\n");
-	
-	return;
-}
-
-
-
-
-
-
-
-
-
-static void DeleteMQ(int _mqID, msqid_ds* _msqDs)
-{
-	msgctl(_mqID, IPC_RMID, _msqDs);
-	
-	return;
-}
-
-
-
-
-
-static void PrintMsg(MsgBuf* _msgBuf, Params* _params, int printMode, size_t index)
-{
-	if (TX_PRINT == printMode)
-	{
-		printf("ServerTx- pid: %d, channel: %ld, status:, %d, data1: %d, data2: %d, Tx counter: %d\n", \
-				 _msgBuf->m_data.m_pid, _msgBuf->m_type, _msgBuf->m_data.m_status, _msgBuf->m_data.m_data1, \
-				 	_msgBuf->m_data.m_data2, index + 1);
-	}
-	else if (RX_PRINT == printMode)
-	{
-		printf("ServerRx- pid: %d, channel: %ld, status:, %d, data1: %d, data2: %d, Tx counter: %d\n", \
-				 _msgBuf->m_data.m_pid, _msgBuf->m_type, _msgBuf->m_data.m_status, _msgBuf->m_data.m_data1, \
-				 	_msgBuf->m_data.m_data2, index + 1);
+		case GEN_MSG:
+			_txMsg->m_data.m_status = 10;
+			_txMsg->m_data.m_data1 = 10;
+			_txMsg->m_data.m_data2 = 10;
+			break;
+			
+		case EOW_MSG:
+			_txMsg->m_data.m_status = 11;
+			_txMsg->m_data.m_data1 = 11;
+			_txMsg->m_data.m_data2 = 11;
+			break;
+			
+		case ATND_MSG:
+			_txMsg->m_data.m_status = 12;
+			_txMsg->m_data.m_data1 = 12;
+			_txMsg->m_data.m_data2 = 12;
+			break;
+			
+		default:
+			_txMsg->m_data.m_status = 13;
+			_txMsg->m_data.m_data1 = 13;
+			_txMsg->m_data.m_data2 = 13;
 	}
 	
 	return;
 }
 
 
-
-
-static void InitServerMsg(MsgBuf* _msgBuf, int _msgChannel)
-{
-	_msgBuf->m_type = _msgChannel;
-	_msgBuf->m_data.m_pid = getpid();
-	_msgBuf->m_data.m_status = 1;
-	_msgBuf->m_data.m_data1 = 1;
-	_msgBuf->m_data.m_data2 = 1;
-	
-	return;
-}
-
-
-
-
-
-
-static void MsgTx(int mqID, MsgBuf* _txMsg, long _channel)
-{
-	int sndErr;
-	
-	sndErr = msgsnd(mqID, _txMsg, sizeof(Data), _channel);
-	
-	if (sndErr == -1)
-	{
-		printf("Server sndErr() ERROR: %s\n", strerror(errno));
-		
-		exit(EXIT_FAILURE);
-	}
-	
-	return;
-}
-
-
-
-
-
-static void MsgRx(int _mqID, MsgBuf* _rxMsg, long _channel, int _flag)
-{
-	ssize_t rcvErr;
-	
-	rcvErr = msgrcv(_mqID, _rxMsg, sizeof(Data), _channel, _flag);
-		
-	if (rcvErr == -1)
-	{
-		if(ENOMSG != errno)
-		{
-			printf("Server rcvErr() ERROR %d: %s\n", errno, strerror(errno));
-			exit(EXIT_FAILURE);
-		}
-	}
-	
-	return;
-}
-
-
-
-
-
+/*
 static void ServerRoutine(int _mqID, Params* _params)
 {
 	size_t numOfMsgRx = 0;
@@ -218,26 +43,48 @@ static void ServerRoutine(int _mqID, Params* _params)
 	MsgBuf msgBuf;
 	MsgBuf txMsg;
 	
-	InitServerMsg(&txMsg, SERVER_TO_CLIENT_CH);
+	InitServerMsg(&txMsg, S2C_CH, GEN_MSG);
 	
 	for (;;)
 	{
-		MsgRx(_mqID, &msgBuf, CLIENT_TO_SERVER_CH, 0);
+		MsgRx(_mqID, &msgBuf, 0);
 
-		if (1 == _params->m_verbosityMode)
-		{
-			PrintMsg(&msgBuf, _params, RX_PRINT, numOfMsgRx++);
-		}
+		PrintMsg(&msgBuf, _params, "Server Rx", numOfMsgRx++);
 		
 		usleep((size_t)_params->m_speed);
 		
-		MsgTx(_mqID, &txMsg, SERVER_TO_CLIENT_CH);
+		MsgTx(_mqID, &txMsg);
 		
-		if (1 == _params->m_verbosityMode)
-		{
-			PrintMsg(&txMsg, _params, TX_PRINT, numOfMsgTx++);
-		}
+		PrintMsg(&txMsg, _params, "Server Tx", numOfMsgTx++);
 	}
+	
+	return;
+}
+
+*/
+
+
+
+static void ServerSignIn(int _mqID, Params* _params)
+{
+	MsgBuf txMsg;
+	
+	InitServerMsg(&txMsg, S_ATND_CH, ATND_MSG);
+	
+	MsgTx(_mqID, &txMsg);
+	
+	PrintMsg(&txMsg, _params, "Server sign in", 1);
+	
+	return;
+}
+
+static void ServerSignOut(int _mqID, Params* _params)
+{
+	MsgBuf rxMsg;
+	
+	MsgRx(_mqID, &rxMsg, S_ATND_CH, 0);
+	
+	PrintMsg(&rxMsg, _params, "Server sign out", 1);
 	
 	return;
 }
@@ -245,7 +92,65 @@ static void ServerRoutine(int _mqID, Params* _params)
 
 
 
+static void WaitForClientSignIn(int _mqID, Params* _params)
+{
+	MsgBuf rxMsg;
+	
+	MsgRx(_mqID, &rxMsg, C_ATND_CH, 0);
+	
+	PrintMsg(&rxMsg, _params, "Server Rx", 1);
+	
+	MsgTx(_mqID, &rxMsg);
+	
+	return;
+}
 
+
+
+
+static int IsClientSignedIn(int _mqID, Params* _params)
+{
+	MsgBuf rxMsg;
+	
+	if (-1 == MsgRx(_mqID, &rxMsg, C_ATND_CH, IPC_NOWAIT))
+	{
+		return 0;
+	}
+	
+	MsgTx(_mqID, &rxMsg);
+	
+	return 1;
+}
+
+
+static int IsMsgForMe(int _mqID)
+{
+	MsgBuf rxMsg;
+	
+	if (-1 == MsgRx(_mqID, &rxMsg, C2S_CH, IPC_NOWAIT))
+	{
+		return 0;
+	}
+	
+	MsgTx(_mqID, &rxMsg);
+	
+	return 1;
+}
+
+/*
+static int IsLastServer(int _mqID
+{
+	MsgBuf* rxMsg;
+	
+	if (-1 == MsgRx(_mqID, &rxMsg, S_ATND_CH, IPC_NOWAIT))
+	{
+		return 1;
+	}
+	
+	return 0;
+}
+
+*/
 
 
 
@@ -253,9 +158,72 @@ int main(int argc, char* argv[])
 {
 	int mqID;
 	key_t mqKey;
-	msqid_ds msqDs;
+	/* msqid_ds msqDs; */
 	Params params;
+	MsgBuf txMsg;
+	MsgBuf rxMsg;
+	size_t msgRxCount = 0;
 	
+	
+	
+	
+	DoGetOpt(argc, argv, &params);
+	
+	if (1 == params.m_createMQFlag)
+	{
+		CreateMQ(&mqKey, &mqID, &params);
+	}
+	
+	ServerSignIn(mqID, &params);
+	
+	WaitForClientSignIn(mqID, &params);
+	
+	
+	
+	while (IsClientSignedIn(mqID, &params) || IsMsgForMe(mqID))
+	{
+		if (-1 == MsgRx(mqID, &rxMsg, C2S_CH, IPC_NOWAIT))
+		{
+			printf("No messages for server pid: %d\n", getpid());
+		}
+		else
+		{
+			++msgRxCount;
+			PrintMsg(&rxMsg, &params, "Server Rx", msgRxCount);
+		}
+		
+		InitServerMsg(&txMsg, rxMsg.m_data.m_pid, GEN_MSG);
+		
+		MsgTx(mqID, &txMsg);
+		
+		usleep((unsigned int)params.m_speed);
+	}
+	
+	ServerSignOut(mqID, &params);
+	
+
+	
+	/*
+	
+	Connect to MQ
+	Sign in
+	
+	While client attendance isnt empty and there are messages for me:
+	{
+		Read msgs for my pid
+	}
+	
+	if im last server
+		sign out and destroy MQ
+	else
+		sign out
+	
+	
+	*/
+	
+	
+	
+	/*
 	DoGetOpt(argc, argv, &params);
 	
 	if (1 == params.m_createMQFlag)
@@ -270,6 +238,15 @@ int main(int argc, char* argv[])
 	DeleteMQ(mqID, &msqDs);
 	
 	printf("Message Queue deleted\n");
+	
+	*/
+	
+	
+	
+	
+	
+	
+	
 
 	return 0;
 }
