@@ -107,35 +107,13 @@ void PrintMsg(MsgBuf* _msgBuf, Params* _params, char* _printerStr, size_t index)
 
 	if (1 == _params->m_verbosityMode)
 	{
-	/*
-		if (TX_PRINT == printMode)
-		{
-			printf("ClientTx- pid: %d, channel: %ld, status:, %d, data1: %d, data2: %d, Tx counter: %d\n", \
-					 _msgBuf->m_data.m_pid, _msgBuf->m_channel, _msgBuf->m_data.m_status, _msgBuf->m_data.m_data1, \
-					 	_msgBuf->m_data.m_data2, index + 1);
-		}
-		else if (RX_PRINT == printMode)
-		{
-			printf("ClientRx- pid: %d, channel: %ld, status:, %d, data1: %d, data2: %d, Tx counter: %d\n", \
-					 _msgBuf->m_data.m_pid, _msgBuf->m_channel, _msgBuf->m_data.m_status, _msgBuf->m_data.m_data1, \
-					 	_msgBuf->m_data.m_data2, index + 1);
-		}
-		*/
-		
 		printf("%s- pid: %d, channel: %ld, status:, %d, data1: %d, data2: %d, Tx counter: %d\n", _printerStr,\
 					 _msgBuf->m_data.m_pid, _msgBuf->m_channel, _msgBuf->m_data.m_status, _msgBuf->m_data.m_data1, \
 					 	_msgBuf->m_data.m_data2, index + 1);
-		
 	}
 	
 	return;
 }
-
-
-
-
-
-
 
 
 
@@ -146,16 +124,7 @@ int MsgTx(int mqID, MsgBuf* _txMsg)
 	int sndErr;
 	
 	sndErr = msgsnd(mqID, _txMsg, sizeof(Data), _txMsg->m_channel);
-	
-	/*
-	if (sndErr == -1)
-	{
-		printf("pid: %d, sndErr() ERROR: %s\n", getpid(), strerror(errno));
-		
-		exit(EXIT_FAILURE);
-	}
-	*/
-	
+
 	return sndErr;
 }
 
@@ -169,13 +138,6 @@ ssize_t MsgRx(int _mqID, MsgBuf* _rxMsg, int _channel, int _flag)
 	
 	rcvErr = msgrcv(_mqID, _rxMsg, sizeof(Data), _channel, _flag);
 
-	/*
-	if (rcvErr == -1)
-	{
-		printf("Client rcvErr() ERROR %d: %s\n", errno, strerror(errno));
-		exit(EXIT_FAILURE);
-	}
-	*/
 	
 	return rcvErr;
 }

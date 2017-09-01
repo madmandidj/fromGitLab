@@ -4,8 +4,7 @@ static void InitClientMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 {
 	_txMsg->m_channel = _msgChannel;
 	_txMsg->m_data.m_pid = getpid();
-	/* _txMsg->m_data.m_pid_receiver = _pidTarget; */
-	
+
 	switch (_msgType)
 	{
 		case GEN_MSG:
@@ -39,11 +38,6 @@ static void InitClientMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 
 
 
-
-
-
-
-
 static void ClientSignIn(int _mqID, Params* _params)
 {
 	MsgBuf txMsg;
@@ -58,6 +52,10 @@ static void ClientSignIn(int _mqID, Params* _params)
 }
 
 
+
+
+
+
 static void ClientSignOut(int _mqID, Params* _params)
 {
 	MsgBuf rxMsg;
@@ -68,32 +66,6 @@ static void ClientSignOut(int _mqID, Params* _params)
 	
 	return;
 }
-
-
-
-/*
-
-static size_t GetActiveServers(int _mqID, pid_t* _pidArr)
-{
-	MsgBuf* msg[64];
-	size_t numOfServers = 0;
-	size_t index;
-	
-	while (-1 != MsgRx(_mqID, &msg[numOfServers], S_ATND_CH, IPC_NOWAIT))
-	{
-		_pidArr[numOfServers] = msg[numOfServers]->m_pid_receiver;
-		++numOfServers;
-	}
-	
-	for(index = 0; index < numOfServers; ++index)
-	{
-		MsgTx(_mqID, &msg[index], msg[index]->m_pid_receiver);
-	}
-	
-	return numOfServers;
-}
-
-*/
 
 
 
@@ -130,20 +102,6 @@ static void DeliverClientPayload(int _mqID, Params* _params)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int main(int argc, char* argv[])
 {
 	int mqID;
@@ -156,50 +114,9 @@ int main(int argc, char* argv[])
 	
 	ClientSignIn(mqID, &params);
 	
-	/*
-	numOfServers = GetActiveServers(mqID, serverPidArr);
-	*/
-	
 	DeliverClientPayload(mqID, &params);
 	
 	ClientSignOut(mqID, &params);
-	
-	/*
-	
-	Connect to MQ
-	Sign In
-	Wait for servers to sign in
-	Get all active servers pids
-	Deliver payload
-	Sign out
-	
-	
-	*/
-	
-	
-	
-	/*
-	
-	DoGetOpt(argc, argv, &params);
-	
-	if (1 == params.m_createMQFlag)
-	{
-		CreateMQ(&mqKey, &mqID, &params);
-	}
-	
-	
-	
-	InitClientMsg(&txMsg, C_ATND_CH, ATND_MSG);
-	
-	ClientSignIn(mqID, &txMsg, &params);
-	
-	InitClientMsg(&txMsg, C2S_CH, GEN_MSG);
-	
-	ClientDeliverPayload(mqID, &txMsg, &params);
-	
-	printf("Client done\n");
-	
-	*/
 
 	return 0;
 }
