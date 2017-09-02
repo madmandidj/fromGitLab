@@ -77,7 +77,7 @@ static void DeliverClientPayload(int _mqID, Params* _params)
 		
 	}
 	
-	printf("Client finished payload delivery\n");
+	printf("Client finished sending %d messages\n", index);
 	
 	return;
 }
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
 	Params params;
 	sem_t* clientSem;
 	
-	clientSem = sem_open(CSEM_NAME, O_CREAT, 0644, 0);
+	clientSem = sem_open(CSEM_NAME, O_CREAT, 0666, 0);
 	
 	DoGetOpt(argc, argv, &params);
 	

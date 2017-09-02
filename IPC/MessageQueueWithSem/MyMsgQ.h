@@ -13,8 +13,8 @@
 #define C2S_CH 1
 #define GEN_MSG 0
 
-#define CSEM_NAME "/myCSem"
-#define SSEM_NAME "/mySSem"
+#define CSEM_NAME "myCSem"
+#define SSEM_NAME "mySSem"
 
 
 #include <stdio.h>

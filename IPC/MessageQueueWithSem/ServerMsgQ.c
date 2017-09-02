@@ -52,13 +52,17 @@ static void ServerSignOut(int _mqID, sem_t* _serverSem, sem_t* _clientSem)
 	
 	if (semVal == 0)
 	{
-		unlink(CSEM_NAME);
-		unlink(SSEM_NAME);
+		sem_close(_clientSem);
+		sem_close(_serverSem);
 		DeleteMQ(_mqID, NULL);
 		printf("Server has signed out\n");
 		printf("Message Queue destroyed\n");
 		return;
 	}
+	/*
+	unlink(CSEM_NAME);
+	unlink(SSEM_NAME);
+	*/
 	
 	printf("Server has signed out\n");
 	
@@ -74,7 +78,7 @@ static void WaitForClientSignIn(sem_t* _clientSem)
 	
 	while (-1 == sem_trywait(_clientSem))
 	{
-		printf("Server waiting for client sign in");
+		printf("Server waiting for client sign in\n");
 		usleep(ONE_SECOND_USEC);
 	}
 	
@@ -89,12 +93,14 @@ static void WaitForClientSignIn(sem_t* _clientSem)
 
 static int IsClientSignedIn(sem_t* _clientSem)
 {
-	if (-1 == sem_trywait(_clientSem))
+	int semVal;
+	
+	sem_getvalue(_clientSem, &semVal);
+
+	if (0 == semVal)
 	{
 		return 0;
 	}
-	
-	sem_post(_clientSem);
 	
 	return 1;
 
@@ -103,8 +109,7 @@ static int IsClientSignedIn(sem_t* _clientSem)
 
 
 
-/*
-static int IsMsgForMe(int _mqID)
+static int IsMsgInQueue(int _mqID)
 {
 	MsgBuf rxMsg;
 	
@@ -117,7 +122,7 @@ static int IsMsgForMe(int _mqID)
 	
 	return 1;
 }
-*/
+
 
 
 
@@ -133,8 +138,8 @@ int main(int argc, char* argv[])
 	sem_t* clientSem;
 	sem_t* serverSem;
 	
-	clientSem = sem_open(CSEM_NAME, O_CREAT, 0644, 0);
-	serverSem = sem_open(SSEM_NAME, O_CREAT, 0644, 0);
+	clientSem = sem_open(CSEM_NAME, O_CREAT, 0666, 0);
+	serverSem = sem_open(SSEM_NAME, O_CREAT, 0666, 0);
 	
 	DoGetOpt(argc, argv, &params);
 	
@@ -145,9 +150,8 @@ int main(int argc, char* argv[])
 	WaitForClientSignIn(clientSem);
 	
 	printf("Server starting to receive payload\n");
-	
-	/* while (IsClientSignedIn(clientSem) || IsMsgForMe(mqID)) */
-	while (IsClientSignedIn(clientSem))
+
+	while (IsClientSignedIn(clientSem) || IsMsgInQueue(mqID))
 	{
 		if (-1 == MsgRx(mqID, &rxMsg, C2S_CH, IPC_NOWAIT))
 		{
@@ -168,7 +172,7 @@ int main(int argc, char* argv[])
 		usleep((unsigned int)params.m_speed);
 	}
 	
-	printf("Server finished receiving all payloads\n");
+	printf("Server finished receiving %d messages\n", msgRxCount);
 	
 	ServerSignOut(mqID, serverSem, clientSem);
 
