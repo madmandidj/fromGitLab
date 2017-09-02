@@ -29,11 +29,15 @@ static void InitServerMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 
 
 
-static void ServerSignIn(sem_t* _serverSem)
+static void ServerSignIn(sem_t* _serverSem, sem_t* _signSem)
 {
+	sem_wait(_signSem);
+	
 	sem_post(_serverSem);
 	
 	printf("Server has signed in\n");
+	
+	sem_post(_signSem);
 	
 	return;
 }
@@ -42,9 +46,11 @@ static void ServerSignIn(sem_t* _serverSem)
 
 
 
-static void ServerSignOut(int _mqID, sem_t* _serverSem, sem_t* _clientSem)
+static void ServerSignOut(int _mqID, sem_t* _serverSem, sem_t* _clientSem, sem_t* _signSem)
 {
 	int semVal;
+	
+	sem_wait(_signSem);
 	
 	sem_wait(_serverSem);
 	
@@ -52,19 +58,29 @@ static void ServerSignOut(int _mqID, sem_t* _serverSem, sem_t* _clientSem)
 	
 	if (semVal == 0)
 	{
+		sem_unlink(CSEM_NAME);
+		sem_unlink(SSEM_NAME);
+		/*
 		sem_close(_clientSem);
 		sem_close(_serverSem);
+		*/
 		DeleteMQ(_mqID, NULL);
 		printf("Server has signed out\n");
 		printf("Message Queue destroyed\n");
+		sem_post(_signSem);
+		sem_unlink(SIGN_INOUT);
 		return;
 	}
-	/*
-	unlink(CSEM_NAME);
-	unlink(SSEM_NAME);
-	*/
+	
+	sem_unlink(CSEM_NAME);
+	sem_unlink(SSEM_NAME);
+	
 	
 	printf("Server has signed out\n");
+	
+	sem_post(_signSem);
+	
+	sem_unlink(SIGN_INOUT);
 	
 	return;
 }
@@ -137,15 +153,17 @@ int main(int argc, char* argv[])
 	size_t msgRxCount = 0;
 	sem_t* clientSem;
 	sem_t* serverSem;
+	sem_t* signSem;
 	
 	clientSem = sem_open(CSEM_NAME, O_CREAT, 0666, 0);
 	serverSem = sem_open(SSEM_NAME, O_CREAT, 0666, 0);
+	signSem = sem_open(SIGN_INOUT, O_CREAT, 0666, 1);
 	
 	DoGetOpt(argc, argv, &params);
 	
 	CreateMQ(&mqKey, &mqID, &params);
 	
-	ServerSignIn(serverSem);
+	ServerSignIn(serverSem, signSem);
 	
 	WaitForClientSignIn(clientSem);
 	
@@ -174,7 +192,7 @@ int main(int argc, char* argv[])
 	
 	printf("Server finished receiving %d messages\n", msgRxCount);
 	
-	ServerSignOut(mqID, serverSem, clientSem);
+	ServerSignOut(mqID, serverSem, clientSem, signSem);
 
 	return 0;
 }

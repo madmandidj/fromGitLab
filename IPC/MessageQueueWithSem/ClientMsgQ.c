@@ -25,11 +25,16 @@ static void InitClientMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 
 
 
-static void ClientSignIn(sem_t* _sem)
+static void ClientSignIn(sem_t* _sem, sem_t* _signSem)
 {
+	
+	sem_wait(_signSem);
+	
 	sem_post(_sem);
 	
 	printf("Client has signed in\n");
+	
+	sem_post(_signSem);
 	
 	return;
 }
@@ -39,11 +44,20 @@ static void ClientSignIn(sem_t* _sem)
 
 
 
-static void ClientSignOut(sem_t* _sem)
+static void ClientSignOut(sem_t* _sem, sem_t* _signSem)
 {
+
+	sem_wait(_signSem);
+
 	sem_wait(_sem);
 	
+	sem_unlink(CSEM_NAME);
+	
 	printf("Client has signed out\n");
+	
+	sem_post(_signSem);
+	
+	sem_unlink(SIGN_INOUT);
 	
 	return;
 }
@@ -93,18 +107,23 @@ int main(int argc, char* argv[])
 	key_t mqKey;
 	Params params;
 	sem_t* clientSem;
+	sem_t* signSem;
 	
 	clientSem = sem_open(CSEM_NAME, O_CREAT, 0666, 0);
+	
+	signSem = sem_open(SIGN_INOUT, O_CREAT, 0666, 1);
+	
+	
 	
 	DoGetOpt(argc, argv, &params);
 	
 	CreateMQ(&mqKey, &mqID, &params);
 	
-	ClientSignIn(clientSem);
+	ClientSignIn(clientSem, signSem);
 	
 	DeliverClientPayload(mqID, &params);
 	
-	ClientSignOut(clientSem);
+	ClientSignOut(clientSem, signSem);
 
 	return 0;
 }

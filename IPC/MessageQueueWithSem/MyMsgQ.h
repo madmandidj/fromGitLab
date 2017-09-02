@@ -15,6 +15,7 @@
 
 #define CSEM_NAME "myCSem"
 #define SSEM_NAME "mySSem"
+#define SIGN_INOUT "inOutSem"
 
 
 #include <stdio.h>
