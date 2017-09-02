@@ -10,15 +10,11 @@
 #define MSG_SIZE 64
 #define TX_PRINT 0
 #define RX_PRINT 1
-#define C_ATND_CH 4
-#define S_ATND_CH 3
-#define S2C_CH 2
 #define C2S_CH 1
 #define GEN_MSG 0
-#define EOW_MSG 1
-#define ATND_MSG 2
 
-#define SEM_NAME "/mySem"
+#define CSEM_NAME "/myCSem"
+#define SSEM_NAME "/mySSem"
 
 
 #include <stdio.h>
@@ -30,6 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <semaphore.h>
+#include <pthread.h>
 
 typedef struct msqid_ds msqid_ds;
 

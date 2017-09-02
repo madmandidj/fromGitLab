@@ -3,7 +3,6 @@
 
 
 
-
 static void InitServerMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 {
 	_txMsg->m_channel = _msgChannel;
@@ -15,18 +14,6 @@ static void InitServerMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 			_txMsg->m_data.m_status = 10;
 			_txMsg->m_data.m_data1 = 10;
 			_txMsg->m_data.m_data2 = 10;
-			break;
-			
-		case EOW_MSG:
-			_txMsg->m_data.m_status = 11;
-			_txMsg->m_data.m_data1 = 11;
-			_txMsg->m_data.m_data2 = 11;
-			break;
-			
-		case ATND_MSG:
-			_txMsg->m_data.m_status = 12;
-			_txMsg->m_data.m_data1 = 12;
-			_txMsg->m_data.m_data2 = 12;
 			break;
 			
 		default:
@@ -42,14 +29,10 @@ static void InitServerMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 
 
 
-static void ServerSignIn(int _mqID, Params* _params)
+static void ServerSignIn(sem_t* _serverSem)
 {
-	MsgBuf txMsg;
+	sem_post(_serverSem);
 	
-	InitServerMsg(&txMsg, S_ATND_CH, ATND_MSG);
-	
-	MsgTx(_mqID, &txMsg);
-
 	printf("Server has signed in\n");
 	
 	return;
@@ -59,11 +42,23 @@ static void ServerSignIn(int _mqID, Params* _params)
 
 
 
-static void ServerSignOut(int _mqID, Params* _params)
+static void ServerSignOut(int _mqID, sem_t* _serverSem, sem_t* _clientSem)
 {
-	MsgBuf rxMsg;
+	int semVal;
 	
-	MsgRx(_mqID, &rxMsg, S_ATND_CH, 0);
+	sem_wait(_serverSem);
+	
+	sem_getvalue(_serverSem, &semVal);
+	
+	if (semVal == 0)
+	{
+		unlink(CSEM_NAME);
+		unlink(SSEM_NAME);
+		DeleteMQ(_mqID, NULL);
+		printf("Server has signed out\n");
+		printf("Message Queue destroyed\n");
+		return;
+	}
 	
 	printf("Server has signed out\n");
 	
@@ -74,15 +69,16 @@ static void ServerSignOut(int _mqID, Params* _params)
 
 
 
-static void WaitForClientSignIn(int _mqID, Params* _params)
+static void WaitForClientSignIn(sem_t* _clientSem)
 {
-	MsgBuf rxMsg;
 	
-	MsgRx(_mqID, &rxMsg, C_ATND_CH, 0);
+	while (-1 == sem_trywait(_clientSem))
+	{
+		printf("Server waiting for client sign in");
+		usleep(ONE_SECOND_USEC);
+	}
 	
-	printf("A client has signed in\n");
-	
-	MsgTx(_mqID, &rxMsg);
+	sem_post(_clientSem);
 	
 	return;
 }
@@ -91,24 +87,23 @@ static void WaitForClientSignIn(int _mqID, Params* _params)
 
 
 
-static int IsClientSignedIn(int _mqID, Params* _params)
+static int IsClientSignedIn(sem_t* _clientSem)
 {
-	MsgBuf rxMsg;
-	
-	if (-1 == MsgRx(_mqID, &rxMsg, C_ATND_CH, IPC_NOWAIT))
+	if (-1 == sem_trywait(_clientSem))
 	{
 		return 0;
 	}
 	
-	MsgTx(_mqID, &rxMsg);
+	sem_post(_clientSem);
 	
 	return 1;
+
 }
 
 
 
 
-
+/*
 static int IsMsgForMe(int _mqID)
 {
 	MsgBuf rxMsg;
@@ -122,7 +117,7 @@ static int IsMsgForMe(int _mqID)
 	
 	return 1;
 }
-
+*/
 
 
 
@@ -135,18 +130,24 @@ int main(int argc, char* argv[])
 	MsgBuf txMsg;
 	MsgBuf rxMsg;
 	size_t msgRxCount = 0;
+	sem_t* clientSem;
+	sem_t* serverSem;
+	
+	clientSem = sem_open(CSEM_NAME, O_CREAT, 0644, 0);
+	serverSem = sem_open(SSEM_NAME, O_CREAT, 0644, 0);
 	
 	DoGetOpt(argc, argv, &params);
 	
 	CreateMQ(&mqKey, &mqID, &params);
 	
-	ServerSignIn(mqID, &params);
+	ServerSignIn(serverSem);
 	
-	WaitForClientSignIn(mqID, &params);
+	WaitForClientSignIn(clientSem);
 	
 	printf("Server starting to receive payload\n");
 	
-	while (IsClientSignedIn(mqID, &params) || IsMsgForMe(mqID))
+	/* while (IsClientSignedIn(clientSem) || IsMsgForMe(mqID)) */
+	while (IsClientSignedIn(clientSem))
 	{
 		if (-1 == MsgRx(mqID, &rxMsg, C2S_CH, IPC_NOWAIT))
 		{
@@ -167,9 +168,9 @@ int main(int argc, char* argv[])
 		usleep((unsigned int)params.m_speed);
 	}
 	
-	printf("Server finished to receive payload\n");
+	printf("Server finished receiving all payloads\n");
 	
-	ServerSignOut(mqID, &params);
+	ServerSignOut(mqID, serverSem, clientSem);
 
 	return 0;
 }

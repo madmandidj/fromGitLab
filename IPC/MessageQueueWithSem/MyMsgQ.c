@@ -2,6 +2,8 @@
 
 
 
+
+
 void DoGetOpt(int _argc, char* _argv[], Params* _params)
 {
 	int opt;
@@ -61,8 +63,6 @@ void DoGetOpt(int _argc, char* _argv[], Params* _params)
 
 
 
-
-
 void CreateMQ(key_t* _mqKey, int* _mqID, Params* _params)
 {
 	*_mqKey = ftok(_params->m_ftokFilename, 1);
@@ -86,6 +86,7 @@ void CreateMQ(key_t* _mqKey, int* _mqID, Params* _params)
 	
 	return;
 }
+
 
 
 

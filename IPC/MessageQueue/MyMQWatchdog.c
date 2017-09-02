@@ -2,6 +2,9 @@
 
 #define FIVE_SECONDS_USEC 5000000
 
+
+
+
 static int IsLastServer(int _mqID)
 {
 	MsgBuf msg;
@@ -15,6 +18,10 @@ static int IsLastServer(int _mqID)
 	
 	return 0;
 }
+
+
+
+
 
 static int IsClientSignedIn(int _mqID, Params* _params)
 {
@@ -45,10 +52,16 @@ int main(int argc, char* argv[])
 	
 	CreateMQ(&mqKey, &mqID, &params);
 	
-	while (!IsLastServer(mqID) || IsClientSignedIn(mqID, &params))
+	while(!IsClientSignedIn(mqID, &params))
+	{
+		printf("Watchdog waiting for client to connect\n");
+		usleep(ONE_SECOND_USEC);
+	}
+	
+	while(!IsLastServer(mqID) || IsClientSignedIn(mqID, &params))
 	{
 		printf("Watchdog is watching\n");
-		usleep(FIVE_SECONDS_USEC);
+		usleep(ONE_SECOND_USEC);
 	}
 	
 	DeleteMQ(mqID, &msqDs);

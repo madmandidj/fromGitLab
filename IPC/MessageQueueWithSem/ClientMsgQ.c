@@ -13,18 +13,6 @@ static void InitClientMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 			_txMsg->m_data.m_data2 = 0;
 			break;
 			
-		case EOW_MSG:
-			_txMsg->m_data.m_status = 1;
-			_txMsg->m_data.m_data1 = 1;
-			_txMsg->m_data.m_data2 = 1;
-			break;
-			
-		case ATND_MSG:
-			_txMsg->m_data.m_status = 2;
-			_txMsg->m_data.m_data1 = 2;
-			_txMsg->m_data.m_data2 = 2;
-			break;
-			
 		default:
 			_txMsg->m_data.m_status = 3;
 			_txMsg->m_data.m_data1 = 3;
@@ -37,13 +25,9 @@ static void InitClientMsg(MsgBuf* _txMsg, int _msgChannel, int _msgType)
 
 
 
-static void ClientSignIn(int _mqID, Params* _params)
+static void ClientSignIn(sem_t* _sem)
 {
-	MsgBuf txMsg;
-	
-	InitClientMsg(&txMsg, C_ATND_CH, ATND_MSG);
-	
-	MsgTx(_mqID, &txMsg);
+	sem_post(_sem);
 	
 	printf("Client has signed in\n");
 	
@@ -55,11 +39,9 @@ static void ClientSignIn(int _mqID, Params* _params)
 
 
 
-static void ClientSignOut(int _mqID, Params* _params)
+static void ClientSignOut(sem_t* _sem)
 {
-	MsgBuf rxMsg;
-	
-	MsgRx(_mqID, &rxMsg, C_ATND_CH, 0);
+	sem_wait(_sem);
 	
 	printf("Client has signed out\n");
 	
@@ -81,7 +63,6 @@ static void DeliverClientPayload(int _mqID, Params* _params)
 	
 	for (index = 0; index < _params->m_numOfMsgs; ++index)
 	{
-		
 		InitClientMsg(&txMsg, C2S_CH, GEN_MSG);
 		
 		MsgTx(_mqID, &txMsg);
@@ -96,7 +77,7 @@ static void DeliverClientPayload(int _mqID, Params* _params)
 		
 	}
 	
-	printf("Client finished payloaed delivery\n");
+	printf("Client finished payload delivery\n");
 	
 	return;
 }
@@ -111,16 +92,19 @@ int main(int argc, char* argv[])
 	int mqID;
 	key_t mqKey;
 	Params params;
+	sem_t* clientSem;
+	
+	clientSem = sem_open(CSEM_NAME, O_CREAT, 0644, 0);
 	
 	DoGetOpt(argc, argv, &params);
 	
 	CreateMQ(&mqKey, &mqID, &params);
 	
-	ClientSignIn(mqID, &params);
+	ClientSignIn(clientSem);
 	
 	DeliverClientPayload(mqID, &params);
 	
-	ClientSignOut(mqID, &params);
+	ClientSignOut(clientSem);
 
 	return 0;
 }
