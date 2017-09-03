@@ -1,5 +1,5 @@
 #include "PQProducers.h"
-
+#include <pthread.h>
 
 
 
@@ -19,17 +19,17 @@ struct Producers
 
 
 
-Producers* CreateProducers(size_t _numOfProds, size_t _numOfMsgs, Queue* _P2C, Queue* _C2P);
+Producers* ProducersCreate(size_t _numOfProds, size_t _numOfMsgs, void** _msgArr, Queue* _P2C, Queue* _C2P)
 {
 	Producers* prods;	
 	
-	if (0 == _numOfProd || 0 == _numOfMsgs || NULL == _P2C || NULL == _C2P)
+	if (0 == _numOfProds || 0 == _numOfMsgs || NULL == _P2C || NULL == _C2P)
 	{
 		return NULL;
 	}
 	
 	prods = malloc(sizeof(Producers));
-	If (NULL == prods)
+	if (NULL == prods)
 	{
 		return NULL;
 	}
@@ -44,7 +44,7 @@ Producers* CreateProducers(size_t _numOfProds, size_t _numOfMsgs, Queue* _P2C, Q
 	prods->m_numOfProds = _numOfProds;
 	prods->m_numOfMsgs = _numOfMsgs;
 	prods->m_P2C = _P2C;
-	prods->m_CP2 = _C2P;
+	prods->m_C2P = _C2P;
 	
 	return prods;
 }
@@ -53,15 +53,15 @@ Producers* CreateProducers(size_t _numOfProds, size_t _numOfMsgs, Queue* _P2C, Q
 
 
 
-void DeleteProducers(Producer* _prods)
+void ProducersDelete(Producers* _prods)
 {
 	if (NULL == _prods)
 	{
 		return;
 	}
 	
-	free(prods->m_threadIDs);
-	free(prods);
+	free(_prods->m_threadIDs);
+	free(_prods);
 	
 	return;
 }
@@ -74,22 +74,25 @@ void DeleteProducers(Producer* _prods)
 
 static void* ProducersRoutine(void* _prods)
 {	
+	/*
 	ADTErr err;
+	*/
 	size_t index;
 	void* rcvMsg;
-	
-	_prods = (Producers*)_prods;
+
 	
 	if (NULL == _prods)
 	{
 		return NULL;
 	}
 	
-	for(index = 0; index < _prods->m_numOfMsgs; ++index)
+	for(index = 0; index < ((Producers*)_prods)->m_numOfMsgs; ++index)
 	{
-		ProQueueInsert(_prods->m_P2C, _prods->m_msgArr[index]);
-		ProQueueRemove(_prods->m_P2C, &rcvMsg);
+		ProQueueInsert(((Producers*)_prods)->m_P2C, ((Producers*)_prods)->m_msgArr[index]);
+		ProQueueRemove(((Producers*)_prods)->m_C2P, &rcvMsg);
 	}
+	
+	return NULL;
 }
 
 
@@ -98,13 +101,13 @@ static void* ProducersRoutine(void* _prods)
 
 
 
-int ProducersRun(Producer* _prods)
+int ProducersRun(Producers* _prods)
 {
 	size_t index;
 	
 	if (NULL == _prods)
 	{
-		return NULL;
+		return 1;
 	}
 	
 	for (index = 0; index < _prods->m_numOfProds; ++index)
@@ -119,6 +122,15 @@ int ProducersRun(Producer* _prods)
 }
 
 
+
+
+
+
+
+void ProducersJoin(Producers* _prods)
+{
+
+}
 
 
 
