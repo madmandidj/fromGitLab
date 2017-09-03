@@ -18,17 +18,16 @@
 #define SIGN_INOUT "inOutSem"
 
 
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <semaphore.h>
-#include <pthread.h>
+#include <stdio.h>			/* printf */
+#include <sys/types.h>		/* msgrcv, msgsnd, msgget, msgctl */
+#include <sys/ipc.h>		/* msgrcv, msgsnd, msgget, msgctl */
+#include <sys/msg.h>		/* msgrcv, msgsnd, msgget, msgctl */
+#include <unistd.h>			/* getpid, usleep, getopt */
+#include <errno.h>			/* errno */
+#include <stdlib.h>			/* atoi, exit */
+#include <string.h>			/* strerr */
+#include <fcntl.h>			/* O_CREAT */
+#include <semaphore.h>		/* sem_t, sem_open */
 
 typedef struct msqid_ds msqid_ds;
 
@@ -59,17 +58,73 @@ typedef struct Params
 
 
 
-
+/**
+*	@brief Get main function input arguments, and set program parameters accordingaly
+*
+*
+*
+*/
 void DoGetOpt(int _argc, char* _argv[], Params* _params);
 
+
+/**
+*	@brief Create or join and message queue
+*	
+*	@warning Errors are handled internally
+*
+*/
 void CreateMQ(key_t* _mqKey, int* _mqID, Params* _params);
 
+
+/**
+*	@brief Delete message queue
+*
+*	TODO : Handle errors 
+*
+*/
 void DeleteMQ(int _mqID, msqid_ds* _msqDs);
 
+
+/**
+*	@brief Transmit message through message queue. 
+*
+*	@param[in] int - message queue ID
+*
+*	@param[in] MsgBuf* - message to transmit. Tx channel is set in m_channel member
+*
+*	@retval 0 - on success
+*
+*	@retval -1 - on failure
+*
+*/
 int MsgTx(int mqID, MsgBuf* _txMsg);
 
+
+/**
+*	@brief Receive message through message queue. 
+*
+*	@param[in] int - message queue ID
+*
+*	@param[in] MsgBuf* - message to receive.
+*
+*	@param[in] int - message channel (Note: can also be negative. look at msgrcv doc))
+*
+*	@param[in] int - flag (e.g. IPC_NOWAIT)
+*
+*	@retval >= 0 - on success returns number of bytes transmitted
+*
+*	@retval -1 - on failure
+*
+*/
 ssize_t MsgRx(int _mqID, MsgBuf* _rxMsg, int _channel, int _flag);
 
+
+/**
+*	@brief Print a message to stdout in Client/Server format
+*
+*
+*
+*/
 void PrintMsg(MsgBuf* _msgBuf, Params* _params, char* _printerStr, size_t index);
 
 
@@ -86,3 +141,6 @@ void PrintMsg(MsgBuf* _msgBuf, Params* _params, char* _printerStr, size_t index)
 
 
 #endif /* #ifndef __MY_MSG_Q_H__ */
+
+
+

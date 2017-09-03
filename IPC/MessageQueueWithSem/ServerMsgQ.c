@@ -60,10 +60,6 @@ static void ServerSignOut(int _mqID, sem_t* _serverSem, sem_t* _clientSem, sem_t
 	{
 		sem_unlink(CSEM_NAME);
 		sem_unlink(SSEM_NAME);
-		/*
-		sem_close(_clientSem);
-		sem_close(_serverSem);
-		*/
 		DeleteMQ(_mqID, NULL);
 		printf("Server has signed out\n");
 		printf("Message Queue destroyed\n");

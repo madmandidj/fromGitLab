@@ -110,7 +110,6 @@ int main(int argc, char* argv[])
 	sem_t* signSem;
 	
 	clientSem = sem_open(CSEM_NAME, O_CREAT, 0666, 0);
-	
 	signSem = sem_open(SIGN_INOUT, O_CREAT, 0666, 1);
 	
 	
