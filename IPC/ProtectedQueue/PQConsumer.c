@@ -4,12 +4,10 @@
 
 
 
-struct Producers
+struct Consumers
 {
 	pthread_t* 	m_threadIDs;
-	size_t 		m_numOfProds;
-	size_t		m_numOfMsgs;
-	void**		m_msgArr;
+	size_t 		m_numOfCons;
 	Queue* 		m_P2C;
 	Queue* 		m_C2P;
 	sem_t*		m_prodAtnd
@@ -20,51 +18,50 @@ struct Producers
 
 
 
-Producers* ProducersCreate(size_t _numOfProds, size_t _numOfMsgs, void** _msgArr, Queue* _P2C, Queue* _C2P)
+Consumers* ConsumersCreate(size_t _numOfCons, Queue* _P2C, Queue* _C2P);
 {
-	Producers* prods;	
+	Consumers* cons;	
 	
-	if (0 == _numOfProds || 0 == _numOfMsgs || NULL == _P2C || NULL == _C2P)
+	if (0 == _numOfCons || NULL == _P2C || NULL == _C2P)
 	{
 		return NULL;
 	}
 	
-	prods = malloc(sizeof(Producers));
-	if (NULL == prods)
+	cons = malloc(sizeof(Producers));
+	if (NULL == cons)
 	{
 		return NULL;
 	}
 	
-	prods->m_threadIDs = malloc(_numOfProds * sizeof(pthread_t));
-	if (NULL == prods->m_threadIDs)
+	cons->m_threadIDs = malloc(_numOfCons * sizeof(pthread_t));
+	if (NULL == cons->m_threadIDs)
 	{
-		free(prods);
+		free(cons);
 		return NULL;
 	}
 	
-	prods->m_numOfProds = _numOfProds;
-	prods->m_numOfMsgs = _numOfMsgs;
-	prods->m_P2C = _P2C;
-	prods->m_C2P = _C2P;
+	cons->m_numOfCons = _numOfCons;
+	cons->m_P2C = _P2C;
+	cons->m_C2P = _C2P;
 	
-	prods->m_prodAtnd = sem_open(C_ATND_SEM, O_CREAT, 0666, 0);
+	cons->m_prodAtnd = sem_open(C_ATND_SEM, O_CREAT, 0666, 0);
 	
-	return prods;
+	return cons;
 }
 
 
 
 
 
-void ProducersDelete(Producers* _prods)
+void ConsumersDelete(Consumers* _cons);
 {
 	if (NULL == _prods)
 	{
 		return;
 	}
 	
-	free(_prods->m_threadIDs);
-	free(_prods);
+	free(_cons->m_threadIDs);
+	free(_cons);
 	
 	return;
 }
@@ -75,7 +72,7 @@ void ProducersDelete(Producers* _prods)
 
 
 
-static void* ProducersRoutine(void* _prods)
+static void* ConsumersRoutine(void* _cons)
 {	
 	/*
 	ADTErr err;
@@ -88,6 +85,16 @@ static void* ProducersRoutine(void* _prods)
 	{
 		return NULL;
 	}
+	
+	/*
+	psuedo code:
+	wait for client to sign in
+	receive message
+	return message
+	*/
+	
+	
+	/*
 	
 	sem_post(_prods->m_prodAtnd);
 	
@@ -104,6 +111,7 @@ static void* ProducersRoutine(void* _prods)
 	pthread_exit(NULL);
 	
 	return NULL;
+	*/
 }
 
 
