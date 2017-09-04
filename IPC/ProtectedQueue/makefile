@@ -1,16 +1,38 @@
-FLAGS1 = -g -ansi -pedantic -Wall -Wconversion -Werror -o TestPQ.out -pthread
+FLAGS = -g -ansi -pedantic -Wall -Wconversion -Werror -pthread
+SRC_PATH = ./src/
+INC_PATH = ./inc/
+OBJ_PATH = ./obj/
+objects =  $(OBJ_PATH)TestPCPQ.o $(OBJ_PATH)ProtectedQueue.o $(OBJ_PATH)PQConsumers.o $(OBJ_PATH)PQProducers.o
 
 
-all: TestPQ.out  
-
-
-
-
-TestPQ.out: TestProtectedQueue.c ProtectedQueue.c ProtectedQueue.h
-	gcc $(FLAGS1) TestProtectedQueue.c ProtectedQueue.c
+TestPCPQ: $(objects) 
+	gcc $(FLAGS) -o TestPCPQ  $(objects)
 	
+	
+	
+$(OBJ_PATH)TestPCPQ.o: $(SRC_PATH)TestPCPQ.c $(INC_PATH)ProtectedQueue.h \
+									$(INC_PATH)PQProducers.h \
+										$(INC_PATH)PQConsumers.h
+	gcc $(FLAGS) -c  $(SRC_PATH)TestPCPQ.c 
+	mv TestPCPQ.o $(OBJ_PATH)
 
+
+$(OBJ_PATH)ProtectedQueue.o: $(SRC_PATH)ProtectedQueue.c $(INC_PATH)ProtectedQueue.h
+	gcc $(FLAGS) -c  $(SRC_PATH)ProtectedQueue.c
+	mv ProtectedQueue.o $(OBJ_PATH)
+
+
+$(OBJ_PATH)PQConsumers.o: $(SRC_PATH)PQConsumers.c $(INC_PATH)ProtectedQueue.h \
+													$(INC_PATH)PQConsumers.h
+	gcc $(FLAGS) -c  $(SRC_PATH)PQConsumers.c
+	mv PQConsumers.o $(OBJ_PATH)
+
+
+$(OBJ_PATH)PQProducers.o: $(SRC_PATH)PQProducers.c $(INC_PATH)ProtectedQueue.h \
+													$(INC_PATH)PQProducers.h
+	gcc $(FLAGS) -c  $(SRC_PATH)PQProducers.c
+	mv PQProducers.o $(OBJ_PATH)
 
 
 clean:
-	rm TestPQ.out 
+	rm TestPCPQ $(objects)

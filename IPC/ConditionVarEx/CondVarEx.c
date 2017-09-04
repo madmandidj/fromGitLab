@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+#include <unistd.h>
 
 #define NUM_OF_TEMPERS 3
 
@@ -86,13 +87,13 @@ void* TempMonitorRoutine(void* _temper)
 		
 		((Temper*)_temper)->m_temp += GenerateTempInc();
 		
-		
-	
-		if(((Temper*)_temper)->m_temp > 25 || ((Temper*)_temper)->m_temp < 21 )
-		{
+		/*if(((Temper*)_temper)->m_temp > 25 || ((Temper*)_temper)->m_temp < 21 )
+		{*/
+			
 			printf("Temp out of bounds = %d\n", ((Temper*)_temper)->m_temp);
 			pthread_cond_signal(&((Temper*)_temper)->m_cond);
-		}
+			/*usleep(10000);
+		/*}*/
 	
 		pthread_mutex_unlock(&((Temper*)_temper)->m_mutex);
 	}
@@ -119,9 +120,10 @@ void* TempMasterRoutine(void* _temper)
 		while(((Temper*)_temper)->m_temp <= 25 && ((Temper*)_temper)->m_temp >= 21)
 		{
 			pthread_cond_wait(&((Temper*)_temper)->m_cond, &((Temper*)_temper)->m_mutex);
+			/*usleep(10000);*/
 			printf("Temp in bounds = %d\n", ((Temper*)_temper)->m_temp);
 		}
-		
+		printf("value reset to 23\n");
 		((Temper*)_temper)->m_temp = 23;
 		pthread_mutex_unlock(&((Temper*)_temper)->m_mutex);
 	}

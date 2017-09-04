@@ -117,29 +117,38 @@ void ProQueueDestroy(ProQueue* _queue)
 
 
 
-ADTErr  ProQueueInsert(ProQueue* _queue, void* _item)
+/*ADTErr  ProQueueInsert(ProQueue* _queue, void* _item)*/
+int  ProQueueInsert(ProQueue* _queue, void* _item)
 {
-	ADTErr err;
+	/*ADTErr err;*/
 	if(NULL == _queue || NULL == _queue->m_vec)
 	{
-		err = ERR_NOT_INITIALIZED;
+		/*err = ERR_NOT_INITIALIZED;*/
+		return 0;
 	}
-	else
-	{
-		sem_wait(&_queue->m_emptySem);
-		pthread_mutex_lock(&_queue->m_qMutex);
-		
-		_queue->m_vec[_queue->m_head] = _item;
-		++(_queue->m_nItems);
-		++(_queue->m_head);
-		_queue->m_head %= _queue->m_size;
-		err = ERR_OK;
-		
-		pthread_mutex_unlock(&_queue->m_qMutex);
-		sem_post(&_queue->m_fullSem);
-	}
+
+	sem_wait(&_queue->m_emptySem);
+	pthread_mutex_lock(&_queue->m_qMutex);
 	
-	return err;
+	/*
+	while(queue is full)
+	{
+		pthread_cond_wait(full)
+	}
+	do insert
+	send signal to empty conditional arg
+		
+	*/
+	
+	_queue->m_vec[_queue->m_head] = _item;
+	++(_queue->m_nItems);
+	++(_queue->m_head);
+	_queue->m_head %= _queue->m_size;
+	
+	pthread_mutex_unlock(&_queue->m_qMutex);
+	sem_post(&_queue->m_fullSem);
+	
+	return 1;
 }
 
 
@@ -151,33 +160,43 @@ ADTErr  ProQueueInsert(ProQueue* _queue, void* _item)
 
 
 
-ADTErr  ProQueueRemove(ProQueue* _queue, void** _item)
+/*ADTErr  ProQueueRemove(ProQueue* _queue, void** _item)*/
+int  ProQueueRemove(ProQueue* _queue, void** _item)
 {
-	ADTErr err;
+/*	ADTErr err;*/
 	if(NULL == _queue || NULL == _queue->m_vec)
 	{
-		err = ERR_NOT_INITIALIZED;
-		return err;
-	}
-	else
-	{
-		sem_wait(&_queue->m_fullSem);
-		pthread_mutex_lock(&_queue->m_qMutex);
-		
-		if(NULL != _item)
-		{
-			*_item = _queue->m_vec[_queue->m_tail];
-		}
-		++(_queue->m_tail);
-		_queue->m_tail %= _queue->m_size;
-		--(_queue->m_nItems);
-		err = ERR_OK;
-		
-		pthread_mutex_unlock(&_queue->m_qMutex);
-		sem_post(&_queue->m_emptySem);
+/*		err = ERR_NOT_INITIALIZED;*/
+		return 0;
 	}
 	
-	return err;
+	sem_wait(&_queue->m_fullSem);
+	pthread_mutex_lock(&_queue->m_qMutex);
+	
+		/*
+	while(queue is empty)
+	{
+		pthread_cond_wait(empty)
+	}
+	do remove
+	send signal to full conditional arg
+		
+	*/
+	
+	if(NULL != _item)
+	{
+		*_item = _queue->m_vec[_queue->m_tail];
+	}
+	++(_queue->m_tail);
+	_queue->m_tail %= _queue->m_size;
+	--(_queue->m_nItems);
+/*	err = ERR_OK;*/
+	
+	pthread_mutex_unlock(&_queue->m_qMutex);
+	sem_post(&_queue->m_emptySem);
+
+	
+	return 1;
 }
 
 
