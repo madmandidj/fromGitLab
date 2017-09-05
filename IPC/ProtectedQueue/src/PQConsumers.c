@@ -13,12 +13,13 @@
 
 struct Consumers
 {
-	pthread_t* 	m_threadIDs;
-	size_t 		m_numOfCons;
-	size_t		m_speed;
 	ProQueue* 	m_P2C;
 	ProQueue* 	m_C2P;
+	pthread_t* 	m_threadIDs;
 	sem_t*		m_eowFlag;
+	size_t 		m_numOfCons;
+	size_t		m_speed;
+	size_t		m_verbosity;
 	ReadMsg		m_readFunc;
 };
 

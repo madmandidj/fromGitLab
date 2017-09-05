@@ -1,6 +1,7 @@
 #include "../inc/ProtectedQueue.h"
 #include "../inc/PQProducers.h"
 #include "../inc/PQConsumers.h"
+#include "../inc/PCPQconfig.h"
 #include <fcntl.h>
 #include <semaphore.h>
 #include <stdio.h>
@@ -48,21 +49,24 @@ int main(int _argc, char* _argv[])
 	int* arr = NULL;
 	size_t 		numOfInts = 20;
 	size_t 		queueSize = 10;
-	size_t 		numOfProds = 5;
 	size_t 		numOfCons = 5;
-	size_t 		numOfMsgs = 10;
 	ProQueue* 	P2C;
 	ProQueue* 	C2P;
 	Producers* 	prods;
 	Consumers* 	cons;
 	sem_t* 		eowFlag;
+	Params* 	params;
 	
 	eowFlag = sem_open(EOW_SEM, O_CREAT, 0666, 1);
 	arr = InitIntArr(numOfInts);
 	
+	
+	params = CreateParams();
+	DoPCPQconfig(_argc, _argv, params);
+	
 	P2C = ProQueueCreate(queueSize);
 	C2P = ProQueueCreate(queueSize);	
-	prods = ProducersCreate(numOfProds, numOfMsgs, (void**)arr, P2C, C2P);
+	prods = ProducersCreate(params, (void**)arr, P2C, C2P);
 	cons = ConsumersCreate(numOfCons, P2C, C2P, (ReadMsg)ReadMsgInt);
 	
 	ConsumersRun(cons);
@@ -75,6 +79,8 @@ int main(int _argc, char* _argv[])
 	ProducersDelete(prods);
 	ProQueueDestroy(P2C);
 	ProQueueDestroy(C2P);
+	
+	DestroyParams(params);
 	
 	sem_close(eowFlag);
 	sem_unlink(EOW_SEM);

@@ -230,30 +230,3 @@ int ProQueueIsEmpty(ProQueue* _queue)
 
 
 
-
-
-
-void    ProQueuePrint(ProQueue* _queue)
-{
-    size_t printIndex;
-    int i;
-    if(NULL == _queue || NULL == _queue->m_vec)
-    {
-    	return;
-    }
-    printIndex = _queue->m_tail;
-    for(i = 0; i < _queue->m_nItems; ++i)
-    {
-    	
-        printf("Index: %u Value: %d\n", printIndex, *(int*)_queue->m_vec[printIndex]);
-        
-        
-        ++printIndex;
-        printIndex %= _queue->m_size;
-    }
-    return;
-}
-
-
-
-

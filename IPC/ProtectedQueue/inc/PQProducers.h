@@ -4,6 +4,7 @@
 #define _GNU_SOURCE
 
 #include "PQMsgUtils.h"
+#include "PCPQconfig.h"
 #include "ProtectedQueue.h"
 #include <stdlib.h>
 
@@ -11,11 +12,9 @@
 typedef struct Producers Producers;
 
 
-/* typedef void (*ReadMsg)(void* _msg, char* _callerName, char* _comMode); */
+/* Producers* ProducersCreate(size_t _numOfProds, size_t _numOfMsgs, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P); */
 
-
-Producers* ProducersCreate(size_t _numOfProds, size_t _numOfMsgs, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P);
-
+Producers* ProducersCreate(Params* _params, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P);
 
 void ProducersDelete(Producers* _prods);	
 

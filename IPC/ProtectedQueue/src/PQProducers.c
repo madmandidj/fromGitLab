@@ -1,5 +1,8 @@
+
 #include "../inc/PQProducers.h"
+#include "../inc/PCPQconfig.h"
 #include "../inc/ProtectedQueue.h"
+
 #include <pthread.h>
 #include <semaphore.h>
 #include <fcntl.h>
@@ -9,13 +12,14 @@
 
 struct Producers
 {
+	ProQueue* 	m_P2C;
+	ProQueue* 	m_C2P;
+	void**		m_msgArr;
 	pthread_t* 	m_threadIDs;
 	size_t 		m_numOfProds;
 	size_t		m_numOfMsgs;
 	size_t		m_speed;
-	void**		m_msgArr;
-	ProQueue* 	m_P2C;
-	ProQueue* 	m_C2P;
+	size_t 		m_verbosity;
 };
 
 
@@ -23,11 +27,12 @@ struct Producers
 
 
 
-Producers* ProducersCreate(size_t _numOfProds, size_t _numOfMsgs, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P)
+/*Producers* ProducersCreate(size_t _numOfProds, size_t _numOfMsgs, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P)*/
+Producers* ProducersCreate(Params* _params, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P)
 {
 	Producers* prods;	
 	
-	if (0 == _numOfProds || 0 == _numOfMsgs || NULL == _P2C || NULL == _C2P)
+	if (NULL == _params || NULL == _msgArr || NULL == _P2C || NULL == _C2P)
 	{
 		return NULL;
 	}
@@ -38,20 +43,20 @@ Producers* ProducersCreate(size_t _numOfProds, size_t _numOfMsgs, void** _msgArr
 		return NULL;
 	}
 	
-	prods->m_threadIDs = malloc(_numOfProds * sizeof(pthread_t));
+	prods->m_threadIDs = malloc(GetNumOfProds(_params) * sizeof(pthread_t));
 	if (NULL == prods->m_threadIDs)
 	{
 		free(prods);
 		return NULL;
 	}
 	
-	prods->m_numOfProds = _numOfProds;
-	prods->m_numOfMsgs = _numOfMsgs;
 	prods->m_P2C = _P2C;
 	prods->m_C2P = _C2P;
-	
 	prods->m_msgArr = _msgArr;
-	prods->m_speed = 1000000;
+	prods->m_numOfProds = GetNumOfProds(_params);
+	prods->m_numOfMsgs = GetNumOfMsgs(_params);
+	prods->m_speed = GetSpeed(_params);
+	prods->m_verbosity = GetVerbosity(_params);
 	
 	return prods;
 }

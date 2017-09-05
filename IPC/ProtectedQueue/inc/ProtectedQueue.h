@@ -26,8 +26,5 @@ int  ProQueueRemove(ProQueue* _queue, void** _item);
 int     ProQueueIsEmpty(ProQueue* _queue);
 
 
-void    ProQueuePrint(ProQueue* _queue);
-
-
 #endif/*#ifndef __PROQUEUE_H__*/
 
