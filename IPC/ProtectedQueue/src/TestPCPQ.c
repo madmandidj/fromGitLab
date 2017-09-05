@@ -59,10 +59,12 @@ int main(int _argc, char* _argv[])
 	
 	eowFlag = sem_open(EOW_SEM, O_CREAT, 0666, 1);
 	arr = InitIntArr(numOfInts);
+	
 	P2C = ProQueueCreate(queueSize);
 	C2P = ProQueueCreate(queueSize);	
 	prods = ProducersCreate(numOfProds, numOfMsgs, (void**)arr, P2C, C2P);
 	cons = ConsumersCreate(numOfCons, P2C, C2P, (ReadMsg)ReadMsgInt);
+	
 	ConsumersRun(cons);
 	ProducersRun(prods);
 	ProducersJoin(prods);
@@ -77,24 +79,7 @@ int main(int _argc, char* _argv[])
 	sem_close(eowFlag);
 	sem_unlink(EOW_SEM);
 
-	/*
-		create int array
-		create queues
-		create producers
-		create consumers
-		producers run
-		consumers run
-		producers join
-		Send EOW
-		consumers join
-		destroy consumers
-		destroy producers
-		destroy queues
-		destroy array
-		
-		
-			
-	*/
+
 	return 0;
 }
 

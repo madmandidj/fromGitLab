@@ -19,7 +19,7 @@ struct Consumers
 	ProQueue* 	m_P2C;
 	ProQueue* 	m_C2P;
 	sem_t*		m_eowFlag;
-	ReadMsg	m_readFunc;
+	ReadMsg		m_readFunc;
 };
 
 

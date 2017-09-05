@@ -4,13 +4,11 @@
 #define _GNU_SOURCE
 #define EOW_SEM "eowSem"
 
-/* #include "ADTDefs.h" */
+
 #include <stdlib.h>
 
+
 typedef struct ProQueue ProQueue;
-
-
-void (*PrintMsg)(void* _msg);
 
 
 ProQueue*  ProQueueCreate(size_t _size);
@@ -18,12 +16,6 @@ ProQueue*  ProQueueCreate(size_t _size);
 
 void    ProQueueDestroy(ProQueue* _queue);
 
-/*
-ADTErr  ProQueueInsert(ProQueue* _queue, void* _item);
-
-
-ADTErr  ProQueueRemove(ProQueue* _queue, void** _item);
-*/
 
 int  ProQueueInsert(ProQueue* _queue, void* _item);
 

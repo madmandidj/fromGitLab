@@ -3,8 +3,8 @@
 
 #define _GNU_SOURCE
 
-/* #include "ProtectedQueue.h" */
-#include "../inc/ProtectedQueue.h"
+#include "PQMsgUtils.h"
+#include "ProtectedQueue.h"
 #include <stdlib.h>
 
 
@@ -24,11 +24,6 @@ int ProducersRun(Producers* _prods);
 
 
 void ProducersJoin(Producers* _prods);
-
-
-
-
-
 
 
 

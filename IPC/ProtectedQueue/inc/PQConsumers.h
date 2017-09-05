@@ -4,13 +4,14 @@
 #define _GNU_SOURCE
 #define EOW_SEM "eowSem"
 
-#include "../inc/ProtectedQueue.h"
+#include "PQMsgUtils.h"
+#include "ProtectedQueue.h"
 #include <stdlib.h>
 
 typedef struct Consumers Consumers;
 
 
-typedef void (*ReadMsg)(void* _msg, char* _callerName, char* _comMode);
+/* typedef void (*ReadMsg)(void* _msg, char* _callerName, char* _comMode); */
 
 
 Consumers* ConsumersCreate(size_t _numOfCons, ProQueue* _P2C, ProQueue* _C2P, ReadMsg _readFunc);
