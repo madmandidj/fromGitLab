@@ -24,6 +24,8 @@ typedef struct Package
 	pthread_t* 			m_threadIDs;
   	unsigned int* 		m_orderIDs;
 	pthread_barrier_t* 	m_barrier;
+	pthread_mutex_t		m_mutex;
+	pthread_t			m_summerID;
 	
 }Package;
 
@@ -41,7 +43,7 @@ unsigned int GetCurThread(void)
 
 
 
-void* TestFunc(Package* _package) 
+void* CounterFunc(Package* _package) 
 {
 	unsigned int curThread;
 	int sleepTime;
@@ -61,9 +63,28 @@ void* TestFunc(Package* _package)
 	printf("thread %u, thread ID: %u I'm ready...\n", curThread, _package->m_orderIDs[curThread]);
 
 	pthread_barrier_wait(_package->m_barrier);
-
+	
+	pthread_mutex_lock(&_package->m_mutex);
+	pthread_mutex_unlock(&_package->m_mutex);
 	printf("thread %u, thread ID: %u going!\n", curThread, _package->m_orderIDs[curThread]);
 	
+	return NULL;
+}
+
+
+
+
+
+void* SummerFunc(Package* _package) 
+{
+	pthread_mutex_lock(&_package->m_mutex);
+
+	pthread_barrier_wait(_package->m_barrier);
+	
+	printf("Summer should do work here\n");
+	
+	pthread_mutex_unlock(&_package->m_mutex);
+
 	return NULL;
 }
 
@@ -82,7 +103,8 @@ Package* InitProgram(unsigned int _countersNum)
 	package->m_orderIDs = malloc(package->m_countersNum * sizeof(unsigned int));
 	
 	srand(time(NULL));
-	pthread_barrier_init(package->m_barrier, NULL, (package->m_countersNum/2) + 1);
+	pthread_mutex_init(&package->m_mutex, NULL);
+	pthread_barrier_init(package->m_barrier, NULL, package->m_countersNum + 1 + 1);
 	
 	return package;
 }
@@ -95,10 +117,12 @@ void RunThreads(Package* _package)
 {
 	size_t index;
 	
+	pthread_create(&_package->m_summerID, NULL, (ThreadFunc)SummerFunc, _package);
+	
 	for (index = 0; index  < _package->m_countersNum; ++index) 
 	{
 		_package->m_orderIDs[index] = index;
-		pthread_create(&_package->m_threadIDs[index], NULL, (ThreadFunc)TestFunc, _package);
+		pthread_create(&_package->m_threadIDs[index], NULL, (ThreadFunc)CounterFunc, _package);
  	}
  	
 	return;
@@ -115,6 +139,8 @@ void JoinThreads(Package* _package)
 		pthread_join(_package->m_threadIDs[index], NULL);
 	}
 	
+	pthread_join(_package->m_summerID, NULL);
+	
 	return;
 }
 
@@ -123,6 +149,7 @@ void JoinThreads(Package* _package)
 void ClenaupProgram(Package* _package)
 {
 	pthread_barrier_destroy(_package->m_barrier);
+	pthread_mutex_destroy(&_package->m_mutex);
 	free(_package->m_barrier);
 	free(_package->m_threadIDs);
 	free(_package->m_orderIDs);
