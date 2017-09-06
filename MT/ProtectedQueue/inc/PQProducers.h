@@ -14,7 +14,7 @@ typedef struct Producers Producers;
 
 /* Producers* ProducersCreate(size_t _numOfProds, size_t _numOfMsgs, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P); */
 
-Producers* ProducersCreate(Params* _params, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P);
+Producers* ProducersCreate(Params* _params, void** _msgArr, ProQueue* _P2C, ProQueue* _C2P, ReadMsg _readFunc);
 
 void ProducersDelete(Producers* _prods);	
 

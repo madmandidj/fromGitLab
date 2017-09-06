@@ -31,7 +31,7 @@ Params* CreateParams()
 
 
 
-void DeleteParams(Params* _params)
+void DestroyParams(Params* _params)
 {
 	if (NULL == _params)
 	{

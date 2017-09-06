@@ -21,14 +21,16 @@ $(OBJ_PATH)TestPCPQ.o: $(SRC_PATH)TestPCPQ.c $(INC_PATH)ProtectedQueue.h \
 
 
 $(OBJ_PATH)PQConsumers.o: $(SRC_PATH)PQConsumers.c $(INC_PATH)ProtectedQueue.h \
-													$(INC_PATH)PQConsumers.h
+													$(INC_PATH)PQConsumers.h \
+													 $(INC_PATH)PCPQconfig.h
 	gcc $(FLAGS) -c  $(SRC_PATH)PQConsumers.c
 	mv PQConsumers.o $(OBJ_PATH)
 
 
 
 $(OBJ_PATH)PQProducers.o: $(SRC_PATH)PQProducers.c $(INC_PATH)ProtectedQueue.h \
-													$(INC_PATH)PQProducers.h $(INC_PATH)PCPQconfig.h
+													$(INC_PATH)PQProducers.h \
+													 $(INC_PATH)PCPQconfig.h
 	gcc $(FLAGS) -c  $(SRC_PATH)PQProducers.c
 	mv PQProducers.o $(OBJ_PATH)
 

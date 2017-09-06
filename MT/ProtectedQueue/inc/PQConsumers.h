@@ -12,8 +12,8 @@
 typedef struct Consumers Consumers;
 
 
-Consumers* ConsumersCreate(size_t _numOfCons, ProQueue* _P2C, ProQueue* _C2P, ReadMsg _readFunc);
-
+/*Consumers* ConsumersCreate(size_t _numOfCons, ProQueue* _P2C, ProQueue* _C2P, ReadMsg _readFunc);*/
+Consumers* ConsumersCreate(Params* _params, ProQueue* _P2C, ProQueue* _C2P, ReadMsg _readFunc);
 
 void ConsumersDelete(Consumers* _cons);	
 

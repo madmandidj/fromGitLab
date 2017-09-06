@@ -49,7 +49,6 @@ int main(int _argc, char* _argv[])
 	int* arr = NULL;
 	size_t 		numOfInts = 20;
 	size_t 		queueSize = 10;
-	size_t 		numOfCons = 5;
 	ProQueue* 	P2C;
 	ProQueue* 	C2P;
 	Producers* 	prods;
@@ -66,8 +65,8 @@ int main(int _argc, char* _argv[])
 	
 	P2C = ProQueueCreate(queueSize);
 	C2P = ProQueueCreate(queueSize);	
-	prods = ProducersCreate(params, (void**)arr, P2C, C2P);
-	cons = ConsumersCreate(numOfCons, P2C, C2P, (ReadMsg)ReadMsgInt);
+	prods = ProducersCreate(params, (void**)arr, P2C, C2P, (ReadMsg)ReadMsgInt);
+	cons = ConsumersCreate(params, P2C, C2P, (ReadMsg)ReadMsgInt);
 	
 	ConsumersRun(cons);
 	ProducersRun(prods);

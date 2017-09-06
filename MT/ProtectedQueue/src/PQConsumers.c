@@ -1,4 +1,5 @@
 #include "../inc/PQConsumers.h"
+#include "../inc/PCPQconfig.h"
 #include "../inc/ProtectedQueue.h"
 #include <unistd.h>
 #include <fcntl.h>
@@ -28,11 +29,12 @@ struct Consumers
 
 
 
-Consumers* ConsumersCreate(size_t _numOfCons, ProQueue* _P2C, ProQueue* _C2P, ReadMsg _readFunc)
+/*Consumers* ConsumersCreate(size_t _numOfCons, ProQueue* _P2C, ProQueue* _C2P, ReadMsg _readFunc)*/
+Consumers* ConsumersCreate(Params* _params, ProQueue* _P2C, ProQueue* _C2P, ReadMsg _readFunc)
 {
 	Consumers* cons;	
 	
-	if (0 == _numOfCons || NULL == _P2C || NULL == _C2P)
+	if (NULL == _params || NULL == _P2C || NULL == _C2P)
 	{
 		return NULL;
 	}
@@ -43,18 +45,20 @@ Consumers* ConsumersCreate(size_t _numOfCons, ProQueue* _P2C, ProQueue* _C2P, Re
 		return NULL;
 	}
 	
-	cons->m_threadIDs = malloc(_numOfCons * sizeof(pthread_t));
+	cons->m_numOfCons = GetNumOfCons(_params);
+	cons->m_verbosity = GetVerbosity(_params);
+	cons->m_speed = GetSpeed(_params);
+	
+	cons->m_threadIDs = malloc(cons->m_numOfCons * sizeof(pthread_t));
 	if (NULL == cons->m_threadIDs)
 	{
 		free(cons);
 		return NULL;
 	}
 	
-	cons->m_numOfCons = _numOfCons;
 	cons->m_P2C = _P2C;
 	cons->m_C2P = _C2P;
 	cons->m_eowFlag = sem_open(EOW_SEM, O_CREAT, 0666, 1);
-	cons->m_speed = 1000000;
 	cons->m_readFunc = _readFunc;
 	
 	return cons;
@@ -108,7 +112,7 @@ static void* ConsumersRoutine(void* _cons)
 	
 	while(ProQueueIsEmpty(((Consumers*)_cons)->m_P2C))
 	{
-		usleep(ONE_SEC_USEC);
+		usleep(((Consumers*)_cons)->m_speed);
 	}
 	
 	/* Rx msgs and Tx responses */
@@ -118,12 +122,19 @@ static void* ConsumersRoutine(void* _cons)
 		{
 			ProQueueRemove(((Consumers*)_cons)->m_P2C, &rcvMsg);
 			
-			((Consumers*)_cons)->m_readFunc(rcvMsg, "Consumer", "Removed");
+			if (((Consumers*)_cons)->m_verbosity)
+			{
+				((Consumers*)_cons)->m_readFunc(rcvMsg, "Consumer", "Removed");
+			}
+			
+			ProQueueInsert(((Consumers*)_cons)->m_C2P, rcvMsg);
+			
+			if (((Consumers*)_cons)->m_verbosity)
+			{
+				((Consumers*)_cons)->m_readFunc(rcvMsg, "Consumer", "Inserted");
+			}
 			
 			usleep(((Consumers*)_cons)->m_speed);
-			ProQueueInsert(((Consumers*)_cons)->m_C2P, &rcvMsg);
-			
-			((Consumers*)_cons)->m_readFunc(rcvMsg, "Consumer", "Inserted");
 		}
 	}
 
