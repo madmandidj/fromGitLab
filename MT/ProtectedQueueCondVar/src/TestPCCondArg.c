@@ -36,7 +36,6 @@ static int* InitIntArr(size_t _numOfInts)
 
 void ReadMsgInt(int* _msg, char* _callerName, char* _comMode, int _callerID)
 {
-/*	printf("%s: %u, %s msg: %d\n", _callerName, (size_t)pthread_self(), _comMode, *_msg);*/
 	printf("%s: %d, %s msg: %d\n", _callerName, _callerID, _comMode, *_msg);	
 	return;
 }
