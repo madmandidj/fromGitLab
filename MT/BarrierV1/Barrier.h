@@ -2,11 +2,11 @@
 #define __BARRIER_H__
 
 
-/*
-typedef struct Barrier Barrier;
-*/
 
-typedef 
+typedef struct Barrier Barrier;
+
+
+typedef void* (*ThreadRoutine)(void*);
 
 /**
 *	@brief Create a barrier
