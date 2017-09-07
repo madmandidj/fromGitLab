@@ -21,6 +21,8 @@ typedef void* (*ThreadFunc)(void* _context);
 typedef struct Package
 {
 	unsigned int 		m_countersNum;
+	int*				m_countArr;
+	int					m_countSum;
 	pthread_t* 			m_threadIDs;
   	unsigned int* 		m_orderIDs;
 	pthread_barrier_t* 	m_barrier;
@@ -45,27 +47,33 @@ unsigned int GetCurThread(void)
 
 void* CounterFunc(Package* _package) 
 {
+	size_t iterIndex;
+	size_t counterIndex;
 	unsigned int curThread;
 	int sleepTime;
 	pid_t test;
 	
-
-	sleepTime = 1 + rand() % 3;
-	
 	curThread = GetCurThread();
-	
 	_package->m_orderIDs[curThread] = syscall(SYS_gettid);
 	
-
-	printf("thread %u, thread ID: %u, Wait for %d seconds.\n", curThread, _package->m_orderIDs[curThread], sleepTime);
-	sleep(sleepTime);
+	for (iterIndex = 0; iterIndex < 4; ++iterIndex)
+	{
+		for (counterIndex = 0; counterIndex < _package->m_countersNum; ++counterIndex)
+		{
+			sleepTime = 1 + rand() % 3;
+			printf("thread %u, thread ID: %u counting\n", curThread, _package->m_orderIDs[curThread]);
+			++_package->m_countArr[curThread];
+			printf("thread %u, thread ID: %u, Wait for %d seconds.\n", curThread, _package->m_orderIDs[curThread], sleepTime);
+			sleep(sleepTime);
+		}
+		printf("thread %u, thread ID: %u I'm ready...\n", curThread, _package->m_orderIDs[curThread]);
+		pthread_barrier_wait(_package->m_barrier);
+		pthread_mutex_lock(&_package->m_mutex);
+		pthread_mutex_unlock(&_package->m_mutex);
+		_package->m_countSum = 0;
+		printf("****Iteration %u is done!!!!****\n", iterIndex);
+	}
 	
-	printf("thread %u, thread ID: %u I'm ready...\n", curThread, _package->m_orderIDs[curThread]);
-
-	pthread_barrier_wait(_package->m_barrier);
-	
-	pthread_mutex_lock(&_package->m_mutex);
-	pthread_mutex_unlock(&_package->m_mutex);
 	printf("thread %u, thread ID: %u going!\n", curThread, _package->m_orderIDs[curThread]);
 	
 	return NULL;
@@ -77,11 +85,20 @@ void* CounterFunc(Package* _package)
 
 void* SummerFunc(Package* _package) 
 {
+	size_t index;
+	
 	pthread_mutex_lock(&_package->m_mutex);
 
 	pthread_barrier_wait(_package->m_barrier);
 	
 	printf("Summer should do work here\n");
+	
+	for(index = 0; index < _package->m_countersNum; ++index)
+	{
+		_package->m_countSum += _package->m_countArr[index];
+	}
+	
+	printf("Count Sum = %d\n", _package->m_countSum);
 	
 	pthread_mutex_unlock(&_package->m_mutex);
 
@@ -97,14 +114,16 @@ Package* InitProgram(unsigned int _countersNum)
 	package = malloc(sizeof(Package));
 	
 	package->m_countersNum = _countersNum;
+	package->m_countSum = 0;
 	
 	package->m_barrier = malloc(sizeof(pthread_barrier_t));
 	package->m_threadIDs = malloc(package->m_countersNum * sizeof(pthread_t));
 	package->m_orderIDs = malloc(package->m_countersNum * sizeof(unsigned int));
+	package->m_countArr = malloc(package->m_countersNum * sizeof(int));
 	
 	srand(time(NULL));
 	pthread_mutex_init(&package->m_mutex, NULL);
-	pthread_barrier_init(package->m_barrier, NULL, package->m_countersNum + 1 + 1);
+	pthread_barrier_init(package->m_barrier, NULL, package->m_countersNum + 1);
 	
 	return package;
 }
@@ -117,8 +136,6 @@ void RunThreads(Package* _package)
 {
 	size_t index;
 	
-	pthread_create(&_package->m_summerID, NULL, (ThreadFunc)SummerFunc, _package);
-	
 	for (index = 0; index  < _package->m_countersNum; ++index) 
 	{
 		_package->m_orderIDs[index] = index;
@@ -129,7 +146,7 @@ void RunThreads(Package* _package)
 }
 
 
-
+/*
 void JoinThreads(Package* _package)
 {
 	size_t index;
@@ -139,17 +156,16 @@ void JoinThreads(Package* _package)
 		pthread_join(_package->m_threadIDs[index], NULL);
 	}
 	
-	pthread_join(_package->m_summerID, NULL);
-	
 	return;
 }
-
+*/
 
 
 void ClenaupProgram(Package* _package)
 {
 	pthread_barrier_destroy(_package->m_barrier);
 	pthread_mutex_destroy(&_package->m_mutex);
+	free(_package->m_countArr);
 	free(_package->m_barrier);
 	free(_package->m_threadIDs);
 	free(_package->m_orderIDs);
@@ -166,15 +182,24 @@ int main()
 	
 	package = InitProgram(10);
 	
+	
+	
 	RunThreads(package);
 
 	printf("main() is ready.\n");
-
-  	pthread_barrier_wait(package->m_barrier);
-
-	printf("main() is going!\n");
 	
-	JoinThreads(package);
+	for (index = 0; index < 4; ++index)
+	{
+		pthread_create(&package->m_summerID, NULL, (ThreadFunc)SummerFunc, package);
+
+		pthread_barrier_wait(package->m_barrier);
+
+		printf("main() is going!\n");
+	
+		pthread_join(package->m_summerID, NULL);
+	}
+	
+	
 	
 	ClenaupProgram(package);
 
