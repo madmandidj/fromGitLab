@@ -1,5 +1,7 @@
 #define _GNU_SOURCE
 
+#include "Barrier.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -11,6 +13,9 @@
 
 #include <sys/syscall.h>
 #include <sys/types.h>
+
+
+
 
 
 typedef void* (*ThreadFunc)(void* _context);
@@ -25,13 +30,14 @@ typedef struct Package
 	int					m_countSum;
 	pthread_t* 			m_threadIDs;
   	unsigned int* 		m_orderIDs;
-	pthread_barrier_t 	m_barrier;
-	pthread_barrier_t 	m_barrier2;
+	Barrier*			m_myBarrier;
 	pthread_mutex_t		m_mutex;
 	pthread_mutex_t		m_mutex2;
 	pthread_t			m_summerID;
 	
 }Package;
+
+
 
 
 
@@ -60,16 +66,13 @@ void* CounterFunc(Package* _package)
 	
 	for (iterIndex = 0; iterIndex < 4; ++iterIndex)
 	{
-		pthread_barrier_wait(&_package->m_barrier);
-	
 		sleepTime = 1 + rand() % 3;
 		++_package->m_countArr[curThread];
 		sleep(sleepTime);
 		
 		printf("Iteration %u for thread %u is done\n", iterIndex, curThread);
-		pthread_barrier_wait(&_package->m_barrier2);
-
 		
+		BarrierWait(_package->m_myBarrier, NULL, NULL);	
 	}
 	
 	printf("thread %u, thread ID: %u going!\n", curThread, _package->m_orderIDs[curThread]);
@@ -78,14 +81,9 @@ void* CounterFunc(Package* _package)
 
 
 
-
-
-void* SummerFunc(Package* _package) 
+int MySummerAction(Package* _package)
 {
 	size_t index;
-
-	pthread_barrier_wait(&_package->m_barrier);
-	pthread_barrier_wait(&_package->m_barrier2);
 	
 	for(index = 0; index < _package->m_countersNum; ++index)
 	{
@@ -94,6 +92,17 @@ void* SummerFunc(Package* _package)
 	
 	printf("Count Sum = %d\n", _package->m_countSum);
 	_package->m_countSum = 0;
+	
+	return 1;
+}
+
+
+void* SummerFunc(Package* _package) 
+{
+	size_t index;
+
+	BarrierWait(_package->m_myBarrier, (BarrierAction)MySummerAction, (void*)_package);
+
 	pthread_exit(NULL);
 }
 
@@ -117,8 +126,8 @@ Package* InitProgram(unsigned int _countersNum)
 	srand(time(NULL));
 	pthread_mutex_init(&package->m_mutex, NULL);
 	pthread_mutex_init(&package->m_mutex2, NULL);
-	pthread_barrier_init(&package->m_barrier, NULL, package->m_countersNum + 1);
-	pthread_barrier_init(&package->m_barrier2, NULL, package->m_countersNum + 1);
+	
+	package->m_myBarrier = BarrierCreate(package->m_countersNum + 1);
 	
 	return package;
 }
@@ -146,8 +155,7 @@ void RunCounters(Package* _package)
 
 void ClenaupProgram(Package* _package)
 {
-	pthread_barrier_destroy(&_package->m_barrier);
-	pthread_barrier_destroy(&_package->m_barrier2);
+	BarrierDestroy(_package->m_myBarrier);
 	pthread_mutex_destroy(&_package->m_mutex);
 	free(_package->m_countArr);
 	free(_package->m_threadIDs);
