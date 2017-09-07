@@ -84,12 +84,12 @@ void* CounterFunc(Package* _package)
 int MySummerAction(Package* _package)
 {
 	size_t index;
-	
+	printf("YOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
 	for(index = 0; index < _package->m_countersNum; ++index)
 	{
 		_package->m_countSum += _package->m_countArr[index];
 	}
-	
+	sleep(3);
 	printf("Count Sum = %d\n", _package->m_countSum);
 	_package->m_countSum = 0;
 	
@@ -100,9 +100,9 @@ int MySummerAction(Package* _package)
 void* SummerFunc(Package* _package) 
 {
 	size_t index;
-
+	printf("BEFORE SUMMER BARRIER");
 	BarrierWait(_package->m_myBarrier, (BarrierAction)MySummerAction, (void*)_package);
-
+	printf("AFTER SUMMER BARRIER");
 	pthread_exit(NULL);
 }
 
@@ -183,8 +183,8 @@ int main()
 	
 	for (index = 0; index < 4; ++index)
 	{
+		printf("MAIN ITERATION %u\n", index);
 		pthread_create(&package->m_summerID, NULL, (ThreadFunc)SummerFunc, package);
-	
 		pthread_join(package->m_summerID, NULL);
 		
 		printf("Joined on summerizer!\n");
