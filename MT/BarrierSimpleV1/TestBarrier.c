@@ -40,76 +40,6 @@ typedef struct Package
 
 
 
-
-
-unsigned int GetCurThread(void)
-{
-	static int id = 0;
-	
-	return id++;
-}
-
-
-
-
-
-void* CounterFunc(Package* _package) 
-{
-	size_t iterIndex;
-	size_t counterIndex;
-	unsigned int curThread;
-	int sleepTime;
-	pid_t test;
-	
-	curThread = GetCurThread();
-	_package->m_orderIDs[curThread] = curThread;
-	
-	for (iterIndex = 0; iterIndex < 4; ++iterIndex)
-	{
-		sleepTime = 1 + rand() % 3;
-		++_package->m_countArr[curThread];
-		sleep(sleepTime);
-		
-		printf("Iteration %u for thread %u is done\n", iterIndex, curThread);
-		
-		BarrierWait(_package->m_myBarrier, NULL, NULL);	
-	}
-	
-	printf("thread %u, thread ID: %u going!\n", curThread, _package->m_orderIDs[curThread]);
-	pthread_exit(NULL);
-}
-
-
-
-int MySummerAction(Package* _package)
-{
-	size_t index;
-	printf("YOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
-	for(index = 0; index < _package->m_countersNum; ++index)
-	{
-		_package->m_countSum += _package->m_countArr[index];
-	}
-	sleep(3);
-	printf("Count Sum = %d\n", _package->m_countSum);
-	_package->m_countSum = 0;
-	
-	return 1;
-}
-
-
-void* SummerFunc(Package* _package) 
-{
-	size_t index;
-	printf("BEFORE SUMMER BARRIER");
-	BarrierWait(_package->m_myBarrier, (BarrierAction)MySummerAction, (void*)_package);
-	printf("AFTER SUMMER BARRIER");
-	pthread_exit(NULL);
-}
-
-
-
-
-
 Package* InitProgram(unsigned int _countersNum)
 {
 	Package* package;
@@ -134,6 +64,42 @@ Package* InitProgram(unsigned int _countersNum)
 
 
 
+unsigned int GetCurThread(void)
+{
+	static int id = 0;
+	
+	return id++;
+}
+
+pid_t counterTID;
+
+void* CounterFunc(Package* _package) 
+{
+	size_t iterIndex;
+	size_t counterIndex;
+	unsigned int curThread;
+	int sleepTime;
+	pid_t test;
+	
+	counterTID = syscall(SYS_gettid);
+	printf("CounterFunc: countertid = %u\n", counterTID);
+	
+	curThread = GetCurThread();
+	_package->m_orderIDs[curThread] = curThread;
+	
+	for (iterIndex = 0; iterIndex < 4; ++iterIndex)
+	{
+		sleepTime = 1 + rand() % 3;
+		++_package->m_countArr[curThread];
+		sleep(sleepTime);
+		printf("CounterFunc: calling barrierwait\n");
+		BarrierWait(_package->m_myBarrier, NULL, NULL);	
+		printf("CounterFunc: left barrierwait\n");
+	}
+
+	pthread_exit(NULL);
+}
+
 
 
 void RunCounters(Package* _package)
@@ -150,6 +116,38 @@ void RunCounters(Package* _package)
 
 
 
+int MySummerAction(Package* _package)
+{
+	size_t index;
+	for(index = 0; index < _package->m_countersNum; ++index)
+	{
+		_package->m_countSum += _package->m_countArr[index];
+		 
+	}
+	printf("SummerAction: countSum = %u\n", _package->m_countSum);
+	_package->m_countSum = 0;
+	
+	return 1;
+}
+
+
+
+pid_t summerTID;
+
+
+void* SummerFunc(Package* _package) 
+{
+	size_t index;
+
+	summerTID = syscall(SYS_gettid);
+	printf("SummerFunc: summertid = %u\n", summerTID);
+	
+	printf("SummerFunc: calling barrierwait\n");
+	BarrierWait(_package->m_myBarrier, (BarrierAction)MySummerAction, (void*)_package);
+	printf("SummerFunc: left barrierwait\n");
+	
+	pthread_exit(NULL);
+}
 
 
 
@@ -165,29 +163,27 @@ void ClenaupProgram(Package* _package)
 	return;
 }
 
-
-
-
+/*int numOfIterations*/
 
 int main()
 {
 	Package* package;
 	size_t index;
-	unsigned int numOfCounters = 4;
+	unsigned int numOfCounters = 2;
+	
 	
 	package = InitProgram(numOfCounters);
 	
 	RunCounters(package);
 
-	printf("main() is ready.\n");
 	
-	for (index = 0; index < 4; ++index)
+	for (index = 0; index < numOfCounters; ++index)
 	{
-		printf("MAIN ITERATION %u\n", index);
+		printf("MAIN: iteration %u\n", index + 1);
 		pthread_create(&package->m_summerID, NULL, (ThreadFunc)SummerFunc, package);
+		printf("MAIN: calling join\n");
 		pthread_join(package->m_summerID, NULL);
-		
-		printf("Joined on summerizer!\n");
+		printf("MAIN: left join\n");
 	}
 	
 	ClenaupProgram(package);

@@ -21,10 +21,17 @@ struct Barrier
 	pthread_cond_t 		m_waitInCond;
 	pthread_cond_t 		m_workDoneCond;
 	pthread_mutex_t		m_mutex;
-	unsigned int		m_workDoneFlag;
+	
 	unsigned int		m_capacity;
+	unsigned int		m_numEntered;
+	unsigned int		m_numDone;
 	unsigned int		m_waitingInside;
 	unsigned int		m_curBatch;
+	unsigned int		m_workDoneFlag;
+	
+	unsigned int		m_arrivalNum;
+	
+	pid_t				m_summerID;
 };
 
 
@@ -68,8 +75,10 @@ Barrier* BarrierCreate(unsigned int _capacity)
 	
 	barrier->m_capacity = _capacity;
 	barrier->m_waitingInside = 0;
-	barrier->m_curBatch = 0;
-	barrier->m_workDoneFlag = 1;
+	barrier->m_curBatch = 1;
+	barrier->m_numEntered = 0;
+	barrier->m_numDone = 0;
+	barrier->m_workDoneFlag = 0;
 	
 	return barrier;
 }
@@ -95,30 +104,30 @@ void BarrierDestroy(Barrier* _barrier)
 
 
 
-static unsigned int GetArrivalNum(void)
-{
-	static unsigned int num = 0;
-	
-	return num++;
-}
-
-
-
-
-
 
 
 static void WaitOutsideBarrier(Barrier* _barrier, unsigned int _batchNum)
 {
-	while (_batchNum != _barrier->m_curBatch)
-	{
-		printf("waiting outside barrier, curBatch = %u, _batchNum = %u\n", _barrier->m_curBatch, _batchNum);
+	while (_barrier->m_curBatch != _batchNum)
+	{	
+		printf("Barrier: _barrier->m_curBatch = %u, _batchNum = %u\n", _barrier->m_curBatch, _batchNum);
+		printf("Barrier: calling cond_wait OUTSIDE\n");
 		pthread_cond_wait(&_barrier->m_workDoneCond, &_barrier->m_mutex);
+		printf("Barrier: leaving cond_wait OUTSIDE\n");
 	}
 	
 	return;
 }
 
+
+
+
+static void GetWaitingInside(Barrier* _barrier)
+{
+	_barrier->m_waitingInside++;
+	_barrier->m_waitingInside = _barrier->m_waitingInside % _barrier->m_capacity;
+	return;
+}
 
 
 
@@ -126,49 +135,34 @@ static void WaitOutsideBarrier(Barrier* _barrier, unsigned int _batchNum)
 
 static void WaitInsideBarrier(Barrier* _barrier)
 {
-	unsigned int curThread = 0;
+/*	++_barrier->m_waitingInside;*/
+	GetWaitingInside(_barrier);
 	
-	_barrier->m_workDoneFlag = 0;
-	
-	while (_barrier->m_waitingInside < _barrier->m_capacity)
+	while (_barrier->m_waitingInside > 0)
 	{
-		++_barrier->m_waitingInside;
-		printf("waiting inside = %u\n", _barrier->m_waitingInside);
-		if (_barrier->m_capacity == _barrier->m_waitingInside)
-		{
-			break;
-		}
-/*		if (_barrier->m_waitingInside == _barrier->m_capacity)*/
+/*		if (_barrier->m_waitingInside == _barrier->m_waitingInside)*/
+/*		if (_barrier->m_waitingInside == 0)*/
 /*		{*/
-/*			pthread_cond_broadcast(&_barrier->m_waitInCond);*/
+/*			break;*/
 /*		}*/
-		printf("waiting inside barrier\n");
+		printf("Barrier: calling cond_wait INSIDE %u\n", _barrier->m_waitingInside);
 		pthread_cond_wait(&_barrier->m_waitInCond, &_barrier->m_mutex);
+		printf("Barrier: leaving cond_wait INSIDE\n");
 	}
-/*	printf("here\n");*/
-	printf("broadcasting inside barrier\n");
+	
 	pthread_cond_broadcast(&_barrier->m_waitInCond);
 	
-/*	*/
-/*	++curThread;*/
-/*	*/
-/*	if (curThread == _barrier->m_capacity)*/
-/*	{*/
-/*		_barrier->m_waitingInside = 0;*/
-/*	}*/
 	
 	return;
 }
 
 
 
-
-
-static unsigned int GetNumOfDone()
+static void GetNumOfDone(Barrier* _barrier)
 {
-	static int num = 1;
+	++_barrier->m_numDone;
 	
-	return num++;
+	return;
 }
 
 
@@ -183,57 +177,88 @@ static void WaitWorkDone(Barrier* _barrier, BarrierAction _func, void* _context,
 		_func(_context);
 	}
 	
-	numOfDone = GetNumOfDone() % _barrier->m_capacity + 1;
-/*	printf("numofdone = %u\n",numOfDone);*/
-	
-/*	if (numOfDone == _barrier->m_capacity - 1)*/
-/*	{*/
-/*		printf("here2\n");*/
-/*		pthread_cond_broadcast(&_barrier->m_workDoneCond);*/
-/*		++_barrier->m_curBatch;*/
-/*	}*/
-/*	printf("here3\n");*/
-	while (numOfDone != _barrier->m_capacity - 1)
-	{
-/*		printf("here4\n");*/
-		pthread_cond_wait(&_barrier->m_waitOutCond, &_barrier->m_mutex);
-/*		numOfDone = 0;*/
-/*		printf("here6\n");*/
-	}
-/*	numOfDone = 0;*/
-	printf("here5, numofdone %d\n", numOfDone);
-	pthread_cond_broadcast(&_barrier->m_waitOutCond);
-	++_barrier->m_curBatch;
 	_barrier->m_workDoneFlag = 1;
+
+/*	printf("YOOOOO\n");*/
+	GetNumOfDone(_barrier);
+	_barrier->m_numDone = _barrier->m_numDone % _barrier->m_capacity;
+/*	printf("Barrier: m_numDone = %u\n", _barrier->m_numDone);*/
+	
+	while (_barrier->m_numDone != 0)
+	{
+		printf("Barrier: %u is calling cond_wait WORKDONE\n", _arrivalNum);
+		printf("Barrier: numOfDone = %u, capacity = %u\n", _barrier->m_numDone, _barrier->m_capacity);
+		pthread_cond_wait(&_barrier->m_waitOutCond, &_barrier->m_mutex);
+		printf("Barrier: leaving cond_wait WORKDONE\n");
+		_barrier->m_workDoneFlag = 0;
+	}
+	
+/*	printf("YOOOOO2\n");*/
+	if (_barrier->m_workDoneFlag)
+	{
+		++_barrier->m_curBatch;
+	}
 /*	_barrier->m_waitingInside = 0;*/
 	
-/*	pthread_exit(NULL);*/
+	pthread_cond_broadcast(&_barrier->m_waitOutCond);
+/*	pthread_cond_broadcast(&_barrier->m_waitInCond);*/
+	
+	
+	
+	
+	
 	
 	return;
 }
 
 
 
+static void GetArrivalNum(Barrier* _barrier)
+{
+	_barrier->m_numEntered++;
+	return;
+}
 
+
+pid_t barrierTID;
 
 
 int BarrierWait(Barrier* _barrier, BarrierAction _func, void* _context)
 {
-	unsigned int arrivalNum = 0;
+/*	unsigned int arrivalNum = 0;*/
 	unsigned int batchNum = 0;
 	
-	printf("Now starting barrierwait\n");
-	arrivalNum = GetArrivalNum();
-	printf("Arrival Num = %u\n", arrivalNum);
-	batchNum = arrivalNum / (_barrier->m_capacity + 1);
-	
 	pthread_mutex_lock(&_barrier->m_mutex);
-	printf("Now passed the mutex barrierwait\n");
 	
+	barrierTID = syscall(SYS_gettid);
+	printf("PreBarrierCond: barriertid = %u\n", barrierTID);
+	
+/*	arrivalNum = GetArrivalNum();*/
+/*	printf("PreBarrierCond: arrivalNum = %u\n", arrivalNum);*/
+/*	batchNum = arrivalNum / (_barrier->m_capacity - 1);*/
+	
+/*	_barrier->m_numEntered = GetArrivalNum(_barrier);*/
+
+	GetArrivalNum(_barrier);
+	printf("PreBarrierCond: arrivalNum = %u\n", _barrier->m_numEntered);
+	batchNum = (_barrier->m_numEntered / (_barrier->m_capacity + 1)) + 1;
+	
+	
+	printf("PreBarrierCond: batchNum = %u\n", batchNum); 
+	
+	
+	
+/*	printf("REACHED OUTSIDE\n");*/
 	WaitOutsideBarrier(_barrier, batchNum);
+/*	printf("LEFT OUTSIDE\n");*/
 	WaitInsideBarrier(_barrier);
-	WaitWorkDone(_barrier, _func, _context, arrivalNum);
-	_barrier->m_waitingInside = 0;
+/*	printf("LEFT INSIDE\n");*/
+/*	WaitWorkDone(_barrier, _func, _context, arrivalNum);*/
+	WaitWorkDone(_barrier, _func, _context, _barrier->m_numEntered);
+/*	printf("LEFT WORK DONE\n");*/
+	
+/*	_barrier->m_waitingInside = 0;*/
+	
 	pthread_cond_broadcast(&_barrier->m_workDoneCond);
 	
 	pthread_mutex_unlock(&_barrier->m_mutex);
