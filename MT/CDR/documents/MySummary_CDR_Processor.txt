@@ -1,0 +1,207 @@
+*******
+SCOPE
+*******
+Charging functionality and charging management is GSM/UMTS and EPS networks.
+
+This document describes the handling of CDR files by a processor for charging purposes.
+Charging is mediated  by processing large files containing CDR records describing services consumed by subscribers.
+
+Each CDR record contains descriptions of charging events such as voice calls and SMS messages.
+
+The processor will produce billing for subscribers and for third party operators that were involved in the service.
+
+
+
+*******
+ABBREVIATIONS
+*******
+BD				Billing Domain
+
+CDR				Charging Data Record
+
+CG				Charging Gateway
+
+IMEI			International Mobile Equipment Identity
+
+IMSI			International Mobile Subscriber Identity
+
+MMS				Multimedia Messaging Service
+
+MO				Mobile Originated
+
+MOC				MO Call
+
+MSISDN			Mobile Subscriber ISDN Number
+
+MT				Mobile Terminated
+
+MTC				Mobile Terminated Call
+
+SIM				Subscriber Identity Module
+
+SMS				Short Message Service
+
+
+
+
+
+*******
+CHARGING MECHANISMS
+*******
+Three types of networks:
+GSM / UMTS / EPC
+
+Three levels of charging mechanisms:
+bearer- 		the network,
+subsystem-		the subscriber (IMSI),
+service-		(e.g. MMS or SMS)
+
+Real-time monitoring of resource usage on all three levels to detect relevant chargeable events.
+Network resource usage is a voice call of certain duration, transport of certain volume of data, etc...
+Network resource usage requests may be initiated by: 
+UE - 		MO case: Mobile Originated
+network -   MT case:
+
+
+*******
+CDR FILE FORMAT
+*******
+header section
+variable sized CDR data section - contains 0 or more concatenated CDR records.
+(e.g.
+header
+CDR 1
+CDR 2
+.
+.
+CDR N
+
+*******
+CDR Format
+*******
+CDR record is composed of the following fields seperated by |
+
+IMSI - International Mobile Subscriber Identity (max 15 digits)
+MSISDN - uniquely identifying a subscription in a mobile network (max 15 digits)
+IMEI - Subscriber equipment number field contains ID of mobile device
+Operator Brand Name - e.g. "Cellcom Israel"(max 64 chars)
+Operator MCC/MNC tuple - Mobile country code (3 digit), Mobile Network Code (2-3 digits)
+Call type: 
+	MOC			outgoing voice call
+	MTC			incoming voice call
+	SMS-NO		outgoing message
+	SMS-MT		incoming message
+	GPRS		internet
+Call date
+call time
+duration
+download
+upload
+party MSISDN - 		corresponding party in this call, empty for GPRS
+party operator-		corresponding partys mobile operator in this calls
+	
+
+
+
+*******
+PROCESSING FUNCTIONS
+*******
+The processor of the CDR files will be fed daily CDR files in a specific configurable directory.
+Usually are large files 1-5 GB
+Processor will read and process files in order to fulfill the following functions:
+
+***BILLING
+for each customer identified by IMSI an aggregate information will be produced that will contain the total of:
+Outgoing voice calls duration to a subscriber within the mobile operator
+Incoming voice calls duration to a subscriber within the mobile operator
+Outgoing voice calls duration to a subscriber outside the mobile operator
+Incoming voice calls duration to a subscriber outside the mobile operator
+SMS messages sent within the mobile operator
+SMS received within the mobile operator
+SMS sent outside the mobile operator
+SMS received outside the mobile operatore
+MB downloaded
+MB uploaded
+
+
+***INTER OPERATOR SETTLEMENT
+Incoming voice call curations
+Outgoing voice call durations
+Incoming SMS messages
+Outgoing SMS messages
+
+
+
+*******
+CHARGING GATEWAY FUNCTIONS
+*******
+The CGF enables interrogation of the system for agrregated data.
+Phase A: support human user
+Phase B: support for external systems integration via an API.
+
+CGF will support the following commands:
+***MSISDN Retrieve Query:
+Support retrieving information for one subscriber at a time. The subscriber will be identified by his MSISDN. The result will be formatted according to the description of one record.
+
+***Operator Retrieve Query
+Support retrieving information for one operator at a time. The operator will be identified by his MCC/MNC Th result will be formatted according to blah blah.
+
+***All Subscribers Report
+Produce one file with one record for each subscriber containing aggregated information. This aggregate information will be imported to other sustems for purposes such as billing. Also should be formatted appropriately.
+
+***All Operators Reports
+Produce one file with one record for each operator containing aggregated information to be used in inter-operator settlement process.
+
+***Aggregated information
+Produce charging files on recepit of triggers. These charging files contain aggregated data for subscribers and operators
+
+
+
+
+
+
+
+
+
+
+
+*******
+*******
+*******
+*******
+*******
+Identified requirments for the system:
+-----------------------
+* Will handle CDR files and produce billing for subscribers and operators.
+* Should allow for high performance by utilizing the most out of the current hardware.
+* Will be fed daily CDR files in a specific configurable directory. (1-5 GB per CDR file)
+* Will discover and process files as they appear in the input directory.
+* Should handle more than one file simultaneously. (typically 2-4 file delivered at once)
+* Will move processed files to a "done" directory.
+* Should support future change of file format.
+* Support concurrent processing of more than one file format.
+* Support receiving CDR data via means other than files.
+* Should be driven by configuration files (ini file format)
+* Will display a user interface that enables operations to:
+	Execute CGF commands
+	Pause the system
+	Resume a paused system
+	Shutdown the system - here should generate a report for billing, 
+		one file for all subscribers and one for operators
+* Should report to a log facility
+* Will contain a Charging Gateway Function (CGF): 
+	MSISDN Retrieve Query, 
+	Operator Retrieve Query, 
+	All Subscribers Report,
+	All Operators Report,
+	Aggregated Information
+* Will produce charging files on receipt of triggers.
+* Will respond to two user defined signals: SIGUSR1 and SIGUSR2
+
+
+
+
+
+
+
+

@@ -1,0 +1,87 @@
+----------
+Pro Bill:
+----------
+#include "Config.h"
+#include "UI.h"
+
+	ProBill_Run();
+	ProBill_Quit();
+
+
+
+
+----------
+Config:
+----------
+#include "Logger.h"
+#include "UI.h"
+
+	Config_Create(); 
+	Config_Read();
+	Config_Destroy();
+
+
+----------
+UI:
+----------
+#include "CDR.h"
+#include "AccountingMeter.h"
+#include "Logger.h"
+
+	UI_Create();
+	UI_GetInput();
+	UI_DoCGF();
+	UI_Pause();
+	UI_Resume();
+	UI_Shutdown();
+	UI_Destroy();
+
+
+
+
+----------
+RecordsManager:
+----------
+#include "ProtectedQueue.h"
+#include "AccountingMeter.h"
+#include "Logger.h"
+
+	RM_Create();
+	RM_ReadRecordFromFile();
+	RM_Parse();
+	RM_SendRecordToAM();
+	
+	RM_Pause();
+	
+	RM_Destroy();
+
+
+
+----------
+AccountingMeter:
+----------
+#include "ProtectedHashMap.h"
+#include "ProtectedQueue.h"
+#include "Logger.h"
+
+	AM_Create(ProQueue* _proQueue, _); /* Init SIGUSR handlers */
+	AM_Destroy();
+	
+	AM_Pause();
+	AM_ReadRecordFromRM();
+	AM_FindRecord();
+	AM_InsertRecord();
+	AM_ExportFile();
+	
+	
+
+
+
+
+----------
+Logger:
+----------
+
+
+
+
