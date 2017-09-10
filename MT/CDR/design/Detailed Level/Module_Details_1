@@ -17,8 +17,10 @@ Config:
 #include "UI.h"
 
 	Config_Create(); 
-	Config_Read();
 	Config_Destroy();
+	
+	Config_Read();
+	
 
 
 ----------
@@ -29,12 +31,13 @@ UI:
 #include "Logger.h"
 
 	UI_Create();
+	UI_Destroy();
+	
 	UI_GetInput();
 	UI_DoCGF();
 	UI_Pause();
 	UI_Resume();
 	UI_Shutdown();
-	UI_Destroy();
 
 
 
@@ -47,13 +50,14 @@ RecordsManager:
 #include "Logger.h"
 
 	RM_Create();
+	RM_Destroy();
+	
 	RM_ReadRecordFromFile();
 	RM_Parse();
 	RM_SendRecordToAM();
-	
 	RM_Pause();
 	
-	RM_Destroy();
+	
 
 
 
@@ -64,7 +68,7 @@ AccountingMeter:
 #include "ProtectedQueue.h"
 #include "Logger.h"
 
-	AM_Create(ProQueue* _proQueue, _); /* Init SIGUSR handlers */
+	AM_Create(ProQueue* _proQueue, ...); /* Init SIGUSR handlers */
 	AM_Destroy();
 	
 	AM_Pause();
@@ -81,7 +85,8 @@ AccountingMeter:
 ----------
 Logger:
 ----------
-
+	Logger_Create();
+	Logger_Destroy();
 
 
 
