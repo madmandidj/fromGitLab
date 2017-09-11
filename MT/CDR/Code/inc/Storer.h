@@ -1,8 +1,8 @@
 #ifndef __STORER_H__
 #define __STORER_H__
 
-#include "Operator.h"
-#include "Subscriber.h"
+#include "./ADTs/Operator.h"
+#include "./ADTs/Subscriber.h"
 
 typedef struct Storer Storer;
 
@@ -25,17 +25,23 @@ struct Storer
 */
 
 
-Storer* 	StorerCreate(Subscriber* _subStorage, Operator* _opStorage);
+Storer* StorerCreate(Subscriber* _subStorage, Operator* _opStorage);
 
-void		StorerDestroy(Storer* _storer);
 
-Subscriber* StorerGetSubscriber(Storer* _storer);
+void StorerDestroy(Storer* _storer);
 
-Operator*	StorerGetOperator(Storer* _storer);
 
-int 		StorerUpdateSubscriber(Storer* _storer, Subscriber* _subscriber);
+Subscriber StorerGetSubscriber(Storer* _storer);
 
-int 		StorerUpdateOperator(Storer* _storer, Operator* _operator);
+
+Operator* StorerGetOperator(Storer* _storer);
+
+
+int StorerUpdateSubscriber(Storer* _storer, Subscriber* _subscriber);
+
+
+int StorerUpdateOperator(Storer* _storer, Operator* _operator);
+
 
 /*
 StorerCreateThreads();

@@ -27,7 +27,8 @@ struct Processor
 */
 
 
-Processor* 		ProcessorCreate(Transmitter*  tx, Storer* stot, .../*TODO: add parameters*/);
+//Processor* 		ProcessorCreate(Transmitter*  tx, Storer* stot, ...);
+Processor* 		ProcessorCreate(unsigned int _numOfThreads);
 
 void			ProcessorDestroy(Processor* _processor);
 

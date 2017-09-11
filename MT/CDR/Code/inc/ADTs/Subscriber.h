@@ -6,7 +6,7 @@ typedef struct Subscriber Subscriber;
 
 struct Subscriber
 {
-	unsigned int	m_magicNum;
+//	unsigned int	m_magicNum;
 	/*
 	Subscriber identifiers
 	*/

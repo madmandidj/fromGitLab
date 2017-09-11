@@ -6,12 +6,12 @@ typedef struct Operator Operator;
 
 struct Operator
 {
-	unsigned int	m_magicNum;
+	/*unsigned int	m_magicNum;*/
 	/*
 	Operator identifiers
 	*/
 	char			m_operatorBrand[65];
-	char			m_operatorMCCMNC[7];
+	int				m_operatorMCCMNC;
 	
 	/*
 	Voice call durations
