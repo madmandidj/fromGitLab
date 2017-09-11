@@ -10,8 +10,8 @@ struct Subscriber
 	/*
 	Subscriber identifiers
 	*/
-	char			m_imsi[15]; 			/* subscriber is identified by this according to 5.1 */
-	char			m_msisdn[15];			/* Should imsi or msisdn be used as key to hash function? */
+	char			m_imsi[16]; 			/* subscriber is identified by this according to 5.1 */
+	char			m_msisdn[16];			/* Should imsi or msisdn be used as key to hash function? */
 	
 	/*
 	Voice call durations
