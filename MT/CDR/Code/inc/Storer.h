@@ -10,6 +10,7 @@ typedef struct Storer Storer;
 FOR Storer.c FILE:
 --------------------
 #include "HashMap.h"
+#include "Transmitter.h"
 #include "Logger.h"
 
 

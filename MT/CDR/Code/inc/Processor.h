@@ -11,7 +11,8 @@ typedef struct Processor Processor;
 /*
 For Processor.c FILE:
 ---------------------
-TODO: add relevant includes
+#include "Processor.h"
+
 
 
 struct Processor
@@ -21,7 +22,6 @@ struct Processor
 	pthread_t*			m_threadIDs;
 	Subscriber*			m_subscriber;
 	Operator*			m_operator;
-	TODO: add relevant struct members
 };
 */
 
