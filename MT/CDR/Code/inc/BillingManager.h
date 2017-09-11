@@ -1,5 +1,5 @@
-#ifndef __PRO_BILL_H__
-#define __PRO_BILL_H__
+#ifndef __BILLING_MANAGER_H__
+#define __BILLING_MANAGER_H__
 
 
 typedef struct BillingManager BillingManager;
@@ -43,23 +43,7 @@ void					BillingManagerDestroy(ProBill* _proBill);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif /* #ifndef __PRO_BILL_H__ */
+#endif /* #ifndef __BILLING_MANAGER_H__ */
 
 
 
