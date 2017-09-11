@@ -26,11 +26,11 @@ struct Processor
 */
 
 
-Processor* 		ProcessorCreate(/*TODO: add parameters*/);
+Processor* 		ProcessorCreate(Transmitter*  tx, Storer* stot, .../*TODO: add parameters*/);
 
 void			ProcessorDestroy(Processor* _processor);
 
-/*TODO: add return*/		ProcessorCreateThreads(/*TODO: add parameters*/);
+/*TODO: add return*/		ProcessorRun(/*TODO: add parameters*/);
 
 /*TODO: add return*/		ProcessorDestroyThreads(/*TODO: add parameters*/);
 

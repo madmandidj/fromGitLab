@@ -28,7 +28,7 @@ void			TransmitterDestroy(/*TODO: add parameters*/);
 
 /*TODO: Add return*/ TransmitterSend(/*TODO: add parameters*/);
 
-/*TODO: Add return*/ TransmitterGet(/*TODO: add parameters*/);
+/*TODO: Add return*/ TransmitterRecieve(Transmitter* _txObject);
 
 /*TODO: Add return*/ TransmitterPause(/*TODO: add parameters*/);
 
