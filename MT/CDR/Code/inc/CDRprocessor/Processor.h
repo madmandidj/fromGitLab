@@ -20,6 +20,7 @@ struct Processor
 	unsigned int 		m_magicNum;
 	unsigned int		m_numOfThreads;
 	pthread_t*			m_threadIDs;
+	Record*				m_record;
 	Subscriber*			m_subscriber;
 	Operator*			m_operator;
 };
@@ -30,13 +31,13 @@ Processor* 		ProcessorCreate(Transmitter*  tx, Storer* stot, .../*TODO: add para
 
 void			ProcessorDestroy(Processor* _processor);
 
-/*TODO: add return*/		ProcessorRun(/*TODO: add parameters*/);
+int 			ProcessorRun(/*TODO: add parameters*/);
 
-/*TODO: add return*/		ProcessorDestroyThreads(/*TODO: add parameters*/);
+int 			ProcessorStop(/*TODO: add parameters*/);
 
-Subscriber*		ProcessorFormatSubscriber(/*TODO: add parameters*/);
+Subscriber*		ProcessorFormatSubscriber(Record* _record);
 
-Operator* 		ProcessorFormatOperator(/*TODO: add parameters*/);		
+Operator* 		ProcessorFormatOperator(Record* _record);		
 
 
 #endif /* #ifndef __PROCESSOR_H__ */

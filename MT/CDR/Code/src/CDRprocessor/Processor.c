@@ -1,5 +1,6 @@
 #include "Processor.h"
-#define		PROCESSOR_MAGIC 0x0C111111
+
+#define PROCESSOR_MAGIC 0x0C111111
 
 struct Processor
 {

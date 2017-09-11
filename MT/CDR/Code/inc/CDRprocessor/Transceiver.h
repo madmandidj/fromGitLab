@@ -3,7 +3,7 @@
 
 #include "Record.h"
 
-typedef struct Transmitter Transmitter;
+typedef struct Transceiver Transceiver;
 
 
 /*
@@ -17,8 +17,9 @@ FOR Transmitter.c FILE:
 struct Transmitter
 {
 	unsigned int		m_magicNum;
-	pthread_t			m_threadIDs;
-	HashMap* 			m_Storage;
+	MessageQueue*		m_queue;
+	long				m_channel;
+	void*				m_msg;
 };
 */
 
@@ -30,12 +31,13 @@ void			TransmitterDestroy(/*TODO: add parameters*/);
 
 /*TODO: Add return*/ TransmitterRecieve(Transmitter* _txObject);
 
-/*TODO: Add return*/ TransmitterPause(/*TODO: add parameters*/);
+/*
+TransmitterPause();
 
-/*TODO: Add return*/ TransmitterResume(/*TODO: add parameters*/);
+TransmitterResume();
 
-/*TODO: Add return*/ TransmitterShutdown(/*TODO: add parameters*/);
-
+TransmitterShutdown();
+*/
 
 
 
