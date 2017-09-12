@@ -4,9 +4,18 @@
 
 typedef struct Record Record;
 
+typedef enum CallType
+{
+	MOC = 0, 	/* Outgoing voice */
+	MTC,		/* Incoming voice */
+	SMS_MO,		/* Outgoing SMS */
+	SMS_MT,		/* Incoming SMS */
+	GPRS		/* Internet */
+}CallType;
+
 struct Record
 {
-	unsigned int	m_magicNum;
+//	unsigned int	m_magicNum;
 	/*
 	Subscriber identifiers
 	*/
@@ -18,14 +27,14 @@ struct Record
 	Operator identifiers
 	*/
 	char			m_operatorBrand[65];
-	char			m_operatorMCCMNC[7];
+	unsigned int	m_operatorMCCMNC;
 	
 	/*
 	Record type attributes
 	*/
-	char			m_callType[7];
+	CallType		m_callType;
 	char			m_callDate[11];
-	char			m_callTime[9];
+	unsigned int	m_callTime;
 	unsigned int	m_duration;
 	unsigned int	m_downloadMB;
 	unsigned int	m_uploadMB;
@@ -34,7 +43,7 @@ struct Record
 	Party identifiers
 	*/
 	char			m_partyMsisdn[16];
-	char			m_partyMCCMNC[7];
+	unsigned int	m_partyMCCMNC;
 };
 
 

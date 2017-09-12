@@ -10,7 +10,7 @@ typedef struct Accumulator Accumulator;
 Accumulator* AccumulatorCreate(Subscriber* _subStorage, Operator* _opStorage);
 
 
-void AccumulatorDestroy(Accumulator* _accum);
+void AccumulatorDestroy(Accumulator* _accum); /* Needs to receive function to destroy elements */
 
 
 Subscriber AccumulatorGetSubscriber(Accumulator* _accum);

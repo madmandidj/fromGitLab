@@ -1,9 +1,9 @@
 #ifndef __PROCESSOR_H__
 #define __PROCESSOR_H__
 
-#include "Record.h"
-#include "Operator.h"
-#include "Subscriber.h"
+#include "./ADTs/Record.h"
+#include "./ADTs/Operator.h"
+#include "./ADTs/Subscriber.h"
 
 typedef struct Processor Processor;
 
@@ -36,10 +36,11 @@ int 			ProcessorRun(/*TODO: add parameters*/);
 
 int 			ProcessorStop(/*TODO: add parameters*/);
 
+/*
 Subscriber*		ProcessorFormatSubscriber(Record* _record);
 
 Operator* 		ProcessorFormatOperator(Record* _record);		
-
+*/
 
 #endif /* #ifndef __PROCESSOR_H__ */
 
