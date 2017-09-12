@@ -1,12 +1,12 @@
 #include "../../../../../../inc/mu_test.h"
-#include "../../../inc/Storer.h"
+#include "../../../inc/Accumulator.h"
 #include <stdio.h>
 
 
 
 
 
-UNIT(StorerCreateAndDestroy)
+UNIT(AccumulatorCreateAndDestroy)
 
 	Subscriber subscriber = {"123456789012345", 
 							"123456789012345", 
@@ -26,11 +26,11 @@ UNIT(StorerCreateAndDestroy)
 									5,
 									6
 	};
-	Storer* storer;
+	Accumulator* accum;
 	
-	storer = StorerCreate(&subscriber, &operator);
-	ASSERT_THAT(storer);
-	StorerDestroy(storer);
+	accum = AccumulatorCreate(&subscriber, &operator);
+	ASSERT_THAT(accum);
+	AccumulatorDestroy(accum);
 	
 END_UNIT
 
@@ -39,7 +39,7 @@ END_UNIT
 
 
 
-UNIT(StorerGetOperatorCheckValue)
+UNIT(AccumulatorGetOperatorCheckValue)
 
 	Subscriber retrievedSubscriber;
 	
@@ -61,12 +61,12 @@ UNIT(StorerGetOperatorCheckValue)
 									5,
 									6
 	};
-	Storer* storer;
+	Accumulator* accum;
 	
-	storer = StorerCreate(&subscriber, &operator);
-	retrievedSubscriber = StorerGetSubscriber(storer);
+	accum = AccumulatorCreate(&subscriber, &operator);
+	retrievedSubscriber = AccumulatorGetSubscriber(accum);
 	ASSERT_THAT(retrievedSubscriber.m_outVoiceWithinOp == subscriber.m_outVoiceWithinOp);
-	StorerDestroy(storer);
+	AccumulatorDestroy(accum);
 	
 END_UNIT
 
@@ -74,7 +74,7 @@ END_UNIT
 
 
 
-UNIT(StorerUpdateSubscriberCheckValue)
+UNIT(AccumulatorUpdateSubscriberCheckValue)
 
 	Subscriber retrievedSubscriber;
 	
@@ -96,13 +96,13 @@ UNIT(StorerUpdateSubscriberCheckValue)
 									5,
 									6
 	};
-	Storer* storer;
+	Accumulator* accum;
 	
-	storer = StorerCreate(&subscriber, &operator);
-	StorerUpdateSubscriber(storer, &subscriber);
-	retrievedSubscriber = StorerGetSubscriber(storer);
+	accum = AccumulatorCreate(&subscriber, &operator);
+	AccumulatorUpdateSubscriber(accum, &subscriber);
+	retrievedSubscriber = AccumulatorGetSubscriber(accum);
 	ASSERT_THAT(retrievedSubscriber.m_outVoiceWithinOp == 2);
-	StorerDestroy(storer);
+	AccumulatorDestroy(accum);
 	
 END_UNIT
 
@@ -113,11 +113,11 @@ END_UNIT
 
 
 
-TEST_SUITE(Storer unit tests v1)
+TEST_SUITE(Accumulator unit tests v1)
 
-	TEST(StorerCreateAndDestroy)
-	TEST(StorerGetOperatorCheckValue)
-	TEST(StorerUpdateSubscriberCheckValue)
+	TEST(AccumulatorCreateAndDestroy)
+	TEST(AccumulatorGetOperatorCheckValue)
+	TEST(AccumulatorUpdateSubscriberCheckValue)
 
 END_SUITE
 
