@@ -2,33 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+
+#define SUBSCRIBERS_HASH_CAPACITY 	1000000
+#define OPERATORS_HASH_CAPACITY 	100000
 /*#include "HashMap.h"*/
 /*#include "Transceiver.h"*/
 /*#include "Logger.h"*/
 
-#define	ACCUMULATOR_MAGIC 0x0CC00001
-
 
 struct Accumulator
 {
-	unsigned int		m_magicNum;
 	pthread_t*			m_threadIDs;
-	Container*			m_container;
-	/*Subscriber 			m_subscriberStorage;
-	Operator 			m_operatorStorage;*/
+	Container*			m_cont;
 };
 
 
 
 
-Accumulator* AccumulatorCreate(Subscriber* _subStorage, Operator* _opStorage)
+Accumulator* AccumulatorCreate()
 {
 	Accumulator* accum;
-	
-	if (!_subStorage || !_opStorage)
-	{
-		return NULL;
-	}
 	
 	accum = malloc(sizeof(Accumulator));
 	if (!accum)
@@ -36,10 +29,14 @@ Accumulator* AccumulatorCreate(Subscriber* _subStorage, Operator* _opStorage)
 		return NULL;
 	}
 	
-	accum->m_magicNum = STORER_MAGIC;
 	accum->m_threadIDs = NULL; /* TODO: Init this properly */
-	accum->m_subscriberStorage = *_subStorage;
-
+	accum->m_cont = ContainerCreate(SUBSCRIBERS_HASH_CAPACITY, OPERATORS_HASH_CAPACITY);
+	if (!accum->m_cont)
+	{
+		free(accum);
+		return NULL;
+	}
+	
 	return accum;
 }
 
@@ -55,6 +52,7 @@ void AccumulatorDestroy(Accumulator* _accum)
 		return;
 	}
 	
+	ContainerDestroy(_accum->m_cont);
 	free(_accum);
 
 	return;
@@ -66,39 +64,81 @@ void AccumulatorDestroy(Accumulator* _accum)
 
 
 
-Subscriber AccumulatorGetSubscriber(Accumulator* _accum)
+int AccumulatorGetSubscriber(Accumulator* _accum, Subscriber* _sub, Subscriber* _subFound)
 {
-	Subscriber sub;
+	int err;
 	
-	if (!_accum)
-	{
-		return sub;
-	}
-	
-	return _accum->m_subscriberStorage;
-
-}
-
-
-
-int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _subscriber)
-{
-	if (!_accum || !_subscriber)
+	if (!_accum || !_sub || !_subFound)
 	{
 		return 0;
 	}
 	
+	err = ContainerFindSubscriber(_accum->m_cont, _sub, _subFound);
 	
-	_accum->m_subscriberStorage.m_outVoiceWithinOp += _subscriber->m_outVoiceWithinOp;
-	_accum->m_subscriberStorage.m_inVoiceWithinOp += _subscriber->m_inVoiceWithinOp;
-	_accum->m_subscriberStorage.m_outVoiceOutsideOp += _subscriber->m_outVoiceOutsideOp;
-	_accum->m_subscriberStorage.m_inVoiceOutsideOp += _subscriber->m_inVoiceOutsideOp;
-	_accum->m_subscriberStorage.m_outSmsWithinOp += _subscriber->m_outSmsWithinOp;
-	_accum->m_subscriberStorage.m_inSmsWithinOp += _subscriber->m_inSmsWithinOp;
-	_accum->m_subscriberStorage.m_outSmsOutsideOp += _subscriber->m_outSmsOutsideOp;
-	_accum->m_subscriberStorage.m_inSmsOutsideOp += _subscriber->m_inSmsOutsideOp;
-	_accum->m_subscriberStorage.m_downloadMB += _subscriber->m_downloadMB;
-	_accum->m_subscriberStorage.m_uploadMB += _subscriber->m_uploadMB;
+	return err;
+}
+
+
+
+
+
+int AccumulatorGetOperator(Accumulator* _accum, Operator* _oper, Operator* _operFound)
+{
+	int err;
+	
+	if (!_accum || !_oper || !_operFound)
+	{
+		return 0;
+	}
+	
+	err = ContainerFindSubscriber(_accum->m_cont, _oper, _operFound);
+	
+	return err;
+}
+
+
+
+
+
+
+int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _sub)
+{
+	int err;
+	
+	if (!_accum || !_sub)
+	{
+		return 0;
+	}
+	
+	err = ContainerUpdateSubscriber(_accum->m_cont, _sub);
+	if (0 == err)
+	{
+		return 0;
+	}
+	
+	return 1;
+}
+
+
+
+
+
+
+
+int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
+{
+	int err;
+	
+	if (!_accum || !_oper)
+	{
+		return 0;
+	}
+	
+	err = ContainerUpdateOperator(_accum->m_cont, _oper);
+	if (0 == err)
+	{
+		return 0;
+	}
 	
 	return 1;
 }

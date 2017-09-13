@@ -3,23 +3,31 @@
 
 #include "../../../CDRDataTypes/Subscriber.h"
 #include "../../../CDRDataTypes/Operator.h"
+#include <stdlib.h>
 
 typedef struct Container Container;
 
 Container* ContainerCreate(size_t _subscribersCapacity, size_t _operatorsCapacity);
 
-Container* ContainerDestroy(Container* _cont);
+void ContainerDestroy(Container* _cont);
 
-int	ContainerFindSubscriber(Container* _cont, Subscriber* _subscriber);
+int	ContainerGetElement(Container* _cont, void* _element, void** _subFound);
 
-int	ContainerFindOperator(Container* _cont, Operator* _operator);
-
-int ContainerUpdateSubscriber(Container* _cont, Subscriber* _subscriber);
-
-int ContainerUpdateOperator(Container* _cont, Operator* _operator);
+int ContainerInsertElement(Container* _cont, void* _element);
 
 
+/*
 
+int	ContainerFindSubscriber(Container* _cont, Subscriber* _sub, Subscriber* _subFound);
+
+int	ContainerFindOperator(Container* _cont, Operator* _oper, Operator* _operFound);
+
+int ContainerUpdateSubscriber(Container* _cont, Subscriber* _sub);
+
+int ContainerUpdateOperator(Container* _cont, Operator* _oper);
+
+
+*/
 
 
 #endif /*#ifndef __CONTAINER_H__*/

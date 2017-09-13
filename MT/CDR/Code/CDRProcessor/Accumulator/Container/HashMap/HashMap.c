@@ -179,6 +179,7 @@ static void DestroyKeyValPairs(Bucket _bucket, KeyDestroy _keyDestroyFunc, ValDe
 	while(nodeItr != nodeSentinel)
 	{
 		data = (Data*) ListItrGet(nodeItr);
+		
 		if (!IS_NULL(_keyDestroyFunc))
 		{
 			_keyDestroyFunc((void*)data->m_key);
@@ -187,6 +188,9 @@ static void DestroyKeyValPairs(Bucket _bucket, KeyDestroy _keyDestroyFunc, ValDe
 		{
 			_valDestroyFunc((void*)data->m_val);
 		}
+		
+		free(data); /* Added as part of CDR project */
+
 		nodeItr = ListItrNext(nodeItr);
 	}
 	return;
