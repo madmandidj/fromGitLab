@@ -26,8 +26,6 @@ ProcessingManager* ProcessingManagerCreate()
 		return NULL;
 	}
 	
-	procMngr->m_accum = 
-	
 	procMngr->m_rcvr = ReceiverCreate();
 	if (!procMngr->m_rcvr)
 	{

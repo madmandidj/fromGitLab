@@ -13,8 +13,9 @@ struct Accumulator
 {
 	unsigned int		m_magicNum;
 	pthread_t*			m_threadIDs;
-	Subscriber 			m_subscriberStorage;
-	Operator 			m_operatorStorage;
+	Container*			m_container;
+	/*Subscriber 			m_subscriberStorage;
+	Operator 			m_operatorStorage;*/
 };
 
 
@@ -37,35 +38,8 @@ Accumulator* AccumulatorCreate(Subscriber* _subStorage, Operator* _opStorage)
 	
 	accum->m_magicNum = STORER_MAGIC;
 	accum->m_threadIDs = NULL; /* TODO: Init this properly */
-	
 	accum->m_subscriberStorage = *_subStorage;
-	
-	
-	
-	
-	
-	/* 
-									"123456789012345", 
-									1, 
-									2, 
-									3, 
-									4,
-									5,
-									6}; 
-	accum->m_operatorStorage = {"EyalAlons MobilePhoneService", 
-									34578,
-									1,
-									2,
-									3,
-									4,
-									5,
-									6};
-									
-									
-									*/
-									
-/*	accum->m_subscriberStorage = {0};*/
-/*	accum->m_operatorStorage = {0};		*/
+
 	return accum;
 }
 
