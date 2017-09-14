@@ -7,6 +7,15 @@
 #define TRUE 1
 #define FALSE 0
 
+typedef struct Person Person;
+
+struct Person
+{
+	char 	m_firstName[32];
+	char 	m_lastName[32];
+	int 	m_age;
+};
+
 /*****
 PRINT HASHMAP ERROR FUNCTION
 *****/
@@ -90,6 +99,10 @@ static size_t* InitSizeTArr(size_t _numOfInts)
     }
     return arr;
 }
+
+
+
+
 /*******************************/
 
 size_t IntHashFunction(const size_t* _key)
@@ -105,6 +118,43 @@ int IntEqualityFunction(const int* _firstKey, const int* _secondKey)
 	}
 	return FALSE;
 }
+
+/*******************************/
+static int* InitPersArr(size_t _numOfPers)
+{
+    Person* arr;
+    size_t index;
+    assert(0 != _numOfPers);
+
+    arr = malloc(_numOfPers * sizeof(Person));
+    if (NULL == arr)
+    {
+        return NULL;
+    }
+    
+    for (index = 0; index < _numOfPers; ++index)
+    {
+        arr[index] = (int)index;
+    }
+    
+    return arr;
+}
+
+size_t IntHashFunction(const size_t* _key)
+{
+	return *_key;
+}
+
+int IntEqualityFunction(const int* _firstKey, const int* _secondKey)
+{
+	if (*_firstKey == *_secondKey)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
 
 
 
@@ -434,6 +484,41 @@ static void TestHashMapFind_KeyNotFound()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+PERSON TESTS
+*/
+static void TestHashMapInsert_DuplicateKey()
+{
+	HashMap* map;
+	size_t capacity = 10;
+	size_t* keyArr;
+	int* valArr;
+	size_t numOfInts = 10;
+	MapResult err;
+
+	keyArr = InitSizeTArr(numOfInts);
+	valArr = InitIntArr(numOfInts);
+	map = HashMapCreate(capacity, (HashFunction)IntHashFunction, (EqualityFunction)IntEqualityFunction);
+	InsertTenKeyValPairsInt(map, numOfInts, keyArr, valArr);
+	err = HashMapInsert(map, keyArr + 5, valArr + 5);
+	PrintErrResult("TestHashMapInsert_DuplicateKey", err, MAP_KEY_DUPLICATE_ERROR);
+	HashMapDestroy(&map, NULL, NULL);
+	free(keyArr);
+	free(valArr);
+	return;
+}
 
 
 

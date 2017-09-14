@@ -95,7 +95,7 @@ void AccumulatorDestroy(Accumulator* _accum)
 
 
 
-/*
+
 int AccumulatorGetSubscriber(Accumulator* _accum, Subscriber* _sub, Subscriber** _subFound)
 {
 	int err;
@@ -128,38 +128,7 @@ int AccumulatorGetOperator(Accumulator* _accum, Operator* _oper, Operator* _oper
 	return err;
 }
 
-*/
 
-
-int AccumulatorGetSubscriber(Accumulator* _accum, char* _key, Subscriber** _subFound)
-{
-	int err;
-	
-	if (!_accum || !_key || !_subFound)
-	{
-		return 0;
-	}
-	
-	err = ContainerGetElement(_accum->m_contSub, _key, (void**)_subFound);
-	
-	return err;
-}
-
-
-
-int AccumulatorGetOperator(Accumulator* _accum, char* _key, Operator* _operFound)
-{
-	int err;
-	
-	if (!_accum || !_key || !_operFound)
-	{
-		return 0;
-	}
-	
-	err = ContainerGetElement(_accum->m_contOp, _key, (void**)&_operFound);
-	
-	return err;
-}
 
 
 

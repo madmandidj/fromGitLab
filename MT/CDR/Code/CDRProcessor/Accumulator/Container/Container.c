@@ -161,7 +161,7 @@ int	ContainerGetElement(Container* _cont, char* _key, void** _elementFound)
 {
 	MapResult mapErr;
 	
-	mapErr = HashMapFind(_cont->m_storage, _key, (void**) _elementFound);
+	mapErr = HashMapFind(_cont->m_storage, _key, _elementFound);
 	if (MAP_SUCCESS != mapErr)
 	{
 		return 0;

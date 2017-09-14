@@ -314,7 +314,8 @@ static ListItr FindKeyDuplicateInBucket(HashMap* _map, const void* _key, size_t 
 		itrData = (Data*) ListItrGet(nodeItr);
 		if (_map->m_keysEqualFunc((void*)itrData->m_key, _key))
 		{
-			return nodeItr;
+/*			return nodeItr;*/
+			return (void*)itrData;
 		}
 		nodeItr = ListItrNext(nodeItr);
 	}
