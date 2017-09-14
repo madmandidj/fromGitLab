@@ -151,6 +151,7 @@ int AccumulatorGetOperator(Accumulator* _accum, Operator* _oper, Operator* _oper
 int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _sub)
 {
 	int err;
+	Subscriber* newSub;
 	Subscriber* subFound;
 	
 	
@@ -162,7 +163,10 @@ int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _sub)
 	err = ContainerGetElement(_accum->m_contSub, _sub->m_msisdn, (void**)&subFound);
 	if (0 == err)
 	{
-		ContainerInsertElement(_accum->m_contSub, _sub->m_msisdn, _sub);
+		newSub = malloc(sizeof(Subscriber));
+		*newSub = *_sub;
+/*		ContainerInsertElement(_accum->m_contSub, _sub->m_msisdn, _sub);*/
+		ContainerInsertElement(_accum->m_contSub, _sub->m_msisdn, newSub);
 		return 1;
 	}
 	

@@ -162,7 +162,7 @@ int	ContainerGetElement(Container* _cont, char* _key, void** _elementFound)
 	MapResult mapErr;
 	
 	mapErr = HashMapFind(_cont->m_storage, _key, (void**) _elementFound);
-	if (NULL == _elementFound)
+	if (MAP_SUCCESS != mapErr)
 	{
 		return 0;
 	}
@@ -178,7 +178,13 @@ int	ContainerGetElement(Container* _cont, char* _key, void** _elementFound)
 
 int ContainerInsertElement(Container* _cont, char* _key, void* _element)
 {
-	HashMapInsert(_cont->m_storage, _key, _element);
+	MapResult mapErr;
+	
+	mapErr = HashMapInsert(_cont->m_storage, _key, _element);
+	if (MAP_SUCCESS != mapErr)
+	{
+		return 0;
+	}
 
 	return 1;
 }
