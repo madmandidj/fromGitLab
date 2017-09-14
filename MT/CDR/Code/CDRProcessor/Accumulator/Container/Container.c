@@ -1,21 +1,32 @@
 #include "Container.h"
-#include "./HashMap/HashMap.h"
+/*#include "./HashMap/HashMap.h"*/
 #include <string.h>		/* strcmp */
+
+
+/*struct Container*/
+/*{*/
+/*	size_t 		m_subscribersCapacity;*/
+/*	size_t 		m_operatorsCapacity;*/
+/*	HashMap*	m_subscribersHash;*/
+/*	HashMap*	m_operatorsHash;*/
+/*};*/
+
 
 
 struct Container
 {
-	size_t 		m_subscribersCapacity;
-	size_t 		m_operatorsCapacity;
-	HashMap*	m_subscribersHash;
-	HashMap*	m_operatorsHash;
+	size_t 		m_capacity;
+	HashMap*	m_storage;
 };
+
+
 
 
 /*
 Hash function adapted from:
 https://stackoverflow.com/questions/7666509/hash-function-for-string
 */
+
 size_t CDRHashFunc(char* _key)
 {
 	unsigned long hash = 5381;
@@ -34,33 +45,33 @@ size_t CDRHashFunc(char* _key)
 
 
 
-int SubscriberEqualityFunc(const Subscriber* _sub1, const Subscriber* _sub2)
-{
-	int result = 1;
-	
-	result = strcmp(_sub1->m_msisdn, _sub2->m_msisdn);
-	if (0 != result)
-	{
-		return 0;
-	}
-	
-	return 1;
-}
+/*int SubscriberEqualityFunc(const Subscriber* _sub1, const Subscriber* _sub2)*/
+/*{*/
+/*	int result = 1;*/
+/*	*/
+/*	result = strcmp(_sub1->m_msisdn, _sub2->m_msisdn);*/
+/*	if (0 != result)*/
+/*	{*/
+/*		return 0;*/
+/*	}*/
+/*	*/
+/*	return 1;*/
+/*}*/
 
 
 
 
 
 
-int OperatorEqualityFunc(const Operator* _oper1, const Operator* _oper2)
-{
-	if (_oper1->m_operatorMCCMNC != _oper2->m_operatorMCCMNC)
-	{
-		return 0;
-	}
-	
-	return 1;
-}
+/*int OperatorEqualityFunc(const Operator* _oper1, const Operator* _oper2)*/
+/*{*/
+/*	if (_oper1->m_operatorMCCMNC != _oper2->m_operatorMCCMNC)*/
+/*	{*/
+/*		return 0;*/
+/*	}*/
+/*	*/
+/*	return 1;*/
+/*}*/
 
 
 /*
@@ -74,7 +85,37 @@ void CDRDataDestroyFunc(void* _data)
 
 
 
-Container* ContainerCreate(size_t _subscribersCapacity, size_t _operatorsCapacity)
+/*Container* ContainerCreate(size_t _subscribersCapacity, size_t _operatorsCapacity)*/
+/*{*/
+/*	Container* cont;*/
+
+/*	cont = malloc(sizeof(Container));*/
+/*	if (!cont)*/
+/*	{*/
+/*		return NULL;*/
+/*	}*/
+
+/*	cont->m_subscribersHash = HashMapCreate(_subscribersCapacity, (HashFunction)CDRHashFunc, (EqualityFunction)SubscriberEqualityFunc);*/
+/*	if (!cont->m_subscribersHash)	*/
+/*	{*/
+/*		free(cont);*/
+/*		return NULL;*/
+/*	}*/
+/*	*/
+/*	cont->m_operatorsHash = HashMapCreate(_operatorsCapacity, (HashFunction)CDRHashFunc, (EqualityFunction)OperatorEqualityFunc);*/
+/*	if (!cont->m_subscribersHash)	*/
+/*	{*/
+/*		free(cont->m_subscribersHash);*/
+/*		free(cont);*/
+/*		return NULL;*/
+/*	}*/
+/*	*/
+/*	return cont;*/
+/*}*/
+
+
+
+Container* ContainerCreate(size_t _capacity, EqualityFunction _func)
 {
 	Container* cont;
 
@@ -84,17 +125,11 @@ Container* ContainerCreate(size_t _subscribersCapacity, size_t _operatorsCapacit
 		return NULL;
 	}
 
-	cont->m_subscribersHash = HashMapCreate(_subscribersCapacity, (HashFunction)CDRHashFunc, (EqualityFunction)SubscriberEqualityFunc);
-	if (!cont->m_subscribersHash)	
-	{
-		free(cont);
-		return NULL;
-	}
+	cont->m_capacity = _capacity;
 	
-	cont->m_operatorsHash = HashMapCreate(_operatorsCapacity, (HashFunction)CDRHashFunc, (EqualityFunction)OperatorEqualityFunc);
-	if (!cont->m_subscribersHash)	
+	cont->m_storage = HashMapCreate(cont->m_capacity, (HashFunction)CDRHashFunc, _func);
+	if (!cont->m_storage)	
 	{
-		free(cont->m_subscribersHash);
 		free(cont);
 		return NULL;
 	}
@@ -109,8 +144,7 @@ Container* ContainerCreate(size_t _subscribersCapacity, size_t _operatorsCapacit
 
 void ContainerDestroy(Container* _cont)
 {
-	HashMapDestroy(&_cont->m_subscribersHash, NULL, NULL);
-	HashMapDestroy(&_cont->m_operatorsHash, NULL, NULL);
+	HashMapDestroy(&_cont->m_storage, NULL, NULL);
 	free(_cont);
 	
 	return;
@@ -118,6 +152,43 @@ void ContainerDestroy(Container* _cont)
 
 
 
+
+
+
+
+
+int	ContainerGetElement(Container* _cont, char* _key, void** _elementFound)
+{
+	MapResult mapErr;
+	
+	mapErr = HashMapFind(_cont->m_storage, _key, (void**) _elementFound);
+	if (NULL == _elementFound)
+	{
+		return 0;
+	}
+	
+	return 1;
+}
+
+
+
+
+
+
+
+int ContainerInsertElement(Container* _cont, char* _key, void* _element)
+{
+	HashMapInsert(_cont->m_storage, _key, _element);
+
+	return 1;
+}
+
+
+
+
+
+
+/*
 
 
 
@@ -222,7 +293,7 @@ int ContainerUpdateOperator(Container* _cont, Operator* _oper)
 
 
 
-
+*/
 
 
 

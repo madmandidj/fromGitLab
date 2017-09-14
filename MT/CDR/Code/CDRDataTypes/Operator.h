@@ -11,7 +11,7 @@ struct Operator
 	Operator identifiers
 	*/
 	char			m_operatorBrand[65];
-	int				m_operatorMCCMNC;
+	char			m_operatorMCCMNC[7];
 	
 	/*
 	Voice call durations

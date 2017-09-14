@@ -3,17 +3,18 @@
 
 #include "../../../CDRDataTypes/Subscriber.h"
 #include "../../../CDRDataTypes/Operator.h"
+#include "./HashMap/HashMap.h"
 #include <stdlib.h>
 
 typedef struct Container Container;
 
-Container* ContainerCreate(size_t _subscribersCapacity, size_t _operatorsCapacity);
+Container* ContainerCreate(size_t _capacity, EqualityFunction _func);
 
 void ContainerDestroy(Container* _cont);
 
-int	ContainerGetElement(Container* _cont, void* _element, void** _subFound);
+int	ContainerGetElement(Container* _cont, char* _key, void** _elementFound);
 
-int ContainerInsertElement(Container* _cont, void* _element);
+int ContainerInsertElement(Container* _cont, char* _key, void* _element);
 
 
 /*

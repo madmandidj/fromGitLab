@@ -1,6 +1,6 @@
 
-#include "../../inc/HashMap.h"
-#include "../../inc/list_itr.h"
+#include "HashMap.h"
+#include "list_itr.h"
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
@@ -116,7 +116,7 @@ static HashMap* AllocateHashMap(size_t _hashSize)
 		}
 	}
 	
-	if (_hashSize < )
+/*	if (_hashSize < )*/
 
 	return hashMap;
 }
@@ -481,7 +481,7 @@ size_t HashMapForEach(const HashMap* _map, KeyValueActionFunction _action, void*
 
 	for (index = 0; index < _map->m_hashSize; ++index)
 	{
-		printf("bucket %lu:\n ", index);
+		printf("bucket %u:\n ", index);
 		nodeSentinel = ListItrEnd(_map->m_buckets[index]);
 		nodeItr = ListItrBegin(_map->m_buckets[index]);
 		while(nodeItr != nodeSentinel)

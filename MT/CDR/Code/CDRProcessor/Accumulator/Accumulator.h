@@ -1,29 +1,29 @@
 #ifndef __ACCUMULATOR_H__
 #define __ACCUMULATOR_H__
 
-#include "./ADTs/Operator.h"
-#include "./ADTs/Subscriber.h"
+#include "../../CDRDataTypes/Operator.h"
+#include "../../CDRDataTypes/Subscriber.h"
 
 typedef struct Accumulator Accumulator;
 
 
-Accumulator* AccumulatorCreate(Subscriber* _subStorage, Operator* _opStorage);
+Accumulator* AccumulatorCreate();
 
 
 /* Needs to receive function to destroy elements ? */
 void AccumulatorDestroy(Accumulator* _accum); 
 
 
-Subscriber AccumulatorGetSubscriber(Accumulator* _accum);
+int AccumulatorGetSubscriber(Accumulator* _accum, Subscriber* _sub, Subscriber* _subFound);
 
 
-Operator* AccumulatorGetOperator(Accumulator* _accum);
+int AccumulatorGetOperator(Accumulator* _accum, Operator* _oper, Operator* _operFound);
 
 
-int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _subscriber);
+int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _sub);
 
 
-int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _operator);
+int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper);
 
 
 #endif /* #ifndef __ACCUMULATOR_H__ */
