@@ -27,7 +27,7 @@ struct Record
 	Operator identifiers
 	*/
 	char			m_operatorBrand[65];
-	unsigned int	m_operatorMCCMNC;
+	char			m_operatorMCCMNC[7];
 	
 	/*
 	Record type attributes

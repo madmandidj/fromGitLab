@@ -29,7 +29,26 @@ static void InitGenerate()
 
 void GenerateRecord(Record* _recordPtr)
 {
-
+	Record rcd;
+	size_t index;
+	char numCharset[11] = "0123456789";
+	char letterCharset[53] = "abcdefghijklmnopqestuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	
+	InitGenerate();
+	
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	_recordPtr->m_callType = 
+	
 	return;
 }
 
@@ -37,7 +56,7 @@ void GenerateSubscriber(Subscriber* _subPtr)
 {
 	Subscriber sub;
 	size_t index;
-	char charset[11] = "0123456789";
+	char numCharset[11] = "0123456789";
 	
 	InitGenerate();
 	
@@ -54,15 +73,15 @@ void GenerateSubscriber(Subscriber* _subPtr)
 	
 	for (index = 0; index < 15; ++index)
 	{
-		size_t key = rand() % (sizeof(charset) - 1);
-		_subPtr->m_imsi[index] = charset[key];
+		size_t key = rand() % (sizeof(numCharset) - 1);
+		_subPtr->m_imsi[index] = numCharset[key];
 	}
 	_subPtr->m_imsi[IMSI_LENGTH] = '\0';
 	
 	for (index = 0; index < 15; ++index)
 	{
-		size_t key = rand() % (sizeof(charset) - 1);
-		_subPtr->m_msisdn[index] = charset[key];
+		size_t key = rand() % (sizeof(numCharset) - 1);
+		_subPtr->m_msisdn[index] = numCharset[key];
 	}
 	_subPtr->m_msisdn[MSISDN_LENGTH] = '\0';
 	

@@ -49,7 +49,7 @@ void ReceiverDestroy(Receiver* _rcvr)
 
 
 
-int ReceiverSend(Receiver* _rcvr, Msg* _msg, size_t _msgSize, int _channel, int _flag)
+int ReceiverReceive(Receiver* _rcvr, Msg* _msg, size_t _msgSize, int _channel, int _flag)
 {
 	if (!_rcvr)
 	{

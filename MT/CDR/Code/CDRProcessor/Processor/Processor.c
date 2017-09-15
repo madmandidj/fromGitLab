@@ -1,5 +1,6 @@
-#include "../../inc/Processor.h"
-#include "../../inc/Accumulator.h"
+#include "Processor.h"
+#include "../Accumulator/Accumulator.h"
+#include "../../comms/Receiver.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,10 +14,8 @@ struct Processor
 	unsigned int 		m_magicNum;
 	unsigned int		m_numOfThreads;
 	pthread_t*			m_threadIDs;
-	/*Subscriber			m_subscriber;
-	Operator			m_operator;*/
 	Accumulator*		m_accum;
-	/*FeederServer*		m_feedServer;*/
+	Receiver*			m_rcvr;
 };
 
 
@@ -31,11 +30,28 @@ Processor* ProcessorCreate(unsigned int _numOfThreads)
 		return NULL;
 	}
 	
+	proc->m_accum = AccumulatorCreate();
+	if (!proc->m_accum)
+	{
+		free(proc);
+		return NULL;
+	}
+	
+	proc->m_rcvr = ReceiverCreate();
+	if (!proc->m_rcvr)
+	{
+		free(proc->m_accum);
+		free(proc);
+		return NULL
+	}
+	
 	proc->m_numOfThreads = _numOfThreads;
 	
 	proc->m_threadIDs = malloc(proc->m_numOfThreads * sizeof(pthread_t));
 	if (!proc->m_threadIDs)
 	{
+		free(proc->m_rcvr);
+		free(proc->m_accum);
 		free(proc);
 		return NULL;
 	}
@@ -59,6 +75,8 @@ void ProcessorDestroy(Processor* _proc)
 	}
 	
 	free(_proc->m_threadIDs);
+	free(_proc->m_rcvr);
+	free(_proc->m_accum);
 	free(_proc);
 	return;
 }
@@ -116,7 +134,7 @@ void* ProcessorRoutine(Processor* _proc)
 	/*
 	Get record from Feeder Server
 	*/
-	
+	record = ReceiverReceive(proc->m_rcvr, )
 	
 	/*
 	Parse record into operator and subscriber
