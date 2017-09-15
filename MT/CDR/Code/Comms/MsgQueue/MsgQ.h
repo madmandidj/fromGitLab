@@ -11,8 +11,6 @@
 
 typedef struct msqid_ds msqid_ds;
 
-//typedef struct Msg Msg;
-
 
 
 void MsgQCreate(key_t* _mqKey, int* _mqID);

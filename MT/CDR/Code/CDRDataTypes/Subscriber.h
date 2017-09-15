@@ -6,7 +6,7 @@ typedef struct Subscriber Subscriber;
 
 struct Subscriber
 {
-//	unsigned int	m_magicNum;
+/*	unsigned int	m_magicNum;*/
 	/*
 	Subscriber identifiers
 	*/
@@ -32,8 +32,8 @@ struct Subscriber
 	/*
 	Data download/upload
 	*/
-	unsigned int	m_downloadMB;
-	unsigned int	m_uploadMB;
+	float			m_downloadMB;
+	float			m_uploadMB;
 };
 
 

@@ -5,10 +5,11 @@
 typedef struct ProcessingManager ProcessingManager;
 
 
-ProcessingManager* ProcessingManagerCreate();
+ProcessingManager* ProcessingManagerCreate(size_t _numOfProcThreads);
 
 void ProcessingManagerDestroy(ProcessingManager* _procMngr);
 
+int ProcessingManagerRun(ProcessingManager* _procMngr);
 
 
 

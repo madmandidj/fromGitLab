@@ -2,7 +2,7 @@
 #define __MSG_TYPE_H__
 
 
-
+#include "../ChannelDefs/ChannelDefs.h"
 
 typedef struct Msg Msg;
 

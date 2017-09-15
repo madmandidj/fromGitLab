@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <assert.h>
+#include <pthread.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -42,11 +43,48 @@ struct HashMap
 /**************
 HASH MAP CREATE
 **************/
+/*static size_t CalcHashSize(size_t _num)*/
+/*{*/
+/*    int isPrime = 0;*/
+/*    size_t i;*/
+/*    _num *= 1.3;*/
+
+/*    while (!isPrime)*/
+/*    {*/
+/*        isPrime = 1;   */
+/*        for (i = 2; i < sqrt(_num) ; ++i)*/
+/*        {*/
+/*            if (_num % i == 0)*/
+/*            {*/
+/*				isPrime = 0;*/
+/*                break;*/
+/*			}*/
+/*		}*/
+/*		if (isPrime == 0)*/
+/*		{*/
+/*			++_num;*/
+/*		}*/
+/*		else*/
+/*		{*/
+/*			break;*/
+/*		}*/
+/*    }*/
+/*    return _num;*/
+/*}*/
+
+
+
+
 static size_t CalcHashSize(size_t _num)
 {
     int isPrime = 0;
     size_t i;
-    _num *= 1.3;
+    double fnum;
+    
+    fnum = _num * 1.3;
+    
+    _num = (size_t) fnum;
+/*    _num *= 1.3;*/
 
     while (!isPrime)
     {
@@ -70,6 +108,12 @@ static size_t CalcHashSize(size_t _num)
     }
     return _num;
 }
+
+
+
+
+
+
 
 static Bucket AllocateBucket(Bucket _bucket)
 {

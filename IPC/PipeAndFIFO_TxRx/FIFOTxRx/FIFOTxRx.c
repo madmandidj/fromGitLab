@@ -10,6 +10,7 @@
 #include <stdlib.h>					/* exit() */
 #include <sys/types.h>				/* mkfifo() */
 #include <sys/stat.h>				/* mkfifo() */
+#include <fcntl.h>					/* open */
 
 
 #define ONE_SECOND_USEC 1000000
@@ -85,7 +86,7 @@ static void ServerRoutine(pid_t _pid, int* _pipefd, Params _params)
 	
 	/* Open server for Tx */
 	usleep(ONE_SECOND_USEC);
-	fifoFD = open(myFifo, O_WONLY);
+	fifoFd = open(myFifo, O_WONLY);
 	
 	for(curCycle = 0; curCycle < _params.m_txCycles; ++curCycle)
 	{
@@ -95,7 +96,7 @@ static void ServerRoutine(pid_t _pid, int* _pipefd, Params _params)
 		}
 		buf[curChar + 1] = '\0';
 		
-		writeErr = write(fifoFD, buf, _params.m_bufSize);
+		writeErr = write(fifoFd, buf, _params.m_bufSize);
 		if (writeErr <= 0) 
 		{
 			printf("Write error from server\n");

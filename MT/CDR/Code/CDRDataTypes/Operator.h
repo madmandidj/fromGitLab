@@ -29,8 +29,8 @@ struct Operator
 	/*
 	Data download/upload
 	*/
-	unsigned int	m_downloadMB;
-	unsigned int	m_uploadMB;
+	float			m_downloadMB;
+	float			m_uploadMB;
 };
 
 

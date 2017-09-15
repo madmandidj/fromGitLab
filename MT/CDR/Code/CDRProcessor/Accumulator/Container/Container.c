@@ -32,9 +32,9 @@ size_t CDRHashFunc(char* _key)
 	unsigned long hash = 5381;
 	int c;
 	
-	while(c = *_key++)
+	while((c = *_key++))
 	{
-		hash = ((hash << 5) + hash) + c;
+		hash = ((hash << 5) + hash) + (unsigned long)c;
 	}
 	
 	return hash;

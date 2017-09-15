@@ -5,9 +5,9 @@
 #include <errno.h>			/* errno */
 #include <stdlib.h>			/* atoi, exit */
 #include <string.h>			/* strerr */
-//#include <fcntl.h>			/* O_CREAT */
-//#include <unistd.h>			 getpid, usleep, getopt 
-//#include <semaphore.h>		/* sem_t, sem_open */
+/*#include <fcntl.h>			 O_CREAT */
+/*#include <unistd.h>			 getpid, usleep, getopt */
+/*#include <semaphore.h>*/		/* sem_t, sem_open */
 
 #define QUEUE_PATHNAME "MQ"
 

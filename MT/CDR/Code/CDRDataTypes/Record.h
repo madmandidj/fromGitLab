@@ -15,7 +15,6 @@ typedef enum CallType
 
 struct Record
 {
-//	unsigned int	m_magicNum;
 	/*
 	Subscriber identifiers
 	*/
@@ -34,16 +33,16 @@ struct Record
 	*/
 	CallType		m_callType;
 	char			m_callDate[11];
-	unsigned int	m_callTime;
+	char			m_callTime[9];
 	unsigned int	m_duration;
-	unsigned int	m_downloadMB;
-	unsigned int	m_uploadMB;
+	float			m_downloadMB;
+	float			m_uploadMB;
 	
 	/*
 	Party identifiers
 	*/
 	char			m_partyMsisdn[16];
-	unsigned int	m_partyMCCMNC;
+	char			m_partyMCCMNC[7];
 };
 
 

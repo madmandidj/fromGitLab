@@ -14,6 +14,4 @@ int TransmitterSend(Transmitter* _trans, Msg* _msg, size_t _msgSize, int _channe
 
 
 
-
-
 #endif /* #ifndef __TRANSMITTER_H__ */

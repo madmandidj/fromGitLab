@@ -1,17 +1,19 @@
 #ifndef __PROCESSOR_H__
 #define __PROCESSOR_H__
 
-#include "./ADTs/Record.h"
-#include "./ADTs/Operator.h"
-#include "./ADTs/Subscriber.h"
+#include "../../CDRDataTypes/Record.h"
+#include "../../CDRDataTypes/Operator.h"
+#include "../../CDRDataTypes/Subscriber.h"
+#include "../Accumulator/Accumulator.h"
+#include "../../Comms/Receiver/Receiver.h"
 
 typedef struct Processor Processor;
 
-Processor* 		ProcessorCreate(unsigned int _numOfThreads);
+Processor* 		ProcessorCreate(Accumulator* _accum, Receiver* _rcvr, unsigned int _numOfThreads);
 
 void			ProcessorDestroy(Processor* _processor);
 
-int 			ProcessorRun(/*TODO: add parameters*/);
+int 			ProcessorRun(Processor* _proc);
 
 int 			ProcessorStop(/*TODO: add parameters*/);
 
