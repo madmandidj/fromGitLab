@@ -1,6 +1,7 @@
 #include "../../Comms/ChannelDefs/ChannelDefs.h"
 #include "../../Comms/MsgQueue/MsgType.h"
 #include "../../Comms/Transmitter/Transmitter.h"
+#include "../../DataGenerator/DataGenerator.h"
 #include "FeederManager.h"
 #include <unistd.h>
 #include <stdlib.h>
@@ -27,7 +28,7 @@ FeederManager* FeederManagerCreate()
 	Transmitter* trans;
 	FeederManager* feedMngr;
 	
-	trans = TransmitterCreate();
+	trans = TransmitterCreate("../../Comms/MsgQueue/MQ");
 	if (!trans)
 	{
 		return NULL;
@@ -74,7 +75,7 @@ int FeederManagerSendCDR(FeederManager* _feedMngr, Record* _record)
 	}
 	
 	_msg.m_channel = FEEDER_TO_PROCESSOR_CH;
-	_msg.m_data = _record;
+	_msg.m_data = *_record;
 	
 	TransmitterSend(_feedMngr->m_trans, &_msg, sizeof(Record), FEEDER_TO_PROCESSOR_CH);
 
@@ -88,27 +89,35 @@ int FeederManagerSendCDR(FeederManager* _feedMngr, Record* _record)
 int main()
 {
 	FeederManager* feedMngr;
-	Record record = {"111111111111111", 
-						"222222222222222",
-						"333333333333333",
-						"CellCom Israel",
-						123456,
-						MOC,
-						"17/01/1984",
-						444, 
-						555, 
-						666, 
-						777, 
-						"888888888888888",
-						654321		 
-	};
+/*	Record record = {"111111111111111", */
+/*						"222222222222222",*/
+/*						"333333333333333",*/
+/*						"CellCom Israel",*/
+/*						"123456",*/
+/*						MOC,*/
+/*						"17/01/1984",*/
+/*						"23:59:59", */
+/*						555, */
+/*						666, */
+/*						777, */
+/*						"888888888888888",*/
+/*						"654321"		 */
+/*	};*/
+
+	Record* record;
 	
+	record = malloc(sizeof(Record));
+	
+	
+	GenerateRecord(record);
 	
 	feedMngr = FeederManagerCreate();
 	
-	FeederManagerSendCDR(feedMngr, &record);
+/*	FeederManagerSendCDR(feedMngr, &record);*/
+
+	FeederManagerSendCDR(feedMngr, record);
 	
-	sleep(5);
+	sleep(10);
 	
 	FeederManagerDestroy(feedMngr);
 

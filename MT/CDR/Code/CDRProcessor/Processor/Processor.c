@@ -75,7 +75,7 @@ typedef void* (*ThreadRoutine)(void*);
 
 void* ProcessorRoutine(Processor* _proc)
 {
-/*	Msg msg;*/
+	Msg msg;
 	Record record;	
 	Subscriber sub;
 		
@@ -96,8 +96,11 @@ void* ProcessorRoutine(Processor* _proc)
 	/*
 	Get record from Feeder Server
 	*/
-	ReceiverReceive(_proc->m_rcvr, (Msg*)&record, sizeof(Record), FEEDER_TO_PROCESSOR_CH, 0); /* TODO: check into Msg* or Record* ? ? */
-/*	record = (Record)msg.m_data;*/
+/*	ReceiverReceive(_proc->m_rcvr, (Msg*)&record, sizeof(Record), FEEDER_TO_PROCESSOR_CH, 0);*/ /* TODO: check into Msg* or Record* ? ? */
+	ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Record), FEEDER_TO_PROCESSOR_CH, 0); /* TODO: check into Msg* or Record* ? ? */	
+
+	record = msg.m_data;
+
 	/*
 	Parse record into operator and subscriber
 	*/

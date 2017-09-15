@@ -13,7 +13,7 @@ struct Transmitter
 
 
 
-Transmitter* TransmitterCreate()
+Transmitter* TransmitterCreate(char* _myPathToMsgQ)
 {
 	Transmitter* trans;
 	
@@ -23,7 +23,7 @@ Transmitter* TransmitterCreate()
 		return NULL;
 	}
 	
-	MsgQCreate(&trans->m_queueKey, &trans->m_queueID);
+	MsgQCreate(&trans->m_queueKey, &trans->m_queueID, _myPathToMsgQ);
 	
 	return trans;
 }

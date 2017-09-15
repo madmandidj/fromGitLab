@@ -36,7 +36,7 @@ ProcessingManager* ProcessingManagerCreate(size_t _numOfProcThreads)
 		return NULL;
 	}
 	
-	procMngr->m_rcvr = ReceiverCreate();
+	procMngr->m_rcvr = ReceiverCreate("../Comms/MsgQueue/MQ");
 	if (!procMngr->m_rcvr)
 	{
 		AccumulatorDestroy(procMngr->m_accum);

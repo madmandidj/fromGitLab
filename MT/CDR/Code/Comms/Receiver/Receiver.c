@@ -13,7 +13,7 @@ struct Receiver
 
 
 
-Receiver* ReceiverCreate()
+Receiver* ReceiverCreate(char* _myPathToMsgQ)
 {
 	Receiver* rcvr;
 	
@@ -23,7 +23,7 @@ Receiver* ReceiverCreate()
 		return NULL;
 	}
 	
-	MsgQCreate(&rcvr->m_queueKey, &rcvr->m_queueID);
+	MsgQCreate(&rcvr->m_queueKey, &rcvr->m_queueID, _myPathToMsgQ);
 	
 	return rcvr;
 }

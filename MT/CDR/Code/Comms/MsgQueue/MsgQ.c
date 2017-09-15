@@ -5,11 +5,12 @@
 #include <errno.h>			/* errno */
 #include <stdlib.h>			/* atoi, exit */
 #include <string.h>			/* strerr */
+#include <unistd.h>			/* getcwd */
 /*#include <fcntl.h>			 O_CREAT */
 /*#include <unistd.h>			 getpid, usleep, getopt */
 /*#include <semaphore.h>*/		/* sem_t, sem_open */
 
-#define QUEUE_PATHNAME "MQ"
+#define QUEUE_PATHNAME "../Comms/MsgQueue/MQ"
 
 
 
@@ -22,9 +23,16 @@
 
 
 
-void MsgQCreate(key_t* _mqKey, int* _mqID)
+void MsgQCreate(key_t* _mqKey, int* _mqID, char* _myPathToMsgQ)
 {
-	*_mqKey = ftok("../../Comms/MsgQueue/MQ", 1);
+
+	char cwd[1024];
+	getcwd(cwd, sizeof(cwd));
+    printf("Current working dir: %s\n", cwd);
+
+	/*	*_mqKey = ftok("../../Comms/MsgQueue/MQ", 1);*/
+/*	*_mqKey = ftok(QUEUE_PATHNAME, 1);*/
+	*_mqKey = ftok(_myPathToMsgQ, 1);
 	if (*_mqKey == -1)
 	{
 		printf("ftok() ERROR: %s\n", strerror(errno));

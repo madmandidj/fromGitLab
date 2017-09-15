@@ -13,7 +13,7 @@ typedef struct msqid_ds msqid_ds;
 
 
 
-void MsgQCreate(key_t* _mqKey, int* _mqID);
+void MsgQCreate(key_t* _mqKey, int* _mqID, char* _myPathToMsgQ);
 
 
 

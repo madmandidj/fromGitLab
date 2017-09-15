@@ -3,6 +3,7 @@
 
 
 #include "../ChannelDefs/ChannelDefs.h"
+#include "../../CDRDataTypes/Record.h"
 
 typedef struct Msg Msg;
 
@@ -12,7 +13,7 @@ typedef struct Msg Msg;
 struct Msg
 {
     long 	m_channel;
-    void* 	m_data; /* changed this to void* for CDR project becaue should handle CDR messages and UI messages */
+    Record 	m_data; /* changed this to void* for CDR project becaue should handle CDR messages and UI messages */
 };
 
 
