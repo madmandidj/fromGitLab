@@ -82,7 +82,7 @@ void ProcessingManagerDestroy(ProcessingManager* _procMngr)
 
 int main()
 {
-	size_t numOfProcThreads = 20;
+	size_t numOfProcThreads = 1;
 	ProcessingManager* procMngr;
 	
 	procMngr = ProcessingManagerCreate(numOfProcThreads);

@@ -14,6 +14,7 @@ struct Processor
 	unsigned int		m_systemMode;
 	unsigned int		m_numOfThreads;
 	pthread_t*			m_threadIDs;
+/*	pthread_mutex_t		m_mutex;*/
 	Accumulator*		m_accum;
 	Receiver*			m_rcvr;
 };
@@ -43,6 +44,13 @@ Processor* ProcessorCreate(Accumulator* _accum, Receiver* _rcvr, unsigned int _n
 		return NULL;
 	}
 	
+/*	if (pthread_mutex_init(&proc->m_mutex, NULL))*/
+/*	{*/
+/*		free(proc->m_threadIDs);*/
+/*		free(proc);*/
+/*		return NULL;*/
+/*	}*/
+	
 	proc->m_magicNum = PROCESSOR_MAGIC;
 	
 	proc->m_systemMode = 1;
@@ -64,6 +72,7 @@ void ProcessorDestroy(Processor* _proc)
 	}
 	
 	free(_proc->m_threadIDs);
+/*	pthread_mutex_destroy(&_proc->m_mutex);*/
 	free(_proc);
 	return;
 }
@@ -184,11 +193,16 @@ void* ProcessorRoutine(Processor* _proc)
 						printf("Wrong Processor Routine Parsing");
 					break;
 			}
-	
+			
+/*			pthread_mutex_lock(&_proc->m_mutex);*/
+			
 			AccumulatorUpdateSubscriber(_proc->m_accum, &sub);
 			printf("Updated Subscriber\n");
 			AccumulatorUpdateOperator(_proc->m_accum, &oper);
 			printf("Updated Operator\n");
+			
+/*			pthread_mutex_unlock(&_proc->m_mutex);*/
+			
 		}	
 	}
 

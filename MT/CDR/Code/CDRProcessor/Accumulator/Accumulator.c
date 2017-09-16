@@ -11,7 +11,7 @@
 
 struct Accumulator
 {
-	pthread_t*			m_threadIDs;
+/*	pthread_t*			m_threadIDs;*/
 	Container*			m_contSub;
 	Container*			m_contOp;
 };
@@ -43,7 +43,7 @@ Accumulator* AccumulatorCreate()
 		return NULL;
 	}
 	
-	accum->m_threadIDs = NULL; /* TODO: Init this properly */
+/*	accum->m_threadIDs = NULL;*/
 	
 	accum->m_contSub = ContainerCreate(SUBSCRIBERS_HASH_CAPACITY, (EqualityFunction)ContainerDataEqualityFunc);
 	if (!accum->m_contSub)
@@ -168,7 +168,7 @@ int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
 	if (0 == err)
 	{
 		ContainerInsertElement(_accum->m_contOp,  _oper->m_operatorMCCMNC, _oper);
-		printf("Finished container insert element subscriber\n"); 
+		printf("Finished container insert element operator\n"); 
 		return 1;
 	}
 	

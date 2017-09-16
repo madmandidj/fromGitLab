@@ -102,12 +102,6 @@ static HashMap* AllocateHashMap(size_t _hashSize)
 {
 	HashMap* hashMap = NULL;
 	size_t index;
-	pthread_mutexattr_t attr;
-	int type;
-	
-	pthread_mutexattr_gettype(&attr, &type);
-	type = PTHREAD_MUTEX_DEFAULT;
-	pthread_mutexattr_settype(&attr, type);
 	
 
 	if (!(hashMap = malloc(sizeof(HashMap))))
@@ -127,18 +121,11 @@ static HashMap* AllocateHashMap(size_t _hashSize)
 	for (index = 0; index < hashMap->m_numOfMutex; ++index)
 	{
 		if (pthread_mutex_init(&hashMap->m_mutexArr[index], NULL))
-/*		if (pthread_mutex_init(&hashMap->m_mutexArr[index], PTHREAD_MUTEX_ERRORCHECK))*/
 		{
 			free(hashMap->m_mutexArr);
 			free(hashMap);
 			return NULL;
 		}
-		
-/*		pthread_mutexattr_gettype(&attr, &type);*/
-/*		type = PTHREAD_MUTEX_ERRORCHECK;*/
-/*		pthread_mutexattr_settype(&attr, type);*/
-/*		pthread_mutexattr_gettype(&attr, &type);*/
-/*		printf("type after = %d\n", type);	*/
 	}
 	
 	if (!(hashMap->m_buckets = malloc(_hashSize * sizeof(Bucket))))
@@ -511,7 +498,7 @@ MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValu
 	}
 	
 	pthread_mutex_unlock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);
-	usleep(10000);
+	usleep(1000);
 	return MAP_KEY_NOT_FOUND_ERROR;
 }
 
