@@ -76,7 +76,6 @@ typedef void* (*ThreadRoutine)(void*);
 
 void* ProcessorRoutine(Processor* _proc)
 {
-	static unsigned int numOfMsgsRxed = 0;
 	ssize_t err;
 	Msg msg = {0};
 	Msg uiMsg = {0};
@@ -95,8 +94,6 @@ void* ProcessorRoutine(Processor* _proc)
 		err = ReceiverReceive(_proc->m_rcvr, &uiMsg, sizeof(Data), UI_TO_PROCESSOR, IPC_NOWAIT);
 		if (err > -1)
 		{
-			++numOfMsgsRxed;
-			printf("Received msg from UI, msg rx num = %u\n", numOfMsgsRxed);
 			if (666 == uiMsg.m_data.m_uiCommand.m_command)
 			{
 				_proc->m_systemMode = 0;
@@ -107,8 +104,6 @@ void* ProcessorRoutine(Processor* _proc)
 		err = ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH, IPC_NOWAIT);
 		if (err > -1)
 		{
-			++numOfMsgsRxed;
-			printf("Received msg from feeder, msg rx num = %u\n", numOfMsgsRxed);
 			record = msg.m_data.m_rec;
 			strcpy(sub.m_imsi, record.m_imsi);
 			strcpy(sub.m_msisdn, record.m_msisdn);
@@ -186,9 +181,7 @@ void* ProcessorRoutine(Processor* _proc)
 			}
 	
 			AccumulatorUpdateSubscriber(_proc->m_accum, &sub);
-			printf("Updated Subscriber\n");
 			AccumulatorUpdateOperator(_proc->m_accum, &oper);
-			printf("Updated Operator\n");
 		}	
 	}
 
@@ -215,12 +208,7 @@ int ProcessorRun(Processor* _proc)
 		}
 	}
 	
-	for (index = 0; index < _proc->m_numOfThreads; ++index)
-	{
-		pthread_join(_proc->m_threadIDs[index], NULL);
-	}
-	
-	
+	pthread_join(_proc->m_threadIDs[0], NULL);
 	
 	
 /*	AccumulatorGetSubscriber(_proc->m_accum, tempGlobal, &subFound);*/

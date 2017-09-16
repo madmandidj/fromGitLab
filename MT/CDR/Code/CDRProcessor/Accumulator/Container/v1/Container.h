@@ -17,6 +17,20 @@ int	ContainerGetElement(Container* _cont, char* _key, void** _elementFound);
 int ContainerInsertElement(Container* _cont, char* _key, void* _element);
 
 
+/*
+
+int	ContainerFindSubscriber(Container* _cont, Subscriber* _sub, Subscriber* _subFound);
+
+int	ContainerFindOperator(Container* _cont, Operator* _oper, Operator* _operFound);
+
+int ContainerUpdateSubscriber(Container* _cont, Subscriber* _sub);
+
+int ContainerUpdateOperator(Container* _cont, Operator* _oper);
+
+
+*/
+
+
 #endif /*#ifndef __CONTAINER_H__*/
 
 

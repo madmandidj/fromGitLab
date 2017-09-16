@@ -112,22 +112,15 @@ int main()
 {
 	FeederManager* feedMngr;
 	Data data;
-	size_t index;
-	size_t reps = 1000;
 	
 	
 /*	data = malloc(sizeof(Data));*/
 	
-	
+	GenerateRecord(&data.m_rec);
 	
 	feedMngr = FeederManagerCreate();
-	
-	for (index = 0; index < reps; ++index)
-	{
-		GenerateRecord(&data.m_rec);
 
-		FeederManagerSendCDR(feedMngr, data);
-	}
+	FeederManagerSendCDR(feedMngr, data);
 	
 	sleep(5);
 	

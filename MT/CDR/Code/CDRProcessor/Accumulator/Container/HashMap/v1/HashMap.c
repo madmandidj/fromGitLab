@@ -1,7 +1,6 @@
 
 #include "HashMap.h"
 #include "list_itr.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
@@ -13,7 +12,7 @@
 #define HASHMAP_MAGIC_NUM 0x05566770
 #define IS_NULL(A) 	(NULL == (A))
 #define IS_A_HASHMAP(H) ((H) && HASHMAP_MAGIC_NUM == (H)->m_magicNum)
-#define MUTEX_NUM_FACTOR 100
+#define NUM_OF_MUTEXS 100
 
 typedef struct Data
 {
@@ -30,8 +29,7 @@ struct HashMap
 	size_t 				m_hashSize;
 	HashFunction 		m_hashFunc;
 	EqualityFunction 	m_keysEqualFunc;
-	pthread_mutex_t* 	m_mutexArr;
-	size_t				m_numOfMutex;
+	pthread_mutex_t 	m_mutexArr[NUM_OF_MUTEXS];
 	#ifndef NDEBUG
 	MapStats 			m_mapStats;
 	#endif /* NDEBUG */
@@ -45,6 +43,38 @@ struct HashMap
 /**************
 HASH MAP CREATE
 **************/
+/*static size_t CalcHashSize(size_t _num)*/
+/*{*/
+/*    int isPrime = 0;*/
+/*    size_t i;*/
+/*    _num *= 1.3;*/
+
+/*    while (!isPrime)*/
+/*    {*/
+/*        isPrime = 1;   */
+/*        for (i = 2; i < sqrt(_num) ; ++i)*/
+/*        {*/
+/*            if (_num % i == 0)*/
+/*            {*/
+/*				isPrime = 0;*/
+/*                break;*/
+/*			}*/
+/*		}*/
+/*		if (isPrime == 0)*/
+/*		{*/
+/*			++_num;*/
+/*		}*/
+/*		else*/
+/*		{*/
+/*			break;*/
+/*		}*/
+/*    }*/
+/*    return _num;*/
+/*}*/
+
+
+
+
 static size_t CalcHashSize(size_t _num)
 {
     int isPrime = 0;
@@ -54,6 +84,7 @@ static size_t CalcHashSize(size_t _num)
     fnum = _num * 1.3;
     
     _num = (size_t) fnum;
+/*    _num *= 1.3;*/
 
     while (!isPrime)
     {
@@ -100,39 +131,14 @@ static HashMap* AllocateHashMap(size_t _hashSize)
 {
 	HashMap* hashMap = NULL;
 	size_t index;
-	
 
 	if (!(hashMap = malloc(sizeof(HashMap))))
 	{
 		return NULL;
 	}
 	
-	hashMap->m_numOfMutex = (size_t)ceil(_hashSize/MUTEX_NUM_FACTOR);
-	
-	
-	if (!(hashMap->m_mutexArr = malloc(hashMap->m_numOfMutex * sizeof(pthread_mutex_t))))
-	{
-		free(hashMap);
-		return NULL;
-	}
-	
-	for (index = 0; index < hashMap->m_numOfMutex; ++index)
-	{
-		if (pthread_mutex_init(&hashMap->m_mutexArr[index], NULL))
-		{
-			free(hashMap->m_mutexArr);
-			free(hashMap);
-			return NULL;
-		}
-	}
-	
 	if (!(hashMap->m_buckets = malloc(_hashSize * sizeof(Bucket))))
 	{
-		for (index = 0; index < hashMap->m_numOfMutex; ++index)
-		{
-			pthread_mutex_destroy(&hashMap->m_mutexArr[index]);
-		}
-		free(hashMap->m_mutexArr);
 		free(hashMap);
 		return NULL;
 	}
@@ -149,15 +155,12 @@ static HashMap* AllocateHashMap(size_t _hashSize)
 			}
 			DestroyBucket(hashMap->m_buckets[index]);
 			free(hashMap->m_buckets);
-			for (index = 0; index < hashMap->m_numOfMutex; ++index)
-			{
-				pthread_mutex_destroy(&hashMap->m_mutexArr[index]);
-			}
-			free(hashMap->m_mutexArr);
 			free(hashMap);
 			return FALSE;
 		}
 	}
+	
+/*	if (_hashSize < )*/
 
 	return hashMap;
 }
@@ -251,8 +254,6 @@ static void DestroyBuckets(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestro
 
 void HashMapDestroy(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valDestroyFunc)
 {
-	size_t index;
-	
 	if (IS_NULL(_map) || !IS_A_HASHMAP(*_map))
 	{
 		return;
@@ -260,11 +261,6 @@ void HashMapDestroy(HashMap** _map, KeyDestroy _keyDestroyFunc, ValDestroy _valD
 	
 	DestroyBuckets(_map, _keyDestroyFunc, _valDestroyFunc);
 	free((*_map)->m_buckets);
-	for (index = 0; index < (*_map)->m_numOfMutex; ++index)
-	{
-		pthread_mutex_destroy(&(*_map)->m_mutexArr[index]);
-	}
-	free((*_map)->m_mutexArr);
 	free(*_map);
 	*_map = NULL;
 }
@@ -362,6 +358,7 @@ static ListItr FindKeyDuplicateInBucket(HashMap* _map, const void* _key, size_t 
 		itrData = (Data*) ListItrGet(nodeItr);
 		if (_map->m_keysEqualFunc((void*)itrData->m_key, _key))
 		{
+/*			return nodeItr;*/
 			return (void*)itrData;
 		}
 		nodeItr = ListItrNext(nodeItr);
@@ -396,13 +393,8 @@ MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
 		return MAP_KEY_NULL_ERROR;
 	}
 
-
-
-
 	bucketIndex = CalculateBucketIndex(_map->m_hashFunc, _key, _map->m_hashSize);
-	
-	pthread_mutex_lock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);
-	
+
 	if (FindKeyDuplicateInBucket(_map, _key, bucketIndex))
 	{
 		return MAP_KEY_DUPLICATE_ERROR;
@@ -412,9 +404,6 @@ MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
 	{
 		return MAP_ALLOCATION_ERROR;
 	}
-	
-	pthread_mutex_unlock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);
-	
 	return MAP_SUCCESS;
 }
 
@@ -483,15 +472,11 @@ MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValu
 	
 	bucketIndex = CalculateBucketIndex(_map->m_hashFunc, _searchKey, _map->m_hashSize);
 	
-	pthread_mutex_lock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);
-	
 	if ((itrFound = FindKeyDuplicateInBucket((HashMap*)_map, _searchKey, bucketIndex)))
 	{
 		*_pValue = (void*)((Data*)itrFound)->m_val;
 		return MAP_SUCCESS; 
 	}
-	
-	pthread_mutex_unlock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);
 	return MAP_KEY_NOT_FOUND_ERROR;
 }
 

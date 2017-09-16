@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <stdio.h>
 
 #define SUBSCRIBERS_HASH_CAPACITY 	1000000
 #define OPERATORS_HASH_CAPACITY 	100000
@@ -126,13 +125,11 @@ int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _sub)
 	}
 	
 	err = ContainerGetElement(_accum->m_contSub, _sub->m_msisdn, (void**)&subFound);
-	printf("Finished container get element subscriber\n"); 
 	if (0 == err)
 	{
 		newSub = malloc(sizeof(Subscriber));
 		*newSub = *_sub;
 		ContainerInsertElement(_accum->m_contSub, newSub->m_msisdn, newSub);
-		printf("Finished container insert element subscriber\n");
 		return 1;
 	}
 	
@@ -162,13 +159,11 @@ int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
 		return 0;
 	}
 	
-	printf("Starting container get element operator\n"); 
+	
 	err = ContainerGetElement(_accum->m_contOp, _oper->m_operatorMCCMNC, (void**)&operFound);
-	printf("Finished container get element operator\n"); 
 	if (0 == err)
 	{
 		ContainerInsertElement(_accum->m_contOp,  _oper->m_operatorMCCMNC, _oper);
-		printf("Finished container insert element subscriber\n"); 
 		return 1;
 	}
 	
