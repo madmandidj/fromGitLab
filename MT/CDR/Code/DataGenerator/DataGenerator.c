@@ -15,7 +15,7 @@ static void InitGenerate()
 	
 	if (0 == initOccured)
 	{
-		srand(time(NULL));
+		srand((unsigned int)time(NULL));
 		++initOccured;	
 	}
 	
@@ -31,7 +31,7 @@ static void GetRandomIntString(char* _strPtr, size_t _strLength)
 	
 	for (index = 0; index < _strLength; ++index)
 	{
-		size_t key = rand() % (sizeof(numCharset) - 1);
+		size_t key = (unsigned int)rand() % (sizeof(numCharset) - 1);
 		_strPtr[index] = numCharset[key];
 	}
 	_strPtr[_strLength] = '\0';
@@ -40,7 +40,7 @@ static void GetRandomIntString(char* _strPtr, size_t _strLength)
 }
 
 
-
+/*
 static void GetRandomFloatString(char* _strPtr)
 {
     char numCharset[11] = "0123456789";
@@ -49,12 +49,12 @@ static void GetRandomFloatString(char* _strPtr)
 	size_t wholeIndex;
 	size_t fractionIndex;
 	
-	wholeNumOfDigits = rand() % 6;
+	wholeNumOfDigits = (unsigned int)rand() % 6;
 	fractionNumOfDigits = 2;
 	
 	for (wholeIndex = 0; wholeIndex < wholeNumOfDigits; ++wholeIndex)
 	{
-		size_t key = rand() % (sizeof(numCharset) - 1);
+		size_t key = (unsigned int)rand() % (sizeof(numCharset) - 1);
 		_strPtr[wholeIndex] = numCharset[key];
 	}
 	
@@ -63,7 +63,7 @@ static void GetRandomFloatString(char* _strPtr)
 	
 	for (fractionIndex = 0; fractionIndex < fractionNumOfDigits; ++fractionIndex)
 	{
-		size_t key = rand() % (sizeof(numCharset) - 1);
+		size_t key = (unsigned int)rand() % (sizeof(numCharset) - 1);
 		_strPtr[fractionIndex] = numCharset[key];
 	}
 	
@@ -71,7 +71,7 @@ static void GetRandomFloatString(char* _strPtr)
 	
 	return;
 }
-
+*/
 
 
 static void GetRandomFloat(float* _floatPtr)
@@ -92,7 +92,7 @@ static void GetRandomCharString(char* _strPtr, size_t _strLength)
 	
 	for (index = 0; index < _strLength; ++index)
 	{
-		size_t key = rand() % (sizeof(letterCharset) - 1);
+		size_t key = (unsigned int)rand() % (sizeof(letterCharset) - 1);
 		_strPtr[index] = letterCharset[key];
 	}
 	_strPtr[_strLength] = '\0';
@@ -113,7 +113,7 @@ void GenerateSingleCDR()
 
 void GenerateRecord(Record* _recordPtr)
 {
-	size_t index;
+/*	size_t index;*/
 
 	InitGenerate();
 	
@@ -127,13 +127,13 @@ void GenerateRecord(Record* _recordPtr)
 	
 	GetRandomIntString(_recordPtr->m_operatorMCCMNC, 6);
 	
-	_recordPtr->m_callType =  rand() % 5;
+	_recordPtr->m_callType =  (unsigned int)rand() % 5;
 	
 	strcpy(_recordPtr->m_callDate, "17/01/1984");
 
 	strcpy(_recordPtr->m_callTime, "23:59:59");
 	
-	_recordPtr->m_duration = rand() % 10000;
+	_recordPtr->m_duration = (unsigned int)rand() % 10000;
 	
 	GetRandomFloat(&_recordPtr->m_downloadMB);
 	
@@ -150,25 +150,25 @@ void GenerateRecord(Record* _recordPtr)
 
 void GenerateSubscriber(Subscriber* _subPtr)
 {
-	size_t index;
+/*	size_t index;*/
 	
 	InitGenerate();
 	
-	_subPtr->m_outVoiceWithinOp = rand() % 10 + 1;
+	_subPtr->m_outVoiceWithinOp = (unsigned int)rand() % 10 + 1;
 	
-	_subPtr->m_inVoiceWithinOp = rand() % 10 + 1;
+	_subPtr->m_inVoiceWithinOp = (unsigned int)rand() % 10 + 1;
 	
-	_subPtr->m_outVoiceOutsideOp = rand() % 10 + 1;
+	_subPtr->m_outVoiceOutsideOp = (unsigned int)rand() % 10 + 1;
 	
-	_subPtr->m_inVoiceOutsideOp = rand() % 10 + 1;
+	_subPtr->m_inVoiceOutsideOp = (unsigned int)rand() % 10 + 1;
 	
-	_subPtr->m_outSmsWithinOp = rand() % 10 + 1;
+	_subPtr->m_outSmsWithinOp = (unsigned int)rand() % 10 + 1;
 	
-	_subPtr->m_inSmsWithinOp = rand() % 10 + 1;
+	_subPtr->m_inSmsWithinOp = (unsigned int)rand() % 10 + 1;
 	
-	_subPtr->m_outSmsOutsideOp = rand() % 10 + 1;
+	_subPtr->m_outSmsOutsideOp = (unsigned int)rand() % 10 + 1;
 	
-	_subPtr->m_inSmsOutsideOp = rand() % 10 + 1;
+	_subPtr->m_inSmsOutsideOp = (unsigned int)rand() % 10 + 1;
 	
 	GetRandomFloat(&_subPtr->m_downloadMB);
 	

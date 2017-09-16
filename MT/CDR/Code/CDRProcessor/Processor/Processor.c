@@ -1,4 +1,5 @@
 #include "Processor.h"
+#include "../../Comms/MsgQueue/MsgType.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -96,10 +97,11 @@ void* ProcessorRoutine(Processor* _proc)
 	/*
 	Get record from Feeder Server
 	*/
-/*	ReceiverReceive(_proc->m_rcvr, (Msg*)&record, sizeof(Record), FEEDER_TO_PROCESSOR_CH, 0);*/ /* TODO: check into Msg* or Record* ? ? */
-	ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Record), FEEDER_TO_PROCESSOR_CH, 0); /* TODO: check into Msg* or Record* ? ? */	
+/*	ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Record), FEEDER_TO_PROCESSOR_CH, 0);*/
+	ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH, 0);
 
-	record = msg.m_data;
+/*	record = *(Record*)msg.m_data;*/
+	record = msg.m_data.m_rec;
 
 	/*
 	Parse record into operator and subscriber

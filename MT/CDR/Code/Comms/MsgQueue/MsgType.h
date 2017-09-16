@@ -7,13 +7,34 @@
 
 typedef struct Msg Msg;
 
+typedef struct Data Data;
 
+typedef struct UIcommand UIcommand;
+
+/*
+struct Msg
+{
+    long 	m_channel;
+    Record 	m_data; 
+};
+*/
+
+struct UIcommand
+{
+	unsigned int m_command;
+};
+
+struct Data
+{
+	Record 		m_rec;
+	UIcommand 	m_uiCommand;
+};
 
 
 struct Msg
 {
     long 	m_channel;
-    Record 	m_data; /* changed this to void* for CDR project becaue should handle CDR messages and UI messages */
+    Data 	m_data; 
 };
 
 

@@ -1,5 +1,4 @@
 #include "../../Comms/ChannelDefs/ChannelDefs.h"
-#include "../../Comms/MsgQueue/MsgType.h"
 #include "../../Comms/Transmitter/Transmitter.h"
 #include "../../DataGenerator/DataGenerator.h"
 #include "FeederManager.h"
@@ -28,7 +27,8 @@ FeederManager* FeederManagerCreate()
 	Transmitter* trans;
 	FeederManager* feedMngr;
 	
-	trans = TransmitterCreate("../../Comms/MsgQueue/MQ");
+/*	trans = TransmitterCreate("../../Comms/MsgQueue/MQ");*/
+	trans = TransmitterCreate("../Comms/MsgQueue/MQ");
 	if (!trans)
 	{
 		return NULL;
@@ -65,23 +65,42 @@ void FeederManagerDestroy(FeederManager* _feedMngr)
 
 
 
-int FeederManagerSendCDR(FeederManager* _feedMngr, Record* _record)
+/*int FeederManagerSendCDR(FeederManager* _feedMngr, Record* _record)*/
+/*{*/
+/*	Msg _msg;*/
+/*	*/
+/*	if (!_feedMngr || !_record)*/
+/*	{*/
+/*		return 0;*/
+/*	}*/
+/*	*/
+/*	_msg.m_channel = FEEDER_TO_PROCESSOR_CH;*/
+/*	_msg.m_data = (char*)_record;*/
+/*	*/
+/*	TransmitterSend(_feedMngr->m_trans, &_msg, sizeof(Record), FEEDER_TO_PROCESSOR_CH);*/
+
+/*	return 1;*/
+/*}*/
+
+
+
+int FeederManagerSendCDR(FeederManager* _feedMngr, Data _data)
 {
-	Msg _msg;
+	Msg msg;
 	
-	if (!_feedMngr || !_record)
+/*	if (!_feedMngr || !_data)*/
+	if (!_feedMngr)
 	{
 		return 0;
 	}
 	
-	_msg.m_channel = FEEDER_TO_PROCESSOR_CH;
-	_msg.m_data = *_record;
+	msg.m_channel = FEEDER_TO_PROCESSOR_CH;
+	msg.m_data = _data;
 	
-	TransmitterSend(_feedMngr->m_trans, &_msg, sizeof(Record), FEEDER_TO_PROCESSOR_CH);
+	TransmitterSend(_feedMngr->m_trans, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH);
 
 	return 1;
 }
-
 
 
 
@@ -104,18 +123,29 @@ int main()
 /*						"654321"		 */
 /*	};*/
 
-	Record* record;
-	
-	record = malloc(sizeof(Record));
+	Data* data;
 	
 	
-	GenerateRecord(record);
+	data = malloc(sizeof(Data));
+	
+	
+	GenerateRecord(&data->m_rec);
+	
+	
+/*	Record* record;*/
+/*	*/
+/*	record = malloc(sizeof(Record));*/
+/*	*/
+/*	*/
+/*	GenerateRecord(record);*/
 	
 	feedMngr = FeederManagerCreate();
 	
 /*	FeederManagerSendCDR(feedMngr, &record);*/
 
-	FeederManagerSendCDR(feedMngr, record);
+/*	FeederManagerSendCDR(feedMngr, record);*/
+
+	FeederManagerSendCDR(feedMngr, *data);
 	
 	sleep(10);
 	
