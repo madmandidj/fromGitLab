@@ -39,7 +39,7 @@ void TransmitterDestroy(Transmitter* _trans)
 		return;
 	}
 	
-/*	MsgQDestroy(_trans->m_queueID, _trans->m_queueStats);*/
+	MsgQDestroy(_trans->m_queueID, _trans->m_queueStats);
 	free(_trans);
 
 	return;

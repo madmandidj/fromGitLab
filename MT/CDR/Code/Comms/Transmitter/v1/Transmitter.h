@@ -6,7 +6,7 @@
 typedef struct Transmitter Transmitter;
 
 
-Transmitter* TransmitterCreate(char* _myPathToMsgQ);
+Transmitter* TransmitterCreate();
 
 void TransmitterDestroy(Transmitter* _trans);
 

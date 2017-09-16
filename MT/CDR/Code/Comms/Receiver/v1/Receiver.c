@@ -49,18 +49,16 @@ void ReceiverDestroy(Receiver* _rcvr)
 
 
 
-ssize_t ReceiverReceive(Receiver* _rcvr, Msg* _msg, size_t _msgSize, int _channel, int _flag)
+int ReceiverReceive(Receiver* _rcvr, Msg* _msg, size_t _msgSize, int _channel, int _flag)
 {
-	ssize_t err;
-
 	if (!_rcvr)
 	{
-		return -1;
+		return 0;
 	}
 	
-	err = MsgQReceive(_rcvr->m_queueID, _msg, _msgSize, _channel, _flag);
+	MsgQReceive(_rcvr->m_queueID, _msg, _msgSize, _channel, _flag);
 
-	return err;
+	return 1;
 }
 
 

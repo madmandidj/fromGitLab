@@ -18,7 +18,6 @@
 #define NUM_OF_LETTERS 26
 #define LOWER_A_ASCI 97
 
-#define myFifo "./myfifo"
 
 typedef struct Params
 {
@@ -87,7 +86,7 @@ static void ServerRoutine(pid_t _pid, int* _pipefd, Params _params)
 	
 	/* Open server for Tx */
 	usleep(ONE_SECOND_USEC);
-	fifoFd = open(myFifo, O_WRONLY);
+	fifoFd = open(myFifo, O_WONLY);
 	
 	for(curCycle = 0; curCycle < _params.m_txCycles; ++curCycle)
 	{
@@ -121,14 +120,13 @@ static void ClientRoutine(pid_t _pid, int* _pipefd, Params _params)
 {
 	char buf[PIPE_BUF];	
 	ssize_t numRead;
-	int fifoFD;
 	
 	/* Open client for Rx */
-	fifoFD = open(myFifo, O_WRONLY);
+	fifoFD = open(myFifo, O_RONLY);
 	
 	for(;;)
 	{
-		numRead = read(fifoFD, &buf, _params.m_bufSize);
+		numRead = read(_pipefd[0], &buf, _params.m_bufSize);
 		if (numRead <= 0) 
 		{
 			printf("Read error from client\n");
@@ -139,7 +137,7 @@ static void ClientRoutine(pid_t _pid, int* _pipefd, Params _params)
 	
 	/* Close client Rx */
 	printf("Client closing read side of pipe\n");
-	close(fifoFD);
+	close(_pipefd[0]);
 	
 	return;
 }
@@ -152,7 +150,7 @@ int main(int argc, char* argv[])
 {
 	pid_t pid;
 	int fifoErr;
-/*	char* myFifo = "./myfifo";*/
+	char* myFifo = "./";
 	Params params;
 	
 	
@@ -164,12 +162,12 @@ int main(int argc, char* argv[])
 	
 	if (pid > 0)
 	{
-		ServerRoutine(pid, 0, params);
+		ServerRoutine(pid, pipefd, params);
 	}
 
 	if (pid == 0)
 	{
-		ClientRoutine(pid, 0, params);
+		ClientRoutine(pid, pipefd, params);
 	}
 	
 	return 0;

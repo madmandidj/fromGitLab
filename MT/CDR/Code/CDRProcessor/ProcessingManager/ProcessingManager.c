@@ -87,6 +87,7 @@ int main()
 	
 	procMngr = ProcessingManagerCreate(numOfProcThreads);
 	ProcessorRun(procMngr->m_proc);
+	ProcessingManagerDestroy(procMngr);
 	printf("here");
 	
 	return 0;
