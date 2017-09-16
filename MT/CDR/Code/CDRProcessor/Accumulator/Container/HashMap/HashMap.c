@@ -295,11 +295,36 @@ HASH MAP REHASH
 **************/
 static size_t CalculateBucketIndex(HashFunction _hashFunc, const void* _key, size_t _hashSize)
 {
+
+
+
+
+
+
+
+
+	/*TODO: Need to make new  hash func to calculate proper index for mutexes ? ? ? */
+
+
+
+
+
+
+
+
+
 	size_t hashFuncResult;
 	
 	hashFuncResult = _hashFunc(_key);
 	return hashFuncResult % _hashSize;
 }
+
+
+
+
+
+
+
 
 MapResult HashMapRehash(HashMap *_map, size_t newCapacity)
 {
@@ -485,6 +510,8 @@ MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValu
 {
 	size_t bucketIndex;
 	ListItr itrFound = NULL;
+	int err;
+/*	int dummy;*/
 
 	if (!IS_A_HASHMAP(_map))
 	{
@@ -498,11 +525,20 @@ MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValu
 	
 	bucketIndex = CalculateBucketIndex(_map->m_hashFunc, _searchKey, _map->m_hashSize);
 	
-	printf("Before hashmapfind mutex number %u\n", bucketIndex / MUTEX_NUM_FACTOR);
+/*	printf("Before hashmapfind mutex number %u\n", bucketIndex / MUTEX_NUM_FACTOR);*/
 	
-	pthread_mutex_lock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);
-
-	printf("After hashmapfind mutex\n");
+/*	pthread_mutex_lock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);*/
+/*	do*/
+/*	{*/
+		err = pthread_mutex_trylock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);
+/*	)while (EBUSY == err);*/
+	if (0 != err)
+	{
+		printf("mutex number= %u err = %d\n", bucketIndex / MUTEX_NUM_FACTOR, err);
+/*		scanf("%d",&dummy);*/
+	}
+	
+/*	printf("After hashmapfind mutex\n");*/
 
 	if ((itrFound = FindKeyDuplicateInBucket((HashMap*)_map, _searchKey, bucketIndex)))
 	{
@@ -511,7 +547,7 @@ MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValu
 	}
 	
 	pthread_mutex_unlock(&_map->m_mutexArr[bucketIndex / MUTEX_NUM_FACTOR]);
-	usleep(10000);
+/*	usleep(10000);*/
 	return MAP_KEY_NOT_FOUND_ERROR;
 }
 
@@ -561,7 +597,7 @@ size_t HashMapForEach(const HashMap* _map, KeyValueActionFunction _action, void*
 
 	for (index = 0; index < _map->m_hashSize; ++index)
 	{
-		printf("bucket %u:\n ", index);
+/*		printf("bucket %u:\n ", index);*/
 		nodeSentinel = ListItrEnd(_map->m_buckets[index]);
 		nodeItr = ListItrBegin(_map->m_buckets[index]);
 		while(nodeItr != nodeSentinel)

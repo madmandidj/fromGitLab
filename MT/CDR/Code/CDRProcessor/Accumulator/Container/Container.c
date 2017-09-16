@@ -81,9 +81,9 @@ int	ContainerGetElement(Container* _cont, char* _key, void** _elementFound)
 	MapResult mapErr;
 	
 /*	pthread_mutex_lock(&_cont->m_mutex);*/
-	printf("Before hashmapFind\n");
+/*	printf("Before hashmapFind\n");*/
 	mapErr = HashMapFind(_cont->m_storage, _key, _elementFound);
-	printf("After hashmapFind\n");
+/*	printf("After hashmapFind\n");*/
 /*	pthread_mutex_unlock(&_cont->m_mutex);*/
 	
 	if (MAP_SUCCESS != mapErr)

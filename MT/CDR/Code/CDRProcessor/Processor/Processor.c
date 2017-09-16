@@ -105,7 +105,7 @@ void* ProcessorRoutine(Processor* _proc)
 		if (err > -1)
 		{
 			++numOfMsgsRxed;
-			printf("Received msg from UI, msg rx num = %u\n", numOfMsgsRxed);
+/*			printf("Received msg from UI, msg rx num = %u\n", numOfMsgsRxed);*/
 			if (666 == uiMsg.m_data.m_uiCommand.m_command)
 			{
 				_proc->m_systemMode = 0;
@@ -117,7 +117,7 @@ void* ProcessorRoutine(Processor* _proc)
 		if (err > -1)
 		{
 			++numOfMsgsRxed;
-			printf("Received msg from feeder, msg rx num = %u\n", numOfMsgsRxed);
+/*			printf("Received msg from feeder, msg rx num = %u\n", numOfMsgsRxed);*/
 			record = msg.m_data.m_rec;
 			strcpy(sub.m_imsi, record.m_imsi);
 			strcpy(sub.m_msisdn, record.m_msisdn);
@@ -197,9 +197,9 @@ void* ProcessorRoutine(Processor* _proc)
 /*			pthread_mutex_lock(&_proc->m_mutex);*/
 			
 			AccumulatorUpdateSubscriber(_proc->m_accum, &sub);
-			printf("Updated Subscriber\n");
+/*			printf("Updated Subscriber\n");*/
 			AccumulatorUpdateOperator(_proc->m_accum, &oper);
-			printf("Updated Operator\n");
+/*			printf("Updated Operator\n");*/
 			
 /*			pthread_mutex_unlock(&_proc->m_mutex);*/
 			
