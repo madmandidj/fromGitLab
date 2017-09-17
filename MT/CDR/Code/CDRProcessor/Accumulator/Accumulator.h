@@ -3,6 +3,7 @@
 
 #include "../../CDRDataTypes/Operator.h"
 #include "../../CDRDataTypes/Subscriber.h"
+#include <stddef.h>
 
 typedef struct Accumulator Accumulator;
 
@@ -23,6 +24,9 @@ int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _sub);
 
 
 int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper);
+
+
+size_t AccumulatorPrintAllSubscribers(Accumulator* _accum);
 
 
 #endif /* #ifndef __ACCUMULATOR_H__ */

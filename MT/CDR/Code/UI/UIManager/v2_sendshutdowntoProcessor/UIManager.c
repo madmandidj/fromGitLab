@@ -1,5 +1,4 @@
 #include "UIManager.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -87,30 +86,12 @@ int main()
 {
 	UIManager* uiMngr;
 	Data data = {0};
-	int isRun = 1;
-	int userInput;
+	
+	data.m_uiCommand.m_command = 666;
 	
 	uiMngr = UIManagerCreate();
 	
-	while(isRun)
-	{
-		printf("0: Shutdown\n1: Print All Subscribers\n");
-		scanf("%d", &userInput);
-		
-		switch (userInput)
-		{
-			case 0:
-				data.m_uiCommand.m_command = 666;
-				isRun = 0;
-				break;
-			
-			case 1:
-				data.m_uiCommand.m_command = 100;
-				UIManagerSendCommand(uiMngr, data, UI_TO_PROCESSOR);
-				break;
-		}
-	}
-/*	sleep(1);*/
+	sleep(1);
 	
 	UIManagerSendCommand(uiMngr, data, UI_TO_PROCESSOR);
 	

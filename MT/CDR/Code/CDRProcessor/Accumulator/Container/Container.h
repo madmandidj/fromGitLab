@@ -16,6 +16,7 @@ int	ContainerGetElement(Container* _cont, char* _key, void** _elementFound);
 
 int ContainerInsertElement(Container* _cont, char* _key, void* _element);
 
+size_t ContainerPrintAllElements(Container* _cont);
 
 #endif /*#ifndef __CONTAINER_H__*/
 

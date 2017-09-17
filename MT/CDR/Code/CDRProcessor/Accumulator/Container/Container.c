@@ -116,6 +116,18 @@ int ContainerInsertElement(Container* _cont, char* _key, void* _element)
 
 
 
+int PrintSubscriber(const void* _key, Subscriber* _sub, void* _context)
+{
+	printf("%s\n",_sub->m_msisdn);
+	
+	return 1;
+}
+
+
+size_t ContainerPrintAllElements(Container* _cont)
+{
+	return HashMapForEach(_cont->m_storage, (KeyValueActionFunction)PrintSubscriber, NULL);
+}
 
 
 

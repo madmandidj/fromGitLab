@@ -16,5 +16,22 @@ int UIManagerSendCommand(UIManager* _uiMngr, Data _data, int _channel);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif /* #ifndef __UI_MANAGER_H__ */
 

@@ -444,11 +444,13 @@ MapResult HashMapInsert(HashMap* _map, const void* _key, const void* _value)
 	
 	if (FindKeyDuplicateInBucket(_map, _key, bucketIndex))
 	{
+		pthread_mutex_unlock(&_map->m_mutexArr[(bucketIndex) % _map->m_numOfMutex]);
 		return MAP_KEY_DUPLICATE_ERROR;
 	}
 	
 	if (MAP_ALLOCATION_ERROR == CreateAndInsertElement(_map, _key, _value, bucketIndex))
 	{
+		pthread_mutex_unlock(&_map->m_mutexArr[(bucketIndex) % _map->m_numOfMutex]);
 		return MAP_ALLOCATION_ERROR;
 	}
 
@@ -510,7 +512,7 @@ MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValu
 {
 	size_t bucketIndex;
 	ListItr itrFound = NULL;
-	int err;
+/*	int err;*/
 
 	if (!IS_A_HASHMAP(_map))
 	{
@@ -524,22 +526,22 @@ MapResult HashMapFind(const HashMap* _map, const void* _searchKey, void** _pValu
 
 	bucketIndex = CalculateBucketIndex(_map->m_hashFunc, _searchKey, _map->m_hashSize);
 
-	err = pthread_mutex_trylock(&_map->m_mutexArr[(bucketIndex) % _map->m_numOfMutex]);
-/*	err = pthread_mutex_trylock(&_map->m_mutexArr[(bucketIndex) / _map->m_numOfMutex]);*/
+/*	err = pthread_mutex_trylock(&_map->m_mutexArr[(bucketIndex) % _map->m_numOfMutex]);*/
+	pthread_mutex_lock(&_map->m_mutexArr[(bucketIndex) % _map->m_numOfMutex]);
 	
-	if (0 != err)
-	{
-		printf("mutex number= %u err = %d\n", (bucketIndex % _map->m_numOfMutex) , err);
-	}
+/*	if (0 != err)*/
+/*	{*/
+/*		printf("mutex number= %u err = %d\n", (bucketIndex % _map->m_numOfMutex) , err);*/
+/*	}*/
 
 	if ((itrFound = FindKeyDuplicateInBucket((HashMap*)_map, _searchKey, bucketIndex)))
 	{
 		*_pValue = (void*)((Data*)itrFound)->m_val;
+		pthread_mutex_unlock(&_map->m_mutexArr[(bucketIndex) % _map->m_numOfMutex]);
 		return MAP_SUCCESS; 
 	}
 
 	pthread_mutex_unlock(&_map->m_mutexArr[(bucketIndex) % _map->m_numOfMutex]);
-/*	pthread_mutex_unlock(&_map->m_mutexArr[(bucketIndex) / _map->m_numOfMutex]);*/
 	
 	return MAP_KEY_NOT_FOUND_ERROR;
 }

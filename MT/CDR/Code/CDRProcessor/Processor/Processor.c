@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <syscall.h> /* syscall gettid */
 
 #define PROCESSOR_MAGIC 0x0C111111
 
@@ -83,6 +84,7 @@ void* ProcessorRoutine(Processor* _proc)
 	Record record = {0};	
 	Subscriber sub = {0};
 	Operator oper = {0};
+	size_t numOfSubs = 0;
 		
 	if (!_proc)
 	{
@@ -100,11 +102,18 @@ void* ProcessorRoutine(Processor* _proc)
 				_proc->m_systemMode = 0;
 				continue;
 			}
+			if (100 == uiMsg.m_data.m_uiCommand.m_command)
+			{
+				numOfSubs = AccumulatorPrintAllSubscribers(_proc->m_accum);
+				printf("Number of Subscribers = %u\n", numOfSubs);
+				continue;
+			}
 		}
 		
 		err = ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH, IPC_NOWAIT);
 		if (err > -1)
 		{
+			printf("tid = %ld\n", syscall(SYS_gettid));
 			++numOfMsgsRxed;
 			record = msg.m_data.m_rec;
 			strcpy(sub.m_imsi, record.m_imsi);

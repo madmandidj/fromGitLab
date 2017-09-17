@@ -8,8 +8,8 @@
 /*#define SUBSCRIBERS_HASH_CAPACITY 	1000000*/
 /*#define OPERATORS_HASH_CAPACITY 	100000*/
 
-#define SUBSCRIBERS_HASH_CAPACITY 	1000
-#define OPERATORS_HASH_CAPACITY 	200
+#define SUBSCRIBERS_HASH_CAPACITY 	10000
+#define OPERATORS_HASH_CAPACITY 	1000
 
 
 struct Accumulator
@@ -191,7 +191,10 @@ int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
 
 
 
-
+size_t AccumulatorPrintAllSubscribers(Accumulator* _accum)
+{
+	return ContainerPrintAllElements(_accum->m_contSub);
+}
 
 
 

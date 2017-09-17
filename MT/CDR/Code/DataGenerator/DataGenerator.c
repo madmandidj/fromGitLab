@@ -114,12 +114,20 @@ void GenerateSingleCDR()
 void GenerateRecord(Record* _recordPtr)
 {
 /*	size_t index;*/
+/*	char temp[4];*/
 
 	InitGenerate();
 	
 	GetRandomIntString(_recordPtr->m_imsi, IMSI_STR_LENGTH);
 	
-	GetRandomIntString(_recordPtr->m_msisdn, MSISDN_STR_LENGTH);
+	strcat(_recordPtr->m_msisdn, "111111111111");
+/*	GetRandomIntString(temp, 3);*/
+	GetRandomIntString(&_recordPtr->m_msisdn[12] , 1);
+	GetRandomIntString(&_recordPtr->m_msisdn[13] , 1);
+	GetRandomIntString(&_recordPtr->m_msisdn[14] , 1);
+	_recordPtr->m_msisdn[15] = '\0';
+	
+/*	GetRandomIntString(_recordPtr->m_msisdn, MSISDN_STR_LENGTH);*/
 	
 	GetRandomIntString(_recordPtr->m_imei, 15);
 
