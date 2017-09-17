@@ -207,14 +207,14 @@ int ProcessorRun(Processor* _proc)
 	
 	if (NULL == _proc)
 	{
-		return 1;
+		return 0;
 	}
 	
 	for (index = 0; index < _proc->m_numOfThreads; ++index)
 	{
 		if (pthread_create(_proc->m_threadIDs + index, NULL, (ThreadRoutine)ProcessorRoutine, _proc))
 		{
-			return 1;
+			return 0;
 		}
 	}
 	
@@ -223,7 +223,7 @@ int ProcessorRun(Processor* _proc)
 		pthread_join(_proc->m_threadIDs[index], NULL);
 	}
 	
-	return 0;
+	return 1;
 }
 
 
