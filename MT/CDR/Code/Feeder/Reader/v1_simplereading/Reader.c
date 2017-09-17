@@ -86,16 +86,18 @@ void* ReaderRoutine(Reader* _reader)
 	char cdrLine[512];
 	char* token;
 /*	int lineNum = 0;*/
-/*	int cdrNumOfLines = 0;*/
+	int cdrNumOfLines = 0;
 	char curCwd[1024];
 	
 	
-	Record record = {0};
+/*	Record record = {0};*/
 	
 	printf("cwd = %s\n", getcwd(curCwd, sizeof(curCwd)));
 	fp = fopen(_reader->m_cdrPath, "r");
 	fseek(fp, 0, 0);
 	
+/*	while (1 == _reader->m_systemMode && !feof(fp))*/
+/*	while (1 == _reader->m_systemMode)*/
 	while (!isFeof)
 	{
 		err = ReceiverReceive(_reader->m_rcvr, &uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);
@@ -108,6 +110,7 @@ void* ReaderRoutine(Reader* _reader)
 			}
 		}
 		
+		
 		if (feof(fp))
     	{
     		isFeof = 1;
@@ -117,82 +120,39 @@ void* ReaderRoutine(Reader* _reader)
     	{
 			fgets(cdrLine, 512, fp);
 			token = strtok(cdrLine, "|\n");
-/*			cdrNumOfLines = atoi(token);*/
-/*			printf("cdrNumOfLines int = %d\n", cdrNumOfLines);*/
+			cdrNumOfLines = atoi(token);
+			printf("cdrNumOfLines int = %d\n", cdrNumOfLines);
 		}
 		
 		while (1)
     	{
-			fgets(cdrLine, 512, fp);
-			if (feof(fp))
-	    	{
-	    		isFeof = 1;
-	        	break;
-	    	}
-			
-			/* Get IMSI */
-			token = strtok(cdrLine, "|");
-			strcpy(record.m_imsi, token);
-			
-			/* Get MSISDN */
-			token = strtok(NULL, "|");
-			strcpy(record.m_msisdn, token);
-			
-			/* Get IMEI */
-			token = strtok(NULL, "|");
-			strcpy(record.m_imei, token);
-			
-			/* Get OpBrand */
-			token = strtok(NULL, "|");
-			strcpy(record.m_operatorBrand, token);
-			
-			/* Get OPMccMnc */
-			token = strtok(NULL, "|");
-			strcpy(record.m_operatorMCCMNC, token);
-			
-			/* Get Call type TODO: convert to correct enum int */
-			token = strtok(NULL, "|");
-			if (!strcmp(token, "MOC"))
-			{
-				record.m_callType = 0;
+        	if (feof(fp))
+        	{
+        		isFeof = 1;
+            	break;
+        	}
+        	else
+        	{
+/*        		++lineNum;*/
+/*				fgets(cdrLine, 512, fp);*/
+/*				token = strtok(cdrLine,"|");*/
+/*				*/
+/*				if (1 == lineNum)*/
+/*				{*/
+/*					cdrNumOfLines = atoi(token);*/
+/*					printf("cdrNumOfLines int = %d\n", cdrNumOfLines);*/
+/*					continue;*/
+/*				}*/
+				fgets(cdrLine, 512, fp);
+				
+				token = strtok(cdrLine, "|");
+				
+				while(NULL != token)
+				{
+					printf("token string = %s\n", token);
+					token = strtok(NULL, "|\n");	
+				}
 			}
-			
-			/* Get Call Date */
-			token = strtok(NULL, "|");
-			strcpy(record.m_callDate, token);
-			
-			/* Get Call Time */
-			token = strtok(NULL, "|");
-			strcpy(record.m_callTime, token);
-			
-			/* Get Duration */
-			token = strtok(NULL, "|");
-			record.m_duration = (unsigned int)atoi(token);
-			
-			/* Get Download TODO: convert to float */
-			token = strtok(NULL, "|");
-			record.m_downloadMB = strtof(token, NULL);
-			
-			/* Get Upload TODO: convert to float */
-			token = strtok(NULL, "|");
-			record.m_uploadMB = strtof(token, NULL);
-			
-			/* Get Party MSISDN */
-			token = strtok(NULL, "|");
-			strcpy(record.m_partyMsisdn, token);
-			
-			/* Get Party Operator */
-			token = strtok(NULL, "|\n");
-			strcpy(record.m_partyMCCMNC, token);
-			
-			
-			
-			
-/*			while(NULL != token)*/
-/*			{*/
-/*				printf("token string = %s\n", token);*/
-/*				token = strtok(NULL, "|\n");	*/
-/*			}*/
 		}
 		/*
 		Read line from CDR file
