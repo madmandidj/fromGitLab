@@ -3,26 +3,10 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
-#include <stdio.h>
 
 
 #define IMSI_STR_LENGTH 15
 #define MSISDN_STR_LENGTH 15
-#define IMEI_STR_LENGTH 15
-#define OPBRAND_STR_LENGTH 7
-#define OPMCCMNC_STR_LENGTH 6
-/*#define CALLTYPE_STR_LENGTH */
-/*#define CALLDATE_STR_LENGTH 10*/
-/*#define CALLTIME_STR_LENGTH 8*/
-#define DURATION_STR_LENGTH 7
-#define DOWNLOAD_STR_LENGTH 10
-#define UPLOAD_STR_LENGTH 10
-#define PARTYMSISDN_STR_LENGTH 15
-#define PARTYOP_STR_LENGTH 15
-
-
-#define RECORDS_NUM 10000000
-#define RECORDS_NUM_STR "10000000\n"
 
 
 static void InitGenerate()
@@ -119,116 +103,7 @@ static void GetRandomCharString(char* _strPtr, size_t _strLength)
 
 void GenerateCDRFile()
 {
-	FILE* fp;
-/*	Record rec;*/
-	char str[128];
-/*	size_t numOfRecords = 10000000;*/
-/*	char numOfRecordsStr[] = "10000000\n";*/
-	
-	/*
-	With 10 processor threads, it takes 24 seconds to read, process and store 1,000,000 records, hashSize of 10,000 for subs and 1,000 for operators
-	with 100 processor threads, it takes 20 seconds ... not sure that performance has increased significantly
-	
-	with 100 processor threads and hashSize of 100,000 for subs and 10,000 for operators, 1,000,000 records in 10 seconds
-	*/
-	
-	
-	size_t index;
-/*	unsigned int randomInt;*/
-	
-	fp = fopen("TestCDRFile", "w+");
-	
-	if (NULL != fp)
-	{
-		fputs(RECORDS_NUM_STR, fp);
-		
-		for(index = 0; index < RECORDS_NUM; ++index)
-		{
-			GetRandomIntString(str, IMSI_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-		
-			GetRandomIntString(str, MSISDN_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-			
-			GetRandomIntString(str, IMEI_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-			
-			GetRandomIntString(str, OPBRAND_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-			
-			GetRandomIntString(str, OPMCCMNC_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-			
-			switch (rand() % 5) /* 5 CallType enum members (in Record.h) */
-			{
-				case 0:
-					fputs("MOC|", fp);
-					break;
-				
-				case 1:
-					fputs("MTC|", fp);
-					break;
-				
-				case 2:
-					fputs("SMS_MO|", fp);
-					break;
-				
-				case 3:
-					fputs("SMS_MT|", fp);
-					break;
-				
-				case 4:
-					fputs("GPRS|", fp);
-					break;
-			}
-			
-			fputs("17/01/1984|", fp);
-			fputs("23:59:59|" , fp);
-			
-			GetRandomIntString(str, DURATION_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-			
-			GetRandomIntString(str, DOWNLOAD_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-			
-			GetRandomIntString(str, UPLOAD_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-			
-			GetRandomIntString(str, PARTYMSISDN_STR_LENGTH);
-			strcat(str, "|");
-			fputs(str, fp);
-			
-			GetRandomIntString(str, PARTYOP_STR_LENGTH);
-			strcat(str, "\n");
-			fputs(str, fp);
-		}
-		
-		
-		/*
-		put number of CDR files
-		for (number of CDR files)
-		{
-			generate record
-			write record to file
-		]
-		*/
-		
-		
-/*		fputs("test1\n", fp);*/
-/*		fputs("test3\n", fp);*/
-/*		fputs("test2\n", fp);*/
-	}
-	
-	fclose(fp);
-	
+
 	return;
 }
 
@@ -238,10 +113,19 @@ void GenerateCDRFile()
 
 void GenerateRecord(Record* _recordPtr)
 {
+/*	size_t index;*/
+/*	char temp[4];*/
+
 	InitGenerate();
 	
 	GetRandomIntString(_recordPtr->m_imsi, IMSI_STR_LENGTH);
-
+	
+/*	strcat(_recordPtr->m_msisdn, "111111111111");*/
+/*/*	GetRandomIntString(temp, 3);*/*/
+/*	GetRandomIntString(&_recordPtr->m_msisdn[12] , 1);*/
+/*	GetRandomIntString(&_recordPtr->m_msisdn[13] , 1);*/
+/*	GetRandomIntString(&_recordPtr->m_msisdn[14] , 1);*/
+/*	_recordPtr->m_msisdn[15] = '\0';*/
 	
 	GetRandomIntString(_recordPtr->m_msisdn, MSISDN_STR_LENGTH);
 	

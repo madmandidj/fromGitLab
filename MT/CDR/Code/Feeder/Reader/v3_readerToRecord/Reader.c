@@ -1,10 +1,10 @@
 #include "Reader.h"
 #include "../../Comms/MsgQueue/MsgType.h"
-#include "../../Comms/ChannelDefs/ChannelDefs.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h> /*getcwd()*/
 
 
 struct Reader
@@ -39,10 +39,6 @@ Reader* ReaderCreate(unsigned int _numOfThreads, char* _cdrPath, Transmitter* _t
 		free(reader);
 		return NULL;
 	}
-	
-	reader->m_trans = _trans;
-	
-	reader->m_rcvr = _rcvr;
 	
 	reader->m_systemMode = 1;
 	
@@ -88,14 +84,15 @@ void* ReaderRoutine(Reader* _reader)
 	FILE* fp;
 	int isFeof = 0;
 	char cdrLine[512];
-	char* cdrLinePtr;
 	char* token;
+/*	int lineNum = 0;*/
+/*	int cdrNumOfLines = 0;*/
+	char curCwd[1024];
+	
+	
 	Record record = {0};
-	Data data = {0};
-	Msg msg = {0};
 	
-	
-	msg.m_channel = FEEDER_TO_PROCESSOR_CH;
+	printf("cwd = %s\n", getcwd(curCwd, sizeof(curCwd)));
 	fp = fopen(_reader->m_cdrPath, "r");
 	fseek(fp, 0, 0);
 	
@@ -119,8 +116,9 @@ void* ReaderRoutine(Reader* _reader)
     	else
     	{
 			fgets(cdrLine, 512, fp);
-/*			token = strtok(cdrLine, "|\n");*/
-			token = strtok_r(cdrLine, "|\n", &cdrLinePtr);
+			token = strtok(cdrLine, "|\n");
+/*			cdrNumOfLines = atoi(token);*/
+/*			printf("cdrNumOfLines int = %d\n", cdrNumOfLines);*/
 		}
 		
 		while (1)
@@ -133,83 +131,72 @@ void* ReaderRoutine(Reader* _reader)
 	    	}
 			
 			/* Get IMSI */
-/*			token = strtok(cdrLine, "|");*/
-			token = strtok_r(cdrLine, "|", &cdrLinePtr);
+			token = strtok(cdrLine, "|");
 			strcpy(record.m_imsi, token);
 			
 			/* Get MSISDN */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			token = strtok(NULL, "|");
 			strcpy(record.m_msisdn, token);
 			
 			/* Get IMEI */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			token = strtok(NULL, "|");
 			strcpy(record.m_imei, token);
 			
 			/* Get OpBrand */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			token = strtok(NULL, "|");
 			strcpy(record.m_operatorBrand, token);
 			
 			/* Get OPMccMnc */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			token = strtok(NULL, "|");
 			strcpy(record.m_operatorMCCMNC, token);
 			
-			/* Get Call type */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			/* Get Call type TODO: convert to correct enum int */
+			token = strtok(NULL, "|");
 			if (!strcmp(token, "MOC"))
 			{
 				record.m_callType = 0;
 			}
-			else if (!strcmp(token, "MTC"))
-			{
-				record.m_callType = 1;
-			}
-			else if (!strcmp(token, "SMS_MO"))
-			{
-				record.m_callType = 2;
-			}
-			else if (!strcmp(token, "SMS_MT"))
-			{
-				record.m_callType = 3;
-			}
-			else /* GPRS */
-			{
-				record.m_callType = 4;
-			}
-
+			
 			/* Get Call Date */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			token = strtok(NULL, "|");
 			strcpy(record.m_callDate, token);
 			
 			/* Get Call Time */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			token = strtok(NULL, "|");
 			strcpy(record.m_callTime, token);
 			
 			/* Get Duration */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			token = strtok(NULL, "|");
 			record.m_duration = (unsigned int)atoi(token);
 			
-			/* Get Download */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			/* Get Download TODO: convert to float */
+			token = strtok(NULL, "|");
 			record.m_downloadMB = strtof(token, NULL);
 			
-			/* Get Upload */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			/* Get Upload TODO: convert to float */
+			token = strtok(NULL, "|");
 			record.m_uploadMB = strtof(token, NULL);
 			
 			/* Get Party MSISDN */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
+			token = strtok(NULL, "|");
 			strcpy(record.m_partyMsisdn, token);
 			
 			/* Get Party Operator */
-			token = strtok_r(NULL, "|\n", &cdrLinePtr);
+			token = strtok(NULL, "|\n");
 			strcpy(record.m_partyMCCMNC, token);
 			
-			/* Send Record to processor */
-			data.m_rec = record;
-			msg.m_data = data;
-			TransmitterSend(_reader->m_trans, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH);
+			
+			
+			
+/*			while(NULL != token)*/
+/*			{*/
+/*				printf("token string = %s\n", token);*/
+/*				token = strtok(NULL, "|\n");	*/
+/*			}*/
 		}
 		/*
+		Read line from CDR file
+		Parse to record
 		Send to msgQ for processor
 		*/	 
 	}
