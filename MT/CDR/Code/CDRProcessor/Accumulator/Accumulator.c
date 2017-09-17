@@ -100,7 +100,7 @@ int AccumulatorGetSubscriber(Accumulator* _accum, char* _key, Subscriber** _subF
 
 
 
-int AccumulatorGetOperator(Accumulator* _accum, char* _key, Operator* _operFound)
+int AccumulatorGetOperator(Accumulator* _accum, char* _key, Operator** _operFound)
 {
 	int err;
 	
@@ -109,7 +109,7 @@ int AccumulatorGetOperator(Accumulator* _accum, char* _key, Operator* _operFound
 		return 0;
 	}
 	
-	err = ContainerGetElement(_accum->m_contOp, _key, (void**)&_operFound);
+	err = ContainerGetElement(_accum->m_contOp, _key, (void**)_operFound);
 	
 	return err;
 }
@@ -159,6 +159,7 @@ int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
 {
 	int err;
 	Operator* operFound;
+	Operator* newOper;
 	
 	if (!_accum || !_oper)
 	{
@@ -170,7 +171,9 @@ int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
 /*	printf("Finished container get element operator\n"); */
 	if (0 == err)
 	{
-		ContainerInsertElement(_accum->m_contOp,  _oper->m_operatorMCCMNC, _oper);
+		newOper = malloc(sizeof(Operator));
+		*newOper = *_oper;
+		ContainerInsertElement(_accum->m_contOp,  newOper->m_operatorMCCMNC, newOper);
 /*		printf("Finished container insert element operator\n"); */
 		return 1;
 	}

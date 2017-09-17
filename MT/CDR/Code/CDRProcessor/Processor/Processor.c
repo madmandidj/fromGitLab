@@ -14,7 +14,6 @@ struct Processor
 	unsigned int		m_systemMode;
 	unsigned int		m_numOfThreads;
 	pthread_t*			m_threadIDs;
-/*	pthread_mutex_t		m_mutex;*/
 	Accumulator*		m_accum;
 	Receiver*			m_rcvr;
 };
@@ -44,13 +43,6 @@ Processor* ProcessorCreate(Accumulator* _accum, Receiver* _rcvr, unsigned int _n
 		return NULL;
 	}
 	
-/*	if (pthread_mutex_init(&proc->m_mutex, NULL))*/
-/*	{*/
-/*		free(proc->m_threadIDs);*/
-/*		free(proc);*/
-/*		return NULL;*/
-/*	}*/
-	
 	proc->m_magicNum = PROCESSOR_MAGIC;
 	
 	proc->m_systemMode = 1;
@@ -72,7 +64,6 @@ void ProcessorDestroy(Processor* _proc)
 	}
 	
 	free(_proc->m_threadIDs);
-/*	pthread_mutex_destroy(&_proc->m_mutex);*/
 	free(_proc);
 	return;
 }
@@ -92,7 +83,6 @@ void* ProcessorRoutine(Processor* _proc)
 	Record record = {0};	
 	Subscriber sub = {0};
 	Operator oper = {0};
-/*	Subscriber* subFound;*/
 		
 	if (!_proc)
 	{
@@ -105,7 +95,6 @@ void* ProcessorRoutine(Processor* _proc)
 		if (err > -1)
 		{
 			++numOfMsgsRxed;
-/*			printf("Received msg from UI, msg rx num = %u\n", numOfMsgsRxed);*/
 			if (666 == uiMsg.m_data.m_uiCommand.m_command)
 			{
 				_proc->m_systemMode = 0;
@@ -117,7 +106,6 @@ void* ProcessorRoutine(Processor* _proc)
 		if (err > -1)
 		{
 			++numOfMsgsRxed;
-/*			printf("Received msg from feeder, msg rx num = %u\n", numOfMsgsRxed);*/
 			record = msg.m_data.m_rec;
 			strcpy(sub.m_imsi, record.m_imsi);
 			strcpy(sub.m_msisdn, record.m_msisdn);
@@ -194,15 +182,9 @@ void* ProcessorRoutine(Processor* _proc)
 					break;
 			}
 			
-/*			pthread_mutex_lock(&_proc->m_mutex);*/
-			
 			AccumulatorUpdateSubscriber(_proc->m_accum, &sub);
-/*			printf("Updated Subscriber\n");*/
+
 			AccumulatorUpdateOperator(_proc->m_accum, &oper);
-/*			printf("Updated Operator\n");*/
-			
-/*			pthread_mutex_unlock(&_proc->m_mutex);*/
-			
 		}	
 	}
 
@@ -213,8 +195,6 @@ void* ProcessorRoutine(Processor* _proc)
 int ProcessorRun(Processor* _proc)
 {
 	size_t index;
-	
-/*	Subscriber* subFound;*/
 	
 	if (NULL == _proc)
 	{
@@ -233,12 +213,6 @@ int ProcessorRun(Processor* _proc)
 	{
 		pthread_join(_proc->m_threadIDs[index], NULL);
 	}
-	
-	
-	
-	
-/*	AccumulatorGetSubscriber(_proc->m_accum, tempGlobal, &subFound);*/
-	
 	
 	return 0;
 }
