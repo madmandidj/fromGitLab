@@ -48,7 +48,7 @@ FeederManager* FeederManagerCreate()
 		return NULL;
 	}
 	
-	feedMngr->m_reader = ReaderCreate(1/*TODO:make this param*/,"./Reader/WORKING/TestCDRFile", feedMngr->m_trans, feedMngr->m_rcvr);
+	feedMngr->m_reader = ReaderCreate(1/*TODO:make this param*/,"./Reader/WORKING/TestCDRFile.cdr", feedMngr->m_trans, feedMngr->m_rcvr);
 	if(!feedMngr->m_reader)
 	{
 		ReceiverDestroy(feedMngr->m_rcvr);

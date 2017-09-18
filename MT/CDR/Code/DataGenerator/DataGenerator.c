@@ -21,8 +21,8 @@
 #define PARTYOP_STR_LENGTH 15
 
 
-#define RECORDS_NUM 100000
-#define RECORDS_NUM_STR "100000\n"
+#define RECORDS_NUM 10000
+#define RECORDS_NUM_STR "10000\n"
 
 
 static void InitGenerate()
@@ -136,7 +136,7 @@ void GenerateCDRFile()
 	size_t index;
 /*	unsigned int randomInt;*/
 	
-	fp = fopen("TestCDRFile", "w+");
+	fp = fopen("TestCDRFile.cdr", "w+");
 	
 	if (NULL != fp)
 	{
@@ -229,7 +229,7 @@ void GenerateCDRFile()
 	
 	fclose(fp);
 	
-	rename("TestCDRFile", "../Feeder/Reader/WORKING/TestCDRFile");
+	rename("TestCDRFile.cdr", "../Feeder/Reader/WORKING/TestCDRFile.cdr");
 	
 	return;
 }

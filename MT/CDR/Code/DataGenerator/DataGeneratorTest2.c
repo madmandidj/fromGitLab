@@ -1,6 +1,7 @@
 #include "DataGenerator.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define ARR_SIZE 10000
 
@@ -16,9 +17,13 @@ int main()
 	Subscriber* subArr;
 	Operator* operArr;
 	
+	
+	srand((unsigned int)time(NULL));
+	
 	recArr = malloc(ARR_SIZE * sizeof(Record));
 	subArr = malloc(ARR_SIZE * sizeof(Subscriber));
 	operArr = malloc(ARR_SIZE * sizeof(Operator));
+	
 			
 /*	for (index = 0; index < ARR_SIZE; ++index)*/
 /*	{*/

@@ -217,7 +217,7 @@ void* ReaderRoutine(Reader* _reader)
 		*/	 
 	}
 	
-	rename("TestCDRFile", "../DONE/TestCDRFile");
+	rename("./Reader/WORKING/TestCDRFile.cdr", "./Reader/DONE/TestCDRFile.cdr");
 	
 	return NULL;
 }
