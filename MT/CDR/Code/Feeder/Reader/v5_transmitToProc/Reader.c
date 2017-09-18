@@ -209,15 +209,10 @@ void* ReaderRoutine(Reader* _reader)
 			msg.m_data = data;
 			TransmitterSend(_reader->m_trans, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH);
 		}
-		
-		
-		
 		/*
 		Send to msgQ for processor
 		*/	 
 	}
-	
-	rename("TestCDRFile", "../DONE/TestCDRFile");
 	
 	return NULL;
 }
