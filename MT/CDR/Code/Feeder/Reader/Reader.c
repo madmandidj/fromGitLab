@@ -79,6 +79,40 @@ void ReaderDestroy(Reader* _reader)
 
 
 
+static void HandleUIMsg(Reader* _reader, Msg* _uiMsg, FILE* _fp)
+{
+	ssize_t err; 
+	
+	err = ReceiverReceive(_reader->m_rcvr, _uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);
+	if (err > -1)
+	{
+		switch (_uiMsg->m_data.m_uiCommand.m_command)
+		{	
+			case PAUSE:
+				/*
+				TODO: use pcond_wait to pause?
+				*/
+				break;
+		
+			case RESUME:
+				/*
+				TODO: use pcond_signal to resume?
+				*/
+				break;
+		
+			case SHUTDOWN:
+				if (!_fp)
+				{
+					fclose(_fp);	/* Check if this can corrupt file/data */
+				}
+				printf("reader received shutdown\n");
+				_reader->m_systemMode = 0;
+				return;
+		}
+	}
+	
+	return;	
+}
 
 
 
@@ -93,7 +127,7 @@ typedef void* (*ThreadRoutine)(void*);
 
 void* ReaderRoutine(Reader* _reader)
 {
-	ssize_t err;
+/*	ssize_t err;*/
 	Msg uiMsg = {0};
 	FILE* fp;
 	int isFeof = 0;
@@ -120,7 +154,12 @@ void* ReaderRoutine(Reader* _reader)
 		while(!isNewFile)
 		{
 			sleep(1);
+			if (!_reader->m_systemMode)
+			{
+				return NULL;
+			}
 			isNewFile = GetNewFilePath(newFileName, &_reader->m_newFileMutex);
+			HandleUIMsg(_reader, &uiMsg, fp);
 		}
 		
 		isFeof = 0;
@@ -131,15 +170,51 @@ void* ReaderRoutine(Reader* _reader)
 		
 		while (!isFeof)
 		{
-			err = ReceiverReceive(_reader->m_rcvr, &uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);
-			if (err > -1)
-			{
-				if (666 == uiMsg.m_data.m_uiCommand.m_command)
-				{
-					_reader->m_systemMode = 0; /* TODO: this does nothing in feeder for now */
-					continue;
-				}
-			}
+		
+		
+/*			err = ReceiverReceive(_reader->m_rcvr, &uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);*/
+/*			if (err > -1)*/
+/*			{*/
+/*				if (SHUTDOWN == uiMsg.m_data.m_uiCommand.m_command)*/
+/*				{*/
+/*					_reader->m_systemMode = 0; */ /* TODO: this does nothing in feeder for now */
+/*					continue;*/
+/*				}*/
+/*			}*/
+		
+		
+			
+/*			err = ReceiverReceive(_reader->m_rcvr, &uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);*/
+/*			if (err > -1)*/
+/*			{	*/
+/*				switch (uiMsg.m_data.m_uiCommand.m_command)*/
+/*				{	*/
+/*					case PAUSE:*/
+/*				*/
+/*						break;*/
+/*				*/
+/*					case RESUME:*/
+/*				*/
+/*						break;*/
+/*				*/
+/*					case SHUTDOWN:*/
+/*						fclose(fp);	*/
+/*						_reader->m_systemMode = 0;*/
+/*						return;*/
+/*				}*/
+/*			}*/
+
+
+
+			HandleUIMsg(_reader, &uiMsg, fp);
+
+			
+			
+			
+			
+			
+			
+			
 		
 			if (feof(fp))
 			{
@@ -154,6 +229,8 @@ void* ReaderRoutine(Reader* _reader)
 		
 			while (1)
 			{
+				HandleUIMsg(_reader, &uiMsg, fp);
+				
 				fgets(cdrLine, 512, fp);
 				if (feof(fp))
 				{

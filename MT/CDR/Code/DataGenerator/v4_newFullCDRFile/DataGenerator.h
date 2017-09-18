@@ -4,19 +4,18 @@
 #include "../CDRDataTypes/Record.h"
 #include "../CDRDataTypes/Subscriber.h"
 #include "../CDRDataTypes/Operator.h"
-#include <stdlib.h>
 
 
-typedef struct Params Params;
+void GenerateRecord(Record* _recordPtr);
 
-struct Params
-{
-	int m_numOfRecords;
-};
+void GenerateSubscriber(Subscriber* _subPtr);
 
-void DoGetOpt(int _argc, char* _argv[], Params* _params);
+void GenerateOperator(Operator* _opPtr);
 
-void GenerateCDRFile(int _numOfRecords);
+void GenerateCDRFile();
+
+
+
 
 #endif /*#ifndef __RECORD_GENERATOR_H__*/
 

@@ -84,7 +84,8 @@ void* ProcessorRoutine(Processor* _proc)
 	Record record = {0};	
 	Subscriber sub = {0};
 	Operator oper = {0};
-	size_t numOfSubs = 0;
+/*	size_t numOfSubs = 0;*/
+	Subscriber* subFound = {0};
 		
 	if (!_proc)
 	{
@@ -96,18 +97,62 @@ void* ProcessorRoutine(Processor* _proc)
 		err = ReceiverReceive(_proc->m_rcvr, &uiMsg, sizeof(Data), UI_TO_PROCESSOR, IPC_NOWAIT);
 		if (err > -1)
 		{
-			++numOfMsgsRxed;
-			if (666 == uiMsg.m_data.m_uiCommand.m_command)
+			++numOfMsgsRxed; /*TODO: is this really needed ?*/ 
+			
+			
+			switch (uiMsg.m_data.m_uiCommand.m_command)
 			{
-				_proc->m_systemMode = 0;
-				continue;
+				case SUBSCRIBER_QUERY:
+				
+/*					numOfSubs = AccumulatorPrintAllSubscribers(_proc->m_accum);*/
+					
+					if (AccumulatorGetSubscriber(_proc->m_accum, uiMsg.m_data.m_uiCommand.m_searchKey, &subFound))
+					{
+						printf("%s,%s,%u,%u,%u,%u,%u,%u,%u,%u,%f,%f\n", subFound->m_imsi, subFound->m_msisdn, subFound->m_outVoiceWithinOp, subFound->m_inVoiceWithinOp, subFound->m_outVoiceOutsideOp, subFound->m_inVoiceOutsideOp, subFound->m_outSmsWithinOp, subFound->m_inSmsWithinOp, subFound->m_outSmsOutsideOp, subFound->m_inSmsOutsideOp, subFound->m_downloadMB, subFound->m_uploadMB);
+					}
+					else
+					{
+						printf("Subscriber not found\n");
+					}
+					break;
+			
+				case OPERATOR_QUERY:
+				
+					break;
+			
+				case ALL_SUBSCRIBERS_QUERY:
+				
+					break;
+				
+				case ALL_OPERATORS_QUERY:
+				
+					break;
+				
+				case PAUSE:
+				
+					break;
+				
+				case RESUME:
+				
+					break;
+				
+				case SHUTDOWN:
+					_proc->m_systemMode = 0;
+					continue;
 			}
-			if (100 == uiMsg.m_data.m_uiCommand.m_command)
-			{
-				numOfSubs = AccumulatorPrintAllSubscribers(_proc->m_accum);
-				printf("Number of Subscribers = %u\n", numOfSubs);
-				continue;
-			}
+	
+/*			if (666 == uiMsg.m_data.m_uiCommand.m_command)*/
+/*			{*/
+/*				_proc->m_systemMode = 0;*/
+/*				continue;*/
+/*			}*/
+/*			if (100 == uiMsg.m_data.m_uiCommand.m_command)*/
+/*			{*/
+/*				numOfSubs = AccumulatorPrintAllSubscribers(_proc->m_accum);*/
+/*				printf("Number of Subscribers = %u\n", numOfSubs);*/
+/*				continue;*/
+/*			}*/	
+			
 		}
 		
 		err = ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH, IPC_NOWAIT);

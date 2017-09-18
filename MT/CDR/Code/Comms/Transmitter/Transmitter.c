@@ -47,6 +47,21 @@ void TransmitterDestroy(Transmitter* _trans)
 
 
 
+void TransmitterDestroyAndDisconnect(Transmitter* _trans)
+{
+	if (!_trans)
+	{
+		return;
+	}
+
+	MsgQDestroy(_trans->m_queueID, _trans->m_queueStats);
+	free(_trans);
+
+	return;
+
+}
+
+
 
 
 int TransmitterSend(Transmitter* _trans, Msg* _msg, size_t _msgSize, int _channel)

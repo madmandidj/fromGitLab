@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "../../Comms/ChannelDefs/ChannelDefs.h"
 
@@ -42,7 +43,7 @@ void UIManagerDestroy(UIManager* _uiMngr)
 		return;
 	}
 	
-	TransmitterDestroy(_uiMngr->m_trans);
+	TransmitterDestroyAndDisconnect(_uiMngr->m_trans);
 	free(_uiMngr);
 	
 	return;
@@ -88,31 +89,59 @@ int main()
 	UIManager* uiMngr;
 	Data data = {0};
 	int isRun = 1;
-	int userInput;
+	int queryType;
+	char queryValStr[32];
 	
 	uiMngr = UIManagerCreate();
 	
 	while(isRun)
 	{
-		printf("0: Shutdown\n1: Print All Subscribers\n");
-		scanf("%d", &userInput);
+		printf("1:\tSubscriber query\n2:***\tOperator query\n3:***\tAll Subscribers query\n4:***\tAll Operators query\n5:***\tPause\n6:***\tResume\n0:\tShutdown\n");
+		scanf("%d", &queryType);
 		
-		switch (userInput)
+		switch (queryType)
 		{
-			case 0:
-				data.m_uiCommand.m_command = 666;
-				isRun = 0;
+			case SUBSCRIBER_QUERY:
+				printf("Enter subscriber MSISDN\n");
+				scanf("%s", queryValStr);
+				data.m_uiCommand.m_command = SUBSCRIBER_QUERY;
+				strcpy(data.m_uiCommand.m_searchKey, queryValStr);
+				UIManagerSendCommand(uiMngr, data, UI_TO_PROCESSOR);
 				break;
 			
-			case 1:
-				data.m_uiCommand.m_command = 100;
-				UIManagerSendCommand(uiMngr, data, UI_TO_PROCESSOR);
+			case OPERATOR_QUERY:
+				
+				break;
+			
+			case ALL_SUBSCRIBERS_QUERY:
+				
+				break;
+				
+			case ALL_OPERATORS_QUERY:
+				
+				break;
+				
+			case PAUSE:
+				
+				break;
+				
+			case RESUME:
+				
+				break;
+				
+			case SHUTDOWN:
+				data.m_uiCommand.m_command = SHUTDOWN;
+				isRun = 0;
 				break;
 		}
 	}
-/*	sleep(1);*/
 	
 	UIManagerSendCommand(uiMngr, data, UI_TO_PROCESSOR);
+	UIManagerSendCommand(uiMngr, data, UI_TO_FEEDER);
+	
+	sleep(1);
+	
+	UIManagerDestroy(uiMngr);
 	
 	return 0;
 }

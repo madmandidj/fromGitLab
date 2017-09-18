@@ -67,8 +67,8 @@ void ProcessingManagerDestroy(ProcessingManager* _procMngr)
 		return;
 	}
 	
-/*	ReceiverDestroy(_procMngr->m_rcvr);*/
-	ReceiverDestroyAndDisconnect(_procMngr->m_rcvr);
+	ReceiverDestroy(_procMngr->m_rcvr);
+/*	ReceiverDestroyAndDisconnect(_procMngr->m_rcvr);*/
 	AccumulatorDestroy(_procMngr->m_accum);
 	ProcessorDestroy(_procMngr->m_proc);
 	free(_procMngr);

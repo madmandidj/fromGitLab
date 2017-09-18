@@ -22,6 +22,7 @@ struct Msg
 struct UIcommand
 {
 	unsigned int m_command;
+	char m_searchKey[32];
 };
 
 struct Data
