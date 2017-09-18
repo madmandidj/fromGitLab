@@ -7,7 +7,7 @@
 typedef struct FeederManager FeederManager;
 
 
-FeederManager* FeederManagerCreate(size_t _numOfReaders);
+FeederManager* FeederManagerCreate();
 
 void FeederManagerDestroy(FeederManager* _feederManager);
 

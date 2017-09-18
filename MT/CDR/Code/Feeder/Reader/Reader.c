@@ -1,10 +1,12 @@
 #include "Reader.h"
 #include "../../Comms/MsgQueue/MsgType.h"
 #include "../../Comms/ChannelDefs/ChannelDefs.h"
+#include "../NewFileWatcher/NewFileWatcher.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
 
 
 struct Reader
@@ -15,6 +17,7 @@ struct Reader
 	pthread_t*			m_threadIDs;
 	Transmitter*		m_trans;
 	Receiver*			m_rcvr;
+	pthread_mutex_t		m_newFileMutex;
 	/* Parser*			m_parser */
 };
 
@@ -40,6 +43,12 @@ Reader* ReaderCreate(unsigned int _numOfThreads, char* _cdrPath, Transmitter* _t
 		return NULL;
 	}
 	
+	if (pthread_mutex_init(&reader->m_newFileMutex, NULL))
+	{
+		free(reader->m_threadIDs);
+		free(reader);
+	}
+	
 	reader->m_trans = _trans;
 	
 	reader->m_rcvr = _rcvr;
@@ -61,6 +70,7 @@ void ReaderDestroy(Reader* _reader)
 		return;
 	}
 	
+	pthread_mutex_destroy(&_reader->m_newFileMutex);
 	free(_reader->m_threadIDs);
 	free(_reader);
 	
@@ -93,131 +103,149 @@ void* ReaderRoutine(Reader* _reader)
 	Record record = {0};
 	Data data = {0};
 	Msg msg = {0};
+	int isNewFile = 0;
+	char fopenFileName[64];
+	char newFileName[64];
+	char workPathName[64];
+	char donePathName[64];
+	
 	
 	
 	msg.m_channel = FEEDER_TO_PROCESSOR_CH;
-	fp = fopen(_reader->m_cdrPath, "r");
-	fseek(fp, 0, 0);
 	
-	while (!isFeof)
+	while (1)
 	{
-		err = ReceiverReceive(_reader->m_rcvr, &uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);
-		if (err > -1)
+		
+		isNewFile = GetNewFilePath(newFileName, &_reader->m_newFileMutex);
+		while(!isNewFile)
 		{
-			if (666 == uiMsg.m_data.m_uiCommand.m_command)
+			sleep(1);
+			isNewFile = GetNewFilePath(newFileName, &_reader->m_newFileMutex);
+		}
+		
+		isFeof = 0;
+		strcpy(fopenFileName, _reader->m_cdrPath);
+		strcat(fopenFileName, newFileName);
+		fp = fopen(fopenFileName, "r");
+		fseek(fp, 0, 0);
+		
+		while (!isFeof)
+		{
+			err = ReceiverReceive(_reader->m_rcvr, &uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);
+			if (err > -1)
 			{
-				_reader->m_systemMode = 0; /* TODO: this does nothing in feeder for now */
-				continue;
+				if (666 == uiMsg.m_data.m_uiCommand.m_command)
+				{
+					_reader->m_systemMode = 0; /* TODO: this does nothing in feeder for now */
+					continue;
+				}
 			}
-		}
 		
-		if (feof(fp))
-    	{
-    		isFeof = 1;
-        	break;
-    	}
-    	else
-    	{
-			fgets(cdrLine, 512, fp);
-/*			token = strtok(cdrLine, "|\n");*/
-			token = strtok_r(cdrLine, "|\n", &cdrLinePtr);
-		}
-		
-		while (1)
-    	{
-			fgets(cdrLine, 512, fp);
 			if (feof(fp))
-	    	{
-	    		isFeof = 1;
-	        	break;
-	    	}
-			
-			/* Get IMSI */
-/*			token = strtok(cdrLine, "|");*/
-			token = strtok_r(cdrLine, "|", &cdrLinePtr);
-			strcpy(record.m_imsi, token);
-			
-			/* Get MSISDN */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			strcpy(record.m_msisdn, token);
-			
-			/* Get IMEI */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			strcpy(record.m_imei, token);
-			
-			/* Get OpBrand */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			strcpy(record.m_operatorBrand, token);
-			
-			/* Get OPMccMnc */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			strcpy(record.m_operatorMCCMNC, token);
-			
-			/* Get Call type */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			if (!strcmp(token, "MOC"))
 			{
-				record.m_callType = 0;
+				isFeof = 1;
+		    	break;
 			}
-			else if (!strcmp(token, "MTC"))
+			else
 			{
-				record.m_callType = 1;
+				fgets(cdrLine, 512, fp);
+				token = strtok_r(cdrLine, "|\n", &cdrLinePtr);
 			}
-			else if (!strcmp(token, "SMS_MO"))
+		
+			while (1)
 			{
-				record.m_callType = 2;
-			}
-			else if (!strcmp(token, "SMS_MT"))
-			{
-				record.m_callType = 3;
-			}
-			else /* GPRS */
-			{
-				record.m_callType = 4;
-			}
+				fgets(cdrLine, 512, fp);
+				if (feof(fp))
+				{
+					isFeof = 1;
+			    	break;
+				}
+			
+				/* Get IMSI */
+				token = strtok_r(cdrLine, "|", &cdrLinePtr);
+				strcpy(record.m_imsi, token);
+			
+				/* Get MSISDN */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				strcpy(record.m_msisdn, token);
+			
+				/* Get IMEI */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				strcpy(record.m_imei, token);
+			
+				/* Get OpBrand */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				strcpy(record.m_operatorBrand, token);
+			
+				/* Get OPMccMnc */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				strcpy(record.m_operatorMCCMNC, token);
+			
+				/* Get Call type */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				if (!strcmp(token, "MOC"))
+				{
+					record.m_callType = 0;
+				}
+				else if (!strcmp(token, "MTC"))
+				{
+					record.m_callType = 1;
+				}
+				else if (!strcmp(token, "SMS_MO"))
+				{
+					record.m_callType = 2;
+				}
+				else if (!strcmp(token, "SMS_MT"))
+				{
+					record.m_callType = 3;
+				}
+				else /* GPRS */
+				{
+					record.m_callType = 4;
+				}
 
-			/* Get Call Date */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			strcpy(record.m_callDate, token);
+				/* Get Call Date */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				strcpy(record.m_callDate, token);
 			
-			/* Get Call Time */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			strcpy(record.m_callTime, token);
+				/* Get Call Time */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				strcpy(record.m_callTime, token);
 			
-			/* Get Duration */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			record.m_duration = (unsigned int)atoi(token);
+				/* Get Duration */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				record.m_duration = (unsigned int)atoi(token);
 			
-			/* Get Download */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			record.m_downloadMB = strtof(token, NULL);
+				/* Get Download */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				record.m_downloadMB = strtof(token, NULL);
 			
-			/* Get Upload */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			record.m_uploadMB = strtof(token, NULL);
+				/* Get Upload */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				record.m_uploadMB = strtof(token, NULL);
 			
-			/* Get Party MSISDN */
-			token = strtok_r(NULL, "|", &cdrLinePtr);
-			strcpy(record.m_partyMsisdn, token);
+				/* Get Party MSISDN */
+				token = strtok_r(NULL, "|", &cdrLinePtr);
+				strcpy(record.m_partyMsisdn, token);
 			
-			/* Get Party Operator */
-			token = strtok_r(NULL, "|\n", &cdrLinePtr);
-			strcpy(record.m_partyMCCMNC, token);
+				/* Get Party Operator */
+				token = strtok_r(NULL, "|\n", &cdrLinePtr);
+				strcpy(record.m_partyMCCMNC, token);
 			
-			/* Send Record to processor */
-			data.m_rec = record;
-			msg.m_data = data;
-			TransmitterSend(_reader->m_trans, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH);
+				/* Send Record to processor */
+				data.m_rec = record;
+				msg.m_data = data;
+				TransmitterSend(_reader->m_trans, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH);
+			}
 		}
-		
-		
-		
-		/*
-		Send to msgQ for processor
-		*/	 
+		strcpy(workPathName, "./NewFileWatcher/WORKING/");
+		strcat(workPathName, newFileName);
+		strcpy(donePathName, "./NewFileWatcher/DONE/");
+		strcat(donePathName, newFileName);
+		rename(workPathName, donePathName);
+		fclose(fp);		
+/*		rename("./NewFileWatcher/WORKING/TestCDRFile.cdr", "./NewFileWatcher/DONE/TestCDRFile.cdr");*/
 	}
-	
-	rename("./Reader/WORKING/TestCDRFile.cdr", "./Reader/DONE/TestCDRFile.cdr");
 	
 	return NULL;
 }
@@ -256,6 +284,8 @@ int ReaderRun(Reader* _reader)
 	
 	return 1;
 }
+
+
 
 
 

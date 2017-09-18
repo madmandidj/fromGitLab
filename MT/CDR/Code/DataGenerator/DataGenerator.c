@@ -21,8 +21,8 @@
 #define PARTYOP_STR_LENGTH 15
 
 
-#define RECORDS_NUM 10000
-#define RECORDS_NUM_STR "10000\n"
+#define RECORDS_NUM 1000000
+#define RECORDS_NUM_STR "1000000\n"
 
 
 static void InitGenerate()
@@ -229,7 +229,7 @@ void GenerateCDRFile()
 	
 	fclose(fp);
 	
-	rename("TestCDRFile.cdr", "../Feeder/Reader/WORKING/TestCDRFile.cdr");
+	rename("TestCDRFile.cdr", "../Feeder/NewFileWatcher/NEW/TestCDRFile.cdr");
 	
 	return;
 }

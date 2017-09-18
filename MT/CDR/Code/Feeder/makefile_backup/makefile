@@ -2,13 +2,12 @@ FLAGS = -g -ansi -pedantic -Wall -Wconversion -Werror -pthread -m32
 OBJ_PATH = ./obj/
 FEEDMNGR_PATH = ./FeederManager/
 READER_PATH = ./Reader/
-NEWFILEWATCH_PATH = ./NewFileWatcher/
 DATAGEN_PATH = ../DataGenerator/
 TRNS_PATH = ../Comms/Transmitter/
 RCVR_PATH = ../Comms/Receiver/
 MSGQ_PATH = ../Comms/MsgQueue/
 CHDEFS_PATH = ../Comms/ChannelDefs/
-objects = $(OBJ_PATH)MsgQ.o $(OBJ_PATH)Receiver.o $(OBJ_PATH)Transmitter.o $(OBJ_PATH)DataGenerator.o $(OBJ_PATH)NewFileWatcher.o $(OBJ_PATH)Reader.o $(OBJ_PATH)FeederManager.o
+objects = $(OBJ_PATH)MsgQ.o $(OBJ_PATH)Receiver.o $(OBJ_PATH)Transmitter.o $(OBJ_PATH)DataGenerator.o $(OBJ_PATH)Reader.o $(OBJ_PATH)FeederManager.o
 
 
 TestFeedMngr: $(objects) 
@@ -34,13 +33,6 @@ $(OBJ_PATH)Reader.o: $(READER_PATH)Reader.c \
 							$(RCVR_PATH)Receiver.h 		
 	gcc $(FLAGS) -c  $(READER_PATH)Reader.c 
 	mv Reader.o $(OBJ_PATH)	
-	
-	
-	
-$(OBJ_PATH)NewFileWatcher.o: $(NEWFILEWATCH_PATH)NewFileWatcher.c \
-							$(NEWFILEWATCH_PATH)NewFileWatcher.h 	
-	gcc $(FLAGS) -c  $(NEWFILEWATCH_PATH)NewFileWatcher.c 
-	mv NewFileWatcher.o $(OBJ_PATH)	
 	
 	
 	

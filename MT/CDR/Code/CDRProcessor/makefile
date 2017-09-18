@@ -1,4 +1,4 @@
-FLAGS = -g -ansi -pedantic -Wall -Wconversion -Werror -pthread 
+FLAGS = -g -ansi -pedantic -Wall -Wconversion -Werror -pthread -m32
 OBJ_PATH = ./obj/
 PROCMNGR_PATH = ./ProcessingManager/
 PROC_PATH = ./Processor/

@@ -18,7 +18,7 @@ struct FeederManager
 
 
 
-FeederManager* FeederManagerCreate(size_t _numOfReaders)
+FeederManager* FeederManagerCreate()
 {
 /*	Transmitter* trans;*/
 /*	Receiver* rcvr;*/
@@ -48,7 +48,7 @@ FeederManager* FeederManagerCreate(size_t _numOfReaders)
 		return NULL;
 	}
 	
-	feedMngr->m_reader = ReaderCreate(_numOfReaders,"./NewFileWatcher/WORKING/", feedMngr->m_trans, feedMngr->m_rcvr);
+	feedMngr->m_reader = ReaderCreate(1/*TODO:make this param*/,"./Reader/WORKING/TestCDRFile.cdr", feedMngr->m_trans, feedMngr->m_rcvr);
 	if(!feedMngr->m_reader)
 	{
 		ReceiverDestroy(feedMngr->m_rcvr);
@@ -109,32 +109,26 @@ int FeederManagerSendCDR(FeederManager* _feedMngr, Data _data)
 int main()
 {
 	FeederManager* feedMngr;
-		
-	feedMngr = FeederManagerCreate(2);
+/*	Data data;*/
+/*	size_t index;*/
+/*	size_t reps = 1000;*/
+	
+	feedMngr = FeederManagerCreate();
+	
+/*	for (index = 0; index < reps; ++index)*/
+/*	{*/
+/*		GenerateRecord(&data.m_rec);*/
+
+/*		FeederManagerSendCDR(feedMngr, data);*/
+/*	}*/
+/*	*/
+/*	sleep(5);*/
 
 	ReaderRun(feedMngr->m_reader);
 
+	
+	
 	FeederManagerDestroy(feedMngr);
-
-
-	/*
-	create feederManager
-	run NewFileWatcher
-	while(system mode is running)
-	{
-		for(max_num_of_CDRs)
-		{
-			if(CDR_state[index] == 0)
-			{
-				call ReaderRun for CDR file [index]
-			}
-			if(CDR_state[index] == 1)
-			{
-				continue
-			}
-		}
-	}
-	*/
 
 	return 0;
 }
