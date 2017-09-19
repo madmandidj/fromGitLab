@@ -2,14 +2,13 @@
 #include <stdlib.h>
 
 
+
 struct Receiver
 {
 	key_t 		m_queueKey;
 	int 		m_queueID;
 	msqid_ds*	m_queueStats;
 };
-
-
 
 
 
@@ -30,8 +29,6 @@ Receiver* ReceiverCreate(char* _myPathToMsgQ)
 
 
 
-
-
 void ReceiverDestroyAndDisconnect(Receiver* _rcvr)
 {
 	if (!_rcvr)
@@ -40,11 +37,11 @@ void ReceiverDestroyAndDisconnect(Receiver* _rcvr)
 	}
 	
 	MsgQDestroy(_rcvr->m_queueID, _rcvr->m_queueStats);
+	
 	free(_rcvr);
 
 	return;
 }
-
 
 
 
@@ -55,13 +52,10 @@ void ReceiverDestroy(Receiver* _rcvr)
 		return;
 	}
 	
-/*	MsgQDestroy(_rcvr->m_queueID, _rcvr->m_queueStats);*/
 	free(_rcvr);
 
 	return;
 }
-
-
 
 
 
@@ -78,11 +72,6 @@ ssize_t ReceiverReceive(Receiver* _rcvr, Msg* _msg, size_t _msgSize, int _channe
 
 	return err;
 }
-
-
-
-
-
 
 
 

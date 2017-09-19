@@ -20,13 +20,8 @@ struct FeederManager
 
 
 FeederManager* FeederManagerCreate(size_t _numOfReaders)
-{
-/*	Transmitter* trans;*/
-/*	Receiver* rcvr;*/
-/*	Reader* reader;*/
+{	
 	FeederManager* feedMngr;
-	
-	
 	
 	feedMngr = malloc(sizeof(FeederManager));
 	if (!feedMngr)
@@ -63,8 +58,6 @@ FeederManager* FeederManagerCreate(size_t _numOfReaders)
 
 
 
-
-
 void FeederManagerDestroy(FeederManager* _feedMngr)
 {
 	if (!_feedMngr)
@@ -82,70 +75,23 @@ void FeederManagerDestroy(FeederManager* _feedMngr)
 
 
 
-
-
-int FeederManagerSendCDR(FeederManager* _feedMngr, Data _data)
-{
-	Msg msg;
-	
-	if (!_feedMngr)
-	{
-		return 0;
-	}
-	
-	msg.m_channel = FEEDER_TO_PROCESSOR_CH;
-	msg.m_data = _data;
-	
-	TransmitterSend(_feedMngr->m_trans, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH);
-
-	return 1;
-}
-
-
-
-
-
-
-
 int main()
 {
 	FeederManager* feedMngr;
+	size_t numOfReaders = 2;
 		
-	feedMngr = FeederManagerCreate(2);
+	feedMngr = FeederManagerCreate(numOfReaders);
+	
 	printf("***Feeder***\n");
+	
 	printf("Running Feeder\n");
+	
 	ReaderRun(feedMngr->m_reader);
 
 	FeederManagerDestroy(feedMngr);
 
-
-	/*
-	create feederManager
-	run NewFileWatcher
-	while(system mode is running)
-	{
-		for(max_num_of_CDRs)
-		{
-			if(CDR_state[index] == 0)
-			{
-				call ReaderRun for CDR file [index]
-			}
-			if(CDR_state[index] == 1)
-			{
-				continue
-			}
-		}
-	}
-	*/
-
 	return 0;
 }
-
-
-
-
-
-
 
 
 

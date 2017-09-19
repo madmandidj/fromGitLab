@@ -5,13 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
-
-
 #define NEW_FILE_PATH "./NewFileWatcher/NEW/"
 #define WORKING_FILE_PATH "./NewFileWatcher/WORKING/"
 #define DONE_FILE_PATH "./NewFileWatcher/DONE/"
-
-
 
 
 
@@ -22,9 +18,6 @@ int	GetNewFilePath(char* _fileName, pthread_mutex_t* _newFileMutex)
 	char* fileName;
 	char* fileExt;
 	size_t index;
-/*	char newFilePath[] = NEW_FILE_PATH;*/
-/*	char workingFilePath[] = WORKING_FILE_PATH;*/
-/*	char donePath[] = DONE_FILE_PATH;*/
 	char oldFile[128];
 	char newFile[128];
 
@@ -66,8 +59,6 @@ int	GetNewFilePath(char* _fileName, pthread_mutex_t* _newFileMutex)
 			strcat(newFile, ".");
 			strcat(newFile, fileExt);
 			
-/*			printf("%s\n", oldFile);*/
-/*			printf("%s\n", newFile);*/
 			printf("New file detected: %s\n", newFile);
 			rename(oldFile, newFile);
 			for (index = 0; index < numOfFiles; ++index)
@@ -78,7 +69,6 @@ int	GetNewFilePath(char* _fileName, pthread_mutex_t* _newFileMutex)
 			pthread_mutex_unlock(_newFileMutex);
 			return 1;
 		}
-/*		printf("End of parse\n");*/
 	}
 	
 	
@@ -91,42 +81,6 @@ int	GetNewFilePath(char* _fileName, pthread_mutex_t* _newFileMutex)
    pthread_mutex_unlock(_newFileMutex);
 	return 0;
 }
-
-
-
-/*
-int main()
-{
-	char filename[64];
-	pthread_mutex_t newFileMutex;
-	int result;
-	
-	
-	pthread_mutex_init(&newFileMutex, NULL);
-	
-	result = GetNewFilePath(filename, &newFileMutex);
-	if(1 == result)
-	{
-		printf("filename = %s\n", filename);
-	}
-	else
-	{
-		printf("No file detected\n");
-	}
-	
-	pthread_mutex_destroy(&newFileMutex);
-	
-	return 0;
-}
-
-*/
-
-
-
-
-
-
-
 
 
 

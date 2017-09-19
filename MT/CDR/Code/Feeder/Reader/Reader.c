@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 
+
 struct Reader
 {
 	unsigned int		m_systemMode;
@@ -18,9 +19,11 @@ struct Reader
 	Transmitter*		m_trans;
 	Receiver*			m_rcvr;
 	pthread_mutex_t		m_newFileMutex;
-	/* Parser*			m_parser */
 };
 
+
+
+typedef void* (*ThreadRoutine)(void*);
 
 
 
@@ -59,7 +62,6 @@ Reader* ReaderCreate(unsigned int _numOfThreads, char* _cdrPath, Transmitter* _t
 	
 	return reader;
 }
-
 
 
 
@@ -116,18 +118,8 @@ static void HandleUIMsg(Reader* _reader, Msg* _uiMsg, FILE* _fp)
 
 
 
-
-
-
-typedef void* (*ThreadRoutine)(void*);
-
-
-
-
-
 void* ReaderRoutine(Reader* _reader)
 {
-/*	ssize_t err;*/
 	Msg uiMsg = {0};
 	FILE* fp;
 	int isFeof = 0;
@@ -143,14 +135,13 @@ void* ReaderRoutine(Reader* _reader)
 	char workPathName[64];
 	char donePathName[64];
 	
-	
-	
 	msg.m_channel = FEEDER_TO_PROCESSOR_CH;
 	
 	while (1)
 	{
 		
 		isNewFile = GetNewFilePath(newFileName, &_reader->m_newFileMutex);
+		
 		while(!isNewFile)
 		{
 			sleep(1);
@@ -163,61 +154,21 @@ void* ReaderRoutine(Reader* _reader)
 		}
 		
 		isFeof = 0;
+		
 		strcpy(fopenFileName, _reader->m_cdrPath);
+		
 		strcat(fopenFileName, newFileName);
+		
 		fp = fopen(fopenFileName, "r");
+		
 		fseek(fp, 0, 0);
 		
 		printf("Starting to read from: %s\n", fopenFileName);
 		
 		while (!isFeof)
 		{
-		
-		
-/*			err = ReceiverReceive(_reader->m_rcvr, &uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);*/
-/*			if (err > -1)*/
-/*			{*/
-/*				if (SHUTDOWN == uiMsg.m_data.m_uiCommand.m_command)*/
-/*				{*/
-/*					_reader->m_systemMode = 0; */ /* TODO: this does nothing in feeder for now */
-/*					continue;*/
-/*				}*/
-/*			}*/
-		
-		
-			
-/*			err = ReceiverReceive(_reader->m_rcvr, &uiMsg, sizeof(Data), UI_TO_FEEDER, IPC_NOWAIT);*/
-/*			if (err > -1)*/
-/*			{	*/
-/*				switch (uiMsg.m_data.m_uiCommand.m_command)*/
-/*				{	*/
-/*					case PAUSE:*/
-/*				*/
-/*						break;*/
-/*				*/
-/*					case RESUME:*/
-/*				*/
-/*						break;*/
-/*				*/
-/*					case SHUTDOWN:*/
-/*						fclose(fp);	*/
-/*						_reader->m_systemMode = 0;*/
-/*						return;*/
-/*				}*/
-/*			}*/
-
-
-
 			HandleUIMsg(_reader, &uiMsg, fp);
 
-			
-			
-			
-			
-			
-			
-			
-		
 			if (feof(fp))
 			{
 				isFeof = 1;
@@ -242,26 +193,32 @@ void* ReaderRoutine(Reader* _reader)
 			
 				/* Get IMSI */
 				token = strtok_r(cdrLine, "|", &cdrLinePtr);
+				
 				strcpy(record.m_imsi, token);
 			
 				/* Get MSISDN */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				strcpy(record.m_msisdn, token);
 			
 				/* Get IMEI */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				strcpy(record.m_imei, token);
 			
 				/* Get OpBrand */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				strcpy(record.m_operatorBrand, token);
 			
 				/* Get OPMccMnc */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				strcpy(record.m_operatorMCCMNC, token);
 			
 				/* Get Call type */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				if (!strcmp(token, "MOC"))
 				{
 					record.m_callType = 0;
@@ -285,58 +242,64 @@ void* ReaderRoutine(Reader* _reader)
 
 				/* Get Call Date */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				strcpy(record.m_callDate, token);
 			
 				/* Get Call Time */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				strcpy(record.m_callTime, token);
 			
 				/* Get Duration */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				record.m_duration = (unsigned int)atoi(token);
 			
 				/* Get Download */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				record.m_downloadMB = strtof(token, NULL);
 			
 				/* Get Upload */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				record.m_uploadMB = strtof(token, NULL);
 			
 				/* Get Party MSISDN */
 				token = strtok_r(NULL, "|", &cdrLinePtr);
+				
 				strcpy(record.m_partyMsisdn, token);
 			
 				/* Get Party Operator */
 				token = strtok_r(NULL, "|\n", &cdrLinePtr);
+				
 				strcpy(record.m_partyMCCMNC, token);
 			
 				/* Send Record to processor */
 				data.m_rec = record;
+				
 				msg.m_data = data;
+				
 				TransmitterSend(_reader->m_trans, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH);
 			}
 		}
 		strcpy(workPathName, "./NewFileWatcher/WORKING/");
+		
 		strcat(workPathName, newFileName);
+		
 		strcpy(donePathName, "./NewFileWatcher/DONE/");
+		
 		strcat(donePathName, newFileName);
+		
 		rename(workPathName, donePathName);
+		
 		fclose(fp);	
+		
 		printf("Finished reading from: %s\n", fopenFileName);	
-/*		rename("./NewFileWatcher/WORKING/TestCDRFile.cdr", "./NewFileWatcher/DONE/TestCDRFile.cdr");*/
 	}
 	
 	return NULL;
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -364,9 +327,6 @@ int ReaderRun(Reader* _reader)
 	
 	return 1;
 }
-
-
-
 
 
 

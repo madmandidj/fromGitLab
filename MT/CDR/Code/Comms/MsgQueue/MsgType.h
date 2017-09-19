@@ -1,23 +1,21 @@
 #ifndef __MSG_TYPE_H__
 #define __MSG_TYPE_H__
-
-
 #include "../ChannelDefs/ChannelDefs.h"
 #include "../../CDRDataTypes/Record.h"
 
+
+
 typedef struct Msg Msg;
+
+
 
 typedef struct Data Data;
 
+
+
 typedef struct UIcommand UIcommand;
 
-/*
-struct Msg
-{
-    long 	m_channel;
-    Record 	m_data; 
-};
-*/
+
 
 struct UIcommand
 {
@@ -25,11 +23,14 @@ struct UIcommand
 	char m_searchKey[32];
 };
 
+
+
 struct Data
 {
 	Record 		m_rec;
 	UIcommand 	m_uiCommand;
 };
+
 
 
 struct Msg
@@ -40,12 +41,7 @@ struct Msg
 
 
 
-
-
 #endif /*#ifndef __MSG_TYPE_H__*/
-
-
-
 
 
 

@@ -4,18 +4,13 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdio.h>
-
-/*#define SUBSCRIBERS_HASH_CAPACITY 	10000*/
-/*#define OPERATORS_HASH_CAPACITY 	1000*/
-
-
 #define SUBSCRIBERS_HASH_CAPACITY 	100000
 #define OPERATORS_HASH_CAPACITY 	10000
 
 
+
 struct Accumulator
 {
-/*	pthread_t*			m_threadIDs;*/
 	Container*			m_contSub;
 	Container*			m_contOp;
 	unsigned int		m_numOfSub;
@@ -49,12 +44,11 @@ Accumulator* AccumulatorCreate()
 		return NULL;
 	}
 	
-/*	accum->m_threadIDs = NULL;*/
-	
 	accum->m_contSub = ContainerCreate(SUBSCRIBERS_HASH_CAPACITY, (EqualityFunction)ContainerDataEqualityFunc);
 	if (!accum->m_contSub)
 	{
 		free(accum);
+		
 		return NULL;
 	}
 	
@@ -62,11 +56,14 @@ Accumulator* AccumulatorCreate()
 	if (!accum->m_contOp)
 	{
 		free(accum->m_contSub);
+		
 		free(accum);
+		
 		return NULL;
 	}
 	
 	accum->m_numOfSub = 0;
+	
 	accum->m_numOfOp = 0;
 	
 	return accum;
@@ -135,15 +132,17 @@ int AccumulatorUpdateSubscriber(Accumulator* _accum, Subscriber* _sub)
 	}
 	
 	err = ContainerGetElement(_accum->m_contSub, _sub->m_msisdn, (void**)&subFound);
-/*	printf("Finished container get element subscriber\n"); */
+
 	if (0 == err)
 	{
 		newSub = malloc(sizeof(Subscriber)); /* TODO: handle error */
 		
 		*newSub = *_sub;
+		
 		ContainerInsertElement(_accum->m_contSub, newSub->m_msisdn, newSub); /* TODO: handle error */
+		
 		++_accum->m_numOfSub;
-/*		printf("Finished container insert element subscriber\n");*/
+		
 		return 1;
 	}
 	
@@ -174,24 +173,31 @@ int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
 		return 0;
 	}
 	
-/*	printf("Starting container get element operator\n"); */
 	err = ContainerGetElement(_accum->m_contOp, _oper->m_operatorMCCMNC, (void**)&operFound);
-/*	printf("Finished container get element operator\n"); */
+
 	if (0 == err)
 	{
 		newOper = malloc(sizeof(Operator));
+		
 		*newOper = *_oper;
+		
 		ContainerInsertElement(_accum->m_contOp,  newOper->m_operatorMCCMNC, newOper);
+		
 		++_accum->m_numOfOp;
-/*		printf("Finished container insert element operator\n"); */
+		
 		return 1;
 	}
 	
 	operFound->m_outVoice += _oper->m_outVoice;
+	
 	operFound->m_inVoice += _oper->m_inVoice;
+	
 	operFound->m_outSms += _oper->m_outSms;
+	
 	operFound->m_inSms += _oper->m_inSms;
+	
 	operFound->m_downloadMB += _oper->m_downloadMB;
+	
 	operFound->m_uploadMB += _oper->m_uploadMB;
 	
 	return 1;
@@ -199,15 +205,10 @@ int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
 
 
 
-
 size_t AccumulatorPrintAllSubscribers(Accumulator* _accum)
 {
-/*	return _accum->m_numOfSub;*/
 	return ContainerPrintAllElements(_accum->m_contSub);
 }
-
-
-
 
 
 

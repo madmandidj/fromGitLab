@@ -6,8 +6,9 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <syscall.h> /* syscall gettid */
-
 #define PROCESSOR_MAGIC 0x0C111111
+
+
 
 struct Processor
 {
@@ -18,6 +19,10 @@ struct Processor
 	Accumulator*		m_accum;
 	Receiver*			m_rcvr;
 };
+
+
+
+typedef void* (*ThreadRoutine)(void*);
 
 
 
@@ -53,10 +58,6 @@ Processor* ProcessorCreate(Accumulator* _accum, Receiver* _rcvr, unsigned int _n
 
 
 
-
-
-
-
 void ProcessorDestroy(Processor* _proc)
 {
 	if (!_proc)
@@ -71,10 +72,6 @@ void ProcessorDestroy(Processor* _proc)
 
 
 
-
-typedef void* (*ThreadRoutine)(void*);
-
-
 void* ProcessorRoutine(Processor* _proc)
 {
 	static unsigned int numOfMsgsRxed = 0;
@@ -84,8 +81,8 @@ void* ProcessorRoutine(Processor* _proc)
 	Record record = {0};	
 	Subscriber sub = {0};
 	Operator oper = {0};
-/*	size_t numOfSubs = 0;*/
 	Subscriber* subFound = {0};
+	size_t forAllCount;
 		
 	if (!_proc)
 	{
@@ -98,7 +95,6 @@ void* ProcessorRoutine(Processor* _proc)
 		if (err > -1)
 		{
 			++numOfMsgsRxed; /*TODO: is this really needed ?*/ 
-			
 			
 			switch (uiMsg.m_data.m_uiCommand.m_command)
 			{
@@ -121,7 +117,9 @@ void* ProcessorRoutine(Processor* _proc)
 			
 				case ALL_SUBSCRIBERS_QUERY:
 					
-					AccumulatorPrintAllSubscribers(_proc->m_accum);
+					forAllCount = AccumulatorPrintAllSubscribers(_proc->m_accum);
+					
+					printf("Number of unique subscribers = %u\n", forAllCount);
 				
 					break;
 				
@@ -140,31 +138,22 @@ void* ProcessorRoutine(Processor* _proc)
 				case SHUTDOWN:
 					_proc->m_systemMode = 0;
 					continue;
-			}
-	
-/*			if (666 == uiMsg.m_data.m_uiCommand.m_command)*/
-/*			{*/
-/*				_proc->m_systemMode = 0;*/
-/*				continue;*/
-/*			}*/
-/*			if (100 == uiMsg.m_data.m_uiCommand.m_command)*/
-/*			{*/
-/*				numOfSubs = AccumulatorPrintAllSubscribers(_proc->m_accum);*/
-/*				printf("Number of Subscribers = %u\n", numOfSubs);*/
-/*				continue;*/
-/*			}*/	
-			
+			}	
 		}
 		
 		err = ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH, IPC_NOWAIT);
 		if (err > -1)
 		{
-/*			printf("tid = %ld\n", syscall(SYS_gettid));*/
 			++numOfMsgsRxed;
+			
 			record = msg.m_data.m_rec;
+			
 			strcpy(sub.m_imsi, record.m_imsi);
+			
 			strcpy(sub.m_msisdn, record.m_msisdn);
+			
 			strcpy(oper.m_operatorBrand, record.m_operatorBrand);
+			
 			strcpy(oper.m_operatorMCCMNC, record.m_operatorMCCMNC);
 	
 			switch(record.m_callType)
@@ -227,13 +216,18 @@ void* ProcessorRoutine(Processor* _proc)
 		
 				case GPRS:
 						sub.m_downloadMB = record.m_downloadMB;
+						
 						sub.m_uploadMB = record.m_uploadMB;
+						
 						oper.m_downloadMB = record.m_downloadMB;
+						
 						oper.m_uploadMB = record.m_uploadMB;
+						
 					break;
 			
 				default:
 						printf("Wrong Processor Routine Parsing");
+						
 					break;
 			}
 			
@@ -245,6 +239,7 @@ void* ProcessorRoutine(Processor* _proc)
 
 	return NULL;
 }
+
 
 
 int ProcessorRun(Processor* _proc)
@@ -271,20 +266,6 @@ int ProcessorRun(Processor* _proc)
 	
 	return 1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

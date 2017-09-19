@@ -1,11 +1,9 @@
 #include "UIManager.h"
+#include "../../Comms/ChannelDefs/ChannelDefs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-
-#include "../../Comms/ChannelDefs/ChannelDefs.h"
-
 
 
 
@@ -13,6 +11,7 @@ struct UIManager
 {
 	Transmitter* m_trans;
 };
+
 
 
 UIManager* UIManagerCreate()
@@ -36,6 +35,7 @@ UIManager* UIManagerCreate()
 }
 
 
+
 void UIManagerDestroy(UIManager* _uiMngr)
 {
 	if (!_uiMngr)
@@ -48,10 +48,6 @@ void UIManagerDestroy(UIManager* _uiMngr)
 	
 	return;
 }
-
-
-
-
 
 
 
@@ -73,14 +69,6 @@ int UIManagerSendCommand(UIManager* _uiMngr, Data _data, int _channel)
 
 
 }
-
-
-
-
-
-
-
-
 
 
 
