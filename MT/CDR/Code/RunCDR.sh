@@ -20,9 +20,7 @@ cd ../..
 cd ./DataGenerator
 make clean
 make
-./TestDataGenerator -n 10000
-./TestDataGenerator -n 10000
-./TestDataGenerator -n 10000
+./TestDataGenerator -n 100000
 cd ..
 
 cd ./CDRProcessor

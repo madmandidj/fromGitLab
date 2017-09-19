@@ -94,6 +94,8 @@ int main()
 	
 	uiMngr = UIManagerCreate();
 	
+	printf("***User Interface***\n");
+	
 	while(isRun)
 	{
 		printf("1:\tSubscriber query\n2:***\tOperator query\n3:***\tAll Subscribers query\n4:***\tAll Operators query\n5:***\tPause\n6:***\tResume\n0:\tShutdown\n");

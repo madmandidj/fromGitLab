@@ -85,11 +85,12 @@ int main()
 {
 	size_t numOfProcThreads = 100;
 	ProcessingManager* procMngr;
-	
+	printf("***CDR Processor***\n");
 	procMngr = ProcessingManagerCreate(numOfProcThreads);
+	printf("Running processor\n");
 	ProcessorRun(procMngr->m_proc);
 	ProcessingManagerDestroy(procMngr);
-	printf("here");
+/*	printf("here");*/
 	
 	return 0;
 

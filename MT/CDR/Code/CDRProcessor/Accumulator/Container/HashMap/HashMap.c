@@ -118,7 +118,7 @@ static HashMap* AllocateHashMap(size_t _hashSize)
 	
 	hashMap->m_numOfMutex = (size_t)ceil(_hashSize/MUTEX_NUM_FACTOR);
 	
-	printf("numOfMutex = %u\n", hashMap->m_numOfMutex); 
+/*	printf("numOfMutex = %u\n", hashMap->m_numOfMutex); */
 	if (!(hashMap->m_mutexArr = malloc(hashMap->m_numOfMutex * sizeof(pthread_mutex_t))))
 	{
 		free(hashMap);

@@ -158,7 +158,7 @@ void* ProcessorRoutine(Processor* _proc)
 		err = ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH, IPC_NOWAIT);
 		if (err > -1)
 		{
-			printf("tid = %ld\n", syscall(SYS_gettid));
+/*			printf("tid = %ld\n", syscall(SYS_gettid));*/
 			++numOfMsgsRxed;
 			record = msg.m_data.m_rec;
 			strcpy(sub.m_imsi, record.m_imsi);

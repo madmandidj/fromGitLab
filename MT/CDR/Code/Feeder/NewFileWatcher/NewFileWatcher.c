@@ -66,8 +66,9 @@ int	GetNewFilePath(char* _fileName, pthread_mutex_t* _newFileMutex)
 			strcat(newFile, ".");
 			strcat(newFile, fileExt);
 			
-			printf("%s\n", oldFile);
-			printf("%s\n", newFile);
+/*			printf("%s\n", oldFile);*/
+/*			printf("%s\n", newFile);*/
+			printf("New file detected: %s\n", newFile);
 			rename(oldFile, newFile);
 			for (index = 0; index < numOfFiles; ++index)
 			{

@@ -28,7 +28,7 @@ void MsgQCreate(key_t* _mqKey, int* _mqID, char* _myPathToMsgQ)
 
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
-    printf("Current working dir: %s\n", cwd);
+/*    printf("Current working dir: %s\n", cwd);*/
 
 	/*	*_mqKey = ftok("../../Comms/MsgQueue/MQ", 1);*/
 /*	*_mqKey = ftok(QUEUE_PATHNAME, 1);*/
@@ -49,7 +49,7 @@ void MsgQCreate(key_t* _mqKey, int* _mqID, char* _myPathToMsgQ)
 		
 	}
 
-	printf("Message Queue created or joined\n");
+/*	printf("Message Queue created or joined\n");*/
 	
 	return;
 }

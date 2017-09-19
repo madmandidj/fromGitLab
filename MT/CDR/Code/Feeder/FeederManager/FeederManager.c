@@ -6,6 +6,7 @@
 #include "FeederManager.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 
 
@@ -111,7 +112,8 @@ int main()
 	FeederManager* feedMngr;
 		
 	feedMngr = FeederManagerCreate(2);
-
+	printf("***Feeder***\n");
+	printf("Running Feeder\n");
 	ReaderRun(feedMngr->m_reader);
 
 	FeederManagerDestroy(feedMngr);
