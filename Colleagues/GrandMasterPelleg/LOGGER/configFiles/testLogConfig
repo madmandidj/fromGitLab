@@ -1,0 +1,11 @@
+some junk
+
+[#]
+Level = LOG_WARNING
+Path = ./logs/
+
+just to confuse my config.c
+
+File = TestLog.log
+
+but it don't matter :)

@@ -1,0 +1,11 @@
+some junk
+
+[#]
+no level
+Path = ./logs/
+
+just to confuse my config.c
+
+File = TestLogDefaultLevel.log
+
+but it don't matter :)
