@@ -1,24 +1,25 @@
 cd ./UI
-make clean
+#make clean
 make
 cd ..
 
 cd ./CDRProcessor
-make clean
+#make clean
 make
 cd ..
 
 cd ./Feeder
-make clean
+#make clean
 make
-cd ./NewFileWatcher
-mkdir DONE
-mkdir WORKING
-mkdir NEW
-cd ../..
+cd ..
+#cd ./NewFileWatcher
+#mkdir DONE
+#mkdir WORKING
+#mkdir NEW
+
 
 cd ./DataGenerator
-make clean
+#make clean
 make
 ./TestDataGenerator -n 100000
 cd ..
