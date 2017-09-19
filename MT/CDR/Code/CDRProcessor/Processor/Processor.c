@@ -103,8 +103,6 @@ void* ProcessorRoutine(Processor* _proc)
 			switch (uiMsg.m_data.m_uiCommand.m_command)
 			{
 				case SUBSCRIBER_QUERY:
-				
-/*					numOfSubs = AccumulatorPrintAllSubscribers(_proc->m_accum);*/
 					
 					if (AccumulatorGetSubscriber(_proc->m_accum, uiMsg.m_data.m_uiCommand.m_searchKey, &subFound))
 					{
@@ -114,6 +112,7 @@ void* ProcessorRoutine(Processor* _proc)
 					{
 						printf("Subscriber not found\n");
 					}
+					
 					break;
 			
 				case OPERATOR_QUERY:
@@ -121,11 +120,13 @@ void* ProcessorRoutine(Processor* _proc)
 					break;
 			
 				case ALL_SUBSCRIBERS_QUERY:
+					
+					AccumulatorPrintAllSubscribers(_proc->m_accum);
 				
 					break;
 				
 				case ALL_OPERATORS_QUERY:
-				
+					
 					break;
 				
 				case PAUSE:

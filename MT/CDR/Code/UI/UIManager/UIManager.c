@@ -98,17 +98,21 @@ int main()
 	
 	while(isRun)
 	{
-		printf("1:\tSubscriber query\n2:***\tOperator query\n3:***\tAll Subscribers query\n4:***\tAll Operators query\n5:***\tPause\n6:***\tResume\n0:\tShutdown\n");
+		printf("1:\tSubscriber query\n2:***\tOperator query\n3:\tAll Subscribers query\n4:***\tAll Operators query\n5:***\tPause\n6:***\tResume\n0:\tShutdown\n");
 		scanf("%d", &queryType);
+		printf("\n");
 		
 		switch (queryType)
 		{
 			case SUBSCRIBER_QUERY:
+			
 				printf("Enter subscriber MSISDN\n");
 				scanf("%s", queryValStr);
+				printf("\n");
 				data.m_uiCommand.m_command = SUBSCRIBER_QUERY;
 				strcpy(data.m_uiCommand.m_searchKey, queryValStr);
 				UIManagerSendCommand(uiMngr, data, UI_TO_PROCESSOR);
+				
 				break;
 			
 			case OPERATOR_QUERY:
@@ -116,7 +120,10 @@ int main()
 				break;
 			
 			case ALL_SUBSCRIBERS_QUERY:
-				
+			
+				data.m_uiCommand.m_command = ALL_SUBSCRIBERS_QUERY;
+				UIManagerSendCommand(uiMngr, data, UI_TO_PROCESSOR);
+				printf("\n");
 				break;
 				
 			case ALL_OPERATORS_QUERY:

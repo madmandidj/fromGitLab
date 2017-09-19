@@ -202,8 +202,8 @@ int AccumulatorUpdateOperator(Accumulator* _accum, Operator* _oper)
 
 size_t AccumulatorPrintAllSubscribers(Accumulator* _accum)
 {
-	return _accum->m_numOfSub;
-/*	return ContainerPrintAllElements(_accum->m_contSub);*/
+/*	return _accum->m_numOfSub;*/
+	return ContainerPrintAllElements(_accum->m_contSub);
 }
 
 

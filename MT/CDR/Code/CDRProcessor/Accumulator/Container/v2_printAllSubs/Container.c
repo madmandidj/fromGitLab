@@ -118,8 +118,8 @@ int ContainerInsertElement(Container* _cont, char* _key, void* _element)
 
 int PrintSubscriber(const void* _key, Subscriber* _sub, void* _context)
 {
-	printf("%s\n",_sub->m_msisdn);
-	
+/*	printf("%s\n",_sub->m_msisdn);*/
+	printf("%s,%s,%u,%u,%u,%u,%u,%u,%u,%u,%f,%f\n", _sub->m_imsi, _sub->m_msisdn, _sub->m_outVoiceWithinOp, _sub->m_inVoiceWithinOp, _sub->m_outVoiceOutsideOp, _sub->m_inVoiceOutsideOp, _sub->m_outSmsWithinOp, _sub->m_inSmsWithinOp, _sub->m_outSmsOutsideOp, _sub->m_inSmsOutsideOp, _sub->m_downloadMB, _sub->m_uploadMB);	
 	return 1;
 }
 

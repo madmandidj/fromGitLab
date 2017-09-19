@@ -168,6 +168,8 @@ void* ReaderRoutine(Reader* _reader)
 		fp = fopen(fopenFileName, "r");
 		fseek(fp, 0, 0);
 		
+		printf("Starting to read from: %s\n", fopenFileName);
+		
 		while (!isFeof)
 		{
 		
@@ -320,7 +322,8 @@ void* ReaderRoutine(Reader* _reader)
 		strcpy(donePathName, "./NewFileWatcher/DONE/");
 		strcat(donePathName, newFileName);
 		rename(workPathName, donePathName);
-		fclose(fp);		
+		fclose(fp);	
+		printf("Finished reading from: %s\n", fopenFileName);	
 /*		rename("./NewFileWatcher/WORKING/TestCDRFile.cdr", "./NewFileWatcher/DONE/TestCDRFile.cdr");*/
 	}
 	
