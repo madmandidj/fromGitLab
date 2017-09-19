@@ -105,7 +105,7 @@ void GenerateCDRFile(int _numOfRecords)
 			strcat(str, "|");
 			fputs(str, fp);
 		
-			GetRandomIntString(str, 3);
+			GetRandomIntString(str, MSISDN_STR_LENGTH);
 			strcat(str, "|");
 			fputs(str, fp);
 			
@@ -117,7 +117,7 @@ void GenerateCDRFile(int _numOfRecords)
 			strcat(str, "|");
 			fputs(str, fp);
 			
-			GetRandomIntString(str, 2);
+			GetRandomIntString(str, OPMCCMNC_STR_LENGTH);
 			strcat(str, "|");
 			fputs(str, fp);
 			
@@ -147,23 +147,23 @@ void GenerateCDRFile(int _numOfRecords)
 			fputs("17/01/1984|", fp);
 			fputs("23:59:59|" , fp);
 			
-/*			GetRandomIntString(str, DURATION_STR_LENGTH);*/
-			strcpy(str, "1|");
-			fputs(str, fp);
-			
-/*			GetRandomIntString(str, DOWNLOAD_STR_LENGTH);*/
-			strcpy(str, "1.0|");
-			fputs(str, fp);
-			
-/*			GetRandomIntString(str, UPLOAD_STR_LENGTH);*/
-			strcpy(str, "1.0|");
-			fputs(str, fp);
-			
-			GetRandomIntString(str, 3);
+			GetRandomIntString(str, DURATION_STR_LENGTH);
 			strcat(str, "|");
 			fputs(str, fp);
 			
-			GetRandomIntString(str, 2);
+			GetRandomIntString(str, DOWNLOAD_STR_LENGTH);
+			strcat(str, "|");
+			fputs(str, fp);
+			
+			GetRandomIntString(str, UPLOAD_STR_LENGTH);
+			strcat(str, "|");
+			fputs(str, fp);
+			
+			GetRandomIntString(str, PARTYMSISDN_STR_LENGTH);
+			strcat(str, "|");
+			fputs(str, fp);
+			
+			GetRandomIntString(str, PARTYOP_STR_LENGTH);
 			strcat(str, "\n");
 			fputs(str, fp);
 		}
