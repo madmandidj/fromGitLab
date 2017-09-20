@@ -18,15 +18,23 @@ struct ProcessingManager
 
 
 
-void DoGetOpt(int _argc, char* _argv[], Params* _params)
+void DoGetOpt(int _argc, char* _argv[], ProcMngrParams* _params)
 {
 	int opt;
 	
-	while ((opt = getopt(_argc, _argv, "n:")) != -1) {
+	while ((opt = getopt(_argc, _argv, "n:s:o:")) != -1) {
 	   switch (opt) 
 	   {
 		case 'n':
 			_params->m_numOfProcessors = (size_t)atoi(optarg);
+		   break;
+		   
+		case 's':
+			_params->m_subHashSize = (size_t)atoi(optarg);
+		   break;
+		   
+		case 'o':
+			_params->m_opHashSize = (size_t)atoi(optarg);
 		   break;
 		   
 		default: 
@@ -40,7 +48,7 @@ void DoGetOpt(int _argc, char* _argv[], Params* _params)
 
 
 
-ProcessingManager* ProcessingManagerCreate(size_t _numOfProcThreads)
+ProcessingManager* ProcessingManagerCreate(ProcMngrParams _params)
 {
 	ProcessingManager* procMngr;
 	
@@ -50,7 +58,7 @@ ProcessingManager* ProcessingManagerCreate(size_t _numOfProcThreads)
 		return NULL;
 	}
 	
-	procMngr->m_accum = AccumulatorCreate();
+	procMngr->m_accum = AccumulatorCreate(_params.m_subHashSize, _params.m_opHashSize);
 	if (!procMngr->m_accum)
 	{
 		free(procMngr);
@@ -68,7 +76,7 @@ ProcessingManager* ProcessingManagerCreate(size_t _numOfProcThreads)
 		return NULL;
 	}
 	
-	procMngr->m_proc = ProcessorCreate(procMngr->m_accum, procMngr->m_rcvr, _numOfProcThreads);
+	procMngr->m_proc = ProcessorCreate(procMngr->m_accum, procMngr->m_rcvr, _params.m_numOfProcessors);
 	if (!procMngr->m_rcvr)
 	{
 		ReceiverDestroy(procMngr->m_rcvr);
@@ -107,16 +115,14 @@ void ProcessingManagerDestroy(ProcessingManager* _procMngr)
 
 int main(int argc, char* argv[])
 {
-	Params params;
-/*	size_t numOfProcThreads = 1;*/
+	ProcMngrParams params;
 	ProcessingManager* procMngr;
 	
 	printf("***CDR Processor***\n");
 	
 	DoGetOpt(argc, argv, &params);
 	
-/*	procMngr = ProcessingManagerCreate(numOfProcThreads);*/
-	procMngr = ProcessingManagerCreate(params.m_numOfProcessors);
+	procMngr = ProcessingManagerCreate(params);
 	
 	printf("Running processor\n");
 	

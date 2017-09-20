@@ -12,13 +12,13 @@
 
 int main(int argc, char* argv[])
 {
-	Params params;
+	DataGenParams params;
 	
 /*	srand((unsigned int)time(NULL));*/
 	
 	DoGetOpt(argc, argv, &params);
 	
-	GenerateCDRFile(params.m_numOfRecords);
+	GenerateCDRFile(params);
 	
 	return 0;
 }

@@ -7,15 +7,12 @@
 #include <stdlib.h>
 
 
-
-typedef struct Params Params;
-
-
-
-struct Params
+typedef struct DataGenParams
 {
 	int m_numOfRecords;
-};
+	size_t m_subMsisdnLength;
+	size_t m_opMsisdnLength;
+}DataGenParams;
 
 
 
@@ -30,11 +27,11 @@ struct Params
  *  
  * @return  void
  */
-void DoGetOpt(int _argc, char* _argv[], Params* _params);
+void DoGetOpt(int _argc, char* _argv[], DataGenParams* _params);
 
 
 
-void GenerateCDRFile(int _numOfRecords);
+void GenerateCDRFile(DataGenParams _params);
 
 
 

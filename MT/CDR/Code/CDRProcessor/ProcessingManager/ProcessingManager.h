@@ -16,10 +16,12 @@ typedef struct ProcessingManager ProcessingManager;
 
 
 
-typedef struct Params
+typedef struct ProcMngrParams
 {
 	size_t m_numOfProcessors;
-}Params;
+	size_t m_subHashSize;
+	size_t m_opHashSize;
+}ProcMngrParams;
 
 
 
@@ -34,11 +36,11 @@ typedef struct Params
  *  
  * @return  void
  */
-void DoGetOpt(int _argc, char* _argv[], Params* _params);
+void DoGetOpt(int _argc, char* _argv[], ProcMngrParams* _params);
 
 
 
-/** 
+/** TODO update this
  * @brief Create new ProcessingManager
  *
  * @param[in] _numOfProcThreads - Number of processor threads to create
@@ -49,7 +51,7 @@ void DoGetOpt(int _argc, char* _argv[], Params* _params);
  *
  * @retval	!NULL upon create success
  */
-ProcessingManager* ProcessingManagerCreate(size_t _numOfProcThreads);
+ProcessingManager* ProcessingManagerCreate(ProcMngrParams _params);
 
 
 

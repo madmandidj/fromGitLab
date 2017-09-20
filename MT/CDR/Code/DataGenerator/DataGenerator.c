@@ -20,19 +20,27 @@
 
 
 
-void DoGetOpt(int _argc, char* _argv[], Params* _params)
+void DoGetOpt(int _argc, char* _argv[], DataGenParams* _params)
 {
 	int opt;
 	
-	while ((opt = getopt(_argc, _argv, "n:")) != -1) {
+	while ((opt = getopt(_argc, _argv, "n:s:o:")) != -1) {
 	   switch (opt) 
 	   {
 		case 'n':
 			_params->m_numOfRecords = atoi(optarg);
 		   break;
+		
+		case 's':
+			_params->m_subMsisdnLength = (size_t)atoi(optarg);
+		   break;
+		   
+		case 'o':
+			_params->m_opMsisdnLength = (size_t)atoi(optarg);
+		   break;
 		   
 		default: 
-		fprintf(stderr, "Usage: %s [-n num of records]\n", _argv[0]);
+		fprintf(stderr, "Usage: %s [-n num of records] [-s subscriber msisdn num length] [-o operator msisdn num length]\n", _argv[0]);
 		exit(EXIT_FAILURE);
 	   }
 	}
@@ -74,7 +82,7 @@ static void GetRandomIntString(char* _strPtr, size_t _strLength)
 
 
 
-void GenerateCDRFile(int _numOfRecords)
+void GenerateCDRFile(DataGenParams _params)
 {
 	FILE* fp;
 	char str[128];
@@ -86,7 +94,7 @@ void GenerateCDRFile(int _numOfRecords)
 	
 	InitGenerate();
 	
-	sprintf(numOfRecStr, "%d", _numOfRecords);
+	sprintf(numOfRecStr, "%d", _params.m_numOfRecords);
 	GetRandomIntString(fileNumStr, 3);
 	strcpy(fileName, "CDR_");
 	strcat(fileName, fileNumStr);
@@ -99,13 +107,13 @@ void GenerateCDRFile(int _numOfRecords)
 		strcat(numOfRecStr, "\n");
 		fputs(numOfRecStr, fp);
 
-		for(index = 0; index < _numOfRecords; ++index)
+		for(index = 0; index < _params.m_numOfRecords; ++index)
 		{
 			GetRandomIntString(str, IMSI_STR_LENGTH);
 			strcat(str, "|");
 			fputs(str, fp);
 		
-			GetRandomIntString(str, 3);
+			GetRandomIntString(str, _params.m_subMsisdnLength);
 			strcat(str, "|");
 			fputs(str, fp);
 			
@@ -117,7 +125,7 @@ void GenerateCDRFile(int _numOfRecords)
 			strcat(str, "|");
 			fputs(str, fp);
 			
-			GetRandomIntString(str, 2);
+			GetRandomIntString(str, _params.m_opMsisdnLength);
 			strcat(str, "|");
 			fputs(str, fp);
 			
@@ -159,11 +167,11 @@ void GenerateCDRFile(int _numOfRecords)
 			strcpy(str, "1.0|");
 			fputs(str, fp);
 			
-			GetRandomIntString(str, 3);
+			GetRandomIntString(str, _params.m_subMsisdnLength);
 			strcat(str, "|");
 			fputs(str, fp);
 			
-			GetRandomIntString(str, 2);
+			GetRandomIntString(str, _params.m_opMsisdnLength);
 			strcat(str, "\n");
 			fputs(str, fp);
 		}

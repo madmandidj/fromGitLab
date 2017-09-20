@@ -19,7 +19,7 @@ typedef struct Accumulator Accumulator;
 
 
 
-/** 
+/** TODO update this
  * @brief Create new Accumulator instance
  *  
  * @return  pointer to allocated Accumulator instance
@@ -28,7 +28,7 @@ typedef struct Accumulator Accumulator;
  *
  * @retval	!NULL upon create success
  */
-Accumulator* AccumulatorCreate();
+Accumulator* AccumulatorCreate(size_t _subHashSize, size_t _opHashSize);
 
 
 

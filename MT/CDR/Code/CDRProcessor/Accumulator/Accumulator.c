@@ -34,7 +34,8 @@ int ContainerDataEqualityFunc(const char* _key1, const char* _key2)
 
 
 
-Accumulator* AccumulatorCreate()
+/*Accumulator* AccumulatorCreate()*/
+Accumulator* AccumulatorCreate(size_t _subHashSize, size_t _opHashSize)
 {
 	Accumulator* accum;
 	
@@ -44,7 +45,7 @@ Accumulator* AccumulatorCreate()
 		return NULL;
 	}
 	
-	accum->m_contSub = ContainerCreate(SUBSCRIBERS_HASH_CAPACITY, (EqualityFunction)ContainerDataEqualityFunc);
+	accum->m_contSub = ContainerCreate(_subHashSize, (EqualityFunction)ContainerDataEqualityFunc);
 	if (!accum->m_contSub)
 	{
 		free(accum);
@@ -52,7 +53,7 @@ Accumulator* AccumulatorCreate()
 		return NULL;
 	}
 	
-	accum->m_contOp = ContainerCreate(OPERATORS_HASH_CAPACITY, (EqualityFunction)ContainerDataEqualityFunc);
+	accum->m_contOp = ContainerCreate(_opHashSize, (EqualityFunction)ContainerDataEqualityFunc);
 	if (!accum->m_contOp)
 	{
 		free(accum->m_contSub);
