@@ -19,6 +19,28 @@ struct FeederManager
 
 
 
+void DoGetOptFeeder(int _argc, char* _argv[], FeederParams* _params)
+{
+	int opt;
+	
+	while ((opt = getopt(_argc, _argv, "n:")) != -1) {
+	   switch (opt) 
+	   {
+		case 'n':
+			_params->m_numOfReaders = (size_t)atoi(optarg);
+		   break;
+		   
+		default: 
+		fprintf(stderr, "Usage: %s [-n num of readers]\n", _argv[0]);
+		exit(EXIT_FAILURE);
+	   }
+	}
+   
+	return;
+}
+
+
+
 FeederManager* FeederManagerCreate(size_t _numOfReaders)
 {	
 	FeederManager* feedMngr;
@@ -75,12 +97,16 @@ void FeederManagerDestroy(FeederManager* _feedMngr)
 
 
 
-int main()
+int main(int argc, char* argv[])
 {
 	FeederManager* feedMngr;
-	size_t numOfReaders = 2;
+	FeederParams params;
+/*	size_t numOfReaders = 2;*/
+
+	DoGetOptFeeder(argc, argv, &params);
 		
-	feedMngr = FeederManagerCreate(numOfReaders);
+/*	feedMngr = FeederManagerCreate(numOfReaders);*/
+	feedMngr = FeederManagerCreate(params.m_numOfReaders);
 	
 	printf("***Feeder***\n");
 	

@@ -4,6 +4,7 @@
 #include "ProcessingManager.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <getopt.h>
 
 
 
@@ -14,6 +15,28 @@ struct ProcessingManager
 	Receiver*		m_rcvr;
 
 };
+
+
+
+void DoGetOpt(int _argc, char* _argv[], Params* _params)
+{
+	int opt;
+	
+	while ((opt = getopt(_argc, _argv, "n:")) != -1) {
+	   switch (opt) 
+	   {
+		case 'n':
+			_params->m_numOfProcessors = (size_t)atoi(optarg);
+		   break;
+		   
+		default: 
+		fprintf(stderr, "Usage: %s [-n num of processors]\n", _argv[0]);
+		exit(EXIT_FAILURE);
+	   }
+	}
+   
+	return;
+}
 
 
 
@@ -82,15 +105,18 @@ void ProcessingManagerDestroy(ProcessingManager* _procMngr)
 
 
 
-int main()
+int main(int argc, char* argv[])
 {
-	size_t numOfProcThreads = 100;
-	
+	Params params;
+/*	size_t numOfProcThreads = 1;*/
 	ProcessingManager* procMngr;
 	
 	printf("***CDR Processor***\n");
 	
-	procMngr = ProcessingManagerCreate(numOfProcThreads);
+	DoGetOpt(argc, argv, &params);
+	
+/*	procMngr = ProcessingManagerCreate(numOfProcThreads);*/
+	procMngr = ProcessingManagerCreate(params.m_numOfProcessors);
 	
 	printf("Running processor\n");
 	

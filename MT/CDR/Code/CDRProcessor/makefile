@@ -29,7 +29,8 @@ $(OBJ_PATH)ProcessingManager.o: $(PROCMNGR_PATH)ProcessingManager.c \
 $(OBJ_PATH)Processor.o: $(PROC_PATH)Processor.c \
 							$(PROC_PATH)Processor.h \
 							$(RCVR_PATH)Receiver.h \
-							$(ACCUM_PATH)Accumulator.h 	
+							$(ACCUM_PATH)Accumulator.h \
+							$(CHDEFS_PATH)ChannelDefs.h	
 	gcc $(FLAGS) -c  $(PROC_PATH)Processor.c 
 	mv Processor.o $(OBJ_PATH)
 	

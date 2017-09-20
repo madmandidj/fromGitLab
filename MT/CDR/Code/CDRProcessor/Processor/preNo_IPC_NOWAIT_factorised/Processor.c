@@ -215,8 +215,8 @@ static int ProcHandleFeederMsg(Processor* _proc, Msg _msg)
 	
 		default:
 				printf("Wrong Processor Routine Parsing");
-				
 				return 0;
+/*			break;*/
 	}
 	
 	AccumulatorUpdateSubscriber(_proc->m_accum, &sub);
@@ -234,6 +234,7 @@ void* ProcessorRoutine(Processor* _proc)
 	static unsigned int numOfMsgsRxed = 0;
 	ssize_t err;
 	Msg msg = {0};
+	Msg uiMsg = {0};
 	Subscriber* subFound = {0};
 		
 	if (!_proc)
@@ -243,27 +244,27 @@ void* ProcessorRoutine(Processor* _proc)
 
 	while(1 == _proc->m_systemMode)
 	{
-		err = ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Data), -2, 0); /* -2 to check both ui to proc and feeder to proc*/
+		err = ReceiverReceive(_proc->m_rcvr, &uiMsg, sizeof(Data), UI_TO_PROCESSOR, IPC_NOWAIT);
 		if (err > -1)
 		{
 			++numOfMsgsRxed; /*TODO: is this really needed ?*/ 
 			
-			if (UI_TO_PROCESSOR == msg.m_channel)
+			if (!ProcHandleUIMsg(_proc, uiMsg, &subFound))
 			{
-				if (!ProcHandleUIMsg(_proc, msg, &subFound))
-				{
-					continue;
-				}
-			}	
-			
-			if (FEEDER_TO_PROCESSOR_CH == msg.m_channel)
-			{
-				if (!ProcHandleFeederMsg(_proc, msg))
-				{
-					return NULL;
-				}
-			}	
+				continue;
+			}
 		}
+		
+		err = ReceiverReceive(_proc->m_rcvr, &msg, sizeof(Data), FEEDER_TO_PROCESSOR_CH, IPC_NOWAIT);
+		if (err > -1)
+		{
+			++numOfMsgsRxed;
+			
+			if (!ProcHandleFeederMsg(_proc, msg))
+			{
+				return NULL;
+			}
+		}	
 	}
 
 	return NULL;

@@ -19,6 +19,30 @@
 
 typedef struct FeederManager FeederManager;
 
+
+
+typedef struct FeederParams
+{
+	size_t m_numOfReaders;
+}FeederParams;
+
+
+
+/** 
+ * @brief Get user input for Feeder manager variables
+ *
+ * @param[in] _argc - number of arguments in argv
+ *
+ * @param[in] _argv[] - user input values
+ *
+ * @param[in-out] _params[] - parameters object to store user values
+ *  
+ * @return  void
+ */
+void DoGetOptFeeder(int _argc, char* _argv[], FeederParams* _params);
+
+
+
 /** 
  * @brief Create new FeederManager
  *

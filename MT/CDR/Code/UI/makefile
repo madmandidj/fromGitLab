@@ -14,7 +14,8 @@ TestUIMngr: $(objects)
 
 $(OBJ_PATH)UIManager.o: $(UIMNGR_PATH)UIManager.c \
 							$(UIMNGR_PATH)UIManager.h \
-							$(TRNS_PATH)Transmitter.h 
+							$(TRNS_PATH)Transmitter.h \
+							$(CHDEFS_PATH)ChannelDefs.h
 	gcc $(FLAGS) -c  $(UIMNGR_PATH)UIManager.c 
 	mv UIManager.o $(OBJ_PATH)
 	

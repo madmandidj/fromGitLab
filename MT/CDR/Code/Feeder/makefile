@@ -31,7 +31,8 @@ $(OBJ_PATH)Reader.o: $(READER_PATH)Reader.c \
 							$(READER_PATH)Reader.h \
 							$(DATAGEN_PATH)DataGenerator.h \
 							$(TRNS_PATH)Transmitter.h \
-							$(RCVR_PATH)Receiver.h 		
+							$(RCVR_PATH)Receiver.h 	\
+							$(CHDEFS_PATH)ChannelDefs.h	
 	gcc $(FLAGS) -c  $(READER_PATH)Reader.c 
 	mv Reader.o $(OBJ_PATH)	
 	

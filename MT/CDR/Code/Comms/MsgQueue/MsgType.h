@@ -1,6 +1,6 @@
 #ifndef __MSG_TYPE_H__
 #define __MSG_TYPE_H__
-#include "../ChannelDefs/ChannelDefs.h"
+/*#include "../ChannelDefs/ChannelDefs.h"*/
 #include "../../CDRDataTypes/Record.h"
 
 

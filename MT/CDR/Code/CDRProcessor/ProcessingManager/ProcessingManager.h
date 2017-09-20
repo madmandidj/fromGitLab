@@ -16,6 +16,28 @@ typedef struct ProcessingManager ProcessingManager;
 
 
 
+typedef struct Params
+{
+	size_t m_numOfProcessors;
+}Params;
+
+
+
+/** 
+ * @brief Get user input for processing manager variables
+ *
+ * @param[in] _argc - number of arguments in argv
+ *
+ * @param[in] _argv[] - user input values
+ *
+ * @param[in-out] _params[] - parameters object to store user values
+ *  
+ * @return  void
+ */
+void DoGetOpt(int _argc, char* _argv[], Params* _params);
+
+
+
 /** 
  * @brief Create new ProcessingManager
  *
