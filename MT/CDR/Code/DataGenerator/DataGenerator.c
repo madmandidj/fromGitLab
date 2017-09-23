@@ -191,6 +191,118 @@ void GenerateCDRFile(DataGenParams _params)
 
 
 
+void GeneratePredictableCDRFile(DataGenParams _params)
+{
+	FILE* fp;
+	char str[128];
+	char numOfRecStr[32];
+	char fileNumStr[128];
+	char fileName[128];
+	char filePath[128];
+	size_t index;
+	
+	InitGenerate();
+	
+	sprintf(numOfRecStr, "%d", _params.m_numOfRecords);
+	GetRandomIntString(fileNumStr, 3);
+	strcpy(fileName, "CDR_");
+	strcat(fileName, fileNumStr);
+	strcat(fileName, ".cdr");
+	
+	fp = fopen(fileName, "w+");
+	
+	if (NULL != fp)
+	{
+		strcat(numOfRecStr, "\n");
+		fputs(numOfRecStr, fp);
+
+		for(index = 0; index < _params.m_numOfRecords; ++index)
+		{
+			
+/*			GetRandomIntString(str, IMSI_STR_LENGTH);*/
+			sprintf(str, "%u", index);
+			strcat(str, "|");
+			fputs(str, fp);
+		
+/*			GetRandomIntString(str, _params.m_subMsisdnLength);*/
+			sprintf(str, "%u", index);
+			strcat(str, "|");
+			fputs(str, fp);
+			
+/*			GetRandomIntString(str, IMEI_STR_LENGTH);*/
+			sprintf(str, "%u", index);
+			strcat(str, "|");
+			fputs(str, fp);
+			
+/*			GetRandomIntString(str, OPBRAND_STR_LENGTH);*/
+			sprintf(str, "%u", index);
+			strcat(str, "|");
+			fputs(str, fp);
+			
+/*			GetRandomIntString(str, _params.m_opMsisdnLength);*/
+			sprintf(str, "%u", index);
+			strcat(str, "|");
+			fputs(str, fp);
+			
+			switch (index % 5) /* 5 CallType enum members (in Record.h) */
+			{
+				case 0:
+					fputs("MOC|", fp);
+					break;
+				
+				case 1:
+					fputs("MTC|", fp);
+					break;
+				
+				case 2:
+					fputs("SMS_MO|", fp);
+					break;
+				
+				case 3:
+					fputs("SMS_MT|", fp);
+					break;
+				
+				case 4:
+					fputs("GPRS|", fp);
+					break;
+			}
+			
+			fputs("17/01/1984|", fp);
+			fputs("23:59:59|" , fp);
+			
+/*			GetRandomIntString(str, DURATION_STR_LENGTH);*/
+			strcpy(str, "1|");
+			fputs(str, fp);
+			
+/*			GetRandomIntString(str, DOWNLOAD_STR_LENGTH);*/
+			strcpy(str, "1.0|");
+			fputs(str, fp);
+			
+/*			GetRandomIntString(str, UPLOAD_STR_LENGTH);*/
+			strcpy(str, "1.0|");
+			fputs(str, fp);
+			
+/*			GetRandomIntString(str, _params.m_subMsisdnLength);*/
+			sprintf(str, "%u", index);
+			strcat(str, "|");
+			fputs(str, fp);
+			
+/*			GetRandomIntString(str, _params.m_opMsisdnLength);*/
+			sprintf(str, "%u", index);
+			strcat(str, "\n");
+			fputs(str, fp);
+		}
+	}
+	
+	fclose(fp);
+	strcpy(filePath, "../Feeder/NewFileWatcher/NEW/");
+	strcat(filePath, fileName);
+	rename(fileName, filePath);
+	
+	return;
+}
+
+
 
 
 

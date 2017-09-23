@@ -33,6 +33,8 @@ void DoGetOpt(int _argc, char* _argv[], DataGenParams* _params);
 
 void GenerateCDRFile(DataGenParams _params);
 
+void GeneratePredictableCDRFile(DataGenParams _params);
+
 
 
 #endif /*#ifndef __RECORD_GENERATOR_H__*/

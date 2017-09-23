@@ -18,7 +18,9 @@ int main(int argc, char* argv[])
 	
 	DoGetOpt(argc, argv, &params);
 	
-	GenerateCDRFile(params);
+/*	GenerateCDRFile(params);*/
+	
+	GeneratePredictableCDRFile(params);
 	
 	return 0;
 }

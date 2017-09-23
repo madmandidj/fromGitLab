@@ -15,12 +15,12 @@ cd ..
 
 cd ./DataGenerator
 make
-./TestDataGenerator -n 10000000 -s 7 -o 6
+./TestDataGenerator -n 1000000 -s 4 -o 6
 cd ..
 
 
 cd ./CDRProcessor
-gnome-terminal -x ./TestProcMngr -n 40 -s 1000000 -o 100000
+gnome-terminal -x ./TestProcMngr -n 5 -s 1000000 -o 100000
 cd ..
 
 
