@@ -1,81 +1,19 @@
-FLAGS = -g -ansi -pedantic -Wall -Wconversion -Werror -pthread -m32
-OBJ_PATH = ./obj/
-FEEDMNGR_PATH = ./FeederManager/
-READER_PATH = ./Reader/
-NEWFILEWATCH_PATH = ./NewFileWatcher/
-DATAGEN_PATH = ../DataGenerator/
-TRNS_PATH = ../Comms/Transmitter/
-RCVR_PATH = ../Comms/Receiver/
-MSGQ_PATH = ../Comms/MsgQueue/
-CHDEFS_PATH = ../Comms/ChannelDefs/
-objects = $(OBJ_PATH)MsgQ.o $(OBJ_PATH)Receiver.o $(OBJ_PATH)Transmitter.o $(OBJ_PATH)DataGenerator.o $(OBJ_PATH)NewFileWatcher.o $(OBJ_PATH)Reader.o $(OBJ_PATH)FeederManager.o
+FLAGS = -g -ansi -pedantic -Wall -Wconversion -pthread -m32
+objects = String_t.o TestString_t.o
 
 
-TestFeedMngr: $(objects) 
-	gcc $(FLAGS) -o TestFeedMngr  $(objects) 
+TestStringT: $(objects) 
+	g++ $(FLAGS) -o TestStringT  $(objects) 
 
 
-
-$(OBJ_PATH)FeederManager.o: $(FEEDMNGR_PATH)FeederManager.c \
-							$(FEEDMNGR_PATH)FeederManager.h \
-							$(READER_PATH)Reader.h \
-							$(DATAGEN_PATH)DataGenerator.h \
-							$(TRNS_PATH)Transmitter.h \
-							$(RCVR_PATH)Receiver.h 		
-	gcc $(FLAGS) -c  $(FEEDMNGR_PATH)FeederManager.c 
-	mv FeederManager.o $(OBJ_PATH)
+TestString_t.o: TestString_t.cpp String_t.cpp String_t.h  		
+	g++ $(FLAGS) -c  TestString_t.cpp 
 	
 	
-	
-$(OBJ_PATH)Reader.o: $(READER_PATH)Reader.c \
-							$(READER_PATH)Reader.h \
-							$(DATAGEN_PATH)DataGenerator.h \
-							$(TRNS_PATH)Transmitter.h \
-							$(RCVR_PATH)Receiver.h 	\
-							$(CHDEFS_PATH)ChannelDefs.h	
-	gcc $(FLAGS) -c  $(READER_PATH)Reader.c 
-	mv Reader.o $(OBJ_PATH)	
-	
-	
-	
-$(OBJ_PATH)NewFileWatcher.o: $(NEWFILEWATCH_PATH)NewFileWatcher.c \
-							$(NEWFILEWATCH_PATH)NewFileWatcher.h 	
-	gcc $(FLAGS) -c  $(NEWFILEWATCH_PATH)NewFileWatcher.c 
-	mv NewFileWatcher.o $(OBJ_PATH)	
-	
-	
-	
-$(OBJ_PATH)DataGenerator.o: $(DATAGEN_PATH)DataGenerator.c \
-							$(DATAGEN_PATH)DataGenerator.h 
-	gcc $(FLAGS) -c  $(DATAGEN_PATH)DataGenerator.c 
-	mv DataGenerator.o $(OBJ_PATH)
-	
-	
-	
-$(OBJ_PATH)Transmitter.o: $(TRNS_PATH)Transmitter.c \
-							$(TRNS_PATH)Transmitter.h \
-							$(MSGQ_PATH)MsgQ.h
-	gcc $(FLAGS) -c  $(TRNS_PATH)Transmitter.c 
-	mv Transmitter.o $(OBJ_PATH)
-	
-
-
-$(OBJ_PATH)Receiver.o: $(RCVR_PATH)Receiver.c \
-							$(RCVR_PATH)Receiver.h \
-							$(MSGQ_PATH)MsgQ.h
-	gcc $(FLAGS) -c  $(RCVR_PATH)Receiver.c 
-	mv Receiver.o $(OBJ_PATH)
-	
-
-
-$(OBJ_PATH)MsgQ.o: $(MSGQ_PATH)MsgQ.c \
-							$(MSGQ_PATH)MsgQ.h \
-							$(MSGQ_PATH)MsgType.h
-	gcc $(FLAGS) -c  $(MSGQ_PATH)MsgQ.c 
-	mv MsgQ.o $(OBJ_PATH)
-
+String_t.o: String_t.cpp String_t.h  		
+	g++ $(FLAGS) -c  String_t.cpp 
 
 	
 clean:
-	rm TestFeedMngr $(objects)	
+	rm TestStringT $(objects)	
 	
