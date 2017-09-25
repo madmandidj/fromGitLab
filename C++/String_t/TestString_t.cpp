@@ -125,6 +125,75 @@ END_UNIT
 
 
 
+UNIT(TestPrependFromChar)
+	
+	String_t str_t1("Alon");
+	String_t str_t2("EyalAlon");
+	
+	str_t1.Prepend("Eyal");
+	
+	ASSERT_THAT(0 == str_t1.Compare(str_t2));
+	
+END_UNIT
+
+
+
+UNIT(TestPrependFromStringT)
+	
+	String_t str_t1("Alon");
+	String_t str_t2("Eyal");
+	String_t str_t3("EyalAlon");
+	
+	str_t1.Prepend(str_t2);
+
+	ASSERT_THAT(0 == str_t1.Compare(str_t3));
+	
+END_UNIT
+
+
+
+UNIT(TestPlusEqualsOperatorConstChar)
+	
+	String_t str_t1("Alon");
+	String_t str_t2("Eyal");
+	String_t str_t3("EyalAlon");
+	
+	str_t2 += "Alon";
+	
+	ASSERT_THAT(0 == str_t2.Compare(str_t3));
+	
+END_UNIT
+
+
+
+UNIT(TestPlusEqualsOperatorConstStringT)
+	
+	String_t str_t1("Alon");
+	String_t& str_t1r = str_t1;
+	String_t str_t2("Eyal");
+	String_t str_t3("EyalAlon");
+	
+	str_t2 += str_t1r;
+	
+	ASSERT_THAT(0 == str_t2.Compare(str_t3));
+	
+END_UNIT
+
+
+
+UNIT(TestGetIthChar)
+	String_t str_t1("EyalAlon");
+	char c;
+	
+	c = str_t1.GetIthChar(4);
+	
+	ASSERT_THAT('A' == c);
+	
+END_UNIT
+
+
+
+
 TEST_SUITE(String_t)
 
 	TEST(TestDefaultConstructor)
@@ -136,7 +205,11 @@ TEST_SUITE(String_t)
 	TEST(TestEqualsOperator)
 	TEST(TestConvertToLower)
 	TEST(TestConvertToUpper)
-	
+	TEST(TestPrependFromChar)
+	TEST(TestPrependFromStringT)
+	TEST(TestPlusEqualsOperatorConstChar)
+	TEST(TestPlusEqualsOperatorConstStringT)
+	TEST(TestGetIthChar)
 	
 END_SUITE
 

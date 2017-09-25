@@ -19,11 +19,13 @@ public:
 	void		ConvertToLowerCase();
 	void		ConvertToUpperCase();
 	void		Prepend(const char* _str);
-	void		Prepend(String_t _str_t);
-	/* TODO: logical operators */
+	void		Prepend(const String_t& _str_t);
+	String_t	operator+= (const char* _str);	/*append operator*/
+	String_t	operator+= (const String_t& _str_t);	/*append operator*/
 	void		Contains(const char* _str) const;
 	void		Contains(const String_t _str_t) const;
 	char		GetIthChar(const size_t _i) const;
+	
 	
 private:
 	char*	m_str;

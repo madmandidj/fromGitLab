@@ -222,6 +222,116 @@ void String_t::ConvertToUpperCase()
 
 
 
+/*
+String_t prepend from char*
+*/
+void String_t::Prepend(const char* _str)
+{
+	if (NULL == _str)
+	{
+		return;
+	}
+	
+	char* str = new char[strlen(_str) + strlen(m_str) + 1];
+	
+	strcpy(str, _str);
+	
+	strcat(str, m_str);
+	
+	delete[] m_str;
+	
+	m_length = strlen(str);
+	
+	m_str = str;
+	
+	return;
+}
+
+
+
+/*
+String_t prepend from String_t
+*/
+void String_t::Prepend(const String_t& _str_t)
+{
+	this->Prepend(_str_t.m_str);
+	
+	return;
+}
+
+
+
+
+/*
+String_t += operator const char*
+*/
+String_t String_t::operator+= (const char* _str)
+{
+	if (NULL == _str)
+	{
+		return *this;
+	}
+	
+	char* str = new char[strlen(_str) + strlen(m_str) + 1];
+	
+	strcpy(str, m_str);
+	
+	strcat(str, _str);
+	
+	delete[] m_str;
+	
+	m_length = strlen(str);
+	
+	m_str = str;
+	
+	return *this;
+}
+
+
+
+/*
+String_t += operator const String_t
+*/
+String_t String_t::operator+= (const String_t& _str_t)
+{	
+	return *this += _str_t.m_str;
+}
+
+
+
+char String_t::GetIthChar(const size_t _i) const
+{
+	if (0 == m_length || _i >= m_length)
+	{
+		return ' ';
+	}
+	
+	return m_str[_i];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
