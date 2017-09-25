@@ -299,6 +299,28 @@ String_t String_t::operator+= (const String_t& _str_t)
 
 
 
+/*
+String_t > operator const String_t
+*/
+int String_t::operator> (const char* _str) const
+{	
+	if (NULL == _str)
+	{
+		return 0;
+	}
+	
+	if (m_length > strlen(_str))
+	{
+		return 1;
+	}
+	return 0;
+}
+
+
+
+/*
+String_t get Ith char
+*/
 char String_t::GetIthChar(const size_t _i) const
 {
 	if (0 == m_length || _i >= m_length)
@@ -311,11 +333,65 @@ char String_t::GetIthChar(const size_t _i) const
 
 
 
+/*
+String_t contains const char*
+*/
+int String_t::Contains(const char* _str) const
+{
+	size_t length;
+	size_t index;
+	size_t strtIndex;
+	size_t strIndex;
+	int cont;
+	
+	if (NULL == _str)
+	{
+		return 0;
+	}
+	
+	length = strlen(_str);
+	
+	if (length > m_length)
+	{
+		return 0;
+	}
+	
+	for (index = 0; index <= m_length - length; ++index)
+	{
+		cont = 1;
+		strIndex = 0;
+		strtIndex = index;
+		while(cont)
+		{
+			if (m_str[strtIndex] == _str[strIndex])
+			{
+				if (strIndex == length - 1)
+				{
+					return 1;
+				}
+				++strtIndex;
+				++strIndex;
+			}
+			else
+			{
+				cont = 0;
+			}
+		}
+	}
+	
+	return 0;
+}
 
 
 
 
-
+/*
+String_t contains const String_t
+*/
+int String_t::Contains(const String_t& _str_t) const
+{
+	return this->Contains(_str_t.m_str);
+}
 
 
 

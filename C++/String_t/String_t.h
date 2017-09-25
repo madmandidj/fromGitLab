@@ -22,8 +22,9 @@ public:
 	void		Prepend(const String_t& _str_t);
 	String_t	operator+= (const char* _str);	/*append operator*/
 	String_t	operator+= (const String_t& _str_t);	/*append operator*/
-	void		Contains(const char* _str) const;
-	void		Contains(const String_t _str_t) const;
+	int 		operator> (const char* _str) const;
+	int			Contains(const char* _str) const;
+	int			Contains(const String_t& _str_t) const;
 	char		GetIthChar(const size_t _i) const;
 	
 	

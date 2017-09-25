@@ -182,12 +182,53 @@ END_UNIT
 
 
 UNIT(TestGetIthChar)
+
 	String_t str_t1("EyalAlon");
 	char c;
 	
 	c = str_t1.GetIthChar(4);
 	
 	ASSERT_THAT('A' == c);
+	
+END_UNIT
+
+
+
+UNIT(TestContainsConstChar)
+
+	String_t str_t1("Alon");
+	int result;
+	
+	result = str_t1.Contains("lo");
+	
+	ASSERT_THAT(1 == result);
+	
+END_UNIT
+
+
+
+UNIT(TestContainsConstStringT)
+
+	String_t str_t1("Alon");
+	String_t str_t2("Alo");
+	int result;
+	
+	result = str_t1.Contains(str_t2);
+	
+	ASSERT_THAT(1 == result);
+	
+END_UNIT
+
+
+
+
+UNIT(TestLargerThan)
+
+	String_t str_t1("Alon");
+	char str[] = "123";
+	int result;
+	
+	ASSERT_THAT(str_t1 > str);
 	
 END_UNIT
 
@@ -210,6 +251,9 @@ TEST_SUITE(String_t)
 	TEST(TestPlusEqualsOperatorConstChar)
 	TEST(TestPlusEqualsOperatorConstStringT)
 	TEST(TestGetIthChar)
+	TEST(TestContainsConstChar)
+	TEST(TestContainsConstStringT)
+	TEST(TestLargerThan)
 	
 END_SUITE
 
