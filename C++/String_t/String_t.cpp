@@ -3,12 +3,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#define INIT_STRING_CAPACITY 128
 
 
 /*
-String_t Default constructor
+private String_t Default constructor
 */
-String_t::String_t()
+void String_t::DefaultCTOR()
 {
 	m_length = 0;
 	
@@ -16,10 +17,22 @@ String_t::String_t()
 	
 	if(0 == m_str)
 	{
-		/* TODO: what to do here? */
+		/* TODO: Do something here*/
 	}
 	
 	m_str[m_length] = '\0';
+	
+	return;
+}
+
+
+
+/*
+String_t Default constructor
+*/
+String_t::String_t()
+{
+	this->DefaultCTOR();
 	
 	return;
 }
@@ -45,16 +58,19 @@ String_t::String_t(const char* _str)
 {
 	if (NULL == _str)
 	{
-		return; /* TODO: need private function that calls default constructor */
+		this->DefaultCTOR();
+		
+		return; 
 	}
 	
 	m_length = strlen(_str);
 	
 	m_str = new char[m_length + 1];
 	
-	/*
-	TODO: Check if new success
-	*/
+	if(0 == m_str)
+	{
+		/* TODO: Do something here*/
+	}
 	
 	m_str[m_length] = '\0';
 	
@@ -92,12 +108,11 @@ String_t& String_t::operator= (const String_t& _str_t)
 {
 	if (this != &_str_t)
 	{
-		this->SetString(_str_t.m_str);
+		this->Set(_str_t.m_str);
 	}
 	
 	return *this;
 }
-
 
 
 
@@ -110,10 +125,11 @@ size_t String_t::Length() const
 }
 
 
+
 /*
 String_t Get string
 */
-const char* String_t::GetString() const
+const char* String_t::Get() const
 {
 	return m_str;
 }
@@ -123,7 +139,7 @@ const char* String_t::GetString() const
 /*
 String_t Set string
 */
-void String_t::SetString(const char* _str)
+void String_t::Set(const char* _str)
 {
 	if (NULL == _str)
 	{
@@ -150,6 +166,7 @@ void String_t::SetString(const char* _str)
 }
 
 
+
 /*
 String_t Compare
 */
@@ -158,17 +175,8 @@ int String_t::Compare(const String_t& _str_t) const
 	int result;
 	
 	result = strcmp(m_str, _str_t.m_str);
-	
-	if (result < 0)
-	{
-		return 1;
-	}
-	else if (result > 0)
-	{
-		return 2;
-	}
-	
-	return 0; 
+
+	return result < 0 ? 1 : (result > 0 ? 2 : 0);
 }
 
 
@@ -187,17 +195,16 @@ void String_t::Print() const
 
 /*
 String_t convert to Lower case
-TODO: get tolower to work
 */
-void String_t::ConvertToLowerCase()
+void String_t::ToLower()
 {
 	size_t index = 0;
-	
+
 	for (index = 0; index < m_length; ++index)
 	{
-		if ('A' <= m_str[index] && 'Z' >= m_str[index])
+		if (isupper(m_str[index]))
 		{
-			m_str[index] += 'a' - 'A';
+			m_str[index] = (char)tolower(m_str[index]);
 		}
 	}
 	
@@ -208,17 +215,16 @@ void String_t::ConvertToLowerCase()
 
 /*
 String_t convert to Upper case
-TODO: get toupper to work
 */
-void String_t::ConvertToUpperCase()
+void String_t::ToUpper()
 {
 	size_t index = 0;
-	
+
 	for (index = 0; index < m_length; ++index)
 	{
-		if ('a' <= m_str[index] && 'z' >= m_str[index])
+		if (islower(m_str[index]))
 		{
-			m_str[index] -= 'a' - 'A';
+			m_str[index] = (char)toupper(m_str[index]);
 		}
 	}
 	
@@ -266,7 +272,6 @@ void String_t::Prepend(const String_t& _str_t)
 
 
 
-
 /*
 String_t += operator const char*
 */
@@ -305,20 +310,16 @@ String_t& String_t::operator+= (const String_t& _str_t)
 
 
 /*
-String_t > operator const String_t
+String_t > operator const char*
 */
-int String_t::operator> (const char* _str) const
+bool String_t::operator> (const char* _str) const
 {	
 	if (NULL == _str)
 	{
-		return 0;
+		return false;
 	}
-	
-	if (m_length > strlen(_str))
-	{
-		return 1;
-	}
-	return 0;
+
+	return m_length > strlen(_str) ? true : false;
 }
 
 
@@ -326,15 +327,16 @@ int String_t::operator> (const char* _str) const
 /*
 String_t get Ith char
 */
-char String_t::GetIthChar(size_t _i) const
+char String_t::IthChar(size_t _i) const
 {
 	if (0 == m_length || _i >= m_length)
 	{
-		return ' ';
+		return '*'; /* '*' indicator of possible error for user, instead of ' ' */
 	}
 	
 	return m_str[_i];
 }
+
 
 
 /*
@@ -342,12 +344,7 @@ String_t get Ith char operator
 */
 char String_t::operator[] (size_t _i)
 {
-	if (0 == m_length || _i >= m_length)
-	{
-		return ' ';
-	}
-	
-	return m_str[_i]; 
+	return this->IthChar(_i);
 }
 
 
@@ -355,63 +352,22 @@ char String_t::operator[] (size_t _i)
 /*
 String_t contains const char*
 */
-/* 
-TODO: check strstr
-TODO: change out to bool type (true/false) 
-*/
-int String_t::Contains(const char* _str) const
-{
-	size_t length;
-	size_t index;
-	size_t strtIndex;
-	size_t strIndex;
-	int cont;
-	
+bool String_t::Contains(const char* _str) const
+{	
 	if (NULL == _str)
 	{
-		return 0;
+		return false;
 	}
 	
-	length = strlen(_str);
-	
-	if (length > m_length)
-	{
-		return 0;
-	}
-	
-	for (index = 0; index <= m_length - length; ++index)
-	{
-		cont = 1;
-		strIndex = 0;
-		strtIndex = index;
-		while(cont)
-		{
-			if (m_str[strtIndex] == _str[strIndex])
-			{
-				if (strIndex == length - 1)
-				{
-					return 1;
-				}
-				++strtIndex;
-				++strIndex;
-			}
-			else
-			{
-				cont = 0;
-			}
-		}
-	}
-	
-	return 0;
+	return NULL != strstr(m_str, _str) ? true : false;
 }
-
 
 
 
 /*
 String_t contains const String_t
 */
-int String_t::Contains(const String_t& _str_t) const
+bool String_t::Contains(const String_t& _str_t) const
 {
 	return this->Contains(_str_t.m_str);
 }
@@ -423,7 +379,7 @@ String_t << operator (equivelant to C stdout)
 */
 ostream& operator<< (ostream& _os, const String_t& _str_t)
 {
-	_os << _str_t.GetString();
+	_os << _str_t.Get();
 	
 	return _os; 
 }
@@ -435,11 +391,11 @@ String_t >> operator (equivelant to C stdin)
 */
 istream& operator>> (istream& _is, String_t& _str_t)
 {
-	char str[128];
+	char str[INIT_STRING_CAPACITY];
 	
 	_is >> str;
 	
-	_str_t.SetString(str);
+	_str_t.Set(str);
 	
 	return _is; 
 }
