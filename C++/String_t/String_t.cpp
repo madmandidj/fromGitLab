@@ -325,6 +325,31 @@ bool String_t::operator> (const char* _str) const
 
 
 /*
+String_t > operator String_t
+*/
+bool String_t::operator> (const String_t& _str_t) const
+{
+	return m_length > _str_t.m_length ? true : false;
+}
+
+
+
+/*
+String_t < operator const char*
+*/
+bool String_t::operator< (const char* _str) const
+{
+	if (NULL == _str)
+	{
+		return false;
+	}
+
+	return m_length < strlen(_str) ? true : false;
+}
+
+
+
+/*
 String_t get Ith char
 */
 char String_t::IthChar(size_t _i) const
