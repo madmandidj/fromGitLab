@@ -7,20 +7,30 @@
 
 
 /*
+Static member initializers
+*/
+unsigned int String_t::m_numOfStrings = 0;
+bool String_t::m_caseSens = true;
+unsigned int String_t::m_defaultCap = 1;
+
+
+/*
 private String_t Default constructor
 */
 void String_t::DefaultCTOR()
-{
-	m_length = 0;
-	
-	m_str = new char[1];
+{	
+	m_str = new char[String_t::m_defaultCap];
 	
 	if(0 == m_str)
 	{
 		/* TODO: Do something here*/
 	}
 	
-	m_str[m_length] = '\0';
+	m_capacity = String_t::m_defaultCap;
+	
+	m_length = 0;
+
+	m_str[0] = '\0';
 	
 	return;
 }
@@ -34,6 +44,8 @@ String_t::String_t()
 {
 	this->DefaultCTOR();
 	
+	++String_t::m_numOfStrings;
+	
 	return;
 }
 
@@ -46,6 +58,8 @@ String_t::~String_t()
 {
 	delete[] m_str;
 	
+	--String_t::m_numOfStrings;
+	
 	return;
 }
 
@@ -56,25 +70,49 @@ String_t Constructor with const char*
 */
 String_t::String_t(const char* _str)
 {
+	unsigned int newCap = 1;
+	
 	if (NULL == _str)
 	{
 		this->DefaultCTOR();
+		
+		++String_t::m_numOfStrings;
 		
 		return; 
 	}
 	
 	m_length = strlen(_str);
 	
-	m_str = new char[m_length + 1];
-	
-	if(0 == m_str)
+	if (m_length >= String_t::m_defaultCap)
 	{
-		/* TODO: Do something here*/
+		while (m_length >= newCap)
+		{
+			newCap *= 2;
+		}
+		
+		m_capacity = newCap;
+		
+		m_str = new char[m_capacity];
+	
+		if(0 == m_str)
+		{
+			/* TODO: Do something here*/
+		}
+		
 	}
 	
-	m_str[m_length] = '\0';
+//	m_str = new char[m_length + 1];
+//	
+//	if(0 == m_str)
+//	{
+//		/* TODO: Do something here*/
+//	}
+	
+	m_str[0] = '\0';
 	
 	strcpy(this->m_str, _str);
+	
+	++String_t::m_numOfStrings;
 	
 	return;
 }
@@ -95,6 +133,8 @@ String_t::String_t(const String_t& _str)
 	m_str[m_length] = '\0';
 	
 	strcpy(this->m_str, _str.m_str);
+	
+	++String_t::m_numOfStrings;
 	
 	return;
 }
@@ -314,6 +354,7 @@ String_t > operator const char*
 */
 bool String_t::operator> (const char* _str) const
 {	
+	/* TODO: add case where this string is NULL and _str is NULL so then they are equal */
 	if (NULL == _str)
 	{
 		return false;
@@ -356,7 +397,8 @@ char String_t::IthChar(size_t _i) const
 {
 	if (0 == m_length || _i >= m_length)
 	{
-		return '*'; /* '*' indicator of possible error for user, instead of ' ' */
+		/*TODO: instead of return, should be exception handler here */
+		return '*'; /* '*' indicator of possible error for user */
 	}
 	
 	return m_str[_i];
@@ -366,7 +408,9 @@ char String_t::IthChar(size_t _i) const
 
 /*
 String_t get Ith char operator
+TODO: make another prototype that returns char& so can do str[2] = 'c'
 */
+
 char String_t::operator[] (size_t _i)
 {
 	return this->IthChar(_i);
@@ -384,6 +428,7 @@ bool String_t::Contains(const char* _str) const
 		return false;
 	}
 	
+	/*TODO: Dont need the ? : statement */
 	return NULL != strstr(m_str, _str) ? true : false;
 }
 
@@ -427,14 +472,35 @@ istream& operator>> (istream& _is, String_t& _str_t)
 	
 
 
+/*
+static member function get current number of String_t instances
+*/
+unsigned int String_t::GetNumOfStrings() 
+{
+	return String_t::m_numOfStrings;
+}
 
 
 
+/*
+static member function get current Case sensitivity state
+*/
+bool String_t::GetCaseSens() 
+{
+	return String_t::m_caseSens;
+}
 
 
 
-
-
+/*
+static member function set current Case sensitivity state
+*/
+void String_t::SetCaseSens(bool _value) 
+{
+	String_t::m_caseSens = _value;
+	
+	return;
+}
 
 
 

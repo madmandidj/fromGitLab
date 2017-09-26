@@ -16,6 +16,7 @@ static void DisplayUI()
 	cout << "15: > char*\t\t16: Contains char*\n";
 	cout << "17: Contains String_t\t18: IthChar\n";
 	cout << "19: []\t\t\t20: >> / <<\n";
+	cout << "21: Num of strings\t22: Set case sensitivity\n";
 	cout << "0: Quit and have a nice day! :-)\n";
 
 	return;
@@ -379,6 +380,38 @@ int main()
 				
 				break;
 			}	
+			
+			
+			case 21: /* Get Num Of Strings */
+			{
+				cout << "Current number of String_t instances = " << String_t::GetNumOfStrings() << endl;
+				{
+					String_t str_t1;
+					String_t str_t2;
+					cout << "Current number of String_t instances = " << String_t::GetNumOfStrings() << endl;
+				}
+				String_t str_t2;
+				
+				cout << "Current number of String_t instances = " << String_t::GetNumOfStrings() << endl;
+				
+				break;
+			}
+			
+			
+			case 22: /* Set Case Sensitivity */
+			{
+				bool result;
+				
+				cout << "Select: 1 = case sense ON, 0 = case sense off" << endl;
+				
+				cin >> result;
+				
+				String_t::SetCaseSens(result);
+				
+				cout << "Case sense value is = " << String_t::GetCaseSens() << endl;
+				
+				break;
+			}
 			
 				
 			case 0:

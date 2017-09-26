@@ -32,11 +32,20 @@ class String_t
 		bool 		operator> (const String_t& _str_t) const; 	/* returns true if length larger than input String_t*/
 		bool 		operator< (const char* _str) const; 		/* returns true if length smaller than input char* */
 		char		operator[] (size_t _i);						/* [] Get Ith char operator*/
+		static unsigned int	GetNumOfStrings();
+		static bool GetCaseSens();
+		static void	SetCaseSens(bool _value);
+		static unsigned int GetDefaultCap();
+		static unsigned int SetDefaultCap();
 	
 	private:
-		char*	m_str;
-		size_t	m_length;
-		void	DefaultCTOR();								
+		char*				m_str;
+		size_t				m_length;							
+		unsigned int		m_capacity;
+		void				DefaultCTOR();
+		static unsigned int	m_numOfStrings;
+		static unsigned int m_defaultCap;
+		static bool			m_caseSens;
 };
 
 ostream&	operator<< (ostream& _os, const String_t& _str_t);
