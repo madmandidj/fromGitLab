@@ -16,7 +16,7 @@ class String_t
 		size_t		Length() const;	
 		void		Set(const char* _str);
 		const char*	Get() const;
-		int			Compare(String_t _str_t) const; 		/* Passing param by value to allow data manipulation for case insensitive */
+		int			Compare(const String_t& _str_t) const; 
 		void		Print() const;
 		void		ToLower();
 		void		ToUpper();
@@ -32,22 +32,20 @@ class String_t
 		bool 		operator> (const String_t& _str_t) const; 	/* returns true if length larger than input String_t*/
 		bool 		operator< (const char* _str) const; 		/* returns true if length smaller than input char* */
 		char		operator[] (size_t _i);						/* [] Get Ith char operator*/
-		static size_t	GetNumOfStrings();
-		static bool 	GetCaseSens();
-		static void		SetCaseSens(bool _value);
-		static size_t 	GetDefaultCap();
-		static size_t 	SetDefaultCap();
+		static unsigned int	GetNumOfStrings();
+		static bool GetCaseSens();
+		static void	SetCaseSens(bool _value);
+		static unsigned int GetDefaultCap();
+		static unsigned int SetDefaultCap();
 	
 	private:
-		char*			m_str;
-		size_t			m_length;							
-		size_t			m_capacity;
-//		void			DefaultCTOR();
-		void 			CreateFrom(const char* _str);
-		size_t			GetNewCapacity();
-		static size_t	m_numOfStrings;
-		static size_t 	m_defaultCap;
-		static bool		m_caseSens;
+		char*				m_str;
+		size_t				m_length;							
+		unsigned int		m_capacity;
+		void				DefaultCTOR();
+		static unsigned int	m_numOfStrings;
+		static unsigned int m_defaultCap;
+		static bool			m_caseSens;
 };
 
 ostream&	operator<< (ostream& _os, const String_t& _str_t);

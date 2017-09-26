@@ -3,7 +3,6 @@
 #include <string.h>
 
 
-
 static void DisplayUI()
 {
 	cout << "\n\nSelect an option:\n";
@@ -32,6 +31,7 @@ static unsigned int GetUserOption()
 	
 	return option;
 }
+
 
 
 

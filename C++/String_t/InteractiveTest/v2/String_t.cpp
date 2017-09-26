@@ -14,53 +14,41 @@ bool String_t::m_caseSens = true;
 unsigned int String_t::m_defaultCap = 1;
 
 
-
 /*
-private Get new capacity
+private String_t Default constructor
 */
-size_t String_t::GetNewCapacity()
-{
-	size_t newCapacity = 1;
-	
-	while (m_length >= newCapacity)
-	{
-		newCapacity *= 2; /* TODO: find more efficient way of finding closest power of 2 */
-	}
-	
-	return newCapacity;
-}
+//void String_t::DefaultCTOR()
+//{	
+//	m_str = new char[String_t::m_defaultCap];
+//	
+//	if(0 == m_str)
+//	{
+//		/* TODO: Do something here*/
+//	}
+//	
+//	m_capacity = String_t::m_defaultCap;
+//	
+//	m_length = 0;
 
+//	m_str[0] = '\0';
+//	
+//	return;
+//}
 
-
-/*
-private String_t Create From char*
-*/
-void String_t::CreateFrom(const char* _str)
+void String_t::CreateFrom()
 {	
-	m_capacity = String_t::m_defaultCap;
+	m_str = new char[String_t::m_defaultCap];
 	
-	m_length = 0;
-	
-	if (NULL != _str)
-	{
-		m_length = strlen(_str);
-	
-		if (m_length >= m_capacity)
-		{
-			m_capacity = this->GetNewCapacity();
-		}
-	}
-	
-	m_str = new char[m_capacity];
-		
 	if(0 == m_str)
 	{
 		/* TODO: Do something here*/
-	}	
+	}
 	
-	strcpy(this->m_str, NULL == _str ? "" : _str);
+	m_capacity = String_t::m_defaultCap;
 	
-	++String_t::m_numOfStrings;
+	m_length = 0;
+
+	m_str[0] = '\0';
 	
 	return;
 }
@@ -72,7 +60,9 @@ String_t Default constructor
 */
 String_t::String_t()
 {
-	this->CreateFrom(NULL);
+	this->DefaultCTOR();
+	
+	++String_t::m_numOfStrings;
 	
 	return;
 }
@@ -98,8 +88,50 @@ String_t Constructor with const char*
 */
 String_t::String_t(const char* _str)
 {
-	this->CreateFrom(_str);
-
+	unsigned int newCap = 1;
+	
+	if (NULL == _str)
+	{
+		this->DefaultCTOR();
+		
+		++String_t::m_numOfStrings;
+		
+		return; 
+	}
+	
+	m_length = strlen(_str);
+	
+	if (m_length >= String_t::m_defaultCap)
+	{
+		while (m_length >= newCap)
+		{
+			newCap *= 2;
+		}
+		
+		m_capacity = newCap;
+		
+		m_str = new char[m_capacity];
+	
+		if(0 == m_str)
+		{
+			/* TODO: Do something here*/
+		}
+		
+	}
+	
+//	m_str = new char[m_length + 1];
+//	
+//	if(0 == m_str)
+//	{
+//		/* TODO: Do something here*/
+//	}
+	
+	m_str[0] = '\0';
+	
+	strcpy(this->m_str, _str);
+	
+	++String_t::m_numOfStrings;
+	
 	return;
 }
 
@@ -108,9 +140,19 @@ String_t::String_t(const char* _str)
 /*
 String_t Constructor with const String_t reference
 */
-String_t::String_t(const String_t& _str_t)
+String_t::String_t(const String_t& _str)
 {
-	this->CreateFrom(_str_t.m_str);
+	/* TODO: how to check valid argument for reference? */
+	
+	m_length = strlen(_str.m_str);
+	
+	m_str = new char[m_length + 1];
+	
+	m_str[m_length] = '\0';
+	
+	strcpy(this->m_str, _str.m_str);
+	
+	++String_t::m_numOfStrings;
 	
 	return;
 }
@@ -162,20 +204,19 @@ void String_t::Set(const char* _str)
 		return;
 	}
 	
-	m_length = strlen(_str);
-	
-	if (m_length >= m_capacity)
+	if (m_length < strlen(_str))
 	{
 		delete[] m_str;
 		
-		m_capacity = this->GetNewCapacity();
+		m_length = strlen(_str);
 		
-		m_str = new char[m_capacity];
+		m_str = new char[m_length + 1];
 		
 		strcpy(m_str, _str);
 		
 		return;
 	}
+	m_length = strlen(_str);
 	
 	strcpy(m_str, _str);
 	
@@ -187,22 +228,12 @@ void String_t::Set(const char* _str)
 /*
 String_t Compare
 */
-int String_t::Compare(String_t _str_t) const
+int String_t::Compare(const String_t& _str_t) const
 {	
 	int result;
-	String_t s1 = *this;
 	
-	if (true == m_caseSens)
-	{
-		result = strcmp(m_str, _str_t.m_str);
-	}
-	else
-	{
-		_str_t.ToLower();
-		s1.ToLower();
-		result = strcmp(s1.m_str, _str_t.m_str);
-	}
-	
+	result = strcmp(m_str, _str_t.m_str);
+
 	return result < 0 ? 1 : (result > 0 ? 2 : 0);
 }
 
@@ -217,7 +248,6 @@ void String_t::Print() const
 	
 	return;
 }
-
 
 
 
@@ -271,20 +301,15 @@ void String_t::Prepend(const char* _str)
 		return;
 	}
 	
-	m_length = strlen(_str) + strlen(m_str);
-	
-	if (m_length >= m_capacity)
-	{	
-		m_capacity = this->GetNewCapacity();
-	}
-	
-	char* str = new char[m_capacity];
+	char* str = new char[strlen(_str) + strlen(m_str) + 1];
 	
 	strcpy(str, _str);
-
+	
 	strcat(str, m_str);
 	
 	delete[] m_str;
+	
+	m_length = strlen(str);
 	
 	m_str = str;
 	
@@ -315,26 +340,17 @@ String_t& String_t::operator+= (const char* _str)
 		return *this;
 	}
 	
-	m_length = strlen(_str) + strlen(m_str);
+	char* str = new char[strlen(_str) + strlen(m_str) + 1];
 	
-	if (m_length >= m_capacity)
-	{	
-		m_capacity = this->GetNewCapacity();
-		
-		char* str = new char[m_capacity];
+	strcpy(str, m_str);
 	
-		strcpy(str, m_str);
-
-		strcat(str, _str);
+	strcat(str, _str);
 	
-		delete[] m_str;
+	delete[] m_str;
 	
-		m_str = str;
-		
-		return *this;
-	}
-
-	strcat(m_str, _str);
+	m_length = strlen(str);
+	
+	m_str = str;
 	
 	return *this;
 }
@@ -361,23 +377,8 @@ bool String_t::operator> (const char* _str) const
 	{
 		return false;
 	}
-	
-	if (true == m_caseSens)
-	{
-		String_t s1 = _str;
-		
-		return 1 == this->Compare(s1) ? true : false;
-	}
-	
-	String_t s1 = *this;
-	
-	String_t s2 = _str;
-	
-	s1.ToLower();
-	
-	s2.ToLower();
-		
-	return 1 == s1.Compare(s2) ? true : false;
+
+	return m_length > strlen(_str) ? true : false;
 }
 
 
@@ -387,10 +388,7 @@ String_t > operator String_t
 */
 bool String_t::operator> (const String_t& _str_t) const
 {
-	/*TODO: Compare should be used here */
-//	return m_length > _str_t.m_length ? true : false;
-	
-	return *this > _str_t;
+	return m_length > _str_t.m_length ? true : false;
 }
 
 
@@ -404,8 +402,7 @@ bool String_t::operator< (const char* _str) const
 	{
 		return false;
 	}
-	
-	/*TODO: Compare should be used here */
+
 	return m_length < strlen(_str) ? true : false;
 }
 
@@ -431,6 +428,7 @@ char String_t::IthChar(size_t _i) const
 String_t get Ith char operator
 TODO: make another prototype that returns char& so can do str[2] = 'c'
 */
+
 char String_t::operator[] (size_t _i)
 {
 	return this->IthChar(_i);
@@ -448,20 +446,8 @@ bool String_t::Contains(const char* _str) const
 		return false;
 	}
 	
-	if (true == m_caseSens)
-	{
-		return strstr(m_str, _str);
-	}
-	
-	String_t s1 = *this;
-	
-	String_t s2 = _str;	
-	
-	s1.ToLower();
-	
-	s2.ToLower();
-
-	return strstr(s1.m_str, s2.m_str);
+	/*TODO: Dont need the ? : statement */
+	return NULL != strstr(m_str, _str) ? true : false;
 }
 
 
