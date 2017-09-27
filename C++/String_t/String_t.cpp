@@ -4,9 +4,7 @@
 #include <strings.h>
 #include <ctype.h>
 
-#define INIT_STRING_CAPACITY 128
-
-
+#define INIT_STRING_CAPACITY 128 /* TODO: change this to const */
 
 /*
 Static member initializers
@@ -18,15 +16,69 @@ unsigned int String_t::m_defaultCap = 1;
 
 
 /*
+private String_t Initialize
+*/
+void String_t::StringtInit()
+{
+	m_str = 0;
+	
+	SetCapacity(String_t::m_defaultCap);
+	
+	SetLength(0);
+	
+	return;
+}
+
+
+
+/*
+private String_t Set Capacity
+*/
+void String_t::SetCapacity(size_t _cap)
+{
+	if (0 == _cap)
+	{
+		m_capacity = 1;
+	}
+	else
+	{
+		m_capacity = _cap;
+	}
+	
+	return;
+}
+
+
+
+/*
+private String_t Set Length
+*/
+void String_t::SetLength(size_t _length)
+{
+	m_length = _length;
+	
+	return;
+}
+
+
+
+/*
 private Get new capacity
 */
-size_t String_t::GetNewCapacity()
+size_t String_t::GetNewCapacity(size_t _newLength)
 {
 	size_t newCapacity = 1;
 	
-	while (m_length >= newCapacity)
+	if (_newLength >= m_capacity)
+	{	
+		while (_newLength >= newCapacity)
+		{
+			newCapacity *= 2; /* TODO: find more efficient way of finding closest power of 2 */
+		}
+	}
+	else
 	{
-		newCapacity *= 2; /* TODO: find more efficient way of finding closest power of 2 */
+		newCapacity = m_capacity;
 	}
 	
 	return newCapacity;
@@ -37,34 +89,23 @@ size_t String_t::GetNewCapacity()
 /*
 private String_t Create From char*
 */
-void String_t::CreateFrom(const char* _str)
-{	
-	m_capacity = String_t::m_defaultCap;
+char* String_t::CreateFrom(const char* _str, size_t _capacity)
+{
+	char* str;
 	
-	m_length = 0;
+	str = new char[_capacity];
 	
-	if (NULL != _str)
+	if (0 == str)
 	{
-		m_length = strlen(_str);
-	
-		if (m_length >= m_capacity)
-		{
-			m_capacity = this->GetNewCapacity();
-		}
+		return 0;
 	}
 	
-	m_str = new char[m_capacity];
-		
-	if(0 == m_str)
-	{
-		/* TODO: Do something here*/
-	}	
-	
-	strcpy(this->m_str, NULL == _str ? "" : _str);
-	
-	++String_t::m_numOfStrings;
-	
-	return;
+	if (NULL == _str)
+	{	
+		return strcpy(str, "");
+	}
+
+	return strcpy(str, _str);
 }
 
 
@@ -74,7 +115,70 @@ String_t Default constructor
 */
 String_t::String_t()
 {
-	this->CreateFrom(NULL);
+	StringtInit();
+	
+	if (0 == (m_str = CreateFrom("", m_capacity)))
+	{
+		//		TODO: Handle "new" exception 
+		return;
+	}
+	
+	++String_t::m_numOfStrings;
+	
+	return;
+}
+
+
+
+// TODO: make private member function DoConstruct for Copy CTOR and char* constructor
+/*
+String_t Constructor from const char*
+*/
+String_t::String_t(const char* _str)
+{
+	StringtInit();
+	
+	if (NULL != _str)
+	{
+		SetLength(strlen(_str));
+		
+		SetCapacity(GetNewCapacity(m_length));
+	}
+	
+	if (0 == (m_str = CreateFrom(_str, m_capacity)))
+	{
+		//	TODO: Handle "new" exception 
+		return;
+	}
+	
+	++String_t::m_numOfStrings;
+
+	return;
+}
+
+
+
+/*
+String_t Constructor from const String_t
+*/
+String_t::String_t(const String_t& _str_t)
+{
+	StringtInit();
+	
+	if (NULL != _str_t.m_str)
+	{	
+		SetLength(strlen(_str_t.m_str));
+	
+		SetCapacity(GetNewCapacity(m_length));
+	}
+
+	if (0 == (m_str = CreateFrom(_str_t.m_str, m_capacity)))
+	{
+		//	TODO: Handle "new" exception 
+		return;
+	}
+	
+	++String_t::m_numOfStrings;
 	
 	return;
 }
@@ -96,60 +200,11 @@ String_t::~String_t()
 
 
 /*
-String_t Constructor with const char*
-*/
-String_t::String_t(const char* _str)
-{
-	this->CreateFrom(_str);
-
-	return;
-}
-
-
-
-/*
-String_t Constructor with const String_t reference
-*/
-String_t::String_t(const String_t& _str_t)
-{
-	this->CreateFrom(_str_t.m_str);
-	
-	return;
-}
-
-
-
-/*
-String_t = operator
-*/
-String_t& String_t::operator= (const String_t& _str_t)
-{
-	if (this != &_str_t)
-	{
-		this->Set(_str_t.m_str);
-	}
-	
-	return *this;
-}
-
-
-
-/*
 String_t Get length
 */
 size_t String_t::Length() const
 {
 	return m_length;
-}
-
-
-
-/*
-String_t Get string
-*/
-const char* String_t::Get() const
-{
-	return m_str;
 }
 
 
@@ -161,27 +216,53 @@ void String_t::Set(const char* _str)
 {
 	if (NULL == _str)
 	{
+		strcpy(m_str, "");
+		
+		SetLength(0);
+		
 		return;
 	}
 	
-	m_length = strlen(_str);
+	size_t newLength = strlen(_str);
 	
-	if (m_length >= m_capacity)
+	if (newLength >= m_capacity)
 	{
+		size_t newCap = GetNewCapacity(newLength);
+		
+		char* str = CreateFrom(_str, newCap);
+		
+		if (0 == str)
+		{
+			//	TODO: Handle "new" exception 
+			return;
+		}
+		
+		SetLength(newLength);
+	
+		SetCapacity(newCap);
+		
 		delete[] m_str;
 		
-		m_capacity = this->GetNewCapacity();
-		
-		m_str = new char[m_capacity];
-		
+		m_str = str;
+	}
+	else
+	{
 		strcpy(m_str, _str);
-		
-		return;
+	
+		SetLength(newLength);	
 	}
 	
-	strcpy(m_str, _str);
-	
 	return;
+}
+
+
+
+/*
+String_t Get string
+*/
+const char* String_t::Get() const
+{
+	return m_str;
 }
 
 
@@ -215,25 +296,6 @@ int String_t::Compare(const char* _str) const
 /*
 String_t Compare String_t
 */
-//int String_t::Compare(String_t _str_t) const
-//{	
-//	int result;
-//	String_t s1 = *this;
-//	
-//	if (true == m_caseSens)
-//	{
-//		result = strcmp(m_str, _str_t.m_str);
-//	}
-//	else
-//	{
-//		_str_t.ToLower();
-//		s1.ToLower();
-//		result = strcmp(s1.m_str, _str_t.m_str);
-//	}
-//	
-//	return result < 0 ? 1 : (result > 0 ? 2 : 0);
-//}
-
 int String_t::Compare(const String_t& _str_t) const
 {	
 	return this->Compare(_str_t.m_str);
@@ -303,15 +365,19 @@ void String_t::Prepend(const char* _str)
 	{
 		return;
 	}
+	// TODO: use memcpy or similar instead of strcpy. do not corrupt data in case "new" fails!!
 	
-	m_length = strlen(_str) + strlen(m_str);
+	size_t newLength = strlen(_str) + strlen(m_str);
+
+	size_t newCap = GetNewCapacity(newLength);
 	
-	if (m_length >= m_capacity)
-	{	
-		m_capacity = this->GetNewCapacity();
+	char* str = CreateFrom("", newCap);
+	
+	if (0 == str)
+	{
+		//	TODO: Handle "new" exception 
+		return;
 	}
-	
-	char* str = new char[m_capacity];
 	
 	strcpy(str, _str);
 
@@ -320,6 +386,10 @@ void String_t::Prepend(const char* _str)
 	delete[] m_str;
 	
 	m_str = str;
+	
+	SetLength(newLength);
+	
+	SetCapacity(newCap);
 	
 	return;
 }
@@ -339,6 +409,21 @@ void String_t::Prepend(const String_t& _str_t)
 
 
 /*
+String_t = operator
+*/
+String_t& String_t::operator= (const String_t& _str_t)
+{
+	if (this != &_str_t)
+	{
+		this->Set(_str_t.m_str);
+	}
+	
+	return *this;
+}
+
+
+
+/*
 String_t += operator const char*
 */
 String_t& String_t::operator+= (const char* _str)
@@ -348,26 +433,31 @@ String_t& String_t::operator+= (const char* _str)
 		return *this;
 	}
 	
-	m_length = strlen(_str) + strlen(m_str);
+	// TODO: use memcpy or similar instead of strcpy. do not corrupt data in case "new" fails!!
 	
-	if (m_length >= m_capacity)
-	{	
-		m_capacity = this->GetNewCapacity();
-		
-		char* str = new char[m_capacity];
-	
-		strcpy(str, m_str);
+	size_t newLength = strlen(m_str) + strlen(_str);
 
-		strcat(str, _str);
+	size_t newCap = GetNewCapacity(newLength);
 	
-		delete[] m_str;
+	char* str = CreateFrom("", newCap);
 	
-		m_str = str;
-		
+	if (0 == str)
+	{
+		//	TODO: Handle "new" exception 
 		return *this;
 	}
+	
+	strcpy(str, m_str);
 
-	strcat(m_str, _str);
+	strcat(str, _str);
+	
+	delete[] m_str;
+	
+	m_str = str;
+	
+	SetLength(newLength);
+	
+	SetCapacity(newCap);
 	
 	return *this;
 }
@@ -389,30 +479,13 @@ String_t > operator const char*
 */
 bool String_t::operator> (const char* _str) const
 {	
-	/* TODO: add case where this string is NULL and _str is NULL so then they are equal */
+	/* TODO: Handle if m_str NULL and _str NULL so then they are equal */
 	if (NULL == _str)
 	{
 		return false;
 	}
-	
-//	if (true == m_caseSens)
-//	{
-//		String_t s1 = _str;
 		
-		return 1 == this->Compare(_str) ? true : false;
-//	}
-	
-//	String_t s1 = *this;
-//	
-//	String_t s2 = _str;
-//	
-//	s1.ToLower();
-//	
-//	s2.ToLower();
-
-	
-		
-//	return 1 == s1.Compare(s2) ? true : false;
+	return 1 == this->Compare(_str) ? true : false;
 }
 
 
@@ -423,8 +496,6 @@ String_t > operator String_t
 bool String_t::operator> (const String_t& _str_t) const
 {
 	/*TODO: Compare should be used here */
-//	return m_length > _str_t.m_length ? true : false;
-	
 	return this->m_str > _str_t.m_str;
 }
 
@@ -475,7 +546,7 @@ char String_t::operator[] (size_t _i)
 
 /*
 String_t contains const char*
-*/
+*/	
 bool String_t::Contains(const char* _str) const
 {	
 	if (NULL == _str)
@@ -487,16 +558,8 @@ bool String_t::Contains(const char* _str) const
 	{
 		return strstr(m_str, _str);
 	}
-	
-	String_t s1 = *this;
-	
-	String_t s2 = _str;	
-	
-	s1.ToLower();
-	
-	s2.ToLower();
 
-	return strstr(s1.m_str, s2.m_str);
+	return strcasestr(m_str, _str);
 }
 
 

@@ -8,11 +8,11 @@ using namespace std;
 
 class String_t
 {
-	public:
-					String_t();									/* default CTOR */
-					~String_t();								/* DTOR */
-					String_t(const char* _str);					/* char* CTOR */
-					String_t(const String_t& _str_t);			/* copy CTOR */
+	public:	//public member functions
+					String_t();								/* default CTOR */
+					String_t(const char* _str);				/* char* CTOR */
+					String_t(const String_t& _str_t);		/* copy CTOR */
+					~String_t();							/* DTOR */
 		size_t		Length() const;	
 		void		Set(const char* _str);
 		const char*	Get() const;
@@ -25,27 +25,35 @@ class String_t
 		void		Prepend(const String_t& _str_t);
 		bool		Contains(const char* _str) const;
 		bool		Contains(const String_t& _str_t) const;
-		char		IthChar(size_t _i) const;					/* Get Ith char */
-		String_t&	operator= (const String_t& _str_t);			/* assignment operator*/	
-		String_t&	operator+= (const char* _str);				/* Append char* */
-		String_t&	operator+= (const String_t& _str_t);		/* Append String_t */
-		bool 		operator> (const char* _str) const; 		/* returns true if length larger than input char* */
-		bool 		operator> (const String_t& _str_t) const; 	/* returns true if length larger than input String_t*/
-		bool 		operator< (const char* _str) const; 		/* returns true if length smaller than input char* */
-		char		operator[] (size_t _i);						/* [] Get Ith char operator*/
+		char		IthChar(size_t _i) const;					
+		String_t&	operator= (const String_t& _str_t);				
+		String_t&	operator+= (const char* _str);				
+		String_t&	operator+= (const String_t& _str_t);		
+		bool 		operator> (const char* _str) const; 		
+		bool 		operator> (const String_t& _str_t) const; 	
+		bool 		operator< (const char* _str) const; 		
+		char		operator[] (size_t _i);						
+	
+	public: // public static member functions
 		static size_t	GetNumOfStrings();
 		static bool 	GetCaseSens();
 		static void		SetCaseSens(bool _value);
 		static size_t 	GetDefaultCap();
 		static size_t 	SetDefaultCap();
 	
-	private:
+	private: //private members
 		char*			m_str;
 		size_t			m_length;							
 		size_t			m_capacity;
-//		void			DefaultCTOR();
-		void 			CreateFrom(const char* _str);
-		size_t			GetNewCapacity();
+	
+	private: //private member functions
+		void			StringtInit();
+		void 			SetCapacity(size_t _cap);
+		void			SetLength(size_t _length);
+		size_t			GetNewCapacity(size_t _newLength);
+		char* 			CreateFrom(const char* _str, size_t _capacity);
+
+	private: //private static members
 		static size_t	m_numOfStrings;
 		static size_t 	m_defaultCap;
 		static bool		m_caseSens;
