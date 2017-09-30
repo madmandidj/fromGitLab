@@ -1,8 +1,7 @@
-#include "memPool_t.h"
+#include "./memPool_t/memPool_t.h"
 #include <iostream>
 
 using namespace std;
-
 
 
 
@@ -28,12 +27,3 @@ int main()
 	
 	return 0;
 }
-
-
-
-
-
-
-
-
-

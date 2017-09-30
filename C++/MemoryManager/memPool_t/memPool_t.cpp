@@ -43,6 +43,12 @@ memPool_t::~memPool_t()
 	
 	for (index = m_vec.size();index > 0; --index)
 	{
+//		memPage_t* mPage;
+//		
+//		mPage = m_vec.at(index - 1);
+
+//		delete mPage;
+		
 		delete m_vec.at(index - 1);
 		
 		m_vec.pop_back();

@@ -3,7 +3,7 @@
 
 
 memPage_t::memPage_t(size_t _capacity)
-{
+{	
 	if (0 == _capacity)
 	{
 		m_capacity = 1;
@@ -14,12 +14,14 @@ memPage_t::memPage_t(size_t _capacity)
 	}
 	
 	m_buf = new char[m_capacity];
+	
 	if (0 == m_buf)
 	{
 		/*TODO: handle 'new' exception */
 	}
 	
 	m_size = 0;
+	
 	m_position = 0;
 }
 
@@ -123,6 +125,8 @@ bool memPage_t::SetPosition(size_t _index)
 	}
 	
 	m_position = _index;
+	
+	return true;
 }
 
 
@@ -155,7 +159,7 @@ void memPage_t::SetCapacity(size_t _newPageSize)
 	}
 	else
 	{
-		m_capacity == _newPageSize;
+		m_capacity = _newPageSize;
 	}
 	
 	return;

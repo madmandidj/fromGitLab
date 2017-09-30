@@ -7,10 +7,12 @@
 
 class memPage_t:public memManager_t
 {
+
 	public:
 		memPage_t(size_t _capacity = 1024);
 		~memPage_t();
-		
+//		~memManager_t();
+
 		virtual size_t 	GetPosition() const;
 		virtual bool 	SetPosition(size_t _index);
 		virtual bool 	IsEmpty() const;
