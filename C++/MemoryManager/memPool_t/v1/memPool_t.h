@@ -29,17 +29,13 @@ class memPool_t:public memManager_t
 		virtual size_t	GetCapacity() const;
 		virtual void	SetCapacity(size_t _newPageSize);
 		
-		
 	private:
 		memPool_t(const memPool_t& memPool_t); 				//Forbidden so placed in private
 		memPool_t&	operator= (const memPool_t& _mPool);	//Forbidden so placed in private
-		vector<memPage_t*> 		m_vec;
-		size_t					m_size;
-		size_t 					m_pageCapacity;
-		size_t					m_position;
-		size_t 					m_numOfPages;
-		size_t					m_poolCapacity;
-		
+		vector<memPage_t*> 			m_vec;
+		size_t						m_size;
+		size_t 						m_capacity;
+		size_t						m_position;
 };
 
 

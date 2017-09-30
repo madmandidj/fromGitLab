@@ -2,6 +2,27 @@
 #include <string.h> 	/* memcpy */
 
 
+size_t memPage_t::GetCapacity() const
+{
+	return m_capacity;
+}
+
+
+void memPage_t::SetCapacity(size_t _newPageSize)
+{
+	if (0 == _newPageSize)
+	{
+		m_capacity = 1;
+	}
+	else
+	{
+		m_capacity == _newPageSize;
+	}
+	
+	return;
+}
+
+
 memPage_t::memPage_t(size_t _capacity)
 {
 	if (0 == _capacity)
@@ -41,25 +62,25 @@ size_t memPage_t::Read(void* _data, size_t _dataSize)
 
 size_t memPage_t::Read(void* _data, size_t _dataSize, size_t _position)
 {
-	if (NULL == _data || 0 == _dataSize || _position >= m_size)
+	if (NULL == _data || 0 == _dataSize || m_position >= m_size)
 	{
 		return 0;
 	}
 		
-	if (_position + _dataSize > m_size)
+	if (m_position + _dataSize >= m_size)
 	{
 		size_t numOfBytesToRead = m_size - _dataSize;
 		
-		memcpy(_data, m_buf + _position, numOfBytesToRead);
+		memcpy(_data, m_buf + m_position, numOfBytesToRead);
 		
 		m_position = m_size;
 		
 		return numOfBytesToRead; /* return amount of bytes read */
 	}
 	
-	memcpy(_data, m_buf + _position, _dataSize);
+	memcpy(_data, m_buf + m_position, _dataSize);
 	
-	m_position = _position + _dataSize;
+	m_position += _dataSize;
 	
 	return _dataSize; /* return amount of bytes read */	
 }
@@ -76,16 +97,16 @@ size_t memPage_t::Write(const void* _data, size_t _dataSize)
 size_t memPage_t::Write(const void* _data, size_t _dataSize, size_t _position)
 {
 
-	if (NULL == _data || 0 == _dataSize || _position > m_size || _position >= m_capacity)
+	if (NULL == _data || 0 == _dataSize || m_position > m_size || m_position >= m_capacity)
 	{
 		return 0;
 	}
 		
-	if (_position + _dataSize > m_capacity)
+	if (m_position + _dataSize > m_capacity)
 	{
-		size_t numOfBytesToWrite = (_position + _dataSize) - m_capacity;
+		size_t numOfBytesToWrite = (m_position + _dataSize) - m_capacity;
 		
-		memcpy(m_buf + _position, _data, numOfBytesToWrite);
+		memcpy(m_buf + m_position, _data, numOfBytesToWrite);
 		
 		m_position = m_capacity;
 		
@@ -94,9 +115,9 @@ size_t memPage_t::Write(const void* _data, size_t _dataSize, size_t _position)
 		return numOfBytesToWrite; /* return amount of bytes written */
 	}
 	
-	memcpy(m_buf + _position, _data, _dataSize);
+	memcpy(m_buf + m_position, _data, _dataSize);
 	
-	m_position = _position + _dataSize;
+	m_position += _dataSize;
 	
 	if (m_position > m_size)
 	{
@@ -140,26 +161,6 @@ bool memPage_t::IsEmpty() const
 	return true;
 }
 
-
-size_t memPage_t::GetCapacity() const
-{
-	return m_capacity;
-}
-
-
-void memPage_t::SetCapacity(size_t _newPageSize)
-{
-	if (0 == _newPageSize)
-	{
-		m_capacity = 1;
-	}
-	else
-	{
-		m_capacity == _newPageSize;
-	}
-	
-	return;
-}
 
 
 
