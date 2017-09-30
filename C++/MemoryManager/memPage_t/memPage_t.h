@@ -10,7 +10,7 @@ class memPage_t:public memManager_t
 
 	public:
 		memPage_t(size_t _capacity = 1024);
-		~memPage_t();
+		virtual ~memPage_t();
 //		~memManager_t();
 
 		virtual size_t 	GetPosition() const;
@@ -26,8 +26,8 @@ class memPage_t:public memManager_t
 		bool 	IsPageFull() const;
 		
 	private:
-		memPage_t(const memPage_t& _mPage); 			//Forbidden so placed in private
-		memPage_t&	operator= (const memPage_t& _mPage);//Forbidden so placed in private
+		memPage_t(const memPage_t& _mPage); 			//Non-copyable
+		memPage_t&	operator= (const memPage_t& _mPage);//Non-copyable
 		char* 	m_buf;
 		size_t	m_size;
 		size_t 	m_capacity;

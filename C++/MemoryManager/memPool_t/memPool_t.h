@@ -16,7 +16,7 @@ class memPool_t:public memManager_t
 {
 	public:
 		memPool_t(size_t _capacity = 1024);
-		~memPool_t();
+		virtual ~memPool_t();
 		
 		virtual size_t 	GetPosition() const;
 		virtual bool 	SetPosition(size_t _index);
@@ -31,8 +31,8 @@ class memPool_t:public memManager_t
 		
 		
 	private:
-		memPool_t(const memPool_t& memPool_t); 				//Forbidden so placed in private
-		memPool_t&	operator= (const memPool_t& _mPool);	//Forbidden so placed in private
+		memPool_t(const memPool_t& memPool_t); 				//Non-copyable
+		memPool_t&	operator= (const memPool_t& _mPool);	//Non-copyable
 		vector<memPage_t*> 		m_vec;
 		size_t					m_size;
 		size_t 					m_pageCapacity;

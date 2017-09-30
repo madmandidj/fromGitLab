@@ -6,7 +6,8 @@
 class memManager_t
 {
 	public:
-		virtual ~memManager_t() = 0;
+//		memManager_t();
+//		virtual ~memManager_t();
 		virtual size_t 	GetPosition() const = 0;
 		virtual bool 	SetPosition(size_t _index) = 0;
 		virtual bool 	IsEmpty() const = 0;
@@ -17,6 +18,10 @@ class memManager_t
 		virtual size_t 	Write(const void* _data, size_t _dataSize, size_t _position) = 0;
 		virtual size_t	GetCapacity() const = 0;
 		virtual void	SetCapacity(size_t _newPageSize) = 0;
+	
+//	private:
+//		memManager_t(const memManager_t& _mMngr);//Non-copyable
+//		memManager_t& operator=(const memManager_t& _mMngr);//Non-copyable
 };
 
 
