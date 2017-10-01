@@ -7,7 +7,7 @@ class memManager_t
 {
 	public:
 //		memManager_t();
-//		virtual ~memManager_t();
+//		virtual ~memManager_t(); /* TODO: check why when this defined get undefined reference */
 		virtual size_t 	GetPosition() const = 0;
 		virtual bool 	SetPosition(size_t _index) = 0;
 		virtual bool 	IsEmpty() const = 0;
@@ -23,11 +23,6 @@ class memManager_t
 //		memManager_t(const memManager_t& _mMngr);//Non-copyable
 //		memManager_t& operator=(const memManager_t& _mMngr);//Non-copyable
 };
-
-
-
-
-
 
 
 

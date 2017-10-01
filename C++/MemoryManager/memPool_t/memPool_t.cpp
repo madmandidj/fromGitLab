@@ -2,10 +2,6 @@
 
 
 
-//size_t memPool_t::m_numOfPages = 0;
-
-
-
 memPool_t::memPool_t(size_t _capacity)
 {
 
@@ -19,20 +15,17 @@ memPool_t::memPool_t(size_t _capacity)
 	}
 	
 	memPage_t* mPage = new memPage_t(m_pageCapacity);
+	
 	if (0 == mPage)
 	{
 		/*TODO: handle 'new' exception */
 	}
 	
-	m_vec.push_back(mPage); // add new pointer to page to the end of vector ?
+	m_vec.push_back(mPage);
 	
 	m_size = 0;
 	
 	m_position = 0;
-	
-	m_numOfPages = 1;
-	
-	m_poolCapacity = m_pageCapacity;
 }
 
 
@@ -42,18 +35,10 @@ memPool_t::~memPool_t()
 	size_t index;
 	
 	for (index = m_vec.size();index > 0; --index)
-	{
-//		memPage_t* mPage;
-//		
-//		mPage = m_vec.at(index - 1);
-
-//		delete mPage;
-		
+	{	
 		delete m_vec.at(index - 1);
 		
 		m_vec.pop_back();
-		
-		--m_numOfPages;
 	}
 }
 
@@ -158,23 +143,52 @@ size_t 	memPool_t::Write(const void* _data, size_t _dataSize, size_t _position)
 	while(_position / (m_pageCapacity - 1) > 0)
 	{
 		_position -= m_pageCapacity;
+		
 		++curPageNum;
 	}
+	
+	if (curPageNum >= m_vec.size())
+	{
+		memPage_t* mPage = new memPage_t(m_pageCapacity);
+	
+		if (0 == mPage)
+		{
+			/*TODO: handle 'new' exception */
+		}
+	
+		m_vec.push_back(mPage);
+	}
+	
+	/*
+	TODO:
+	Sequence needs to change here to handle semi/full overflow
+	*/
 	
 	memPage_t* mPage;
 	
 	mPage = m_vec.at(curPageNum);
 	
 	size_t result = mPage->Write(_data, _dataSize, _position);
-	/*
-	TODO: handle case when result != _dataSize
-	*/
 	
-	m_position = _position + result;
+	m_position = (curPageNum * m_pageCapacity) + _position + result;
 	
 	if (m_position > m_size)
 	{
 		m_size = m_position;
+	}
+	
+	if (result != _dataSize)
+	{
+		memPage_t* mPage = new memPage_t(m_pageCapacity);
+	
+		if (0 == mPage)
+		{
+			/*TODO: handle 'new' exception */
+		}
+	
+		m_vec.push_back(mPage);
+		
+		/* TODO: write remaining data */
 	}
 	
 	return result;
@@ -194,12 +208,6 @@ void	memPool_t::SetCapacity(size_t _newPageSize)
 {
 	return;
 }
-
-//		
-//size_t memPool_t::GetNumOfPages() const
-//{
-//	return m_numOfPages;
-//}
 
 
 

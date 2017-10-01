@@ -11,7 +11,12 @@ TestMemManager: $(objects)
 	g++ $(FLAGS) -o TestMemManager  $(objects) 
 
 
-memPool_t.o: $(PAGE_PATH)memPage_t.cpp $(POOL_PATH)memPool_t.cpp $(PAGE_PATH)memPage_t.h $(POOL_PATH)memPool_t.h $(MNGR_PATH)memManager_t.h 		
+TestMemManager.o: TestMemManager.cpp $(POOL_PATH)memPool_t.cpp $(POOL_PATH)memPool_t.h
+	g++ $(FLAGS) -c  TestMemManager.cpp
+
+
+memPool_t.o: $(PAGE_PATH)memPage_t.cpp $(POOL_PATH)memPool_t.cpp \
+				$(PAGE_PATH)memPage_t.h $(POOL_PATH)memPool_t.h $(MNGR_PATH)memManager_t.h 		
 	g++ $(FLAGS) -c  $(POOL_PATH)memPool_t.cpp 
 	
 	

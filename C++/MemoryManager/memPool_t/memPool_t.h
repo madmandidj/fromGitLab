@@ -2,14 +2,11 @@
 #define __MEMPOOL_T_H__
 
 #include "../memManager_t/memManager_t.h"
-//class memPage_t;
 #include "../memPage_t/memPage_t.h"
 #include <stddef.h>
 #include <vector>
 
 using namespace std; /* vector<> */
-
-
 
 
 class memPool_t:public memManager_t
@@ -37,9 +34,6 @@ class memPool_t:public memManager_t
 		size_t					m_size;
 		size_t 					m_pageCapacity;
 		size_t					m_position;
-		size_t 					m_numOfPages;
-		size_t					m_poolCapacity;
-		
 };
 
 

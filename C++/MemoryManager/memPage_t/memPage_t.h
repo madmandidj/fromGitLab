@@ -10,8 +10,7 @@ class memPage_t:public memManager_t
 
 	public:
 		memPage_t(size_t _capacity = 1024);
-		virtual ~memPage_t();
-//		~memManager_t();
+		virtual ~memPage_t(); /*TODO: check why when this not virtual, get warning */
 
 		virtual size_t 	GetPosition() const;
 		virtual bool 	SetPosition(size_t _index);
