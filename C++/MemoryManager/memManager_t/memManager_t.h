@@ -6,8 +6,8 @@
 class memManager_t
 {
 	public:
-//		memManager_t();
-//		virtual ~memManager_t(); /* TODO: check why when this defined get undefined reference */
+		memManager_t();
+		virtual ~memManager_t(); /* TODO: check why when this defined get undefined reference */
 		virtual size_t 	GetPosition() const = 0;
 		virtual bool 	SetPosition(size_t _index) = 0;
 		virtual bool 	IsEmpty() const = 0;
@@ -19,12 +19,13 @@ class memManager_t
 		virtual size_t	GetCapacity() const = 0;
 		virtual void	SetCapacity(size_t _newPageSize) = 0;
 	
-//	private:
-//		memManager_t(const memManager_t& _mMngr);//Non-copyable
-//		memManager_t& operator=(const memManager_t& _mMngr);//Non-copyable
+	private:
+		memManager_t(const memManager_t& _mMngr);//Non-copyable
+		memManager_t& operator=(const memManager_t& _mMngr);//Non-copyable
 };
 
-
+inline memManager_t::memManager_t(){}
+inline memManager_t::~memManager_t(){}
 
 #endif /* #ifndef __MEMMANAGER_T_H__ */
 
