@@ -2,21 +2,16 @@
 #include <string.h> 	/* memcpy */
 
 
-size_t memPage_t::m_defaultCap = 10;
-
-
-memPage_t::memPage_t()
+memPage_t::memPage_t(size_t _capacity)
 {	
-//	if (0 == _capacity)
-//	{
-//		m_capacity = 1;
-//	}
-//	else
-//	{
-//		m_capacity = _capacity;
-//	}
-
-	m_capacity = memPage_t::GetDefaultCapacity();
+	if (0 == _capacity)
+	{
+		m_capacity = 1;
+	}
+	else
+	{
+		m_capacity = _capacity;
+	}
 	
 	m_buf = new char[m_capacity];
 	
@@ -115,64 +110,56 @@ size_t memPage_t::Write(const void* _data, size_t _dataSize, size_t _position)
 
 
 
-//size_t memPage_t::GetPosition() const
-//{
-//	return m_position;
-//}
+size_t memPage_t::GetPosition() const
+{
+	return m_position;
+}
 
 
 
-//bool memPage_t::SetPosition(size_t _index)
-//{
-//	if (_index > m_size || _index >= m_capacity)
-//	{
-//		return false;
-//	}
-//	
-//	m_position = _index;
-//	
-//	return true;
-//}
+bool memPage_t::SetPosition(size_t _index)
+{
+	if (_index > m_size || _index >= m_capacity)
+	{
+		return false;
+	}
+	
+	m_position = _index;
+	
+	return true;
+}
 
 
 
-//size_t memPage_t::GetSize() const
-//{
-//	return m_size;
-//}
+size_t memPage_t::GetSize() const
+{
+	return m_size;
+}
 
 
 
-//bool memPage_t::IsEmpty() const
-//{
-//	/*TODO: implement*/
-//	return true;
-//}
+bool memPage_t::IsEmpty() const
+{
+	/*TODO: implement*/
+	return true;
+}
 
 
-size_t memPage_t::GetCapacity()
+size_t memPage_t::GetCapacity() const
 {
 	return m_capacity;
 }
 
 
-
-size_t memPage_t::GetDefaultCapacity()
-{
-	return m_defaultCap;
-}
-
-
-
-void memPage_t::SetDefaultCapacity(size_t _newPageSize)
+void memPage_t::SetCapacity(size_t _newPageSize)
 {
 	if (0 == _newPageSize)
 	{
-		m_defaultCap = 1;
+		m_capacity = 1;
 	}
 	else
 	{
-		m_defaultCap = _newPageSize;
+		m_capacity = _newPageSize;
 	}
 	
 	return;
