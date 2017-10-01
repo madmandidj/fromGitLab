@@ -53,28 +53,38 @@ size_t 	memPool_t::Read(void* _data, size_t _dataSize, size_t _position)
 	
 	size_t readPageNum = 0;
 	
-	size_t readPosition = 0;
+	size_t readOffset = 0; /*TODO: use _position and [] operator for vector */
 	
 	memPage_t* mPage;
 	
 	if (0 == _position)
 	{
 		mPage = m_vec.at(readPageNum);
+		readOffset = mPage->GetCapacity();
 	}
 	
-	while(readPosition < _position)
+	while(readOffset < _position)
 	{
 		mPage = m_vec.at(readPageNum);
-		readPosition += mPage->GetCapacity();
+		readOffset += mPage->GetCapacity();
 		++readPageNum;
 	}
 	
-	size_t result = mPage->Read(_data, _dataSize, mPage->GetCapacity() - readPosition);
+	size_t result = mPage->Read(_data, _dataSize, readOffset - mPage->GetCapacity() + _position);
+	
+	m_position = _position + result;
+	
 	/*
 	TODO: handle case when result != _dataSize
 	*/
-	
-	m_position = readPosition + result;
+	if (result != _dataSize)
+	{
+//		if (m_vec.size() < readPageNum)
+//		{
+			mPage = m_vec.at(readPageNum);
+			result = mPage->Read((char*)_data + result, _dataSize - result, 0);
+//		}
+	}
 	
 	return result;
 }
@@ -97,29 +107,56 @@ size_t 	memPool_t::Write(const void* _data, size_t _dataSize, size_t _position)
 
 	size_t writePageNum = 0;
 	
-	size_t writePosition = 0;
+	size_t writeOffset = 0;
 	
 	memPage_t* mPage;
 	
 	if (0 == _position)
 	{
 		mPage = m_vec.at(writePageNum);
+		writeOffset = mPage->GetCapacity();
 	}
 	
-	while(writePosition < _position)
+	while(writeOffset < _position)
 	{
 		mPage = m_vec.at(writePageNum);
-		writePosition += mPage->GetCapacity();
+		writeOffset += mPage->GetCapacity();
 		++writePageNum;
 	}
 	
-	size_t result = mPage->Write(_data, _dataSize, _position);
+	size_t result = mPage->Write(_data, _dataSize, writeOffset - mPage->GetCapacity() + _position);
 
-	m_position = writePosition + result;
+	m_position = _position + result;
 	
 	if (m_position > m_size)
 	{
 		m_size = m_position;
+	}
+	
+	if (result != _dataSize)
+	{
+		if (m_vec.size() >= writePageNum)
+		{
+			memPage_t* mPage2 = new memPage_t();
+	
+			if (0 == mPage)
+			{
+				/*TODO: handle 'new' exception */
+			}
+			
+			result = mPage2->Write((char*)_data + result, _dataSize - result, 0);
+	
+			m_vec.push_back(mPage2);
+			
+		}
+		else
+		{
+			mPage = m_vec.at(writePageNum);
+		
+			result = mPage->Write((char*)_data + result, _dataSize - result, 0);
+		}
+		
+		m_position += result;
 	}
 
 	/*TODO: handle overflow */

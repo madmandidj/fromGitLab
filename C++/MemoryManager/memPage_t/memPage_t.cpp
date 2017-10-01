@@ -55,7 +55,8 @@ size_t memPage_t::Read(void* _data, size_t _dataSize, size_t _position)
 		
 	if (_position + _dataSize > m_size)
 	{
-		size_t numOfBytesToRead = m_size - _dataSize;
+//		size_t numOfBytesToRead = m_size - _dataSize;
+		size_t numOfBytesToRead = m_size - _position;
 		
 		memcpy(_data, m_buf + _position, numOfBytesToRead);
 		
