@@ -41,9 +41,6 @@ size_t	memPool_t::Read(void* _data, size_t _dataSize)
 
 
 
-//mPage* FindPage
-
-
 size_t 	memPool_t::Read(void* _data, size_t _dataSize, size_t _position)
 {
 	if (NULL == _data || 0 == _dataSize || _position >= m_size)
@@ -79,11 +76,11 @@ size_t 	memPool_t::Read(void* _data, size_t _dataSize, size_t _position)
 	*/
 	if (result != _dataSize)
 	{
-//		if (m_vec.size() < readPageNum)
-//		{
-			mPage = m_vec.at(readPageNum);
-			result = mPage->Read((char*)_data + result, _dataSize - result, 0);
-//		}
+		mPage = m_vec.at(readPageNum);
+		
+		result += mPage->Read((char*)_data + result, _dataSize - result, 0);
+		
+		m_position = _position + result;
 	}
 	
 	return result;
@@ -144,7 +141,7 @@ size_t 	memPool_t::Write(const void* _data, size_t _dataSize, size_t _position)
 				/*TODO: handle 'new' exception */
 			}
 			
-			result = mPage2->Write((char*)_data + result, _dataSize - result, 0);
+			result += mPage2->Write((char*)_data + result, _dataSize - result, 0);
 	
 			m_vec.push_back(mPage2);
 			
@@ -153,10 +150,11 @@ size_t 	memPool_t::Write(const void* _data, size_t _dataSize, size_t _position)
 		{
 			mPage = m_vec.at(writePageNum);
 		
-			result = mPage->Write((char*)_data + result, _dataSize - result, 0);
+			result += mPage->Write((char*)_data + result, _dataSize - result, 0);
 		}
 		
 		m_position += result;
+		m_size = m_position;
 	}
 
 	/*TODO: handle overflow */
@@ -164,36 +162,6 @@ size_t 	memPool_t::Write(const void* _data, size_t _dataSize, size_t _position)
 	return result;
 	
 }
-
-
-
-//size_t	memPool_t::GetCapacity() const
-//{
-//	return 1;
-//}
-
-
-
-//void	memPool_t::SetCapacity(size_t _newPageSize)
-//{
-//	return;
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -40,14 +40,19 @@ int main()
 	unsigned int intVar = 1234567890;
 	double dblVar = 98765.01234;
 	
-	int readInt;
+	char readChar = 0;
+	TwoBytes readTwoBytes = {0};
+	ThreeBytes readThreeBytes = {0};
+	int readInt = 0;
+	double readDbl = 0.0;
+	
 
 	cout << endl << "Good morning, Yossi :-) Please select an option:" << endl << "************************************************" << endl;
 		
 	while (true == cont)
 	{
 		
-		cout << "1 - Create memory pool" << endl;
+		cout << endl << "1 - Create memory pool" << endl;
 		cout << "2 - Get pool size" << endl;
 		cout << "3 - Get position" << endl;
 		cout << "4 - Set position" << endl;
@@ -143,7 +148,9 @@ int main()
 					switch (rwOption)
 					{
 						case 1:
-							
+							readResult = mPool->Read(&readChar, sizeof(char));
+							cout << "readChar = " << +readChar << ", Read char returned: " << readResult << endl;
+							readChar = 0;
 						break;
 						
 						case 2:
@@ -156,7 +163,8 @@ int main()
 						
 						case 4:
 							readResult = mPool->Read(&readInt, sizeof(int));
-							cout << "intVar = " << readInt << ", Read returned: " << readResult << endl;
+							cout << "readInt = " << readInt << ", Read int returned: " << readResult << endl;
+							readInt = 0;
 						break;
 						
 						case 5:
@@ -171,7 +179,7 @@ int main()
 				}
 			break;
 			
-			case 6: // Read from current position
+			case 6: // Write tp current position
 				if (true == memPoolExists)
 				{
 					cout << "Enter type to write" << endl;
@@ -186,7 +194,8 @@ int main()
 					switch (rwOption)
 					{
 						case 1:
-							
+							writeResult = mPool->Write(&charVar, sizeof(char));
+							cout << "Write char returned: " << writeResult << endl;
 						break;
 						
 						case 2:
@@ -199,7 +208,7 @@ int main()
 						
 						case 4:
 							writeResult = mPool->Write(&intVar, sizeof(int));
-							cout << "Write returned: " << writeResult << endl;
+							cout << "Write int returned: " << writeResult << endl;
 						break;
 						
 						case 5:
