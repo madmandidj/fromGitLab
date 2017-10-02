@@ -18,7 +18,7 @@ class memManager_t
 		size_t	GetSize() const;
 		
 	protected:
-		size_t m_size;
+		size_t m_size; /*  TODO: can be private and use protected functions to set these */
 		size_t m_position;
 	
 	private:
