@@ -2,20 +2,19 @@ template <typename dlistType>
 class LList 
 {
 	class Node;
-//	class Iterator;
 	
 	public:
 		class Iterator
 		{
 			public:
 			Iterator();
-			~Iterator();
+//			~Iterator();
 			dlistType get() const;
 			void next();
 			void previous();
 			bool equals(Iterator iter) const;
 			
-			private:
+//			private:
 			Node* position;
 			LList* container;
 		};
@@ -33,7 +32,8 @@ class LList
 	{
 		public:
 		Node(dlistType data);
-		private:
+//		private:
+//		protected:
 		dlistType data;
 		Node* ptr_next;
 		Node* ptr_prev;
@@ -142,13 +142,13 @@ void LList<dlistType>::pushBack(dlistType data)
  typename LList<dlistType>::Iterator LList<dlistType>::begin()
  {
      Iterator iter;
-     iter.positon = ptr_first;
+     iter.position = ptr_first;
      iter.container = this;
      return iter;
   }
 
 template <typename dlistType> 
-Iterator LList<T2>::end()
+ typename LList<dlistType>::Iterator LList<dlistType>::end()
 {
      Iterator iter;
      iter.position = ptr_last;
@@ -179,7 +179,7 @@ Iterator LList<T2>::end()
   }                             
 
   template <typename dlistType> 
-  Iterator LList<dlistType>::erase(Iterator iter)
+  typename LList<dlistType>::Iterator LList<dlistType>::erase(Iterator iter)
   {
      Node* after = iter.position->ptr_next;
      Node* before = iter.position->ptr_prev;
