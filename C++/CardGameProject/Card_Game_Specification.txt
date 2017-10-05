@@ -26,9 +26,66 @@ Card game specification:
 
 Player turns go in clockwise direction (player 1 is first)
 
-D 1/../8/9/T/J/Q/K/A
+D 2/../8/9/T/J/Q/K/A
 H
 C
 S
+
+
+
+My implementation:
+Classes:
+--------
+CardGame
+BareketCards
+GameManager
+Players
+Player
+Cards
+Card
+
+
+CardGame (Abstract base class):
+-------------------------------
+	Public (pure virtual):
+		Shuffle(Cards* _cards);
+		Start();
+		Restart();
+		Pause();
+		Stop();
+		PrintScore();
+		PrintFinalScore();
+
+	Protected:
+/////////		GameManager*	m_manager;
+		Players* 		m_players;
+		Cards*  		m_deck;
+		Cards*			m_board;
+		size_t 			m_numOfPlayers;
+		
+
+BareketCards:
+-------------
+Inherits from CardGame
+
+
+
+Card:
+-----
+	Public:
+	
+	
+	Private:
+		char 			m_suit;
+		char 			m_val;
+		unsigned int	m_owner;
+
+
+
+
+
+
+
+
 
 
