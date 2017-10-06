@@ -111,6 +111,8 @@ BareketCards::BareketCards()
 	}
 	
 	m_printMode = true;
+	
+	m_quit = false;
 }
 
 
@@ -141,20 +143,26 @@ bool BareketCards::PlayRound(size_t _numOfPlayers, size_t& _curRound)
 	
 	bool isDefenderWinner = false;
 	
-//	Player player;//currentAttacker;
+	std::cout << "Round #" << _curRound << std::endl << std::endl;
 	
-//	player = (m_players->at(currentAttacker));//currentAttacker;
+//	m_players->ShowPlayersCards();
 	
-//	Player* player = m_players->GetPlayer(0);
-
+//	std::cout << "Attacker = Player #" << currentAttacker + 1 << std::endl;
+	
 	attackPlayer->Attack();
+	
+//	m_players->ShowPlayersCards();
 	
 	isAttackerWinner = (attackPlayer->IsWinner());
 	
 	numOfWinners = (true == isAttackerWinner) ? ++numOfWinners : numOfWinners;
 	
+//	std::cout << "Defender = Player #" << currentDefender + 1 << std::endl;
+	
 	if (true == (defendPlayer->Defend()))
 	{
+//		m_players->ShowPlayersCards();
+		
 		isDefenderWinner = defendPlayer->IsWinner();
 		
 		numOfWinners = (true == isDefenderWinner) ? ++numOfWinners : numOfWinners;
@@ -163,6 +171,8 @@ bool BareketCards::PlayRound(size_t _numOfPlayers, size_t& _curRound)
 	{
 		++_curRound;
 	}
+	
+//	m_players->ShowPlayersCards();
 	
 	if(numOfWinners > 0)
 	{
@@ -180,36 +190,33 @@ bool BareketCards::PlayRound(size_t _numOfPlayers, size_t& _curRound)
 void BareketCards::Start()
 {
 	size_t currentRound = 0;
-	size_t numOfRounds = 40;
+	size_t numOfRounds = 60;
 	size_t currentAttacker = 0;
 	size_t currentDefender = 1;
 	bool isWinner = 0;
 	size_t numOfPlayers = GetNumOfPlayers();
 	
-	while (currentRound < numOfRounds)
+	while (currentRound < numOfRounds && m_quit == false)
 	{
 		
 		isWinner = PlayRound(numOfPlayers, currentRound);
 		
 		if (isWinner)
 		{
-//			PrintFinalScore();
 			Stop();
-			return;
+			continue;
+//			return;
 		}
 		
 		if(true == m_printMode)
 		{
-			std::cout << "Round " << currentRound << std::endl;
+			std::cout << "Pause end of round: " << currentRound + 1 << std::endl << std::endl;
+			m_players->ShowPlayersCards();
 			Pause();
 		} 
 		
 		++currentRound;
 	}
-	
-//	SetWinners();
-	
-//	PrintFinalScore();
 	
 	return;
 }
@@ -259,34 +266,54 @@ void BareketCards::Restart()
 
 void BareketCards::Pause()
 {
-	m_players->ShowPlayersCards();
+	char option;
 	
-	int resume;
+	std::cout << "Enter: 'p' - play next round, 'm' - print mode off, 'q' - quit" << std::endl;
 	
-	std::cin >> resume;
+	std::cin >> option;
+	
+	switch (option)
+	{
+		case 'p':
+			break;
+			
+		case 'm':
+			SetPrintMode(false);
+			break;
+			
+		case 'q':
+			m_quit = true;
+			
+		default:
+			break;
+	}
 }
 
 
 
 void BareketCards::Stop()
 {
+	std::cout << std::endl << std::endl << "Final Score is:" << std::endl;
 	m_players->ShowPlayersCards();
+	Quit();
 }
 
 
 void BareketCards::Quit()
 {
-
+	m_quit = true;
 }
 
 
 
 
 
-//void BareketCards::PrintScore()
-//{
-
-//}
+void BareketCards::PrintScore(size_t _playerNum) const
+{
+	Player* player = m_players->GetPlayer(_playerNum);
+	
+	player->ShowCards();
+}
 
 
 //void BareketCards::PrintFinalScore()
@@ -295,16 +322,16 @@ void BareketCards::Quit()
 //}
 
 
-//bool BareketCards::GetPrintMode()
-//{
-//	return true;
-//}
+bool BareketCards::GetPrintMode() const
+{
+	return m_printMode;
+}
 
 
-//void BareketCards::SetPrintMode()
-//{
-
-//}
+void BareketCards::SetPrintMode(bool _printMode)
+{
+	m_printMode = _printMode;
+}
 
 
 

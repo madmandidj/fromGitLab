@@ -48,6 +48,13 @@ void Player::Attack()
 	
 	m_board->PushBackCard(card);
 	
+	/* TODO: add printMode data member to class so that card prints this when printmode on */
+	std::cout << "Player #" << m_myID + 1 << " attacking with: ";
+	
+	card->PrintCard();
+	
+	std::cout << std::endl << std::endl;
+	
 	return ;
 }
 
@@ -77,13 +84,31 @@ bool Player::Defend()
 			
 			m_cards.RemoveCard(defendIndex);
 			
-			Attack();
+//			Attack();
+
+			/* TODO: add printMode data member to class so that card prints this when printmode on */
+			std::cout << "Player #" << m_myID + 1 << " defended with: ";
+	
+			defendCard->PrintCard();
+	
+			std::cout << std::endl << std::endl;
 			
 			return true;
 		}
 	
 		++defendIndex;
 	}
+	
+	m_cards.PushBackCard(attackCard);
+	
+	/* TODO: add printMode data member to class so that card prints this when printmode on */
+	std::cout << "Player #" << m_myID + 1 << " failed to defend! Took: ";
+
+	attackCard->PrintCard();
+
+	std::cout << std::endl << std::endl;
+	
+	SortCards();
 	
 	return false;
 }

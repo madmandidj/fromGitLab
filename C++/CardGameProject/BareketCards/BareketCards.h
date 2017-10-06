@@ -29,13 +29,13 @@ class BareketCards:public CardGame
 		
 		virtual void Quit();
 		
-		void PrintScore(unsigned int _playerNum) const;
+		void PrintScore(size_t _playerNum) const;
 		
 		void PrintFinalScore() const;
 		
 		bool GetPrintMode() const;
 		
-		void SetPrintMode(bool _mode = true);
+		void SetPrintMode(bool _printMode);
 		
 		size_t GetNumOfPlayers() const;
 		
@@ -54,13 +54,11 @@ class BareketCards:public CardGame
 		
 		BareketCards& operator= (BareketCards& _barCards);
 		
+		bool m_quit;
+		
 		bool m_printMode;	
 		
-//		void Shuffle(); 
-		
 		void CreateDeck();
-		
-//		void Deal();
 		
 		bool PlayRound(size_t _numOfPlayers, size_t& _curRound);
 };
