@@ -11,31 +11,35 @@ int main()
 	
 	Array_t<int> arrayInt(initNumOfElems, initCap, blockSize);
 
-	int int1 = 785;
+	int int1 = 100;
 	
-	int int2 = 345;
+	int int2 = 200;
+	
+	int int3 = 300;
+	
+	int int4 = 400;
 	
 	int* int1p;
 	
 	int* int2p;
 	
-	int* removedInt;
+	int* int3p;
+	
+	int* int4p;
 	
 	int1p = &int1;
 	
 	int2p = &int2;
 	
-	int* int3p;
-	
-	arrayInt.Insert(int1p);
-	
-	arrayInt.Insert(int2p);
-	
-	int int3 = 666;
-	
 	int3p = &int3;
 	
-	arrayInt.Prepend(int3p, 1);
+	int4p = &int4;
+	
+	arrayInt.Insert(int1p);
+
+	arrayInt.Append(int2p, 0);
+	
+	arrayInt.Prepend(int3p, 0);
 	
 	std::cout << arrayInt.GetElementIndex(int1p) << std::endl;
 	

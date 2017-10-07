@@ -17,7 +17,7 @@ class Array_t:public Container_t<elementType>
 		
 		virtual bool Insert(elementType* const _element);
 		
-//		virtual bool Append(elementType* const _element, size_t _index);
+		virtual bool Append(elementType* const _element, size_t _index);
 		
 		virtual bool Prepend(elementType* const _element, size_t _index);
 		
@@ -56,6 +56,8 @@ class Array_t:public Container_t<elementType>
 		void CopyAllElements(Array_t const& _array);
 		
 		void Resize();
+		
+		void ShiftRight(size_t _index);
 		
 	private:			
 		size_t 			m_blockSize;	
@@ -145,6 +147,26 @@ bool Array_t<elementType>::Insert(elementType* const _element)
 
 
 template <class elementType>
+bool Array_t<elementType>::Append(elementType* const _element, size_t _index)
+{
+	if (this->m_numOfElements <= _index)
+	{
+		return false;
+	}
+	
+	Resize();
+	
+	ShiftRight(_index + 1);
+	
+	m_items[_index + 1] = _element;
+	
+	this->m_numOfElements += 1;
+	
+	return true;
+}
+
+
+template <class elementType>
 bool Array_t<elementType>::Prepend(elementType* const _element, size_t _index)
 {
 	if (this->m_numOfElements <= _index)
@@ -156,14 +178,13 @@ bool Array_t<elementType>::Prepend(elementType* const _element, size_t _index)
 	
 	Resize();
 	
-	for (index = this->m_numOfElements; index > _index; --index)
-	{
-		m_items[index] = m_items[index - 1];
-	}
+	ShiftRight(_index);
 	
 	m_items[_index] = _element;
 	
 	this->m_numOfElements += 1;
+	
+	return true;
 }
 
 
@@ -293,6 +314,18 @@ void Array_t<elementType>::Resize()
 }
 
 
+template <class elementType>
+void Array_t<elementType>::ShiftRight(size_t _index)
+{
+	size_t index;
+	
+	for (index = this->m_numOfElements; index > _index; --index)
+	{
+		m_items[index] = m_items[index - 1];
+	}
+	
+	return;
+}
 
 
 

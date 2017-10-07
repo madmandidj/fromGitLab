@@ -1,6 +1,6 @@
 #include "Dlist_t.h"
 #include <iostream>
-
+using namespace std;
 
 
 int main()

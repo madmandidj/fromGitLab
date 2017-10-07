@@ -15,24 +15,24 @@ class Container_t
 		
 		virtual ~Container_t();
 		
-//		virtual bool Append(elementType* const _element, size_t index) = 0;
-//		
-		virtual bool Prepend(elementType* const _element, size_t index) = 0;
-//		
 		virtual bool Insert(elementType* const _element) = 0;
-//		
+		
+		virtual bool Append(elementType* const _element, size_t index) = 0;
+		
+		virtual bool Prepend(elementType* const _element, size_t index) = 0;
+		
 		virtual elementType* Remove(const elementType& _element) = 0;
-//		
+		
 //		virtual bool RemoveAll() = 0; /* TODO: Need to return all elements ?? */
-//		
+		
 //		virtual elementType* RemoveAndDelete(elementType const& _element) = 0;
-//		
+		
 //		virtual bool RemoveAndDeleteAll() = 0;
-//		
+		
 		virtual bool Contains(elementType const& _element) const = 0;
-//		
+		
 		virtual elementType* Find(const elementType& _element) const = 0;
-//		
+		
 		virtual int GetElementIndex(elementType* const _element) const = 0;
 		
 		size_t Count() const;

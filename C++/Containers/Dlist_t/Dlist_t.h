@@ -1,9 +1,16 @@
+#ifndef __DLIST_T_H__
+#define __DLIST_T_H__
+
+
 template <typename dlistType>
 class LList 
 {
 	class Node;
 	
 	public:
+		LList();
+		~LList();
+		
 		class Iterator
 		{
 			public:
@@ -19,8 +26,7 @@ class LList
 			LList* container;
 		};
 
-		LList();
-		~LList();
+		
 		void pushBack(dlistType data);
 		Iterator begin();
 		Iterator end();
@@ -28,18 +34,16 @@ class LList
 		Iterator erase(Iterator Iter);
 		
 	private:
-	class Node
-	{
-		public:
-		Node(dlistType data);
-//		private:
-//		protected:
-		dlistType data;
-		Node* ptr_next;
-		Node* ptr_prev;
-	};
-	Node* ptr_first;
-	Node* ptr_last;
+		class Node
+		{
+			public:
+			Node(dlistType data);
+			dlistType data;
+			Node* ptr_next;
+			Node* ptr_prev;
+		};
+		Node* ptr_first;
+		Node* ptr_last;
 };
 
 
@@ -191,3 +195,19 @@ template <typename dlistType>
      delete remove;
      remove = 0;
    }
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+#endif /*#ifndef __DLIST_T_H__*/   
+   
+   
+
