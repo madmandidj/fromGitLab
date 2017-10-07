@@ -1,224 +1,46 @@
 #include "BareketCards.h"
-#include "../Players/Players.h"
-#include "../Player/Player.h"
-#include "../Cards/Cards.h"
-#include "../Card/Card.h"
-//#include <vector>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 
+size_t BareketCards::m_defaultNumOfPlayers = 0;
 
-/********
-Private member functions
-*********/
-void BareketCards::CreateDeck()
-{
-//	Cards hand1;
-//	Cards hand2;
-//	Cards deck;
-//	Cards board;
-	
-	
-	
-	size_t suitIndex;
-	size_t valIndex;
-	size_t deckIndex = 0;
-	CardSuit cardSuit;
-	const char SuitCharArr[] = {'C', 'D', 'H', 'S'};
-	const char ValCharArr[] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'};
-	Card* getCard;
-	
-	Card* getCard2;
-	
-//	Card cards[52];
-	
-	srand(time(0));
-	
-	for(suitIndex = 0; suitIndex < numOfSuits; ++suitIndex)
-	{
-		for (valIndex = 0; valIndex < numOfVals; ++valIndex)
-		{	
-			Card* card = new Card;
-			
-			/*TODO: handle new exception */
-			
-			card->SetSuit(SuitCharArr[suitIndex]);
-			
-			card->SetVal(ValCharArr[valIndex]);
-			
-//			_deck->PushBackCard(card);
-
-			m_deck->PushBackCard(card);
-			
-			++deckIndex; 
-			
-			
-//			cards[deckIndex].SetSuit(SuitCharArr[suitIndex]);
-//		
-//			cards[deckIndex].SetVal(ValCharArr[valIndex]);
-//			
-//			deck.PushBackCard(cards + deckIndex);
-//			
-//			++deckIndex; 
-
-			
-
-//			_deck->GetCard(deckIndex).SetSuit(SuitCharArr[suitIndex]);
-//		
-//			cards[deckIndex].SetVal(ValCharArr[valIndex]);
-//			
-//			deck.PushBackCard(cards + deckIndex);
-//			
-//			++deckIndex; 
-			
-		}
-	}
-	
-	
-	return;
-}
-
-
+const size_t NUM_OF_ROUNDS = 100;
 
 /********
 Public member functions
 *********/
 BareketCards::BareketCards()
 {
-//	size_t numOfPlayers = GetNumOfPlayers();
+	/****
+	TODO: Handle all 'new' exceptions in constructor 
+	*****/
+	
+	m_numOfPlayers = m_defaultNumOfPlayers;
 	
 	m_deck = new Cards;
-	if (0 == m_deck)
-	{
-		// TODO: Handle new exception
-	}
 	
 	CreateDeck();
 	
 	m_board = new Cards;
-	if (0 == m_board)
-	{
-		// TODO: Handle new exception
-	}
 	
-//	InitBoard();
+	m_players = new Players(m_numOfPlayers, m_deck, m_board);
 	
-	m_players = new Players(m_deck, m_board);
-	if (0 == m_players)
-	{
-		// TODO: Handle new exception
-	}
+	m_printMode = false;
 	
-	m_printMode = true;
-	
-	m_quit = false;
+	m_quitFlag = false;
 }
 
 
 BareketCards::~BareketCards()
 {	
+	DestroyDeck();	
+	
 	delete m_deck;
 	
 	delete m_board;
 	
 	delete m_players;
-}
-
-
-bool BareketCards::PlayRound(size_t _numOfPlayers, size_t& _curRound)
-{	
-	int numOfWinners = 0;	
-	
-	size_t currentAttacker = _curRound % _numOfPlayers;
-	
-	size_t currentDefender = (_curRound + 1) % _numOfPlayers;
-	
-	Player* attackPlayer = m_players->GetPlayer(currentAttacker);
-	
-	Player* defendPlayer = m_players->GetPlayer(currentDefender);
-	
-	
-	bool isAttackerWinner = false;
-	
-	bool isDefenderWinner = false;
-	
-	std::cout << "Round #" << _curRound << std::endl << std::endl;
-	
-//	m_players->ShowPlayersCards();
-	
-//	std::cout << "Attacker = Player #" << currentAttacker + 1 << std::endl;
-	
-	attackPlayer->Attack();
-	
-//	m_players->ShowPlayersCards();
-	
-	isAttackerWinner = (attackPlayer->IsWinner());
-	
-	numOfWinners = (true == isAttackerWinner) ? ++numOfWinners : numOfWinners;
-	
-//	std::cout << "Defender = Player #" << currentDefender + 1 << std::endl;
-	
-	if (true == (defendPlayer->Defend()))
-	{
-//		m_players->ShowPlayersCards();
-		
-		isDefenderWinner = defendPlayer->IsWinner();
-		
-		numOfWinners = (true == isDefenderWinner) ? ++numOfWinners : numOfWinners;
-	}
-	else
-	{
-		++_curRound;
-	}
-	
-//	m_players->ShowPlayersCards();
-	
-	if(numOfWinners > 0)
-	{
-		/*TODO:
-		Check if overtime needed and do it
-		*/
-		
-		return true;
-	}
-	
-	return false;
-}
-
-
-void BareketCards::Start()
-{
-	size_t currentRound = 0;
-	size_t numOfRounds = 60;
-	size_t currentAttacker = 0;
-	size_t currentDefender = 1;
-	bool isWinner = 0;
-	size_t numOfPlayers = GetNumOfPlayers();
-	
-	while (currentRound < numOfRounds && m_quit == false)
-	{
-		
-		isWinner = PlayRound(numOfPlayers, currentRound);
-		
-		if (isWinner)
-		{
-			Stop();
-			continue;
-//			return;
-		}
-		
-		if(true == m_printMode)
-		{
-			std::cout << "Pause end of round: " << currentRound + 1 << std::endl << std::endl;
-			m_players->ShowPlayersCards();
-			Pause();
-		} 
-		
-		++currentRound;
-	}
-	
-	return;
 }
 
 
@@ -234,11 +56,10 @@ void BareketCards::Deal()
 {
 	size_t cardNum;
 	size_t playerNum;
-	size_t numOfPlayers = GetNumOfPlayers();
 	
-	for (cardNum = 0; cardNum < numOfVals; ++cardNum)
+	for (cardNum = 0; cardNum < NUM_OF_VALS; ++cardNum)
 	{
-		for (playerNum = 0; playerNum < numOfPlayers; ++playerNum)
+		for (playerNum = 0; playerNum < m_numOfPlayers; ++playerNum)
 		{
 			Player* player = m_players->GetPlayer(playerNum);
 			
@@ -246,23 +67,50 @@ void BareketCards::Deal()
 		}
 	}
 	
-	for (playerNum = 0; playerNum < numOfPlayers; ++playerNum)
+	for (playerNum = 0; playerNum < m_numOfPlayers; ++playerNum)
 	{
 		Player* player = m_players->GetPlayer(playerNum);
 		
 		player->SortCards();
 	}
 	
-	
-	
 	return;
 }
 
 
-void BareketCards::Restart()
+void BareketCards::Start()
 {
+	size_t currentRound = 0;
+	bool isWinner = false;
+	
+	while (currentRound < NUM_OF_ROUNDS && m_quitFlag == false)
+	{
+		
+		isWinner = PlayRound(currentRound);
+		
+		if (isWinner)
+		{
+			Stop();
+			continue;
+		}
+		
+		if(true == m_printMode)
+		{
+			std::cout << "Pause end of round: " << currentRound + 1 << std::endl << std::endl;
+			m_players->ShowPlayersCards();
+			Pause();
+		} 
+		
+		++currentRound;
+	}
+	
+	ReturnCardsToDeck();
 
+	m_quitFlag = false;
+	
+	return;
 }
+
 
 void BareketCards::Pause()
 {
@@ -282,7 +130,7 @@ void BareketCards::Pause()
 			break;
 			
 		case 'q':
-			m_quit = true;
+			m_quitFlag = true;
 			
 		default:
 			break;
@@ -290,22 +138,18 @@ void BareketCards::Pause()
 }
 
 
-
 void BareketCards::Stop()
 {
-	std::cout << std::endl << std::endl << "Final Score is:" << std::endl;
+	std::cout << std::endl << std::endl << "The final score is:" << std::endl;
+	
 	m_players->ShowPlayersCards();
-	Quit();
+	
+	PrintWinners();
+	
+	std::cout << "Thanks for playing Bareket Cards! :-)" << std::endl << std::endl;
+	
+	m_quitFlag = true;
 }
-
-
-void BareketCards::Quit()
-{
-	m_quit = true;
-}
-
-
-
 
 
 void BareketCards::PrintScore(size_t _playerNum) const
@@ -316,41 +160,138 @@ void BareketCards::PrintScore(size_t _playerNum) const
 }
 
 
-//void BareketCards::PrintFinalScore()
-//{
-
-//}
-
-
-bool BareketCards::GetPrintMode() const
+void BareketCards::SetDefaultNumOfPlayers(size_t _numOfPlayers)
 {
-	return m_printMode;
-}
-
-
-void BareketCards::SetPrintMode(bool _printMode)
-{
-	m_printMode = _printMode;
-}
-
-
-
-
-
-size_t BareketCards::GetNumOfPlayers() const
-{
-	return Players::GetNumOfPlayers();
-}
-
-
-void BareketCards::SetNumOfPlayers(size_t _numOfPlayers)
-{
-	Players::SetNumOfPlayers(_numOfPlayers);
+	m_defaultNumOfPlayers = _numOfPlayers;
 	
 	return;
 }
 
 
+
+/***********************
+Private member functions
+***********************/
+void BareketCards::CreateDeck()
+{
+	size_t suitIndex;
+	size_t valIndex;
+	
+	srand(time(0));
+	
+	for(suitIndex = 0; suitIndex < NUM_OF_SUITS; ++suitIndex)
+	{
+		for (valIndex = 0; valIndex < NUM_OF_VALS; ++valIndex)
+		{	
+			Card* card = new Card;
+			
+			if (0 == card)
+			{
+				/*TODO: handle new exception */
+			}
+			
+			card->SetSuit(SUIT_CHAR_ARR[suitIndex]);
+			
+			card->SetVal(VAL_CHAR_ARR[valIndex]);
+
+			m_deck->PushBackCard(card);		
+		}
+	}
+	
+	return;
+}
+
+
+bool BareketCards::PlayRound(size_t& _curRound)
+{	
+	int numOfWinners = 0;	
+	size_t currentAttacker = _curRound % m_numOfPlayers;
+	size_t currentDefender = (_curRound + 1) % m_numOfPlayers;
+	Player* attackPlayer = m_players->GetPlayer(currentAttacker); /*TODO: use [] operator for player*/
+	Player* defendPlayer = m_players->GetPlayer(currentDefender);
+	bool isAttackerWinner = false;
+	bool isDefenderWinner = false;
+	
+	std::cout << std::endl << std::endl << "Round #" << _curRound + 1 << std::endl;
+	
+	attackPlayer->Attack();
+	
+	isAttackerWinner = (attackPlayer->IsWinner());
+	
+	numOfWinners = (true == isAttackerWinner) ? numOfWinners + 1 : numOfWinners + 0;
+	
+	if (true == (defendPlayer->Defend()))
+	{
+		isDefenderWinner = defendPlayer->IsWinner();
+		
+		numOfWinners = (true == isDefenderWinner) ? numOfWinners + 1 : numOfWinners + 0;
+	}
+	else
+	{
+		++_curRound;
+	}
+	
+	if(numOfWinners > 0)
+	{
+		/*TODO:
+		Check if overtime!!
+		*/
+		
+		return true;
+	}
+	
+	return false;
+}
+
+
+void BareketCards::PrintWinners() const
+{
+	Player* player;
+	
+	std::cout << std::endl << "The winners are:";
+	
+	for (size_t index = 0; index < m_numOfPlayers; ++index)
+	{
+		player = m_players->GetPlayer(index); /*TODO: use [] operator for player*/
+		
+		if (true == player->IsWinner())
+		{
+			std::cout << " Player #" << (index + 1);
+		}
+	}
+	
+	std::cout << std::endl;
+}
+
+
+void BareketCards::ReturnCardsToDeck()
+{
+	Player* player;
+	
+	for (size_t index = 0; index < m_numOfPlayers; ++index)
+	{
+		player = m_players->GetPlayer(index); /*TODO: use [] operator for player*/
+		
+		player->ReturnCardsToDeck();
+	}
+}
+
+
+void BareketCards::DestroyDeck()
+{
+	size_t numOfCards = m_deck->GetNumOfCards();
+	
+	Card* card;
+	
+	for (size_t index = 0; index < numOfCards; ++index)
+	{
+		card = m_deck->GetCard(0);
+		
+		m_deck->RemoveCard(0);
+		
+		delete card;
+	}
+}
 
 
 

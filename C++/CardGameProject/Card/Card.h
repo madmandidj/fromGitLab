@@ -1,11 +1,13 @@
 #ifndef __CARD_H__
 #define __CARD_H__
-#include <iostream>
 
-const size_t numOfSuits = 4;
+#include <iostream>	//size_t, cout, endl
 
-const size_t numOfVals = 13;
+const size_t NUM_OF_SUITS = 4;
+const size_t NUM_OF_VALS = 13;
 
+const char SUIT_CHAR_ARR[] = {'C', 'D', 'H', 'S'}; /* TODO: Ask about this. Could be moved to BareketCards.cpp */
+const char VAL_CHAR_ARR[] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'}; /* TODO: Ask about this. Could be moved to BareketCards.cpp */
 
 
 typedef enum CardSuit
@@ -33,6 +35,7 @@ typedef enum CardVal
 	Ace
 }CardVal;
 
+
 class Card
 {
 	public:
@@ -40,7 +43,7 @@ class Card
 		
 		~Card();
 		
-		Card& operator= (Card& _card);
+		Card& operator= (const Card& _card);
 		
 		void SetSuit(char _suit);
 		
@@ -63,7 +66,7 @@ class Card
 		void PrintCard() const;
 		
 	private:
-		Card(Card& _card);
+		Card(const Card& _card);
 		
 		char			m_suit;
 		
@@ -75,12 +78,16 @@ class Card
 };
 
 
+/***************
+inline functions
+****************/
 inline Card::Card(){}
 
 
 inline Card::~Card(){}
 
-inline Card& Card::operator= (Card& _card)
+
+inline Card& Card::operator= (const Card& _card)
 {
 	SetSuit(_card.m_suit);
 	
@@ -101,43 +108,43 @@ inline char Card::GetVal() const
 	return m_val;
 }
 
+
+inline bool Card::operator> (const Card& _card) const
+{
+	return m_suitEnum > _card.m_suitEnum ? true : false;
+}
+
+
+inline bool Card::operator< (const Card& _card) const
+{
+	return m_suitEnum < _card.m_suitEnum ? true : false;
+}
+
+
+inline bool Card::operator>> (const Card& _card) const
+{
+	return m_valEnum > _card.m_valEnum ? true : false;
+}
+
+
+inline bool Card::operator<< (const Card& _card) const
+{
+	return m_valEnum < _card.m_valEnum ? true : false;
+}
+
+
+inline bool Card::operator== (const Card& _card) const
+{	
+	return m_suitEnum == _card.m_suitEnum ? true : false;
+}
+
+
 inline void Card::PrintCard() const
 {
 	std::cout << m_suit << m_val;
 	
 	return;
 }
-
-
-//inline bool Card::operator> (const Card& _card) const
-//{
-//	return m_suitEnum > _card.m_suitEnum ? true : false;
-//}
-
-
-//inline bool Card::operator< (const Card& _card) const
-//{
-//	return m_suitEnum < _card.m_suitEnum ? true : false;
-//}
-
-
-//inline bool Card::operator>> (const Card& _card) const
-//{
-//	return m_valEnum >> _card.m_valEnum ? true : false;
-//}
-
-
-//inline bool Card::operator<< (const Card& _card) const
-//{
-//	return m_valEnum < _card.m_valEnum ? true : false;
-//}
-
-
-//inline bool Card::operator== (const Card& _card) const
-//{	
-//	return m_suitEnum == _card.m_suitEnum ? true : false;
-//}
-
 
 
 #endif /*#ifndef __CARD_H__*/

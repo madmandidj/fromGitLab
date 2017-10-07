@@ -2,11 +2,6 @@
 #define __BAREKET_CARDS_H__
 
 #include "../CardGame/CardGame.h"
-#include "../Players/Players.h"
-//#include "../Player/Player.h"
-#include "../Cards/Cards.h"
-//#include "../Card/Card.h"
-
 
 class BareketCards:public CardGame
 {
@@ -21,8 +16,6 @@ class BareketCards:public CardGame
 		
 		virtual void Start();
 		
-		virtual void Restart();
-		
 		virtual void Pause();
 		
 		virtual void Stop();
@@ -31,7 +24,9 @@ class BareketCards:public CardGame
 		
 		void PrintScore(size_t _playerNum) const;
 		
-		void PrintFinalScore() const;
+		void PrintWinners() const;
+		
+		void ShowDeck() const;
 		
 		bool GetPrintMode() const;
 		
@@ -39,7 +34,8 @@ class BareketCards:public CardGame
 		
 		size_t GetNumOfPlayers() const;
 		
-		void SetNumOfPlayers(size_t _numOfPlayers);
+	public:
+		static void SetDefaultNumOfPlayers(size_t _numOfPlayers);
 		
 	protected:	
 	/***********************
@@ -54,20 +50,59 @@ class BareketCards:public CardGame
 		
 		BareketCards& operator= (BareketCards& _barCards);
 		
-		bool m_quit;
-		
-		bool m_printMode;	
-		
 		void CreateDeck();
 		
-		bool PlayRound(size_t _numOfPlayers, size_t& _curRound);
+		bool PlayRound(size_t& _curRound);
+		
+		void ReturnCardsToDeck();
+		
+		void DestroyDeck();
+		
+	private:	
+		size_t 			m_numOfPlayers;
+		
+		bool 			m_quitFlag;
+		
+		bool 			m_printMode;	
+		
+	private:
+		static size_t 	m_defaultNumOfPlayers;
 };
 
 
 
 
+/***************
+inline functions
+****************/
+inline void BareketCards::Quit()
+{
+	ReturnCardsToDeck();
+}
 
 
+inline void BareketCards::ShowDeck() const
+{
+	m_deck->PrintCards();
+}
+
+
+inline bool BareketCards::GetPrintMode() const
+{
+	return m_printMode;
+}
+
+
+inline void BareketCards::SetPrintMode(bool _printMode)
+{
+	m_printMode = _printMode;
+}
+
+
+inline size_t BareketCards::GetNumOfPlayers() const
+{
+	return m_numOfPlayers;
+}
 
 
 

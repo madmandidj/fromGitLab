@@ -8,42 +8,59 @@
 class Players
 {
 	public:
-		Players(Cards* _deck, Cards* _board);
+		Players(size_t _numOfPlayers, Cards* const _deck, Cards* const _board);
 		
 		~Players();
 		
-		Player* operator[] (size_t _index) const;
+		size_t GetNumOfPlayers();
+		
+		void SetNumOfPlayers(size_t _numOfPlayers);
+		
+		Player* operator[] (size_t _index) const; /*TODO: Debug! Use GetPlayer() for now */
 		
 		Player* GetPlayer(size_t _index) const;
 		
 		void ShowPlayersCards() const;
 		
-		static size_t GetNumOfPlayers();
-		
-		static void SetNumOfPlayers(size_t _numOfPlayers);
-		
-		Cards* m_deck;
-		
-		Cards* m_board;
-		
 	private:
 		Players(Players& _players);
 		
 		Players& operator= (Players& _players);
+	
+	private:
+		std::vector<Player*> m_playersVec;
 		
-		std::vector<Player*> m_players;
-		
-		static size_t m_numOfPlayers;
+		size_t m_numOfPlayers;
 };
 
 
 
+/***************
+inline functions
+****************/
+inline Player* Players::operator[] (size_t _index) const
+{
+	return m_playersVec[_index];
+}
 
-
-
-
-
-
+inline Player* Players::GetPlayer(size_t _index) const
+{
+	return m_playersVec[_index];
+}
+		
+		
+inline size_t Players::GetNumOfPlayers()
+{
+	return m_numOfPlayers;
+}
+		
+		
+inline void Players::SetNumOfPlayers(size_t _numOfPlayers)
+{
+	m_numOfPlayers = _numOfPlayers;	
+	
+	return;
+}
 
 
 

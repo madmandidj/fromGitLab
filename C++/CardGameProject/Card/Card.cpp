@@ -1,6 +1,9 @@
 #include "Card.h"
-#include <stdlib.h>
 
+
+/**********************
+Public member functions
+**********************/
 void Card::SetSuit(char _suit)
 {
 	m_suit = _suit;	
@@ -24,7 +27,7 @@ void Card::SetSuit(char _suit)
 			break;
 		
 		default:
-			exit(EXIT_FAILURE);
+			/*TODO: Handle error char */
 			break;
 	}
 	
@@ -91,41 +94,11 @@ bool Card::SetVal(char _val)
 			return true;
 			
 		default:
+			/*TODO: Handle error char */
 			break;
 	}
 	
 	return false;
 }
-
-
-bool Card::operator> (const Card& _card) const
-{
-	return m_suitEnum > _card.m_suitEnum ? true : false;
-}
-
-
-bool Card::operator< (const Card& _card) const
-{
-	return m_suitEnum < _card.m_suitEnum ? true : false;
-}
-
-
-bool Card::operator>> (const Card& _card) const
-{
-	return m_valEnum > _card.m_valEnum ? true : false;
-}
-
-
-bool Card::operator<< (const Card& _card) const
-{
-	return m_valEnum < _card.m_valEnum ? true : false;
-}
-
-
-bool Card::operator== (const Card& _card) const
-{	
-	return m_suitEnum == _card.m_suitEnum ? true : false;
-}
-
 
 

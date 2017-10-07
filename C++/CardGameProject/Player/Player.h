@@ -1,17 +1,23 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
-#include "../Card/Card.h"
 #include "../Cards/Cards.h"
-
 #include <iostream>
 
 class Player
 {
 	public:
-		Player(Cards* _deck, Cards* _board);
+		Player(unsigned int _playerID, Cards* const _deck, Cards* const _board);
 		
 		~Player();
+		
+		void SetMyID(unsigned int _playerID);
+		
+		unsigned int GetMyID() const;
+		
+		void TakeCard(Cards* _cards);
+		
+		void SortCards();
 	
 		void Attack();
 		
@@ -19,36 +25,50 @@ class Player
 		
 		bool IsWinner() const;
 		
-		void SortCards();
+		void ReturnCardsToDeck();
 		
 		void ShowCards() const;
-		
-		void TakeCard(Cards* _cards);
-		
-		unsigned int GetMyID() const;
-		
-		static unsigned int GetID();
 		
 	private:
 		Player(Player& _player);
 		
 		Player& operator= (Player& _player);
-		
-		Cards m_cards; /*TODO: change this to Cards* */
+	
+	private:
+		Cards* m_cards;
 		
 		Cards* m_deck;
 		
 		Cards* m_board;
 		
 		unsigned int m_myID;
-		
-		static unsigned int m_ID;
 };
 
 
+/***************
+inline functions
+****************/
+inline Player::~Player()
+{
+	delete m_cards;
+}
 
 
+inline void Player::SetMyID(unsigned int _myID)
+{
+	m_myID = _myID;
+}
 
+inline unsigned int Player::GetMyID() const
+{
+	return m_myID;
+}
+
+
+inline void Player::SortCards()
+{
+	m_cards->Sort();
+}
 
 
 

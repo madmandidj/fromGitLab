@@ -2,58 +2,58 @@
 #include <iostream>
 #include <stdlib.h>
 
-
-
-unsigned int Player::m_ID = 0;
-
-
-unsigned int Player::GetID()
+/**********************
+Public member functions
+**********************/
+Player::Player(unsigned int _playerID, Cards* const _deck, Cards* const _board)
 {
-	return m_ID++;
-}
-
-unsigned int Player::GetMyID() const
-{
-	return m_myID;
-}
-
-
-Player::Player(Cards* _deck, Cards* _board)
-{
-	m_myID = Player::GetID();	
+	SetMyID(_playerID);
 	
-	if (!_deck || !_board)
+	if (0 == _deck || 0 == _board)
 	{
-		exit(EXIT_FAILURE);
+		/*TODO: handle null pointers*/
 	}
 	
 	m_deck = _deck;
 	
 	m_board = _board;
+	
+	m_cards = new Cards;
+	
+	if (0 == m_cards)
+	{
+		/*TODO: handle new exception*/
+	}
 }
-		
-		
-Player::~Player(){}
+
+
+void Player::TakeCard(Cards* _cards)
+{
+	m_cards->PushBackCard(_cards->GetCard(0));
+	
+	_cards->RemoveCard(0);
+	
+	return;
+}
 
 
 void Player::Attack()
 {
 	Card* card;
 	
-	size_t index = rand() % m_cards.GetNumOfCards();
+	size_t index = rand() % m_cards->GetNumOfCards();
 	
-	card = m_cards.GetCard(index);
+	card = m_cards->GetCard(index);
 	
-	m_cards.RemoveCard(index);
+	m_cards->RemoveCard(index);
 	
 	m_board->PushBackCard(card);
 	
-	/* TODO: add printMode data member to class so that card prints this when printmode on */
-	std::cout << "Player #" << m_myID + 1 << " attacking with: ";
+	std::cout << "Player #" << GetMyID() << " attacking with: ";
 	
 	card->PrintCard();
 	
-	std::cout << std::endl << std::endl;
+	std::cout << std::endl;
 	
 	return ;
 }
@@ -63,9 +63,8 @@ bool Player::Defend()
 {
 	Card* attackCard;
 	Card* defendCard;
-	bool isDefended = false;
 	size_t defendIndex = 0;
-	size_t numOfCards = m_cards.GetNumOfCards();
+	size_t numOfCards = m_cards->GetNumOfCards();
 	
 	attackCard = m_board->GetCard(0);
 
@@ -73,25 +72,22 @@ bool Player::Defend()
 	
 	while (defendIndex < numOfCards)
 	{
-		defendCard = m_cards.GetCard(defendIndex);
+		defendCard = m_cards->GetCard(defendIndex);
 	
+		/* if defend successful */
 		if ((*defendCard == *attackCard) && (*defendCard >> *attackCard))
 		{
-			/* defend success */
 			m_deck->PushBackCard(attackCard);
 			
 			m_deck->PushBackCard(defendCard);
 			
-			m_cards.RemoveCard(defendIndex);
-			
-//			Attack();
+			m_cards->RemoveCard(defendIndex);
 
-			/* TODO: add printMode data member to class so that card prints this when printmode on */
-			std::cout << "Player #" << m_myID + 1 << " defended with: ";
+			std::cout << "Player #" << GetMyID() << " defended with: ";
 	
 			defendCard->PrintCard();
 	
-			std::cout << std::endl << std::endl;
+			std::cout << std::endl;
 			
 			return true;
 		}
@@ -99,14 +95,13 @@ bool Player::Defend()
 		++defendIndex;
 	}
 	
-	m_cards.PushBackCard(attackCard);
-	
-	/* TODO: add printMode data member to class so that card prints this when printmode on */
-	std::cout << "Player #" << m_myID + 1 << " failed to defend! Took: ";
+	m_cards->PushBackCard(attackCard);
+
+	std::cout << "Player #" << GetMyID() << " failed to defend! Took: ";
 
 	attackCard->PrintCard();
 
-	std::cout << std::endl << std::endl;
+	std::cout << std::endl;
 	
 	SortCards();
 	
@@ -116,39 +111,39 @@ bool Player::Defend()
 
 bool Player::IsWinner() const
 {
-	return 0 == m_cards.GetNumOfCards() ? true : false;
+	return 0 == m_cards->GetNumOfCards() ? true : false;
+}
+
+
+void Player::ReturnCardsToDeck()
+{
+	size_t numOfCards = m_cards->GetNumOfCards();
+	
+	Card* card;
+	
+	for (size_t index = 0; index < numOfCards; ++index)
+	{
+		card = m_cards->GetCard(0);
+		
+		m_deck->PushBackCard(card);
+		
+		m_cards->RemoveCard(0);
+	}
 }
 
 
 void Player::ShowCards() const
 {
-	std::cout << "Player #" << (GetMyID() + 1) << ": " << std::endl;
+	std::cout << "Player #" << (GetMyID()) << ": " << std::endl;
 	
 	std::cout << "***********" << std::endl;
 	
-	m_cards.PrintCards();
+	m_cards->PrintCards();
 	
 	std::cout << std::endl;
 	
 	return; 
 }
-
-
-void Player::TakeCard(Cards* _cards)
-{
-	m_cards.PushBackCard(_cards->GetCard(0));
-	
-	_cards->RemoveCard(0);
-	
-	return;
-}
-
-
-void Player::SortCards()
-{
-	m_cards.Sort();
-}
-
 
 
 
