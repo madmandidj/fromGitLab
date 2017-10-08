@@ -1,5 +1,5 @@
 #include "memManager_t.h"
-
+#include "../../ExceptionHandler/TException_t.h"
 
 
 //inline memManager_t::memManager_t(){}
@@ -21,8 +21,11 @@ bool memManager_t::SetPosition(size_t _index)
 {
 	if (_index > m_size)
 	{
+		std::string desc("Failed Set Position");
+		std::string fileName(__FILE__);
 //		return false;
-		throw false;
+		TException_t<memManager_t> tExc(this, desc, fileName, __LINE__);
+		throw tExc;
 	}
 	
 	m_position = _index;

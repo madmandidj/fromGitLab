@@ -1,4 +1,5 @@
 #include "./memPool_t/memPool_t.h"
+#include "../ExceptionHandler/TException_t.h"
 #include <iostream>
 
 using namespace std;
@@ -121,25 +122,23 @@ int main()
 						cout << "Enter position" << endl;
 					
 						cin >> position;
-					
-	//					if (false == mPool->SetPosition(position))
-	//					{
-	//						cout << "Set position failed" << endl;
-	//					}
-	//					else
-	//					{
-	//						cout << "Set position success" << endl;
-	//					}
 
 						try
 						{
 							getNewPosition = false;
 							mPool->SetPosition(position);
 						}
-						catch(bool _caught)
+						catch(TException_t<memManager_t> _tExcp)
 						{
 							getNewPosition = true;
-							cout << "Bad position" << endl;
+							
+							cout << _tExcp;
+							
+							memManager_t* tempMm;
+							
+							tempMm = _tExcp.GetObject();
+							
+							cout << tempMm->GetSize() << " Woohoo" << endl;
 						}
 					}
 				}
@@ -267,36 +266,6 @@ int main()
 			break;
 		}
 	}
-
-	/*
-	int a = 1010101015;
-	int b = 1010101016;
-	int c = 1010101017;
-	
-	int x;
-	int y;
-	int z;
-
-	memPool_t* mPool = new memPool_t();
-	
-	mPool->Write(&a, sizeof(int));
-	
-	mPool->Write(&b, sizeof(int));
-	
-	mPool->Write(&c, sizeof(int));
-	
-	mPool->SetPosition(0);
-	
-	mPool->Read(&x, sizeof(int));
-	
-	mPool->Read(&y, sizeof(int));
-	
-	mPool->Read(&z, sizeof(int));
-
-	cout << " x = " << x << ", y = " << y << ", z = " << z << endl;
-	
-	delete mPool;
-	*/
 	
 	return 0;
 }
