@@ -114,17 +114,33 @@ int main()
 			case 4: // Set position
 				if (true == memPoolExists)
 				{
-					cout << "Enter position" << endl;
+					bool getNewPosition = true;
 					
-					cin >> position;
+					while(true == getNewPosition)
+					{
+						cout << "Enter position" << endl;
 					
-					if (false == mPool->SetPosition(position))
-					{
-						cout << "Set position failed" << endl;
-					}
-					else
-					{
-						cout << "Set position success" << endl;
+						cin >> position;
+					
+	//					if (false == mPool->SetPosition(position))
+	//					{
+	//						cout << "Set position failed" << endl;
+	//					}
+	//					else
+	//					{
+	//						cout << "Set position success" << endl;
+	//					}
+
+						try
+						{
+							getNewPosition = false;
+							mPool->SetPosition(position);
+						}
+						catch(bool _caught)
+						{
+							getNewPosition = true;
+							cout << "Bad position" << endl;
+						}
 					}
 				}
 				else

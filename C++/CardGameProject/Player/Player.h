@@ -17,11 +17,11 @@ class Player
 		
 		void TakeCard(Cards* _cards);
 		
-		void SortCards();
+		void SortCards(); /*TODO: should not be public */
 	
-		void Attack();
+		void Attack(); /*TODO: should return Card**/
 		
-		bool Defend();
+		bool Defend(); /*TODO: should return Card**/
 		
 		bool IsWinner() const;
 		

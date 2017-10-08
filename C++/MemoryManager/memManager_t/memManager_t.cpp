@@ -21,7 +21,8 @@ bool memManager_t::SetPosition(size_t _index)
 {
 	if (_index > m_size)
 	{
-		return false;
+//		return false;
+		throw false;
 	}
 	
 	m_position = _index;

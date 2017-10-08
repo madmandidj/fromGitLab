@@ -34,6 +34,10 @@ class BareketCards:public CardGame
 		
 		size_t GetNumOfPlayers() const;
 		
+		/*TODO: add set num of cards */
+		
+		/*TODO: add player and remove player */
+		
 	public:
 		static void SetDefaultNumOfPlayers(size_t _numOfPlayers);
 		
@@ -50,13 +54,13 @@ class BareketCards:public CardGame
 		
 		BareketCards& operator= (BareketCards& _barCards);
 		
-		void CreateDeck();
+		void CreateDeck(); //TODO: put in protected so derived classes can use
 		
-		bool PlayRound(size_t& _curRound);
+		bool PlayRound(size_t& _curRound); //TODO: put in protected so derived classes can use
 		
-		void ReturnCardsToDeck();
+		void ReturnCardsToDeck(); //TODO: put in protected so derived classes can use
 		
-		void DestroyDeck();
+		void DestroyDeck(); //TODO: put in protected so derived classes can use
 		
 	private:	
 		size_t 			m_numOfPlayers;
