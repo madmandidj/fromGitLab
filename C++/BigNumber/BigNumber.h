@@ -1,6 +1,7 @@
 #ifndef __BIG_NUMBER_H__
 #define __BIG_NUMBER_H__
 
+#include <stdio.h>
 #include <iostream> 
 #include <string> // std::string, std::stoi
 
@@ -35,9 +36,9 @@ class BigNumber
 		std::string m_str;
 };
 
-ostream&	operator<< (ostream& _os, const BigNumber& _bigNum);
+std::ostream& operator<< (std::ostream& _os, const BigNumber& _bigNum);
 
-istream&	operator>> (istream& _is, BigNumber& _bigNum);
+std::istream& operator>> (std::istream& _is, BigNumber& _bigNum);
 
 
 inline BigNumber::BigNumber()
@@ -54,7 +55,12 @@ inline BigNumber::BigNumber(const char* _str)
 
 inline BigNumber::BigNumber(int _num)
 {
-	m_str.assign(std::to_string(_num));
+//	m_str.assign(std::to_string(_num));
+	char buf[11];
+	
+	sprintf(buf, "%d", _num);
+	
+	m_str.assign(buf);
 }
 
 
@@ -67,7 +73,7 @@ inline BigNumber::BigNumber(const BigNumber& _bigNum)
 inline BigNumber::~BigNumber(){}
 
 
-inline BigNumber& operator= (const BigNumber& _bigNum)
+inline BigNumber& BigNumber::operator= (const BigNumber& _bigNum)
 {
 	m_str.assign(_bigNum.m_str);
 	
@@ -75,17 +81,23 @@ inline BigNumber& operator= (const BigNumber& _bigNum)
 }
 
 
-inline BigNumber& operator= (int _num)
+inline BigNumber& BigNumber::operator= (int _num)
 {
-	m_str.assign(std::to_string(_num));
+//	m_str.assign(std::to_string(_num));
+	char buf[11];
+	
+	sprintf(buf, "%d", _num);
+	
+	m_str.assign(buf);
+
 	
 	return *this;
 }
 
 
-inline bool operator== (const BigNumber& _bigNum) const
+inline bool BigNumber::operator== (const BigNumber& _bigNum) const
 {
-	return (0 == strcmp(m_str, _bigNum.m_str)) ? true : false;
+	return (0 == m_str.compare(_bigNum.m_str)) ? true : false;
 }
 
 

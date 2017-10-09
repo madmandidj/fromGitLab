@@ -4,6 +4,10 @@
 #include <iostream>
 #include <string>
 
+/********************************************************************************
+Test for this file is included in MemoryManager exercise for function SetPosition 
+********************************************************************************/
+
 template <class T> 
 class TException_t
 {
@@ -19,14 +23,11 @@ class TException_t
 		size_t GetLineNumber() const;
 		
 	private:
-		T* 				m_object; /*TODO: ask if this should be pointer or reference or object ??? */
+		T* 				m_object;
 		std::string		m_description;
 		std::string		m_sourceFileName;
 		size_t 			m_lineNumber;
 };
-
-
-
 
 
 template <class T>
@@ -36,12 +37,6 @@ std::ostream& operator<< (std::ostream& _os, TException_t<T>& _tException)
 	
 	return _os;
 }
-
-//istream&	TException_t<T>::operator>> (istream& _is, BigNumber& _bigNum);
-
-
-
-
 
 
 template <class T>
@@ -123,20 +118,6 @@ size_t TException_t<T>::GetLineNumber() const
 {
 	return m_lineNumber;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
