@@ -1,4 +1,4 @@
-#ifndef __TCONTAINER_T_H__ /* VERSION A */
+#ifndef __TCONTAINER_T_H__ /* VERSION B */
 #define __TCONTAINER_T_H__
 
 #include <iostream>
@@ -8,11 +8,12 @@
 #include <typeinfo>
 
 
-template <class T1, class T2> 
+//template <class T1, class T2> 
+template <typename T1, template <typename, typename> class Container> 
 class tContainer_t
 {
-	typedef typename T2::iterator iter_t;
-	typedef typename T2::const_iterator constIter_t;
+	typedef typename Container<T1, std::allocator<T1*> >::iterator iter_t;
+	typedef typename Container<T1, std::allocator<T1*> >::const_iterator constIter_t;
 
 	public:
 		class IsEqual
@@ -172,27 +173,8 @@ class tContainer_t
 		
 		tContainer_t& operator= (const tContainer_t& _tcont);
 		
-		T2 m_container;	
+		Container<T1, std::allocator<T1*> > m_container;	
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
