@@ -28,9 +28,11 @@ class BigNumber
 		
 		bool operator< (const BigNumber& _bigNum) const;	
 		
-		BigNumber& operator+ (const BigNumber& _bigNum);
+		BigNumber& operator+ (const BigNumber& _bigNum); //TODO: should return BigNumber
 		
 		BigNumber& operator- (const BigNumber& _bigNum);
+		
+		std::string& GetNumStr() const;
 
 	private:
 		std::string m_str;

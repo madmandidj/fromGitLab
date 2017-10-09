@@ -1,5 +1,5 @@
 #include "BigNumber.h"
-
+#include <algorithm>
 const size_t INT_DIGITS = 10;
 
 
@@ -15,21 +15,9 @@ BigNumber& BigNumber::operator+ (const BigNumber& _bigNum)
 	std::string::iterator it1;
 	std::string::iterator it2;
 	
-//	std::reverse(m_str.begin(), m_str.end());
+	std::reverse(m_str.begin(), m_str.end());
 	
-//	std::reverse(_bigNum.m_str.begin(), _bigNum.m_str.end());
-	
-	/*
-	reverse string
-	*/
-	it1 = m_str.begin();
-	it2 = m_str.end();
-	while (it1 < it2)
-	{
-//		m_str.replace(
-	}
-	
-	
+	std::reverse(_bigNum.m_str.begin(), _bigNum.m_str.end());	
 }
 
 
@@ -46,6 +34,11 @@ std::ostream& operator<< (std::ostream& _os, const BigNumber& _bigNum)
 }
 
 
+
+std::string& BigNumber::GetNumStr() const
+{
+	return m_str;
+}
 
 
 

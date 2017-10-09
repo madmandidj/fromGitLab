@@ -12,18 +12,18 @@ template <class T>
 class TException_t
 {
 	public:
-		TException_t(T* const _object, const std::string& _description, const std::string& _sourceFileName, size_t _lineNumber);
+		TException_t(T const _object, const std::string& _description, const std::string& _sourceFileName, size_t _lineNumber);
 		TException_t(const TException_t& _tException);
 		TException_t& operator= (const TException_t& _tException);
 		~TException_t();
 		
-		T* GetObject() const;
-		std::string& GetDescription();
-		std::string& GetSourceFileName();
+		T GetObject() const;
+		const std::string& GetDescription() const;
+		const std::string& GetSourceFileName() const;
 		size_t GetLineNumber() const;
 		
 	private:
-		T* 				m_object;
+		T 				m_object; //TODO: should be T 
 		std::string		m_description;
 		std::string		m_sourceFileName;
 		size_t 			m_lineNumber;
@@ -40,7 +40,7 @@ std::ostream& operator<< (std::ostream& _os, TException_t<T>& _tException)
 
 
 template <class T>
-TException_t<T>::TException_t(T* const _object, const std::string& _description, const std::string& _sourceFileName, size_t _lineNumber)
+TException_t<T>::TException_t(T const _object, const std::string& _description, const std::string& _sourceFileName, size_t _lineNumber)
 {
 	if (0 == _object)
 	{
@@ -93,21 +93,21 @@ TException_t<T>::~TException_t(){}
 
 
 template <class T>
-T* TException_t<T>::GetObject() const
+T TException_t<T>::GetObject() const
 {
 	return m_object;
 }
 
 
 template <class T>
-std::string& TException_t<T>::GetDescription()
+const std::string& TException_t<T>::GetDescription() const
 {
 	return m_description;
 }
 
 
 template <class T>
-std::string& TException_t<T>::GetSourceFileName()
+const std::string& TException_t<T>::GetSourceFileName() const
 {
 	return m_sourceFileName;
 }
@@ -118,8 +118,6 @@ size_t TException_t<T>::GetLineNumber() const
 {
 	return m_lineNumber;
 }
-
-
 
 
 
