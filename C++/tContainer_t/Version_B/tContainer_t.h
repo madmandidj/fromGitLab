@@ -9,7 +9,7 @@
 
 
 //template <class T1, class T2> 
-template <class T1, template <class, class Alloc = std::allocator <T1> > class Container> 
+template <class T1, template <class, class Alloc = std::allocator <T1*> > class Container> 
 class tContainer_t
 {
 	typedef typename Container<T1*>::iterator iter_t;
@@ -144,7 +144,8 @@ class tContainer_t
 		 		return 0;
 		 	}
 		 
-		 	if (typeid(m_container) == typeid(std::vector<T1*>))
+//		 	if (typeid(m_container) == typeid(std::vector<T1*>))
+			if (typeid(m_container) == typeid(Container<T1*>))
 		 	{
 //		 		return m_container[_index];
 				return (*(std::vector<T1*>*)&m_container)[_index];

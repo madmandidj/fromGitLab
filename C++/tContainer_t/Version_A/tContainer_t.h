@@ -18,7 +18,7 @@ class tContainer_t
 		class IsEqual
 		{
 			public:
-				IsEqual(T1 _element) : m_val(_element) {}
+				IsEqual(T1 _element) : m_val(_element) {} //can be reference input param
 				bool operator()(T1* _element)const {return *_element == m_val;}
 			
 			private:
@@ -71,13 +71,13 @@ class tContainer_t
 		}
 		
 		
-		T1* GetFirstElement() const {return *m_container.begin();}
+		T1* GetFirstElement() const {return *m_container.begin();} //handle if empty
 		
 		
-		T1* GetLastElement() const {return *(m_container.end() - 1);}
+		T1* GetLastElement() const {return *(m_container.end() - 1);} //handle if empty
 		
 		
-		T1*	Find(const T1 _element) const
+		T1*	Find(const T1 _element) const //should be reference input
 		{
 			constIter_t it = find_if(m_container.begin(), m_container.end(), IsEqual(_element));
 			
@@ -158,7 +158,7 @@ class tContainer_t
 		 			++it;
 		 		}
 		 		
-		 		return *it;
+		 		return *it; //check if NULL. if so use exception
 		 		
 //		 		return m_container.begin() + _index;
 		 	}
