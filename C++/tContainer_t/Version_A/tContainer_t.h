@@ -145,7 +145,7 @@ class tContainer_t
 		 	{
 //		 		return m_container[_index];
 //				return (std::vector<T1*>)m_container[_index];
-				return (*(std::vector<T1*>*)&m_container)[_index]; /* wtf ? */
+				return (*(std::vector<T1*>*)&m_container)[_index];
 		 	}
 		 	
 		 	else if (typeid(m_container) == typeid(std::list<T1*>))

@@ -24,6 +24,8 @@ int main()
 //	tContainer_t<int, vector<int*> > cont;
 
 	tContainer_t<int, vector> cont;
+
+//	tContainer_t<int, list> cont;
 	
 	cont.InsertElement(ip);
 	
