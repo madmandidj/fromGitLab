@@ -1,0 +1,66 @@
+
+
+Library:				
+--------
+map<BorrowerRecord*>	m_borrowerRecords;
+map<BookRecord*>		m_bookRecords;
+
+
+BorrowerRecord:				
+------------------------------------------------------------------------------------------------------------------------
+Borrower*					m_borrower;
+vector<BookRecord*>			m_borrowedBooks;
+
+
+Borrower: 					
+------------------------------------------------------------------------------------------------------------------------
+string						m_firstName;
+string						m_lastName;
+string						m_PhoneNumber;
+string						m_ID;
+
+
+
+BookRecord:					
+------------------------------------------------------------------------------------------------------------------------
+Book*						m_book;
+size_t 						m_numAvaialble;
+size_t						m_numOfCopies;
+vector<BorrowerRecord*>		m_borrowers;
+
+
+Book: 						
+------------------------------------------------------------------------------------------------------------------------
+string						m_title;
+string						m_firstName;
+string						m_lastName;
+string						m_ISBN; 
+
+
+
+BookAdmin:					AddBook(), RemoveBook(), SearchBook(), ReportBook()
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+BorrowerAdmin: 				AddBorrower(), RemoveBorrower(), SearchBorrower(), ReportAllBorrowers(), Borrow(), Return()
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

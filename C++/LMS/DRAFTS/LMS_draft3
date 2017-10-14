@@ -1,0 +1,134 @@
+LMS class layout:
+=================
+LMS:						Run(), Load(), Save(), Quit()
+------------------------------------------------------------------------------------------------------------------------
+Admin* 						m_librarian;
+BorrowerRecordContainer* 	m_borrowers;							
+BookRecordContainer* 		m_books;
+
+Admin:						AddBook(), RemoveBook(), AddBorrower(), RemoveBorrower(), SearchBook(), SearchBorrower(),
+----------					Borrow(), Return(), BorrowerReport(), BorrowerReportAll(), BookReport, BookReportAll(),
+							SetPass(), QuitLMS()
+------------------------------------------------------------------------------------------------------------------------
+BorrowerRecordContainer* 	m_borrowers;							
+BookRecordContainer* 		m_books;
+
+
+BorrowerRecordContainer:	Add(), Remove(), Search(), Report(), ReportAll()
+------------------------------------------------------------------------------------------------------------------------
+map<string, BorrowerRecord*> m_bookRecords;
+
+
+BorrowerRecord:				GetBorrower(), AddBorrowedBook(), ReturnBorrowedBook(), ReportAllBorrowedBooks(), operator== (), Compare()
+------------------------------------------------------------------------------------------------------------------------
+Borrower*					m_borrower;
+vector<BookRecord*>			m_borrowedBooks;
+
+
+Borrower:					GetFirstName(), GetLastName(), GetPhoneNum(), GetID(), operator== (), Compare()
+------------------------------------------------------------------------------------------------------------------------
+string						m_firstName;
+string						m_lastName;
+string						m_PhoneNumber;
+string						m_ID;
+
+
+BookRecordContainer:		Add(), Remove(), Search(), Report(), ReportAll()
+------------------------------------------------------------------------------------------------------------------------
+map<string, BookRecord*> 			m_bookRecords;
+
+
+BookRecord:					GetBook(), GetStatus(), Borrow(), Return(), ReportAllBorrowers(), operator== (), Compare() 
+------------------------------------------------------------------------------------------------------------------------
+Book*								m_book;
+size_t 								m_numAvaialble;
+size_t								m_numOfCopies;
+vector<BorrowerRecord*>				m_borrowers;
+
+
+Book:						GetTitle(), GetAuthor(), GetFirstName(), GetLastName(), GetISBN(), operator== (), Compare()
+------------------------------------------------------------------------------------------------------------------------
+string						m_title;
+string						m_firstName;
+string						m_lastName;
+string						m_ISBN;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UI:				PromptUser(), RunLibrarian(), RunBorrower(),  
+Library*				m_bookRecords;
+Librarian* 				m_librarian;
+vector<Borrower*>		m_borrowers;
+
+string			m_libConfigPath;
+string			m_librarianConfigPath;
+string			m_borrowerConfigPath;
+
+
+Library:		LoadLibrary(), SaveLibrary(), Find(), AddBook(), RemoveBook(), ReportBook()
+map<BookRecord*>		m_bookContainer;
+
+
+Librarian:		CheckPass(), AddBook(), RemoveBook(), AddBorrower(), RemoveBorrower(), SearchBook(), SearchBorrower(), ReportBook(), ReportAllBorrowers()
+vector<BorrowerRecord*> m_borrowers;
+vector<BookRecord*>		m_books;
+Library*				m_library;
+string					m_passWord;
+
+
+Borrower:		CheckID(), CheckPass(), Borrow(), Return(), Report()
+string 			m_ID;
+BorrowerRecord* m_record;
+Library*		m_library;
+string			m_passWord;
+
+
+BorrowerRecord: Get...(), Set...()
+string			m_name;
+string			m_phoneNumber;
+string			m_ID;
+string			m_passWord;
+vector<string>	m_currentlyBorrowed;
+
+
+BookRecord:		Get...(), Set...()
+string			m_ISBN;
+string 			m_title;
+string 			m_authorFirstName;
+string 			m_authorLastName;
+size_t			m_numOfCopies;
+size_t 			m_numAvailable;
+size_t			m_section;
+size_t			m_row;
+size_t 			m_shelf;
+bool 			m_status;
+vector<string> 	m_currentBorrowers;
+vector<BorrowerRecord*>
+
+
+
+
+
+
+
+
+
+
+
+
