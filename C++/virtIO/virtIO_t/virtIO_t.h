@@ -24,11 +24,6 @@ class virtIO_t
 		
 		virtual ~virtIO_t() = 0;
 		
-		/*TODO:
-		Open()
-		Close()
-		*/
-		
 		FileStatus Open(const string& _fileName, const string& _mode);
 		
 		void Close();
@@ -43,14 +38,18 @@ class virtIO_t
 		
 		virtual virtIO_t& operator>> (char& _char) = 0;
 		
-		virtual virtIO_t& operator<< (char& _char) = 0;
+		virtual virtIO_t& operator<< (const char& _char) = 0;
 		
 	protected:
 		FILE* m_fp;
+	
+		void SetFileName(const string& _fileName); //TODO: Implement if needed
+	
+		void SetMode(const string& _mode); //TODO: Implement if needed
 		
-		void SetStatus(FileStatus _status);
+		void SetStatus(const FileStatus& _status);
 		
-		void SetDefaultValues();
+		void SetDataMembersDefaultValues();
 		
 	private:
 		virtIO_t(const virtIO_t& _virtIO_t);

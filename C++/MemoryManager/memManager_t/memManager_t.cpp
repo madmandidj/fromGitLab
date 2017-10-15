@@ -21,7 +21,7 @@ bool memManager_t::SetPosition(size_t _index)
 {
 	if (_index > m_size)
 	{	
-		throw TException_t<memManager_t> (this, "Failed Set Position", __FILE__, __LINE__);;
+		throw TException_t<memManager_t> (this, "Failed Set Position", __FILE__, __LINE__);
 	}
 	
 	m_position = _index;

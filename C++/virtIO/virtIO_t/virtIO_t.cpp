@@ -1,25 +1,7 @@
 #include "virtIO_t.h"
 
 
-virtIO_t::virtIO_t()
-{
-	SetDefaultValues();
-}
-
-
-virtIO_t::virtIO_t(const string& _fileName, const string& _mode)
-{
-	Open(_fileName, _mode);
-}
-
-
-virtIO_t::~virtIO_t()
-{
-	fclose(m_fp);
-}
-
-
-void virtIO_t::SetDefaultValues()
+void virtIO_t::SetDataMembersDefaultValues()
 {
 	m_fp = 0;
 	
@@ -31,6 +13,28 @@ void virtIO_t::SetDefaultValues()
 	
 	return;
 }
+
+
+virtIO_t::virtIO_t()
+{
+	SetDataMembersDefaultValues();
+}
+
+
+virtIO_t::virtIO_t(const string& _fileName, const string& _mode)
+{
+	Open(_fileName, _mode);
+}
+
+
+virtIO_t::~virtIO_t()
+{
+	if (0 != m_fp)
+	{
+		fclose(m_fp);
+	}
+}
+
 
 
 virtIO_t::FileStatus virtIO_t::Open(const string& _fileName, const string& _mode)
@@ -51,7 +55,7 @@ void virtIO_t::Close()
 {
 	fclose(m_fp);	
 	
-	SetDefaultValues();
+	SetDataMembersDefaultValues();
 }
 
 
@@ -86,7 +90,7 @@ size_t virtIO_t::GetFileLength()
 }
 
 
-void virtIO_t::SetStatus(FileStatus _status)
+void virtIO_t::SetStatus(const FileStatus& _status)
 {
 	m_status = _status;
 }
