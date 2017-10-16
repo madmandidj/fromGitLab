@@ -16,7 +16,7 @@ bool binIO_t::IsReadMode() const
 {
 	string mode = GetMode();
 	
-	if (!strcmp(mode.c_str(), "rb") || !strcmp(mode.c_str(), "r+b") || !strcmp(mode.c_str(), "rwb") || !strcmp(mode.c_str(), "rw+b"))
+	if (!strcmp(mode.c_str(), "rb") || !strcmp(mode.c_str(), "r+b") || !strcmp(mode.c_str(), "w+b"))
 	{
 		return true;
 	}
@@ -29,7 +29,7 @@ bool binIO_t::IsWriteMode() const
 {
 	string mode = GetMode();
 	
-	if (!strcmp(mode.c_str(), "wb") || !strcmp(mode.c_str(), "w+b") || !strcmp(mode.c_str(), "rwb") || !strcmp(mode.c_str(), "rw+b"))
+	if (!strcmp(mode.c_str(), "wb") || !strcmp(mode.c_str(), "r+b") || !strcmp(mode.c_str(), "w+b"))
 	{
 		return true;
 	}
@@ -60,7 +60,7 @@ binIO_t& binIO_t:: operator<< (const char& _char)
 	{
 		int result = fwrite(&_char, sizeof(char), 1, m_fp);
 		
-		if (sizeof(char) != result || ferror(m_fp))
+		if (1 != result || ferror(m_fp))
 		{
 			throw(result);
 		}
@@ -92,7 +92,7 @@ binIO_t& binIO_t:: operator<< (const int& _int)
 	{
 		int result = fwrite(&_int, sizeof(int), 1, m_fp);
 		
-		if (sizeof(char) != result || ferror(m_fp))
+		if (1 != result || ferror(m_fp))
 		{
 			throw(result);
 		}

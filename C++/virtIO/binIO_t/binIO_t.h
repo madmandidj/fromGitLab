@@ -43,10 +43,12 @@ class binIO_t : public virtIO_t
 		
 		virtual binIO_t& operator<< (const int& _int);	
 		
-		/* TODO:
-		binIO_t& operator>> (void* _buf);
-		binIO_t& operator<< (const void* _buf);	
-		void operator, (int _len);
+		/* 
+		TODO: binIO_t& operator>> (void* _buf);
+		
+		TODO: binIO_t& operator<< (const void* _buf);	
+		
+		TODO: void operator, (int _len);
 		*/
 		
 	protected:

@@ -54,12 +54,16 @@ class asciiIO_t : public virtIO_t
 		
 		void SetDataMembersDefaultValues();
 		
+		size_t GetNumOfIntDigits(int _int) const;
+		
 		*********
 		********/
 		
 		bool IsReadMode() const;
 		
 		bool IsWriteMode() const;
+		
+		size_t GetNumOfIntDigits(int _int) const;
 		
 	private:
 		asciiIO_t(const asciiIO_t& _asciiIO_t);

@@ -17,7 +17,7 @@ bool asciiIO_t::IsReadMode() const
 {
 	string mode = GetMode();
 	
-	if (!strcmp(mode.c_str(), "r") || !strcmp(mode.c_str(), "r+") || !strcmp(mode.c_str(), "rw") || !strcmp(mode.c_str(), "rw+"))
+	if (!strcmp(mode.c_str(), "r") || !strcmp(mode.c_str(), "r+") || !strcmp(mode.c_str(), "w+"))
 	{
 		return true;
 	}
@@ -30,13 +30,30 @@ bool asciiIO_t::IsWriteMode() const
 {
 	string mode = GetMode();
 	
-	if (!strcmp(mode.c_str(), "w") || !strcmp(mode.c_str(), "w+") || !strcmp(mode.c_str(), "rw") || !strcmp(mode.c_str(), "rw+"))
+	if (!strcmp(mode.c_str(), "w") || !strcmp(mode.c_str(), "r+") || !strcmp(mode.c_str(), "w+"))
 	{
 		return true;
 	}
 	
 	return false;
 }
+
+
+size_t asciiIO_t::GetNumOfIntDigits(int _int) const
+{
+	int numOfDigits = 0;
+	
+	while (_int / 10 > 0)
+	{
+		++numOfDigits;
+		_int /= 10;
+	}
+	
+	++numOfDigits;
+	
+	return numOfDigits;
+}
+
 
 asciiIO_t& asciiIO_t:: operator>> (char& _char)
 {
@@ -92,7 +109,7 @@ asciiIO_t& asciiIO_t:: operator<< (const int& _int)
 	{
 		int result = fprintf(m_fp, "%d", _int);
 		
-		if (sizeof(int) != result || ferror(m_fp))
+		if (GetNumOfIntDigits(_int) != result || ferror(m_fp))
 		{
 			throw(result);
 		}
