@@ -9,7 +9,7 @@ using namespace std;
 class asciiIO_t : public virtIO_t
 {
 	public:
-		/******** Inhertied from virtIO_t
+		/******** Inherited from virtIO_t
 		*********
 
 		FileStatus Open(const string& _fileName, const string& _mode);
@@ -18,11 +18,15 @@ class asciiIO_t : public virtIO_t
 		
 		const string& GetFileName() const;
 		
-		const string& GetMode() const;
+		string GetMode() const;
 		
 		FileStatus GetStatus() const;
 		
-		size_t GetFileLength();
+		size_t GetFileLength() const;
+		
+		void SetToStartPosition() const;
+		
+		int GetPosition() const;
 		
 		*********
 		********/
@@ -45,7 +49,7 @@ class asciiIO_t : public virtIO_t
 		virtual asciiIO_t& operator<< (const float& _float);
 		
 	protected:
-		/******** Inhertied from virtIO_t
+		/******** Inherited from virtIO_t
 		*********
 		
 		FILE* m_fp;
@@ -89,7 +93,7 @@ asciiIO_t& asciiIO_t::MyRead(T& _t, const char* _format)
 	{
 		int result = fscanf(m_fp, _format, &_t);
 	
-		if (1 != result || ferror(m_fp))
+		if (ferror(m_fp))
 		{
 			throw(result);
 		}

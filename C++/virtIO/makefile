@@ -28,7 +28,7 @@ virtIO_t.o: $(VIRT_PATH)virtIO_t.cpp $(VIRT_PATH)virtIO_t.h
 	
 	
 clean:
-	rm TESTVirtIO $(objects)	
+	rm TESTVirtIO asciiFile binFile $(objects)	
  
 
 

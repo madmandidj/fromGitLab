@@ -99,7 +99,7 @@ binIO_t& binIO_t::operator, (int _len)
 	{
 		int result = fwrite(m_buf, _len, 1, m_fp);
 		
-		if (1 != result || ferror(m_fp))
+		if (ferror(m_fp))
 		{
 			m_commaMode = NONE;
 			throw(result);
@@ -109,7 +109,7 @@ binIO_t& binIO_t::operator, (int _len)
 	{
 		int result = fread(m_buf, _len, 1, m_fp);
 	
-		if (1 != result || ferror(m_fp))
+		if (ferror(m_fp))
 		{
 			m_commaMode = NONE;
 			throw(result);

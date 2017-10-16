@@ -18,11 +18,15 @@ class binIO_t : public virtIO_t
 		
 		const string& GetFileName() const;
 		
-		const string& GetMode() const;
+		string GetMode() const;
 		
 		FileStatus GetStatus() const;
 		
-		size_t GetFileLength();
+		size_t GetFileLength() const;
+		
+		void SetToStartPosition() const;
+		
+		int GetPosition() const;
 		
 		*********
 		********/
@@ -104,8 +108,8 @@ binIO_t& binIO_t::MyRead(T& _t)
 		m_commaMode = READ;
 		
 		int result = fread(&_t, sizeof(T), 1, m_fp);
-	
-		if (1 != result || ferror(m_fp))
+		
+		if (ferror(m_fp))
 		{
 			m_commaMode = NONE;
 			
@@ -126,7 +130,7 @@ binIO_t& binIO_t::MyWrite(T& _t)
 		
 		int result = fwrite(&_t, sizeof(T), 1, m_fp);
 		
-		if (1 != result || ferror(m_fp))
+		if (ferror(m_fp))
 		{
 			m_commaMode = NONE;
 			

@@ -105,6 +105,12 @@ void virtIO_t::SetToStartPosition() const
 }
 
 
+int virtIO_t::GetPosition() const
+{
+	return ftell(m_fp);
+}
+
+
 
 
 

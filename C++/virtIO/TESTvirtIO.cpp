@@ -6,29 +6,22 @@
 
 using namespace std;
 
-
-
 int main()
 {
-	/*
-	select ascii / binary
-	select write / read / break 
-	select int / float /
-	*/
 	virtIO_t* virtP;
-	bool cont = true;
 	bool isBreakLoop = false;
 	char fileOption;
 	char actionOption;
 	char typeOption;
 	string asciiFile = "asciiFile";
 	string binFile = "binFile";
-	string fileMode = "w+";
+	string asciiFileMode = "w+";
+	string binFileMode = "w+b";
 	
 	
 	while(1)
 	{
-		cout << "Select: (a)scii, (b)inary, (q)uit" << endl;
+		cout << "Select: (a)scii, (b)inary, (q)uit" << endl << endl;
 	
 		cin >> fileOption;
 		
@@ -37,12 +30,12 @@ int main()
 		switch (fileOption)
 		{
 			case 'a':
-				virtP = new asciiIO_t(asciiFile, fileMode);
+				virtP = new asciiIO_t(asciiFile, asciiFileMode);
 				
 				break;
 			
 			case 'b':
-				virtP = new binIO_t(binFile, fileMode);
+				virtP = new binIO_t(binFile, binFileMode);
 			
 				break;
 			
@@ -57,16 +50,82 @@ int main()
 		
 		while (!isBreakLoop)
 		{
-			cout << "Select: (w)rite, (r)ead, (s)et start position, (b)reak" << endl;
+			cout << "Select: (w)rite, (r)ead, (s)et position to start, (g)et position, (o) comma operator write, (i) comma operator read, (b)reak" << endl << endl;
 	
 			cin >> actionOption;
 		
 			switch (actionOption)
 			{
 				case 's':
-					//TODO: call set start position
+				
 					virtP->SetToStartPosition();
+					
 					continue;
+					
+				case 'g':
+				
+					cout << "Current position: " << virtP->GetPosition() << endl << endl;
+					
+					continue;
+					
+				case 'o':
+				{
+					int intVal;
+					
+					cout << "Enter integer value to write with ',' operator" << endl << endl;
+					
+					cin >> intVal;
+					
+					binIO_t* binP = dynamic_cast<binIO_t*>(virtP);
+					
+					if (0 != binP)
+					{
+						try
+						{
+						
+							*binP << &intVal , sizeof(int);
+							
+						}catch(int result){
+					
+							cout << " Exception: write integer with ',' operator" << endl << endl;
+						}
+						
+					}
+					else
+					{
+						cout << "Cannot perform ',' write with ascii file";
+					}
+					
+					continue;
+				}
+				
+				case 'i':
+				{
+					int intVal;
+					
+					binIO_t* binP = dynamic_cast<binIO_t*>(virtP);
+					
+					if (0 != binP)
+					{
+						try
+						{
+						
+							*binP >> &intVal , sizeof(int);
+							
+						}catch(int result){
+					
+							cout << " Exception: read integer with ',' operator" << endl << endl;
+						}
+						
+						cout << "int read with ',' operator: " << intVal << endl << endl;
+					}
+					else
+					{
+						cout << "Cannot perform ',' read with ascii file";
+					}
+					
+					continue;
+				}
 				
 				case 'b':
 					delete virtP;
@@ -78,7 +137,7 @@ int main()
 					continue;
 			}
 		
-			cout << "Select: (c)har, (i)nt, (f)loat, (b)reak" << endl; //TODO: add option for ',' operator in binary
+			cout << "Select: (c)har, (i)nt, (f)loat, (b)reak" << endl << endl; //TODO: add option for ',' operator in binary
 	
 			cin >> typeOption;
 			
@@ -90,34 +149,59 @@ int main()
 						case 'c':
 							char c;
 							
-							cout << "Enter char" << endl;
+							cout << "Enter char" << endl << endl;
 							
 							cin >> c;
 							
-							*virtP << c;
+							try
+							{
+							
+								*virtP << c;
+								
+							}catch(int result){
+							
+								cout << " Exception: write char" << endl << endl;
+							}
 							
 							continue;
 			
 						case 'i':
 							int i;
 							
-							cout << "Enter int" << endl;
+							cout << "Enter int" << endl << endl;
 							
 							cin >> i;
 							
+							try
+							{
+							
 							*virtP << i;
+							
+							}catch(int result){
+							
+								cout << " Exception: write int" << endl << endl;
+							}
 							
 							continue;
 			
 						case 'f':
-							int f;
+							float f;
 							
-							cout << "Enter float" << endl;
+							cout << "Enter float" << endl << endl;
 							
 							cin >> f;
 							
+							try
+							{
+							
 							*virtP << f;
-							break;
+							
+							}catch(int result){
+							
+								cout << " Exception: write float" << endl << endl;
+							}
+							
+							continue;
 			
 						case 'b':
 							
@@ -132,27 +216,55 @@ int main()
 						case 'c':
 							char c;
 							
-							*virtP >> c;
+							try
+							{
 							
-							cout << "Char read: " << c << endl;
+								*virtP >> c;
+								
+							}catch(int result){
+							
+								cout << " Exception: read char" << endl << endl;
+								
+								continue;
+							}
+							
+							cout << "Char read: " << c << endl << endl;
 							
 							continue;
 			
 						case 'i':
 							int i;
+							try
+							{
 							
 							*virtP >> i;
 							
-							cout << "Integer read: " << i << endl;
+							}catch(int result){
+							
+								cout << " Exception: read int" << endl << endl;
+								
+								continue;
+							}
+							
+							cout << "Integer read: " << i << endl << endl;
 							
 							continue;
 			
 						case 'f':
-							int f;
+							float f;
+							try
+							{
 							
 							*virtP >> f;
 							
-							cout << "Float read: " << f << endl;
+							}catch(int result){
+							
+								cout << " Exception: read float" << endl << endl;
+								
+								continue;
+							}
+							
+							cout << "Float read: " << f << endl << endl;
 							break;
 			
 						case 'b':

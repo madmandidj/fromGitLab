@@ -38,6 +38,8 @@ class virtIO_t
 		
 		void SetToStartPosition() const;
 		
+		int GetPosition() const;
+		
 		virtual virtIO_t& operator>> (char& _char) = 0;
 		
 		virtual virtIO_t& operator<< (const char& _char) = 0;
