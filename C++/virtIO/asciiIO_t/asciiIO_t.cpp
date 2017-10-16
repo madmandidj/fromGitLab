@@ -3,7 +3,6 @@
 #include <string.h>
 
 
-
 asciiIO_t::asciiIO_t(){}
 
 
@@ -36,22 +35,6 @@ bool asciiIO_t::IsWriteMode() const
 	}
 	
 	return false;
-}
-
-
-size_t asciiIO_t::GetNumOfIntDigits(int _int) const
-{
-	int numOfDigits = 0;
-	
-	while (_int / 10 > 0)
-	{
-		++numOfDigits;
-		_int /= 10;
-	}
-	
-	++numOfDigits;
-	
-	return numOfDigits;
 }
 
 
@@ -91,28 +74,21 @@ asciiIO_t& asciiIO_t:: operator<< (const float& _float)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//Not used
+size_t asciiIO_t::GetNumOfIntDigits(int _int) const
+{
+	int numOfDigits = 0;
+	
+	while (_int / 10 > 0)
+	{
+		++numOfDigits;
+		
+		_int /= 10;
+	}
+	
+	++numOfDigits;
+	
+	return numOfDigits;
+}
 
 

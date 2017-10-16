@@ -55,9 +55,9 @@ class virtIO_t
 	protected:
 		FILE* m_fp;
 	
-		void SetFileName(const string& _fileName); //TODO: Implement if needed
+		void SetFileName(const string& _fileName); 	//TODO: Implement if needed
 	
-		void SetMode(const string& _mode); //TODO: Implement if needed
+		void SetMode(const string& _mode); 			//TODO: Implement if needed
 		
 		void SetStatus(const FileStatus& _status);
 		

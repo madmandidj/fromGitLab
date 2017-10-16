@@ -71,7 +71,7 @@ class asciiIO_t : public virtIO_t
 		
 		bool IsWriteMode() const;
 		
-		size_t GetNumOfIntDigits(int _int) const;
+		size_t GetNumOfIntDigits(int _int) const; //Not used
 		
 		template<class T>
 		asciiIO_t& MyRead(T& _t, const char* _format);
@@ -118,8 +118,6 @@ asciiIO_t& asciiIO_t::MyWrite(T& _t, const char* _format)
 	
 	return *this;
 }
-
-
 
 
 

@@ -80,21 +80,13 @@ binIO_t& binIO_t:: operator<< (const float& _float)
 }
 
 
-
-
-
-
-
-
-
-
-
 binIO_t& binIO_t::operator, (int _len)
 {
 	if (0 == m_fp || NONE == m_commaMode)
 	{
 		return *this;
 	}
+	
 	else if (WRITE == m_commaMode)
 	{
 		int result = fwrite(m_buf, _len, 1, m_fp);
@@ -102,9 +94,11 @@ binIO_t& binIO_t::operator, (int _len)
 		if (ferror(m_fp))
 		{
 			m_commaMode = NONE;
+			
 			throw(result);
 		}
 	}
+	
 	else
 	{
 		int result = fread(m_buf, _len, 1, m_fp);
@@ -112,6 +106,7 @@ binIO_t& binIO_t::operator, (int _len)
 		if (ferror(m_fp))
 		{
 			m_commaMode = NONE;
+			
 			throw(result);
 		}
 	}
@@ -150,13 +145,6 @@ binIO_t& binIO_t::operator<< (const void* _buf)
 	
 	return *this;
 }
-
-
-
-
-
-
-
 
 
 

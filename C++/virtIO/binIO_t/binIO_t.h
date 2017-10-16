@@ -44,7 +44,7 @@ class binIO_t : public virtIO_t
 		
 		virtual ~binIO_t();
 		
-		virtual binIO_t& operator>> (char& _char);
+		virtual binIO_t& operator>> (char& _char);			
 		
 		virtual binIO_t& operator<< (const char& _char);
 		
@@ -63,7 +63,7 @@ class binIO_t : public virtIO_t
 		binIO_t& operator, (int _len);
 		
 	protected:
-		/******** Inhertied from virtIO_t
+		/******** Inherited from virtIO_t
 		*********
 		
 		FILE* m_fp;
@@ -140,9 +140,6 @@ binIO_t& binIO_t::MyWrite(T& _t)
 	
 	return *this;
 }
-
-
-
 
 
 #endif /* #ifndef __BINIO_H__ */

@@ -36,7 +36,6 @@ virtIO_t::~virtIO_t()
 }
 
 
-
 virtIO_t::FileStatus virtIO_t::Open(const string& _fileName, const string& _mode)
 {
 	m_fileName = _fileName;
@@ -94,7 +93,6 @@ void virtIO_t::SetStatus(const FileStatus& _status)
 {
 	m_status = _status;
 }
-
 
 
 void virtIO_t::SetToStartPosition() const
