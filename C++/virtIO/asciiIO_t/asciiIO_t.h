@@ -65,6 +65,12 @@ class asciiIO_t : public virtIO_t
 		
 		size_t GetNumOfIntDigits(int _int) const;
 		
+		template<class T>
+		asciiIO_t& MyRead(T& _t, const char* _format);
+		
+		template<class T>
+		asciiIO_t& MyWrite(T& _t, const char* _format);
+
 	private:
 		asciiIO_t(const asciiIO_t& _asciiIO_t);
 		
@@ -72,7 +78,38 @@ class asciiIO_t : public virtIO_t
 };
 
 
+template<class T>
+asciiIO_t& asciiIO_t::MyRead(T& _t, const char* _format)
+{
+	if ((0 != m_fp) && (IsReadMode()))
+	{
+		int result = fscanf(m_fp, _format, &_t);
+	
+		if (1 != result || ferror(m_fp))
+		{
+			throw(result);
+		}
+	}
+	
+	return *this;
+}
 
+
+template<class T>
+asciiIO_t& asciiIO_t::MyWrite(T& _t, const char* _format)
+{
+	if ((0 != m_fp) && (IsWriteMode()))
+	{
+		int result = fprintf(m_fp, _format, _t);
+		
+		if (ferror(m_fp))
+		{
+			throw(result);
+		}
+	}
+	
+	return *this;
+}
 
 
 

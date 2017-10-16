@@ -29,6 +29,14 @@ class binIO_t : public virtIO_t
 		
 		*********
 		********/
+		
+		enum CommaMode
+		{
+			NONE,
+			READ,
+			WRITE
+		};
+		
 		binIO_t();
 		
 		binIO_t(const string& _fileName, const string& _mode);
@@ -43,12 +51,14 @@ class binIO_t : public virtIO_t
 		
 		virtual binIO_t& operator<< (const int& _int);	
 		
+		binIO_t& operator>> (void* _buf);
+		
+		binIO_t& operator<< (const void* _buf);
+		
+		binIO_t& operator, (int _len);
+		
 		/* 
-		TODO: binIO_t& operator>> (void* _buf);
-		
 		TODO: binIO_t& operator<< (const void* _buf);	
-		
-		TODO: void operator, (int _len);
 		*/
 		
 	protected:
@@ -72,11 +82,15 @@ class binIO_t : public virtIO_t
 		
 		bool IsWriteMode() const;
 		
-		void* 	m_buf;
+		template<class T>
+		binIO_t& MyRead(T& _t);
 		
-		size_t 	m_size;
+		template<class T>
+		binIO_t& MyWrite(T& _t);
 		
-		size_t 	m_count;
+		void* 		m_buf;
+		
+		CommaMode	m_commaMode;
 		
 	private:
 		binIO_t(const binIO_t& _binIO_t);
@@ -85,11 +99,38 @@ class binIO_t : public virtIO_t
 };
 
 
+template<class T>
+binIO_t& binIO_t::MyRead(T& _t)
+{
+	if ((0 != m_fp) && (IsReadMode()))
+	{
+		int result = fread(&_t, sizeof(T), 1, m_fp);
+	
+		if (1 != result || ferror(m_fp))
+		{
+			throw(result);
+		}
+	}
+	
+	return *this;
+}
 
 
-
-
-
+template<class T>
+binIO_t& binIO_t::MyWrite(T& _t)
+{
+	if ((0 != m_fp) && (IsWriteMode()))
+	{
+		int result = fwrite(&_t, sizeof(T), 1, m_fp);
+		
+		if (1 != result || ferror(m_fp))
+		{
+			throw(result);
+		}
+	}
+	
+	return *this;
+}
 
 
 

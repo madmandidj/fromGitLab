@@ -57,65 +57,25 @@ size_t asciiIO_t::GetNumOfIntDigits(int _int) const
 
 asciiIO_t& asciiIO_t:: operator>> (char& _char)
 {
-	if ((0 != m_fp) && (IsReadMode()))
-	{
-		int result = fscanf(m_fp, "%c", &_char);
-	
-		if (1 != result || ferror(m_fp))
-		{
-			throw(result);
-		}
-	}
-	
-	return *this;
+	return MyRead(_char, "%c");
 }
 
 
 asciiIO_t& asciiIO_t:: operator<< (const char& _char)
 {
-	if ((0 != m_fp) && (IsWriteMode()))
-	{
-		int result = fprintf(m_fp, "%c", _char);
-		
-		if (sizeof(char) != result || ferror(m_fp))
-		{
-			throw(result);
-		}
-	}
-	
-	return *this;
+	return MyWrite(_char, "%c");
 }
 
 
 asciiIO_t& asciiIO_t:: operator>> (int& _int)
 {
-	if ((0 != m_fp) && (IsReadMode()))
-	{
-		int result = fscanf(m_fp, "%d", &_int);
-	
-		if (1 != result || ferror(m_fp))
-		{
-			throw(result);
-		}
-	}
-	
-	return *this;
+	return MyRead(_int, "%d");
 }
 
 
 asciiIO_t& asciiIO_t:: operator<< (const int& _int)
 {
-	if ((0 != m_fp) && (IsWriteMode()))
-	{
-		int result = fprintf(m_fp, "%d", _int);
-		
-		if (GetNumOfIntDigits(_int) != result || ferror(m_fp))
-		{
-			throw(result);
-		}
-	}
-	
-	return *this;
+	return MyWrite(_int, "%d");
 }
 
 

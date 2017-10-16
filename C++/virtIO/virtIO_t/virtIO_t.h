@@ -40,6 +40,10 @@ class virtIO_t
 		
 		virtual virtIO_t& operator<< (const char& _char) = 0;
 		
+		virtual virtIO_t& operator>> (int& _int) = 0;
+		
+		virtual virtIO_t& operator<< (const int& _int) = 0;
+		
 	protected:
 		FILE* m_fp;
 	

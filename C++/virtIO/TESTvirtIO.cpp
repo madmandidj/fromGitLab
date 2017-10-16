@@ -26,6 +26,7 @@ int main()
 	try
 	{
 		asciiFile << a;
+		asciiFile << b;
 	}catch(int result)
 	{
 		cout << "caught 1" << endl;
@@ -34,6 +35,7 @@ int main()
 	try
 	{
 		binFile << x;
+		asciiFile << b;
 	}catch(int result)
 	{
 		cout << "caught 2" << endl;
@@ -47,19 +49,18 @@ int main()
 	
 	binFile.Open(binFileName, binReadMode);
 	
+	char readChar;
 	int readInt;
 	
 	try
 	{
-		asciiFile >> readInt;
+		asciiFile >> readChar;
 	}catch(int result)
 	{
 		cout << "caught 3" << endl;
 	}
 	
-	cout << readInt << endl;
-	
-	char readChar;
+	cout << readChar << endl;
 	
 	try
 	{
@@ -70,6 +71,37 @@ int main()
 	}
 	
 	cout << readInt << endl;
+	
+	
+	int n = 171;
+	
+	int m;
+	
+	binFile.Close();
+	
+	binFile.Open(binFileName, binWriteMode);
+	
+	try
+	{
+		binFile << &n, sizeof(int);
+	}catch(int result)
+	{
+		cout << "caught 5" << endl;
+	}
+	
+	binFile.Close();
+	
+	binFile.Open(binFileName, binReadMode);
+	
+	try
+	{
+		binFile >> &m, sizeof(int);
+	}catch(int result)
+	{
+		cout << "caught 6" << endl;
+	}
+	
+	cout << m << endl;
 
 	return 0;
 }
