@@ -97,7 +97,12 @@ void virtIO_t::SetStatus(const FileStatus& _status)
 
 
 
-
+void virtIO_t::SetToStartPosition() const
+{
+	fseek(m_fp, 0, SEEK_SET);
+	
+	return;
+}
 
 
 
