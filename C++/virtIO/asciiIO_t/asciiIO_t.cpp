@@ -79,7 +79,16 @@ asciiIO_t& asciiIO_t:: operator<< (const int& _int)
 }
 
 
+asciiIO_t& asciiIO_t:: operator>> (float& _float)
+{
+	return MyRead(_float, "%f");
+}
 
+
+asciiIO_t& asciiIO_t:: operator<< (const float& _float)
+{
+	return MyWrite(_float, "%f");
+}
 
 
 

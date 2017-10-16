@@ -1,9 +1,6 @@
 #ifndef __BINIO_H__
 #define __BINIO_H__
 
-
-
-
 #include "../virtIO_t/virtIO_t.h"
 #include <string>
 
@@ -49,17 +46,17 @@ class binIO_t : public virtIO_t
 		
 		virtual binIO_t& operator>> (int& _int);
 		
-		virtual binIO_t& operator<< (const int& _int);	
+		virtual binIO_t& operator<< (const int& _int);
+		
+		virtual binIO_t& operator>> (float& _float);		
+		
+		virtual binIO_t& operator<< (const float& _float);	
 		
 		binIO_t& operator>> (void* _buf);
 		
 		binIO_t& operator<< (const void* _buf);
 		
 		binIO_t& operator, (int _len);
-		
-		/* 
-		TODO: binIO_t& operator<< (const void* _buf);	
-		*/
 		
 	protected:
 		/******** Inhertied from virtIO_t
@@ -104,10 +101,14 @@ binIO_t& binIO_t::MyRead(T& _t)
 {
 	if ((0 != m_fp) && (IsReadMode()))
 	{
+		m_commaMode = READ;
+		
 		int result = fread(&_t, sizeof(T), 1, m_fp);
 	
 		if (1 != result || ferror(m_fp))
 		{
+			m_commaMode = NONE;
+			
 			throw(result);
 		}
 	}
@@ -121,10 +122,14 @@ binIO_t& binIO_t::MyWrite(T& _t)
 {
 	if ((0 != m_fp) && (IsWriteMode()))
 	{
+		m_commaMode = WRITE;
+		
 		int result = fwrite(&_t, sizeof(T), 1, m_fp);
 		
 		if (1 != result || ferror(m_fp))
 		{
+			m_commaMode = NONE;
+			
 			throw(result);
 		}
 	}

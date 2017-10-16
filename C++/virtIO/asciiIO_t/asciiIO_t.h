@@ -38,7 +38,11 @@ class asciiIO_t : public virtIO_t
 		
 		virtual asciiIO_t& operator>> (int& _int);
 		
-		virtual asciiIO_t& operator<< (const int& _int);		
+		virtual asciiIO_t& operator<< (const int& _int);
+		
+		virtual asciiIO_t& operator>> (float& _float);		
+		
+		virtual asciiIO_t& operator<< (const float& _float);
 		
 	protected:
 		/******** Inhertied from virtIO_t

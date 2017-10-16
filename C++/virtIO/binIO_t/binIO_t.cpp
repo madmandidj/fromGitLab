@@ -57,19 +57,36 @@ binIO_t& binIO_t:: operator<< (const char& _char)
 
 
 binIO_t& binIO_t:: operator>> (int& _int)
-{
-	m_commaMode = READ;	
-	
+{		
 	return MyRead(_int);
 }
 
 
 binIO_t& binIO_t:: operator<< (const int& _int)
 {	
-	m_commaMode = WRITE;
-	
 	return MyWrite(_int);
 }
+
+
+binIO_t& binIO_t:: operator>> (float& _float)
+{
+	return MyRead(_float);
+}
+
+
+binIO_t& binIO_t:: operator<< (const float& _float)
+{
+	return MyWrite(_float);
+}
+
+
+
+
+
+
+
+
+
 
 
 binIO_t& binIO_t::operator, (int _len)

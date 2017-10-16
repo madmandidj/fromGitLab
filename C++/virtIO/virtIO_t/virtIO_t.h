@@ -34,7 +34,7 @@ class virtIO_t
 		
 		FileStatus GetStatus() const;
 		
-		size_t GetFileLength();
+		size_t GetFileLength() const;
 		
 		virtual virtIO_t& operator>> (char& _char) = 0;
 		
@@ -43,6 +43,10 @@ class virtIO_t
 		virtual virtIO_t& operator>> (int& _int) = 0;
 		
 		virtual virtIO_t& operator<< (const int& _int) = 0;
+		
+		virtual virtIO_t& operator>> (float& _float) = 0;
+		
+		virtual virtIO_t& operator<< (const float& _float) = 0;
 		
 	protected:
 		FILE* m_fp;

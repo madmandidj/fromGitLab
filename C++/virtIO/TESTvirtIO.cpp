@@ -102,13 +102,40 @@ int main()
 	}
 	
 	cout << m << endl;
+	
+	
+	float pI = 3.14;
+	
+	float mpI;
+	
+	binFile.Close();
+	
+	binFile.Open(binFileName, binWriteMode);
+	
+	try
+	{
+		binFile << &pI, sizeof(float);
+	}catch(int result)
+	{
+		cout << "caught 7" << endl;
+	}
+	
+	binFile.Close();
+	
+	binFile.Open(binFileName, binReadMode);
+	
+	try
+	{
+		binFile >> &mpI, sizeof(float);
+	}catch(int result)
+	{
+		cout << "caught 8" << endl;
+	}
+	
+	cout << mpI << endl;
 
 	return 0;
 }
-
-
-
-
 
 
 

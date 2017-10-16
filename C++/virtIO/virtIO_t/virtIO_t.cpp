@@ -77,7 +77,7 @@ virtIO_t::FileStatus virtIO_t::GetStatus() const
 }
 
 
-size_t virtIO_t::GetFileLength()
+size_t virtIO_t::GetFileLength() const
 {
 	if (0 == m_fp)
 	{
