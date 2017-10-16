@@ -30,7 +30,7 @@ class virtIO_t
 		
 		const string& GetFileName() const;
 		
-		const string& GetMode() const;
+		string GetMode() const;
 		
 		FileStatus GetStatus() const;
 		

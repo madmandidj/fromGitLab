@@ -43,7 +43,7 @@ virtIO_t::FileStatus virtIO_t::Open(const string& _fileName, const string& _mode
 	
 	m_mode = _mode;
 	
-	m_fp = fopen(m_fileName.c_str(), _mode.c_str());
+	m_fp = fopen(m_fileName.c_str(), m_mode.c_str());
 	
 	m_status = (0 == m_fp) ? cant_open_file_e : ok_e;
 	
@@ -65,7 +65,7 @@ const string& virtIO_t::GetFileName() const
 }
 
 
-const string& virtIO_t::GetMode() const
+string virtIO_t::GetMode() const
 {
 	return m_mode;
 }

@@ -37,7 +37,11 @@ class binIO_t : public virtIO_t
 		
 		virtual binIO_t& operator>> (char& _char);
 		
-		virtual binIO_t& operator<< (const char& _char);	
+		virtual binIO_t& operator<< (const char& _char);
+		
+		virtual binIO_t& operator>> (int& _int);
+		
+		virtual binIO_t& operator<< (const int& _int);	
 		
 		/* TODO:
 		binIO_t& operator>> (void* _buf);
@@ -61,6 +65,10 @@ class binIO_t : public virtIO_t
 		
 		*********
 		********/
+		
+		bool IsReadMode() const;
+		
+		bool IsWriteMode() const;
 		
 		void* 	m_buf;
 		

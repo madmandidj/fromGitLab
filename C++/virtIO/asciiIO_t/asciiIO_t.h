@@ -34,7 +34,11 @@ class asciiIO_t : public virtIO_t
 		
 		virtual asciiIO_t& operator>> (char& _char);
 		
-		virtual asciiIO_t& operator<< (const char& _char);		
+		virtual asciiIO_t& operator<< (const char& _char);
+		
+		virtual asciiIO_t& operator>> (int& _int);
+		
+		virtual asciiIO_t& operator<< (const int& _int);		
 		
 	protected:
 		/******** Inhertied from virtIO_t
@@ -52,6 +56,10 @@ class asciiIO_t : public virtIO_t
 		
 		*********
 		********/
+		
+		bool IsReadMode() const;
+		
+		bool IsWriteMode() const;
 		
 	private:
 		asciiIO_t(const asciiIO_t& _asciiIO_t);
