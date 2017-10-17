@@ -15,7 +15,6 @@ class Tokenizer
 	
 	
 	private:
-		size_t m_curLinePosition; //Maybe not needed
 		static const char* const m_delimiters[];
 		Tokenizer(const Tokenizer& _tokenizer);
 		Tokenizer& operator= (const Tokenizer& _tokenizer);
@@ -23,5 +22,13 @@ class Tokenizer
 
 
 #endif /* #ifndef __TOKENIZER_H__ */
+
+
+
+
+
+
+
+
 
 

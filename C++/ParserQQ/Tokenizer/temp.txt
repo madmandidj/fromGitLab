@@ -1,0 +1,24 @@
+
+/*
+
+while(getline(stringStream, line)) 
+	{	
+		size_t prev = 0; 
+		size_t pos;
+			
+		while ((pos = line.find_first_of(" ';", prev)) != string::npos)
+		{
+			if (pos > prev)
+			{
+				wordVector.push_back(line.substr(prev, pos-prev));		        
+				prev = pos+1;
+			}
+		}
+		if (prev < line.length())
+		{
+			wordVector.push_back(line.substr(prev, string::npos));
+		}
+	}
+
+
+*/

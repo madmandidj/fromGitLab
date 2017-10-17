@@ -8,8 +8,12 @@ using namespace std;
 
 class Analyzer
 {
+	
 	public:
+			
+		
 		//TODO: error enum
+		
 		bool IsTokenLegal();
 	
 	protected:
@@ -18,6 +22,8 @@ class Analyzer
 	private:
 		Tokenizer*		m_tokenizer;
 		vector<string>*	m_unresolvedTokens;
+		vector<size_t>*	m_unresolvedLineNum;
+		
 		size_t			m_currentErrNum;
 		size_t			m_currentLineNum;
 		size_t			m_curlyCount;
