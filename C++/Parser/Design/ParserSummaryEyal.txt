@@ -1,0 +1,58 @@
+parser reads line by line.
+tokenizer - divides lines to tokens
+analyzer - syntax/semantics analyzer (is the expression legal) -- if ok then translates to assembly (we dont translate to assembly)
+key words in qq have nothing to do with C/C++
+C uses ftok .. in C++ something else
+Rules: first token is main (preceeding blank lines are allowed) .. {} not required after main
+ending line does not need to end in ';'
+Everythig is legal besides the rules defined
+at file end: report how many braces and which types arent close e.g. 2 (, 1 [, 3 {
+
+3 classes:
+Parser - managing the file (open file, close file, check file ...)
+Tokenizer
+Analyzer
+
+possible to do: qq.out p1.qq p2.qq
+
+to read line from file:
+object.GetLine()
+
+look at basic_string in cpp reference website
+
+c++ free libraries
+
+basic_string::find_first_of
+
+
+Possible errors:
+----------------
+1. Number of open braces doesnt match number of closed braces.
+2. Close brace appears before open brace.
+3. 'else' without 'if'
+4. multiple predefined types: int short k;
+5. +++ , ---
+6. Already declared variable
+7. undeclared
+8. main should be first token
+
+token list:
+----------
+	allowed variable name (first char must be underscore or alphabet):
+	underscore, capital letters, small letters, digits
+	
+	predefined types:
+	char, short, int, long, float, double, void
+	
+	KeyWords:
+	if, else, for, while, class, private, public, protected, main, const, virtual
+
+	Operators:
+	++, --, ==, ->, =, +, -, *, &, <<, >>
+
+	(, ), [, ], {, }, ;, <, >, =, +, -, *, &
+	
+	
+
+
+

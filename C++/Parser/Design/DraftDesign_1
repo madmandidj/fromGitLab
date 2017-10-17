@@ -1,0 +1,53 @@
+class Parser:
+	OpenFile();
+	CloseFile();
+	GetNewLine();
+	ParseLine();
+	PrintResults();
+Tokenizer* 	m_tokenizer;
+Analyzer* 	m_analyzer;	
+
+	
+class Tokenizer:
+	GetNextToken();
+string		m_line;
+
+class Analyzer:
+	IsTokenLegal()
+size_t		m_curLine;
+Tokenizer* 	m_tokenizer;
+
+	
+	
+
+
+int main(int argc, char* argv[])
+{
+	size_t index;
+	
+	Parser* qqParser;
+	
+	DoGetOpt();
+	
+	for (index = 0; index < numOfFiles; ++index)
+	{
+		OpenFile();
+		
+		while(!eof(filePointer))
+		{
+			GetNewLine();
+			
+			ParseLine();			
+		}
+		
+		CloseFile();
+	}
+	
+	return 0;
+}
+
+
+
+
+
+
