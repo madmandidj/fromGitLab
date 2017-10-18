@@ -21,6 +21,7 @@ class Tokenizer
 		//TODO: add member for ignored delimiters 
 		size_t 						m_curPosition;
 		string						m_curToken;
+		
 		Tokenizer(const Tokenizer& _tokenizer);
 		Tokenizer& operator= (const Tokenizer& _tokenizer);
 };

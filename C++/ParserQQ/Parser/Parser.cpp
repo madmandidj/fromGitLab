@@ -14,18 +14,6 @@ Parser::Parser()
 	{
 		return;
 	}
-
-	m_ifStream = new ifstream;
-	if (0 == m_ifStream)
-	{
-		return;
-	}
-	
-	m_fileNames = new vector<string>;
-	if (0 == m_fileNames)
-	{
-		return;
-	}
 	
 	m_nextLine = "";
 	
@@ -34,14 +22,12 @@ Parser::Parser()
 
 Parser::~Parser()
 {
-	if (m_ifStream->is_open())
+	if (m_ifStream.is_open())
 	{
-		m_ifStream->close();
+		m_ifStream.close();
 	}	
-	
-	delete m_fileNames;
-	
-	delete m_ifStream;
+
+	delete m_tokenizer;
 }
 
 
@@ -55,7 +41,6 @@ void Parser::GetFileNames(int _argc, char* _argv[])
 	{
 		fileName = _argv[index];
 		
-//		if (string::npos == fileName.find(".qq")) //TODO: correct this so that only checks last characters of string
 		if (fileName.compare(fileName.size() - 3, 3, ".qq"))
 		{
 			cout << fileName << " is not a valid .qq file" << endl;
@@ -63,7 +48,7 @@ void Parser::GetFileNames(int _argc, char* _argv[])
 			continue;
 		}
 	
-		m_fileNames->push_back(_argv[index]);
+		m_fileNames.push_back(_argv[index]);
 	}
 	
 	return;
@@ -93,7 +78,7 @@ void Parser::Parse(int _argc, char* _argv[])
 		{
 			ReadNextLine();
 			
-			if(m_ifStream->eof())
+			if(m_ifStream.eof())
 			{
 				break;
 			}
@@ -127,29 +112,29 @@ void Parser::Parse(int _argc, char* _argv[])
 }
 
 
-//TODO:double check why did this compile when bool declared as return value, but return actually openResult;
+//TODO:double check why did this compile when bool declared as return value, but return is actually ParserState;
 Parser::ParserState Parser::OpenFile() 
 {
-	if (0 == m_fileNames->size())
+	if (0 == m_fileNames.size())
 	{
 		return ParserEMPTY;
 	}
 	
-	string fileName = m_fileNames->back();
+	string fileName = m_fileNames.back();
 	
-	m_ifStream->open(fileName.c_str(), ios_base::in);
+	m_ifStream.open(fileName.c_str(), ios_base::in);
 	
 	ParserState state;
 
-	return state = (true == m_ifStream->good()) ? ParserOK : (true == m_ifStream->bad() ? ParserBAD : ParserFAIL);
+	return state = (true == m_ifStream.good()) ? ParserOK : (true == m_ifStream.bad() ? ParserBAD : ParserFAIL);
 }
 
 
 void Parser::CloseFile()
 {
-	if (m_ifStream->is_open())
+	if (m_ifStream.is_open())
 	{
-		m_ifStream->close();
+		m_ifStream.close();
 	}
 	
 	m_curLineNum = 0;
@@ -158,7 +143,7 @@ void Parser::CloseFile()
 
 void Parser::ReadNextLine()
 {
-	std::getline(*m_ifStream, m_nextLine);	
+	std::getline(m_ifStream, m_nextLine);	
 	
 	++m_curLineNum;
 }
@@ -172,19 +157,19 @@ size_t Parser::GetCurLineNum() const
 
 void Parser::PushBackFileName(const string& _fileName)
 {
-	m_fileNames->push_back(_fileName.c_str());
+	m_fileNames.push_back(_fileName.c_str());
 }
 
 
 void Parser::PopBackFileName()
 {
-	m_fileNames->pop_back();
+	m_fileNames.pop_back();
 }
 
 
 size_t Parser::GetNumOfFiles() const
 {
-	return m_fileNames->size();
+	return m_fileNames.size();
 }
 
 
