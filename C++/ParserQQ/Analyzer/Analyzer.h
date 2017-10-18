@@ -23,6 +23,8 @@ class Analyzer
 		Tokenizer*		m_tokenizer;
 		vector<string>*	m_unresolvedTokens;
 		vector<size_t>*	m_unresolvedLineNum;
+		// set of defined variables (symbol table)
+		
 		
 		size_t			m_currentErrNum;
 		size_t			m_currentLineNum;

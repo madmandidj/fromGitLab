@@ -6,11 +6,21 @@ using namespace std;
 int main()
 {
 	Tokenizer tokenizer;
-	char* c_str1 = "Yoo this [ is ] a ) te(st";
-	char token;
+	string c_str1 = "Yo(o this [ is ] a ) te(st;;asdfgfadf. m\tm ,r .. . ..qq\r  ";
+	bool isEndOfLine = false;
+	string token = "";
 	
-	token = tokenizer.GetNextToken(c_str1);
+	isEndOfLine = tokenizer.GetNextToken(c_str1.c_str());
 	
-	cout << token << endl;
+	while (!isEndOfLine)
+	{
+		cout << tokenizer.GetCurToken() << endl;
+		
+		isEndOfLine = tokenizer.GetNextToken(c_str1.c_str());
+	}
+	
+	if ("" != tokenizer.GetCurToken())
+	cout << tokenizer.GetCurToken() << endl;
+	
 	return 0;
 }

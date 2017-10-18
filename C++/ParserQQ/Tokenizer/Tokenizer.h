@@ -9,16 +9,17 @@ class Tokenizer
 {
 	public:
 		Tokenizer();
-		~Tokenizer();
-		char 	GetNextToken(const string& _line);
-		void	ResetCurrentPosition();
+		virtual ~Tokenizer();
+		bool 	GetNextToken(const string& _line); //returns true if end of line
+		const string& GetCurToken() const;
+		
 	protected:
 		
 	
 	private:
-		static const char* const 	m_delimitersArr[];
 		static const char* const	m_delimiters;
 		size_t 						m_curPosition;
+		string						m_curToken;
 		Tokenizer(const Tokenizer& _tokenizer);
 		Tokenizer& operator= (const Tokenizer& _tokenizer);
 };

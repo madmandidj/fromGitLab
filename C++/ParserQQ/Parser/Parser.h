@@ -22,7 +22,8 @@ class Parser
 		};
 		
 		Parser();
-		~Parser();
+		virtual ~Parser();
+		void		Parse(); //TODO: implement!! Place all other funcs in protected
 		ParserState OpenFile();				//opens last file in m_fileNames
 		void 		CloseFile();			//closes last file, and popback
 		bool		ReadNextLine();			//reads into m_nextLine. returns true for eof
