@@ -1,6 +1,6 @@
 #include "Parser.h"
 //#include "../Analyzer/Analyzer.h"
-//#include "../Tokenizer/Tokenizer.h"
+#include "../Tokenizer/Tokenizer.h"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -9,15 +9,19 @@ using namespace std;
 
 Parser::Parser()
 {
+	m_tokenizer = new Tokenizer;
+	if (0 == m_tokenizer)
+	{
+		return;
+	}
+
 	m_ifStream = new ifstream;
-	
 	if (0 == m_ifStream)
 	{
 		return;
 	}
 	
 	m_fileNames = new vector<string>;
-	
 	if (0 == m_fileNames)
 	{
 		return;
@@ -38,6 +42,88 @@ Parser::~Parser()
 	delete m_fileNames;
 	
 	delete m_ifStream;
+}
+
+
+void Parser::GetFileNames(int _argc, char* _argv[])
+{
+	size_t index;
+	
+	string fileName;
+	
+	for (index = 1; index < (size_t)_argc; ++index)
+	{
+		fileName = _argv[index];
+		
+//		if (string::npos == fileName.find(".qq")) //TODO: correct this so that only checks last characters of string
+		if (fileName.compare(fileName.size() - 3, 3, ".qq"))
+		{
+			cout << fileName << " is not a valid .qq file" << endl;
+			
+			continue;
+		}
+	
+		m_fileNames->push_back(_argv[index]);
+	}
+	
+	return;
+}
+
+
+void Parser::Parse(int _argc, char* _argv[])
+{
+	Parser::ParserState result;
+	
+	bool isEndOfLine = false;
+
+	GetFileNames(_argc, _argv);
+	
+	while (0 < GetNumOfFiles())
+	{
+		result = OpenFile();
+		
+		if (result == ParserBAD || result == ParserFAIL)
+		{
+			PopBackFileName();
+			
+			continue;
+		}
+	
+		while (1)
+		{
+			ReadNextLine();
+			
+			if(m_ifStream->eof())
+			{
+				break;
+			}
+			cout << "current line num: " << GetCurLineNum() << endl;
+			
+			PrintCurLine();	//TODO: Remove after implementation done
+			
+			while(!isEndOfLine)
+			{
+				isEndOfLine = m_tokenizer->GetNextToken(m_nextLine);
+				
+				if ("" == m_tokenizer->GetCurToken())
+				{
+					break;
+				}
+				
+				//TODO: m_analyzer->Analyzer(GetCurLineNum(), m_tokenizer->GetCurToken())
+				
+				cout << "Token = " << m_tokenizer->GetCurToken() << endl; //TODO: Remove after implementation done
+			}
+			
+			isEndOfLine = false;
+		}
+		
+		CloseFile();
+		
+		PopBackFileName();
+	}
+	
+	return;
 }
 
 
@@ -66,26 +152,15 @@ void Parser::CloseFile()
 		m_ifStream->close();
 	}
 	
-	PopBackFileName();
-	
 	m_curLineNum = 0;
-	
-	return;
 }
 
 
-bool Parser::ReadNextLine()
+void Parser::ReadNextLine()
 {
 	std::getline(*m_ifStream, m_nextLine);	
 	
-	if (m_ifStream->eof())
-	{
-		return true;
-	}
-	
 	++m_curLineNum;
-	
-	return false;
 }
 
 
@@ -98,16 +173,12 @@ size_t Parser::GetCurLineNum() const
 void Parser::PushBackFileName(const string& _fileName)
 {
 	m_fileNames->push_back(_fileName.c_str());
-	
-	return;
 }
 
 
 void Parser::PopBackFileName()
 {
 	m_fileNames->pop_back();
-	
-	return;
 }
 
 

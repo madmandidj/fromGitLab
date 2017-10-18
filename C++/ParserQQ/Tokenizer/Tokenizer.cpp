@@ -33,7 +33,7 @@ bool Tokenizer::GetNextToken(const string& _line)
 		{
 			m_curToken = _line.substr(m_curPosition, 1);
 			
-			if(m_curToken == " " || m_curToken == "\t" || m_curToken == "\r" || m_curToken == "\n")
+			if(m_curToken == " " || m_curToken == "\t" || m_curToken == "\r" || m_curToken == "\n") //TODO: change these to ignoredDelimiters
 			{
 				m_curToken = "";
 				

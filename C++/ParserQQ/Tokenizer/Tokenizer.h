@@ -17,7 +17,8 @@ class Tokenizer
 		
 	
 	private:
-		static const char* const	m_delimiters;
+		static const char* const	m_delimiters;//TODO: change this to string or char*
+		//TODO: add member for ignored delimiters 
 		size_t 						m_curPosition;
 		string						m_curToken;
 		Tokenizer(const Tokenizer& _tokenizer);
