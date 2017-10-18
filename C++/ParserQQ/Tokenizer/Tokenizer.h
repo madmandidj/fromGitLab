@@ -10,12 +10,15 @@ class Tokenizer
 	public:
 		Tokenizer();
 		~Tokenizer();
-		string GetNextToken(string& _line);
+		char 	GetNextToken(const string& _line);
+		void	ResetCurrentPosition();
 	protected:
-	
+		
 	
 	private:
-		static const char* const m_delimiters[];
+		static const char* const 	m_delimitersArr[];
+		static const char* const	m_delimiters;
+		size_t 						m_curPosition;
 		Tokenizer(const Tokenizer& _tokenizer);
 		Tokenizer& operator= (const Tokenizer& _tokenizer);
 };
