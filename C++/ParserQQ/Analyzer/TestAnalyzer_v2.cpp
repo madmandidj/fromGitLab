@@ -40,25 +40,25 @@ int main()
 	
 	Analyzer analyzer(legalTypes, legalKeywords, legalOperators, predefinedTokens);
 	
-	analyzer.AnalyzeToken(*legalKeywords.find("main"), 1);
+	analyzer.AnalyzeToken(*legalKeywords.find("main"), 1, false);
 	
-	analyzer.AnalyzeToken(*predefinedTokens.find("("), 1);
+	analyzer.AnalyzeToken(*predefinedTokens.find("("), 1, false);
 	
-	analyzer.AnalyzeToken(*predefinedTokens.find(")"), 1);
+	analyzer.AnalyzeToken(*predefinedTokens.find(")"), 1, false);
 	
-	analyzer.AnalyzeToken(*predefinedTokens.find(")"), 1);
+	analyzer.AnalyzeToken(*predefinedTokens.find(")"), 1, false);
 	
-	analyzer.AnalyzeToken(*predefinedTokens.find(")"), 1);
+	analyzer.AnalyzeToken(*predefinedTokens.find(")"), 1, false);
 	
-	analyzer.AnalyzeToken(*predefinedTokens.find("]"), 1);
+	analyzer.AnalyzeToken(*predefinedTokens.find("]"), 1, false);
 	
-	analyzer.AnalyzeToken(*legalTypes.find("int"), 1);
+	analyzer.AnalyzeToken(*legalTypes.find("int"), 1, false);
 	
-	analyzer.AnalyzeToken("eyal", 1);
+	analyzer.AnalyzeToken("eyal", 1, false);
 	
-	analyzer.AnalyzeToken("eyal", 1);
+	analyzer.AnalyzeToken("eyal", 1, false);
 	
-	analyzer.AnalyzeToken("eyal", 1);
+	analyzer.AnalyzeToken("eyal", 1, false);
 	
 	return 0;
 }

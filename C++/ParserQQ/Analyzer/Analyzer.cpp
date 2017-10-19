@@ -50,7 +50,7 @@ void Analyzer::AnalyzeToken(const string& _curToken, size_t _curLineNum, bool is
 
 	if (true == PreDefinedTokenRoutine(_curToken, _curLineNum))
 	{
-		return;
+//		return;
 	}
 	
 	if (true == PreDefinedTypeRoutine(_curToken, _curLineNum))
