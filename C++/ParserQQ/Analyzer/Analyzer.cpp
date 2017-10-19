@@ -248,6 +248,7 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNu
 	return false;
 }
 
+
 bool Analyzer::IsLegalCVar(const string& _curToken) const
 {
 	if (isdigit(_curToken.c_str()[0]) || 
@@ -282,6 +283,7 @@ bool Analyzer::IsLegalCVar(const string& _curToken) const
 	
 	return true;
 }
+
 
 bool Analyzer::PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum)
 {
