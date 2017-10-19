@@ -63,6 +63,11 @@ void Analyzer::AnalyzeToken(const string& _curToken, size_t _curLineNum, bool is
 		return;
 	}
 	
+	if (true == KeyWordRoutine(_curToken, _curLineNum))
+	{
+		return;
+	}
+	
 	/*
 	PSUEDO:
 		check if newfile
@@ -260,6 +265,21 @@ bool Analyzer::IsLegalCVar(const string& _curToken) const
 			}
 	}
 	
+	if (m_legalKeyWords.end() != m_legalKeyWords.find(_curToken))
+	{
+		return false;
+	}
+	
+	if (m_legalOperators.end() != m_legalOperators.find(_curToken))
+	{
+		return false;
+	}
+	
+	if (m_legalTypes.end() != m_legalTypes.find(_curToken))
+	{
+		return false;
+	}
+	
 	return true;
 }
 
@@ -313,5 +333,13 @@ bool Analyzer::DeclaredVariablesRoutine(const string& _curToken, size_t _curLine
 	
 	return false;
 }
+
+
+bool Analyzer::KeyWordRoutine(const string& _curToken, size_t _curLineNum)
+{
+	
+}
+
+
 
 
