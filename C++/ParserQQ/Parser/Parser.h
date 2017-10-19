@@ -38,7 +38,7 @@ class Parser
 		
 	private:
 		Tokenizer*			m_tokenizer;
-		//TODO:Analyzer*			m_analyzer;
+		Analyzer*			m_analyzer;
 		ifstream			m_ifStream;
 		vector<string>		m_fileNames;
 		string				m_nextLine;

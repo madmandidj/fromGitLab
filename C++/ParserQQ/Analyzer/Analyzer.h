@@ -16,13 +16,14 @@ class Analyzer
 					set<string>& _predefinedTokens);
 							
 		virtual ~Analyzer();
-		virtual void AnalyzeToken(const string& _curToken, size_t _curLineNum);
+		virtual void AnalyzeToken(const string& _curToken, size_t _curLineNum, bool isLastLine);
 		void SetEndOfFileFlag();
 	
 	protected:
 			virtual bool NewFileRoutine(const string& _curToken, size_t _curLineNum);
 			virtual bool PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNum);
 			virtual bool PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum);
+			virtual bool DeclaredVariablesRoutine(const string& _curToken, size_t _curLineNum);
 //TODO:			virtual bool KeyWordRoutine(const string& _curToken, size_t _curLineNum);
 //TODO:			virtual bool OperatorRoutine(const string& _curToken, size_t _curLineNum);
 			bool IsLegalCVar(const string& _curToken) const;

@@ -1,5 +1,5 @@
 #include "Parser.h"
-//#include "../Analyzer/Analyzer.h"
+#include "../Analyzer/Analyzer.h"
 #include "../Tokenizer/Tokenizer.h"
 #include <fstream>
 #include <iostream>
@@ -95,13 +95,15 @@ void Parser::Parse(int _argc, char* _argv[])
 					break;
 				}
 				
-				//TODO: m_analyzer->Analyzer(GetCurLineNum(), m_tokenizer->GetCurToken())
+				m_analyzer->AnalyzeToken(GetCurLineNum(), m_tokenizer->GetCurToken(), false);
 				
 				cout << "Token = " << m_tokenizer->GetCurToken() << endl; //TODO: Remove after implementation done
 			}
 			
 			isEndOfLine = false;
 		}
+		
+		m_analyzer->AnalyzeToken(GetCurLineNum(), "", true); //send lastline flag to analyzer
 		
 		CloseFile();
 		

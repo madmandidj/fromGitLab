@@ -38,11 +38,6 @@ int main()
 		predefinedTokens.insert(strpredefinedTokens[index]);
 	}
 	
-	
-//	cout << *legalTypes.find(strlegalTypes[5]) << endl;
-//	
-//	cout << *predefinedTokens.find(strpredefinedTokens[5]) << endl;
-	
 	Analyzer analyzer(legalTypes, legalKeywords, legalOperators, predefinedTokens);
 	
 	analyzer.AnalyzeToken(*legalKeywords.find("main"), 1);
@@ -58,6 +53,10 @@ int main()
 	analyzer.AnalyzeToken(*predefinedTokens.find("]"), 1);
 	
 	analyzer.AnalyzeToken(*legalTypes.find("int"), 1);
+	
+	analyzer.AnalyzeToken("eyal", 1);
+	
+	analyzer.AnalyzeToken("eyal", 1);
 	
 	analyzer.AnalyzeToken("eyal", 1);
 	

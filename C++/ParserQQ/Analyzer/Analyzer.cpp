@@ -41,7 +41,7 @@ Analyzer::Analyzer(set<string>& _legalTypes,
 
 Analyzer::~Analyzer(){}
 
-void Analyzer::AnalyzeToken(const string& _curToken, size_t _curLineNum)
+void Analyzer::AnalyzeToken(const string& _curToken, size_t _curLineNum, bool isLastLine)
 {	
 	if (true == NewFileRoutine(_curToken, _curLineNum))
 	{
@@ -58,11 +58,17 @@ void Analyzer::AnalyzeToken(const string& _curToken, size_t _curLineNum)
 		return;
 	}
 	
+	if (true == DeclaredVariablesRoutine(_curToken, _curLineNum))
+	{
+		return;
+	}
+	
 	/*
 	PSUEDO:
 		check if newfile
 		check if predefined token
 		check if predefined type
+		check if declared variable
 		check if keyword
 		check if operator
 	*/
@@ -239,12 +245,20 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNu
 
 bool Analyzer::IsLegalCVar(const string& _curToken) const
 {
-	if (isdigit(_curToken.c_str()[0]))
+	if (isdigit(_curToken.c_str()[0]) || 
+			(!isalpha(_curToken.c_str()[0]) && ('_' != _curToken.c_str()[0])))
 	{
 		return false;
 	}
 	
-	//TODO: finish this
+	for (size_t index = 1; index < _curToken.size(); ++index)
+	{
+		if (!isalpha(_curToken.c_str()[index]) || 
+			(!isdigit(_curToken.c_str()[index]) && !('_' != _curToken.c_str()[index])))
+			{
+				return false;
+			}
+	}
 	
 	return true;
 }
@@ -263,11 +277,7 @@ bool Analyzer::PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum
 		}
 		
 		m_isTypeFlag = true;
-	}
-	
-	if (false == IsLegalCVar(_curToken))
-	{
-		cout << "line " << _curLineNum << ": error, illegal variable name"<< endl;
+		
 		return true;
 	}
 	
@@ -275,6 +285,33 @@ bool Analyzer::PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum
 }
 
 
-
+bool Analyzer::DeclaredVariablesRoutine(const string& _curToken, size_t _curLineNum)
+{
+	if (true == m_isTypeFlag)
+	{
+		if (false == IsLegalCVar(_curToken))
+		{
+			cout << "line " << _curLineNum << ": error, illegal variable name"<< endl;
+		}
+		else
+		{
+			if (m_declaredVariables.end() != m_declaredVariables.find(_curToken))
+			{
+				m_declaredVariables.insert(_curToken);
+			}
+			else
+			{
+				cout << "line " << _curLineNum << ": error, variable '"
+					<< _curToken <<"' already declared" << endl;
+			}
+		}
+		
+		m_isTypeFlag = false;
+			
+		return true;
+	}
+	
+	return false;
+}
 
 
