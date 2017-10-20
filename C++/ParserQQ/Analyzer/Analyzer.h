@@ -17,17 +17,37 @@ class Analyzer
 							
 		virtual ~Analyzer();
 		virtual void AnalyzeToken(const string& _curToken, size_t _curLineNum, bool isLastLine);
-		void SetEndOfFileFlag();
+		virtual void DoEndOfFile();
+		virtual void ResetAnalyzer();
+//		virtual void PrintEndOfFileResults() const;
 	
 	protected:
-			virtual bool NewFileRoutine(const string& _curToken, size_t _curLineNum);
-			virtual bool PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNum);
-			virtual bool PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum);
-			virtual bool DeclaredVariablesRoutine(const string& _curToken, size_t _curLineNum);
-			virtual bool KeyWordRoutine(const string& _curToken, size_t _curLineNum);
-//TODO:			virtual bool OperatorRoutine(const string& _curToken, size_t _curLineNum);
-			bool IsLegalCVar(const string& _curToken) const;
-	
+//		enum AnalysisErrors
+//		{
+//			Analyzer_OK,
+//			Analyzer_NOT_OK,
+//			Analyzer_UNBALANCED_BRACES,
+//			Analyzer_CLOSE_BRACE_FIRST,
+//			Analyzer_ELSE_WITHOUT_IF,
+//			Analyzer_MULTIPLE_TYPE,
+//			Analyzer_TRIPLE_PLUS,
+//			Analyzer_TRIPLE_MINUS,
+//			Analyzer_ALREADY_DECLARED,
+//			Analyzer_UNDECLARED,
+//			Analyzer_MAIN_NOT_FIRST
+//		};
+		
+		virtual bool NewFileRoutine(const string& _curToken, size_t _curLineNum);
+		virtual bool PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNum);
+		virtual bool PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum);
+		virtual bool DeclaredVariablesRoutine(const string& _curToken, size_t _curLineNum);
+		virtual bool KeyWordRoutine(const string& _curToken, size_t _curLineNum);
+		virtual bool OperatorRoutine(const string& _curToken, size_t _curLineNum);
+		bool IsLegalCVar(const string& _curToken) const;
+		void PrintIllegalVar(const string& _curToken, size_t _curLineNum);
+		void ResetPlusMinus();
+		
+
 	private:
 		bool			m_isNewFile;
 		bool			m_isTypeFlag;
@@ -52,12 +72,14 @@ class Analyzer
 		Analyzer& operator= (const Analyzer& _analyzer);
 };
 
+
+//void Analyzer::DoEndOfFile()
+//{
+//	m_isNewFile = true;
+//}
+
 #endif /* #ifndef __ANALYZER_H__ */
 
-inline void Analyzer::SetEndOfFileFlag()
-{
-	m_isNewFile = true;
-}
 
 
 

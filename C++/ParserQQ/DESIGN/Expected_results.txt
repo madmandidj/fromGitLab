@@ -1,0 +1,16 @@
+File: Parser2.qq, Line #12: Error, no 'main' before
+File: Parser2.qq, Line #12: Error, is illegal '{' has to come before '}'
+File: Parser2.qq, Line #13: Error, multiple type decleration
+File: Parser2.qq, Line #13: Error, 'k' is not declared
+File: Parser2.qq, Line #14: Error, 'else' without 'if'
+File: Parser2.qq, Line #14: Error, 'a' is not declared
+File: Parser2.qq, Line #14: Error, 'b' is not declared
+File: Parser2.qq, Line #22: Error, is illegal '{' has to come before '}'
+File: Parser2.qq, Line #30: Error, illegal operator '---'
+File: Parser2.qq, Line #32: Error, '66' illegal variable name
+File: Parser2.qq, Line #33: Error, '17abc' illegal variable name
+File: Parser2.qq, Line #35: Error, multiple type decleration
+File: Parser2.qq, Line #36: Error, 'k' is not declared
+File: Parser2.qq: Error - 3 '(' not closed
+File: Parser2.qq: Error - 1 '[' not closed
+File: Parser2.qq: Error - 2 '{' not closed

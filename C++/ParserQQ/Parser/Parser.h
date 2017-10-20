@@ -6,7 +6,6 @@
 #include <vector>
 
 using namespace std;
-//class ifstream;
 class Tokenizer;
 class Analyzer;
 
@@ -23,18 +22,19 @@ class Parser
 		
 		Parser();
 		virtual ~Parser();
-		void Parse(int _argc, char* _argv[]); 
+		virtual void Parse(int _argc, char* _argv[]); 
 		
 	protected:
-		void 		GetFileNames(int _argc, char* _argv[]); //TODO:implement
-		ParserState OpenFile();				//opens last file in m_fileNames
-		void 		CloseFile();			//closes last file, and popback
-		void		ReadNextLine();			//reads into m_nextLine
-		size_t		GetCurLineNum() const;
-		void		PushBackFileName(const string& _fileName);
-		void		PopBackFileName();
-		size_t		GetNumOfFiles() const;	
-		void		PrintCurLine() const;
+		void 			GetFileNames(int _argc, char* _argv[]); //TODO:implement
+		virtual void	CreateAnalyzer();
+		ParserState 	OpenFile();				//opens last file in m_fileNames
+		void 			CloseFile();			//closes last file, and popback
+		void			ReadNextLine();			//reads into m_nextLine
+		size_t			GetCurLineNum() const;
+		void			PushBackFileName(const string& _fileName);
+		void			PopBackFileName();
+		size_t			GetNumOfFiles() const;	
+		void			PrintCurLine() const;
 		
 	private:
 		Tokenizer*			m_tokenizer;

@@ -1,11 +1,51 @@
 #include "Parser.h"
 #include "../Analyzer/Analyzer.h"
 #include "../Tokenizer/Tokenizer.h"
+#include "../Analyzer/Analyzer.h"
 #include <fstream>
 #include <iostream>
 #include <string>
 
 using namespace std;
+
+void Parser::CreateAnalyzer()
+{
+const int NUM_OF_TYPES = 6;
+	const int NUM_OF_KEYWOR = 11;
+	const int NUM_OF_OPER = 11;
+	const int NUM_OF_PREDEF = 14;	
+	string strlegalTypes[NUM_OF_TYPES] = {"char", "short", "int", "long", "float", "double"};
+	string strlegalKeywords[NUM_OF_KEYWOR] = {"if", "else", "for", "while", "class", "private", "public", "protected", "main", "const", "virtual"};
+	string strlegalOperators[NUM_OF_OPER] = {"++", "--", "==", "->", "=", "+", "-", "*", "&", "<<", ">>"};
+	string strpredefinedTokens[NUM_OF_PREDEF] = {"(", ")", "[", "]", "{", "}", ";", "<", ">", "=", "+", "-", "*", "&"};
+	set<string> legalTypes;
+	set<string> legalKeywords;
+	set<string> legalOperators;
+	set<string> predefinedTokens;
+	
+	for (int index = 0; index <NUM_OF_TYPES; ++index)
+	{
+		legalTypes.insert(strlegalTypes[index]);
+	}
+	
+	for (int index = 0; index <NUM_OF_KEYWOR; ++index)
+	{
+		legalKeywords.insert(strlegalKeywords[index]);
+		legalOperators.insert(strlegalOperators[index]);
+	}
+	
+	for (int index = 0; index <NUM_OF_PREDEF; ++index)
+	{
+		predefinedTokens.insert(strpredefinedTokens[index]);
+	}
+	
+	m_analyzer = new Analyzer(legalTypes, legalKeywords, legalOperators, predefinedTokens);
+	if (0 == m_analyzer)
+	{
+		return;
+	}
+	
+}
 
 Parser::Parser()
 {
@@ -14,6 +54,8 @@ Parser::Parser()
 	{
 		return;
 	}
+	
+	CreateAnalyzer();
 	
 	m_nextLine = "";
 	
@@ -28,6 +70,8 @@ Parser::~Parser()
 	}	
 
 	delete m_tokenizer;
+	
+	delete m_analyzer;
 }
 
 
@@ -63,6 +107,10 @@ void Parser::Parse(int _argc, char* _argv[])
 
 	GetFileNames(_argc, _argv);
 	
+	string token;
+	
+	size_t curLine;
+	
 	while (0 < GetNumOfFiles())
 	{
 		result = OpenFile();
@@ -82,9 +130,6 @@ void Parser::Parse(int _argc, char* _argv[])
 			{
 				break;
 			}
-			cout << "current line num: " << GetCurLineNum() << endl;
-			
-			PrintCurLine();	//TODO: Remove after implementation done
 			
 			while(!isEndOfLine)
 			{
@@ -94,16 +139,16 @@ void Parser::Parse(int _argc, char* _argv[])
 				{
 					break;
 				}
-				
-				m_analyzer->AnalyzeToken(GetCurLineNum(), m_tokenizer->GetCurToken(), false);
-				
-				cout << "Token = " << m_tokenizer->GetCurToken() << endl; //TODO: Remove after implementation done
+								
+				m_analyzer->AnalyzeToken(m_tokenizer->GetCurToken(), GetCurLineNum(), false);
 			}
 			
 			isEndOfLine = false;
 		}
 		
-		m_analyzer->AnalyzeToken(GetCurLineNum(), "", true); //send lastline flag to analyzer
+		m_analyzer->AnalyzeToken("", GetCurLineNum(), true); //send lastline flag to analyzer
+		
+		m_analyzer->DoEndOfFile();
 		
 		CloseFile();
 		

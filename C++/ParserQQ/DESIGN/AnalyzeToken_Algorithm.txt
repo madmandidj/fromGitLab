@@ -1,0 +1,18 @@
+m_isNewFile;
+m_isTypeFlag;
+m_isKeyWord;
+m_isOperator;
+m_isPreDefinedTok;
+m_isDeclaredVariable;
+
+
+
+
+
+
+
+check new file
+check if typeflag is set
+
+set flags for current token
+check flags

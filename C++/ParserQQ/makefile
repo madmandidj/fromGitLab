@@ -4,7 +4,7 @@ PAR_PATH = ./Parser/
 TOK_PATH = ./Tokenizer/
 ANA_PATH = ./Analyzer/
 
-objects = Tokenizer.o Parser.o TestParserQQ.o
+objects = Analyzer.o Tokenizer.o Parser.o TestParserQQ.o
 
 
 TestParserQQ: $(objects) 
@@ -21,6 +21,10 @@ Parser.o: $(PAR_PATH)Parser.cpp $(PAR_PATH)Parser.h $(TOK_PATH)Tokenizer.h
 
 Tokenizer.o: $(TOK_PATH)Tokenizer.cpp $(TOK_PATH)Tokenizer.h 
 	g++ $(FLAGS) -c  $(TOK_PATH)Tokenizer.cpp
+	
+	
+Analyzer.o: $(ANA_PATH)Analyzer.cpp $(ANA_PATH)Analyzer.h 
+	g++ $(FLAGS) -c  $(ANA_PATH)Analyzer.cpp
 	
 	
 clean:
