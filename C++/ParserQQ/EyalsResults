@@ -1,0 +1,28 @@
+g++ -g -ansi -pedantic -Wall -Wconversion -m32 -c  ./Analyzer/Analyzer.cpp
+g++ -g -ansi -pedantic -Wall -Wconversion -m32 -c  ./Tokenizer/Tokenizer.cpp
+g++ -g -ansi -pedantic -Wall -Wconversion -m32 -c  ./Parser/Parser.cpp
+g++ -g -ansi -pedantic -Wall -Wconversion -m32 -c  TestParserQQ.cpp
+g++ -g -ansi -pedantic -Wall -Wconversion -m32 -o TestParserQQ Analyzer.o Tokenizer.o Parser.o TestParserQQ.o 
+dummy is not a valid .qq file
+dummy.cpp is not a valid .qq file
+xxxxxxxxxxxxxxxxxxxx
+Starting to parse 'Parser_2.qq'
+********************
+xxxxxxxxxxxxxxxxxxxx
+Starting to parse 'Parser.qq'
+********************
+line 2: error, illegal declaration before 'main'
+line 2: error, variable 'k' already declared
+line 3: error, multiple type declaration
+line 5: error, is illegal 'if' has to be before 'else'
+line 7: error, is illegal '[' has to be before ']'
+line 9: error, no operator +++
+line 10: error, variable 'abc' already declared
+line 11: error, variable 'abc' already declared
+line 14: error, no operator ---
+line 16: error, 'virtual' illegal variable name
+line 18: error, 'private' illegal variable name
+line 25: error, variable 'i' already declared
+You left 2 '{' unclosed
+You left 1 '(' unclosed
+You left 3 '[' unclosed

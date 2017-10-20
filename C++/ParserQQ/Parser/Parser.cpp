@@ -8,6 +8,7 @@
 
 using namespace std;
 
+
 void Parser::CreateAnalyzer()
 {
 const int NUM_OF_TYPES = 6;
@@ -42,18 +43,28 @@ const int NUM_OF_TYPES = 6;
 	m_analyzer = new Analyzer(legalTypes, legalKeywords, legalOperators, predefinedTokens);
 	if (0 == m_analyzer)
 	{
-		return;
+		return; //Throw exception here? still not clear to me
+	}
+}
+
+
+void Parser::CreateTokenizer()
+{
+	string _delimiters = "+-=<>*&;(){}[]  \t\r";
+	
+	m_tokenizer = new Tokenizer(_delimiters);
+	
+	if (0 == m_tokenizer)
+	{
+		return; //Throw exception here? still not clear to me
 	}
 	
 }
 
+
 Parser::Parser()
-{
-	m_tokenizer = new Tokenizer;
-	if (0 == m_tokenizer)
-	{
-		return;
-	}
+{	
+	CreateTokenizer();
 	
 	CreateAnalyzer();
 	
@@ -61,6 +72,7 @@ Parser::Parser()
 	
 	m_curLineNum = 0;
 }
+
 
 Parser::~Parser()
 {
@@ -109,18 +121,23 @@ void Parser::Parse(int _argc, char* _argv[])
 	
 	string token;
 	
-	size_t curLine;
-	
 	while (0 < GetNumOfFiles())
 	{
 		result = OpenFile();
 		
+		cout << "xxxxxxxxxxxxxxxxxxxx" << endl;
+		
 		if (result == ParserBAD || result == ParserFAIL)
 		{
+			
 			PopBackFileName();
 			
 			continue;
 		}
+		
+		
+		cout << "Starting to parse '" << m_fileNames[GetNumOfFiles()-1] << "'" << endl;
+		cout << "********************" << endl;
 	
 		while (1)
 		{
@@ -140,13 +157,11 @@ void Parser::Parse(int _argc, char* _argv[])
 					break;
 				}
 								
-				m_analyzer->AnalyzeToken(m_tokenizer->GetCurToken(), GetCurLineNum(), false);
+				m_analyzer->AnalyzeToken(m_tokenizer->GetCurToken(), GetCurLineNum());
 			}
 			
 			isEndOfLine = false;
 		}
-		
-		m_analyzer->AnalyzeToken("", GetCurLineNum(), true); //send lastline flag to analyzer
 		
 		m_analyzer->DoEndOfFile();
 		

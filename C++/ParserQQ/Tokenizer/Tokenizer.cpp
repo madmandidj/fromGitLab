@@ -1,9 +1,9 @@
 #include "Tokenizer.h"
 
-const char* const Tokenizer::m_delimiters = "+-=<>*&;(){}[]  \t\r";
-
-Tokenizer::Tokenizer()
+Tokenizer::Tokenizer(string _delimiters)
 {
+	m_delimiters = _delimiters;
+	
 	m_curPosition = 0;
 	
 	m_curToken = "";
@@ -19,7 +19,7 @@ bool Tokenizer::GetNextToken(const string& _line)
 
 	while(1)
 	{
-		position = _line.find_first_of(Tokenizer::m_delimiters, position);
+		position = _line.find_first_of(m_delimiters.c_str(), position);
 
 		if (string::npos == position)
 		{
@@ -33,7 +33,7 @@ bool Tokenizer::GetNextToken(const string& _line)
 		{
 			m_curToken = _line.substr(m_curPosition, 1);
 			
-			if(m_curToken == " " || m_curToken == "\t" || m_curToken == "\r" || m_curToken == "\n") //TODO: change these to ignoredDelimiters
+			if(m_curToken == " " || m_curToken == "\t" || m_curToken == "\r" || m_curToken == "\n")
 			{
 				m_curToken = "";
 				

@@ -27,42 +27,56 @@ Analyzer::Analyzer(set<string>& _legalTypes,
 Analyzer::~Analyzer(){}
 
 
-void Analyzer::AnalyzeToken(const string& _curToken, size_t _curLineNum, bool isLastLine)
-{	
-	if (true == NewFileRoutine(_curToken, _curLineNum))
-	{
-		return;
-	}
-	
-	if (true == PreDefinedTokenRoutine(_curToken, _curLineNum))
-	{
-		return;
-	}
-	
-	if (true == PreDefinedTypeRoutine(_curToken, _curLineNum))
-	{
-		return;
-	}
-	
-	if (true == KeyWordRoutine(_curToken, _curLineNum))
-	{
-		return;
-	}
-	
-	if (true == OperatorRoutine(_curToken, _curLineNum))
-	{
-		return;
-	}
-	
-	if (true == DeclaredVariablesRoutine(_curToken, _curLineNum))
-	{
-		return;
-	}
-	
-//	if (m_ifElseCount
+void Analyzer::SetCurLineNum(size_t _curLineNum)
+{
+	m_curLineNum = _curLineNum;
 }
 
 
+void Analyzer::AnalyzeToken(const string& _curToken, size_t _curLineNum)
+{	
+	SetCurLineNum(_curLineNum);
+	
+	if (true == NewFileRoutine(_curToken))
+	{
+		return;
+	}
+	
+	if (_curToken != "+")
+	{
+		m_plusCount = 0;
+	}
+	
+	if (_curToken != "-")
+	{
+		m_minusCount = 0;
+	}
+	
+	if (true == PreDefinedTokenRoutine(_curToken))
+	{
+		return;
+	}
+	
+	if (true == PreDefinedTypeRoutine(_curToken))
+	{
+		return;
+	}
+	
+	if (true == KeyWordRoutine(_curToken))
+	{
+		return;
+	}
+	
+	if (true == OperatorRoutine(_curToken))
+	{
+		return;
+	}
+	
+	if (true == DeclaredVariablesRoutine(_curToken))
+	{
+		return;
+	}
+}
 
 
 void Analyzer::DoEndOfFile()
@@ -82,16 +96,8 @@ void Analyzer::DoEndOfFile()
 		cout << "You left " << m_squareCount << " '[' unclosed" << endl;
 	}
 	
-	m_isNewFile = true;
+	ResetAnalyzer();
 }
-
-
-
-
-
-
-
-
 
 void Analyzer::ResetAnalyzer()
 {
@@ -111,15 +117,11 @@ void Analyzer::ResetAnalyzer()
 	
 	m_minusCount = 0;
 	
-	m_currentLineNum = 0;
+	m_curLineNum = 0;
 }
 
 
-
-
-
-
-bool Analyzer::NewFileRoutine(const string& _curToken, size_t _curLineNum)
+bool Analyzer::NewFileRoutine(const string& _curToken)
 {
 		if (true == m_isNewFile)
 		{
@@ -131,7 +133,7 @@ bool Analyzer::NewFileRoutine(const string& _curToken, size_t _curLineNum)
 			}
 			else
 			{
-				cout << "line " << _curLineNum << ": error, illegal declaration before 'main'" << endl; 
+				cout << "line " << m_curLineNum << ": error, illegal declaration before 'main'" << endl; 
 			}
 		
 			m_isNewFile = false;
@@ -141,48 +143,32 @@ bool Analyzer::NewFileRoutine(const string& _curToken, size_t _curLineNum)
 }
 
 
-
-
-
-
-bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNum)
+bool Analyzer::PreDefinedTokenRoutine(const string& _curToken)
 {
 	if (m_predefinedTokens.end() != m_predefinedTokens.find(_curToken))
 	{
-		m_isPreDefinedTok = true;
-		
 		string tokenString = *m_predefinedTokens.find(_curToken);
 		
 		string keyString;
 		
 		m_isTypeFlag = false;
-		
-//		if (tokenString != "+" && tokenString != "-")
-//		{		
-//			ResetPlusMinus();
+
+//		if (tokenString != "+")
+//		{
+//			m_plusCount = 0;
 //		}
-		
-		if (tokenString != "+")
-		{
-			m_plusCount = 0;
-		}
-		
-		if (tokenString != "-")
-		{
-			m_minusCount = 0;
-		}
-		
+//		
+//		if (tokenString != "-")
+//		{
+//			m_minusCount = 0;
+//		}
 		
 		keyString = "(";
 		if (tokenString == keyString)
 		{
 			++m_roundCount;
 			
-//			if (true == m_isTypeFlag)
-//			{
-				PrintIllegalVar(_curToken, _curLineNum);
-//				m_isTypeFlag = false;
-//			}
+			PrintIllegalVar(_curToken);
 
 			m_isTypeFlag = false;
 			
@@ -197,7 +183,7 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNu
 			if (-1 == m_roundCount)
 			{
 				m_roundCount = 0;
-				cout << "line " << _curLineNum << ": error, is illegal '(' has to be before ')'" << endl;	
+				cout << "line " << m_curLineNum << ": error, is illegal '(' has to be before ')'" << endl;	
 			}
 			
 			return true;
@@ -219,7 +205,7 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNu
 			if (-1 == m_squareCount)
 			{
 				m_squareCount = 0;
-				cout << "line " << _curLineNum << ": error, is illegal '[' has to be before ']'" << endl;	
+				cout << "line " << m_curLineNum << ": error, is illegal '[' has to be before ']'" << endl;	
 			}
 			return true;
 		}
@@ -240,7 +226,7 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNu
 			if (-1 == m_curlyCount)
 			{
 				m_curlyCount = 0;
-				cout << "line " << _curLineNum << ": error, is illegal '{' has to be before '}'" << endl;	
+				cout << "line " << m_curLineNum << ": error, is illegal '{' has to be before '}'" << endl;	
 			}
 			return true;
 		}
@@ -277,7 +263,7 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNu
 			if(3 == m_plusCount)
 			{
 				m_plusCount = 0;
-				cout << "line " << _curLineNum << ": error, no operator +++" << endl;
+				cout << "line " << m_curLineNum << ": error, no operator +++" << endl;
 			}
 			return true;
 		}
@@ -290,7 +276,7 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNu
 			if(3 == m_minusCount)
 			{
 				m_minusCount = 0;
-				cout << "line " << _curLineNum << ": error, no operator ---"<< endl;
+				cout << "line " << m_curLineNum << ": error, no operator ---"<< endl;
 			}
 			
 			return true;
@@ -308,18 +294,9 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken, size_t _curLineNu
 			return true;
 		}
 	}
-	
-	m_isPreDefinedTok = false;
-		
+
 	return false;
 }
-
-
-
-
-
-
-
 
 
 bool Analyzer::IsLegalCVar(const string& _curToken) const
@@ -359,13 +336,7 @@ bool Analyzer::IsLegalCVar(const string& _curToken) const
 }
 
 
-
-
-
-
-
-
-bool Analyzer::PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum)
+bool Analyzer::PreDefinedTypeRoutine(const string& _curToken)
 {
 	if (m_legalTypes.end() != m_legalTypes.find(_curToken))
 	{	
@@ -373,7 +344,7 @@ bool Analyzer::PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum
 		{
 			m_isTypeFlag = false;
 			
-			cout << "line " << _curLineNum << ": error, multiple type declaration"<< endl;
+			cout << "line " << m_curLineNum << ": error, multiple type declaration"<< endl;
 			
 			return true;
 		}
@@ -382,21 +353,12 @@ bool Analyzer::PreDefinedTypeRoutine(const string& _curToken, size_t _curLineNum
 		
 		return true;
 	}
-	
-//	m_isTypeFlag = false;
-	
+
 	return false;
 }
 
 
-
-
-
-
-
-
-
-bool Analyzer::KeyWordRoutine(const string& _curToken, size_t _curLineNum)
+bool Analyzer::KeyWordRoutine(const string& _curToken)
 {
 	if (m_legalKeyWords.end() != m_legalKeyWords.find(_curToken))
 	{	
@@ -411,7 +373,7 @@ bool Analyzer::KeyWordRoutine(const string& _curToken, size_t _curLineNum)
 		{
 			++m_ifElseCount;
 			
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			
 			return true;
 		}
@@ -421,11 +383,11 @@ bool Analyzer::KeyWordRoutine(const string& _curToken, size_t _curLineNum)
 		{
 			--m_ifElseCount;
 			
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			
 			if (0 > m_ifElseCount)
 			{
-				cout << "line " << _curLineNum << ": error, is illegal 'if' has to be before 'else'" << endl;
+				cout << "line " << m_curLineNum << ": error, is illegal 'if' has to be before 'else'" << endl;
 				
 				m_ifElseCount = 0;	
 			} 
@@ -436,82 +398,74 @@ bool Analyzer::KeyWordRoutine(const string& _curToken, size_t _curLineNum)
 		keyString = "for";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 		
 		keyString = "while";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 		
 		keyString = "class";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 		
 		keyString = "private";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 		
 		keyString = "public";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 		
 		keyString = "protected";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 		
 		keyString = "main";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 		
 		keyString = "const";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 		
 		keyString = "virtual";
 		if (tokenString == keyString)
 		{
-			PrintIllegalVar(_curToken, _curLineNum);
+			PrintIllegalVar(_curToken);
 			return true;
 		}
 	}
 	
 	m_isKeyWord = false;
 	
-	
-	
 	return false;
 }
 
 
-
-
-
-
-
-
-bool Analyzer::OperatorRoutine(const string& _curToken, size_t _curLineNum)
+bool Analyzer::OperatorRoutine(const string& _curToken)
 {
 	if (m_legalOperators.end() != m_legalOperators.find(_curToken))
 	{	
@@ -522,43 +476,10 @@ bool Analyzer::OperatorRoutine(const string& _curToken, size_t _curLineNum)
 }
 
 
-
-
-
-
-
-
-
-bool Analyzer::DeclaredVariablesRoutine(const string& _curToken, size_t _curLineNum)
+bool Analyzer::DeclaredVariablesRoutine(const string& _curToken)
 {	
-
-	/*
-	Psuedo
-	
-	
-	
-	*/
-
-
-
 	if (true == IsLegalCVar(_curToken))
 	{
-//		if (m_legalKeyWords.end() != m_legalKeyWords.find(_curToken))
-//		{
-//			return false;
-//		}
-//	
-//		if (m_legalOperators.end() != m_legalOperators.find(_curToken))
-//		{
-//			return false;
-//		}
-//	
-//		if (m_legalTypes.end() != m_legalTypes.find(_curToken))
-//		{
-//			return false;
-//		}	
-		
-	
 		if (true == m_isTypeFlag)
 		{
 			if (m_declaredVariables.end() == m_declaredVariables.find(_curToken))
@@ -567,7 +488,7 @@ bool Analyzer::DeclaredVariablesRoutine(const string& _curToken, size_t _curLine
 			}
 			else
 			{
-				cout << "line " << _curLineNum << ": error, variable '"
+				cout << "line " << m_curLineNum << ": error, variable '"
 					<< _curToken <<"' already declared" << endl;
 			}
 			
@@ -578,14 +499,13 @@ bool Analyzer::DeclaredVariablesRoutine(const string& _curToken, size_t _curLine
 		
 		if(true == m_isKeyWord)
 		{
-//			cout << "variable keyword here1" << endl;
 			m_isKeyWord = false;
 			return true;
 		}
 		
 		if (m_declaredVariables.end() == m_declaredVariables.find(_curToken))
 		{
-			cout << "line " << _curLineNum << ": error, '"
+			cout << "line " << m_curLineNum << ": error, '"
 				<< _curToken <<"' is not declared" << endl;
 		}
 		
@@ -594,101 +514,31 @@ bool Analyzer::DeclaredVariablesRoutine(const string& _curToken, size_t _curLine
 	
 	if (true == m_isTypeFlag)
 	{
-//		cout << "line " << _curLineNum << ": error, '" << _curToken << "' illegal variable name"<< endl;
-		PrintIllegalVar(_curToken, _curLineNum);
-		
+		PrintIllegalVar(_curToken);
 		return true;
 	}
 	
 	if(true == m_isKeyWord)
-	{
-//		cout << "variable keyword here2" << endl;
-		
+	{		
 		m_isKeyWord = false;
-		
 		return true;
 	}
 	
-	
 	m_isTypeFlag = false;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	if (true == m_isTypeFlag)
-//	{
-//		if (false == isLegalCVar)
-//		{
-//			cout << "line " << _curLineNum << ": error, '" << _curToken << "' illegal variable name"<< endl;
-//		}
-//		else
-//		{
-//			
-//		}
-//		
-//		m_isTypeFlag = false;
-//			
-//		return true;
-//	}
-//	
-//	if (true == m_isKeyWord)
-//	{
-//		m_isKeyWord = false;
-//		
-//		return true;
-//	} 
-	
+
 	return false;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-void Analyzer::PrintIllegalVar(const string& _curToken, size_t _curLineNum)
+void Analyzer::PrintIllegalVar(const string& _curToken)
 {
 	if (true == m_isTypeFlag)
 	{
-//		PrintIllegalVar(_curToken, _curLineNum);
-		cout << "line " << _curLineNum << ": error, '" << _curToken << "' illegal variable name"<< endl;
+		cout << "line " << m_curLineNum << ": error, '" << _curToken << "' illegal variable name"<< endl;
 
 		m_isTypeFlag = false;
 	}
 }
-
-
-
-
-
-void Analyzer::ResetPlusMinus()
-{
-	m_plusCount = 0;
-	m_minusCount = 0;
-}
-
 
 
 
