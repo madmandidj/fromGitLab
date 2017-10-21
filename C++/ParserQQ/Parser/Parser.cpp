@@ -41,10 +41,14 @@ const int NUM_OF_TYPES = 6;
 	
 	Analyzer* analyzer;
 	
-	analyzer = new Analyzer(legalTypes, legalKeywords, legalOperators, predefinedTokens);
-	if (0 == analyzer)
+	try
 	{
-		return; //Throw exception here? still not clear to me
+		analyzer = new Analyzer(legalTypes, legalKeywords, legalOperators, predefinedTokens);
+	}
+	catch (bad_alloc& _newAnaResult)
+	{
+		cout << "***New Analyzer failed***" << endl;
+		return;
 	}
 	
 	SetAnalyzer(analyzer);
@@ -57,11 +61,14 @@ void Parser::CreateTokenizer()
 	
 	Tokenizer* tokenizer;
 	
-	tokenizer = new Tokenizer(_delimiters);
-	
-	if (0 == tokenizer)
+	try
 	{
-		return; //Throw exception here? still not clear to me
+		tokenizer = new Tokenizer(_delimiters);
+	}
+	catch (bad_alloc& _newTokResult)
+	{
+		cout << "***New Tokenizer failed***" << endl;
+		return;
 	}
 	
 	SetTokenizer(tokenizer);
