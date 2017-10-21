@@ -1,2 +1,2 @@
 make
-./TestParserQQ Parser.qq dummy dummy.cpp Parser_2.qq
+./TestParserQQ dummy dummy.cpp Parser_2.qq Parser.qq

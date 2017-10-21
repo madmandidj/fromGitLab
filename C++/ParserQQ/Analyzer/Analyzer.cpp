@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 Analyzer::Analyzer(set<string>& _legalTypes, 
 					set<string>& _legalKeyWords, 
 					set<string>& _legalOperators, 
@@ -25,12 +24,6 @@ Analyzer::Analyzer(set<string>& _legalTypes,
 
 
 Analyzer::~Analyzer(){}
-
-
-void Analyzer::SetCurLineNum(size_t _curLineNum)
-{
-	m_curLineNum = _curLineNum;
-}
 
 
 void Analyzer::AnalyzeToken(const string& _curToken, size_t _curLineNum)
@@ -152,16 +145,6 @@ bool Analyzer::PreDefinedTokenRoutine(const string& _curToken)
 		string keyString;
 		
 		m_isTypeFlag = false;
-
-//		if (tokenString != "+")
-//		{
-//			m_plusCount = 0;
-//		}
-//		
-//		if (tokenString != "-")
-//		{
-//			m_minusCount = 0;
-//		}
 		
 		keyString = "(";
 		if (tokenString == keyString)

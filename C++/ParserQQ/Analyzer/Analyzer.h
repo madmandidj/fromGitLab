@@ -27,11 +27,21 @@ class Analyzer
 		virtual bool DeclaredVariablesRoutine(const string& _curToken);
 		virtual bool KeyWordRoutine(const string& _curToken);
 		virtual bool OperatorRoutine(const string& _curToken);
-		void SetCurLineNum(size_t _curLineNum);
 		bool IsLegalCVar(const string& _curToken) const;
+		void SetCurLineNum(size_t _curLineNum);
+		//TODO: bool& 	GetIsNewFile() const;
+		//TODO: bool& 	GetIsTypeFlag() const;
+		//TODO: bool& 	GetIsKeyWord() const;
+		//TODO: int& 	GetIfElseCount() const;
+		//TODO: int& 	GetIfElseCount() const;
+		//TODO: int& 	GetCurlyCount() const;
+		//TODO: int& 	GetRoundCount() const;
+		//TODO: int& 	GetSquareCount() const;
+		//TODO: size_t& GetPlusCount() const;
+		//TODO: size_t& GetMinusCount() const;
+		//TODO: size_t& GetCurLineNum() const;
+		//TODO: set<string>& GetLegalTypes() const;
 		void PrintIllegalVar(const string& _curToken);
-		//TODO: Get and Set functions for all data members, so derived can access these.
-		
 
 	private:
 		bool			m_isNewFile;
@@ -53,6 +63,20 @@ class Analyzer
 		Analyzer(const Analyzer& _analyzer);
 		Analyzer& operator= (const Analyzer& _analyzer);
 };
+
+
+inline void Analyzer::SetCurLineNum(size_t _curLineNum)
+{
+	m_curLineNum = _curLineNum;
+}
+
+
+
+
+
+
+
+
 
 #endif /* #ifndef __ANALYZER_H__ */
 

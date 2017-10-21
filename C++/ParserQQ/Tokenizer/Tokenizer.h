@@ -12,7 +12,10 @@ class Tokenizer
 		virtual ~Tokenizer();
 		virtual bool 	GetNextToken(const string& _line); //returns true if end of line
 		const string& 	GetCurToken() const;
-		//TODO: Get and Set functions for all data members, so derived can access these.
+		
+	protected:
+		//TODO: string&	GetDelimiters() const;
+		//TODO: size_t& GetCurPosition() const;
 	
 	private:
 		string	m_delimiters;

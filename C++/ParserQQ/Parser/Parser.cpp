@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 void Parser::CreateAnalyzer()
 {
 const int NUM_OF_TYPES = 6;
@@ -40,11 +39,15 @@ const int NUM_OF_TYPES = 6;
 		predefinedTokens.insert(strpredefinedTokens[index]);
 	}
 	
-	m_analyzer = new Analyzer(legalTypes, legalKeywords, legalOperators, predefinedTokens);
-	if (0 == m_analyzer)
+	Analyzer* analyzer;
+	
+	analyzer = new Analyzer(legalTypes, legalKeywords, legalOperators, predefinedTokens);
+	if (0 == analyzer)
 	{
 		return; //Throw exception here? still not clear to me
 	}
+	
+	SetAnalyzer(analyzer);
 }
 
 
@@ -52,13 +55,16 @@ void Parser::CreateTokenizer()
 {
 	string _delimiters = "+-=<>*&;(){}[]  \t\r";
 	
-	m_tokenizer = new Tokenizer(_delimiters);
+	Tokenizer* tokenizer;
 	
-	if (0 == m_tokenizer)
+	tokenizer = new Tokenizer(_delimiters);
+	
+	if (0 == tokenizer)
 	{
 		return; //Throw exception here? still not clear to me
 	}
 	
+	SetTokenizer(tokenizer);
 }
 
 
@@ -67,31 +73,40 @@ Parser::Parser()
 	CreateTokenizer();
 	
 	CreateAnalyzer();
-	
-	m_nextLine = "";
-	
-	m_curLineNum = 0;
+
+	string& nextLine = GetNextLine();
+	nextLine = "";
+
+	size_t& curLineNum = GetCurLineNum();
+
+	curLineNum = 0;
 }
 
 
 Parser::~Parser()
 {
-	if (m_ifStream.is_open())
-	{
-		m_ifStream.close();
-	}	
+	ifstream& ifStream = GetIFstream();
 
-	delete m_tokenizer;
+	if (ifStream.is_open())
+	{
+		ifStream.close();
+	}
 	
-	delete m_analyzer;
+	Tokenizer* tokenizer = GetTokenizer();	
+
+	delete tokenizer;
+	
+	Analyzer* analyzer = GetAnalyzer();
+	
+	delete analyzer;
 }
 
 
 void Parser::GetFileNames(int _argc, char* _argv[])
 {
 	size_t index;
-	
 	string fileName;
+	vector<string>& fileNames = GetFilesVector();
 	
 	for (index = 1; index < (size_t)_argc; ++index)
 	{
@@ -103,8 +118,8 @@ void Parser::GetFileNames(int _argc, char* _argv[])
 			
 			continue;
 		}
-	
-		m_fileNames.push_back(_argv[index]);
+
+		fileNames.push_back(_argv[index]);
 	}
 	
 	return;
@@ -114,12 +129,16 @@ void Parser::GetFileNames(int _argc, char* _argv[])
 void Parser::Parse(int _argc, char* _argv[])
 {
 	Parser::ParserState result;
-	
 	bool isEndOfLine = false;
-
-	GetFileNames(_argc, _argv);
-	
 	string token;
+	Tokenizer* tokenizer = GetTokenizer();
+	Analyzer* analyzer = GetAnalyzer();
+	ifstream& ifStream = GetIFstream();
+	vector<string>& fileNames = GetFilesVector();
+	string& nextLine = GetNextLine();
+	size_t& curLineNum = GetCurLineNum();
+	
+	GetFileNames(_argc, _argv);
 	
 	while (0 < GetNumOfFiles())
 	{
@@ -134,36 +153,35 @@ void Parser::Parse(int _argc, char* _argv[])
 			
 			continue;
 		}
-		
-		
-		cout << "Starting to parse '" << m_fileNames[GetNumOfFiles()-1] << "'" << endl;
+
+		cout << "Starting to parse '" << (fileNames)[GetNumOfFiles()-1] << "'" << endl;
 		cout << "********************" << endl;
 	
 		while (1)
 		{
 			ReadNextLine();
-			
-			if(m_ifStream.eof())
+
+			if(ifStream.eof())
 			{
 				break;
 			}
 			
 			while(!isEndOfLine)
 			{
-				isEndOfLine = m_tokenizer->GetNextToken(m_nextLine);
+				isEndOfLine = tokenizer->GetNextToken(nextLine);
 				
-				if ("" == m_tokenizer->GetCurToken())
+				if ("" == tokenizer->GetCurToken())
 				{
 					break;
 				}
-								
-				m_analyzer->AnalyzeToken(m_tokenizer->GetCurToken(), GetCurLineNum());
+
+				analyzer->AnalyzeToken(tokenizer->GetCurToken(), curLineNum);
 			}
 			
 			isEndOfLine = false;
 		}
-		
-		m_analyzer->DoEndOfFile();
+
+		analyzer->DoEndOfFile();
 		
 		CloseFile();
 		
@@ -177,68 +195,49 @@ void Parser::Parse(int _argc, char* _argv[])
 //TODO:double check why did this compile when bool declared as return value, but return is actually ParserState;
 Parser::ParserState Parser::OpenFile() 
 {
-	if (0 == m_fileNames.size())
+	vector<string>& fileNames = GetFilesVector();
+	ifstream& ifStream = GetIFstream();
+
+	if (0 == fileNames.size())
 	{
 		return ParserEMPTY;
 	}
-	
-	string fileName = m_fileNames.back();
-	
-	m_ifStream.open(fileName.c_str(), ios_base::in);
+
+	string fileName = fileNames.back();
+
+	ifStream.open(fileName.c_str(), ios_base::in);
 	
 	ParserState state;
 
-	return state = (true == m_ifStream.good()) ? ParserOK : (true == m_ifStream.bad() ? ParserBAD : ParserFAIL);
+	return state = (true == ifStream.good()) ? ParserOK : (true == ifStream.bad() ? ParserBAD : ParserFAIL);
 }
 
 
 void Parser::CloseFile()
 {
-	if (m_ifStream.is_open())
-	{
-		m_ifStream.close();
-	}
+	ifstream& ifStream = GetIFstream();
 	
-	m_curLineNum = 0;
+	if (ifStream.is_open())
+	{
+		ifStream.close();
+	}
+
+	size_t& curLineNum = GetCurLineNum();
+	curLineNum = 0;
 }
 
 
 void Parser::ReadNextLine()
 {
-	std::getline(m_ifStream, m_nextLine);	
-	
-	++m_curLineNum;
+	string& nextLine = GetNextLine();
+	ifstream& ifStream = GetIFstream();
+	size_t& curLineNum = GetCurLineNum();
+
+	std::getline(ifStream, nextLine);
+
+	++curLineNum;
 }
 
-
-size_t Parser::GetCurLineNum() const
-{
-	return m_curLineNum;
-}
-
-
-void Parser::PushBackFileName(const string& _fileName)
-{
-	m_fileNames.push_back(_fileName.c_str());
-}
-
-
-void Parser::PopBackFileName()
-{
-	m_fileNames.pop_back();
-}
-
-
-size_t Parser::GetNumOfFiles() const
-{
-	return m_fileNames.size();
-}
-
-
-void Parser::PrintCurLine() const
-{
-	cout << "m_nextLine = " << m_nextLine << endl;
-}
 
 
 

@@ -65,4 +65,3 @@ const string& Tokenizer::GetCurToken() const
 	return m_curToken;
 }
 
-
