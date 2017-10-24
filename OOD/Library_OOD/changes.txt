@@ -1,0 +1,5 @@
+library is missing functions. run and quit are not enough.
+library to book admin and borrower admin should be composition. only data members in library should be admins.
+borrower admin to borrower, and book admin to book is aggregation
+Add notes for <<parameter>>
+
