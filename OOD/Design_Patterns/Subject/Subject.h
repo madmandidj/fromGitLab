@@ -1,21 +1,23 @@
 #ifndef __SUBJECT_H__
 #define __SUBJECT_H__
 
-#include<vector>
+#include<map>
+
+using namespace std;
 
 public Subject
 {
 	public:
 		Subject();
-		virtual ~Subject()
-		void Attach(Observer*)
-		void Detach(Observer*)
+		virtual ~Subject();
+		virtual void Attach(Observer* _observer);
+		virtual void Detach(Observer* _observer);
 		
 	protected:
-		void virtual Notify();
+		virtual void Notify(string& _accountType);
 		
 	private:
-		vector<Observer*>
+		multimap<string, Observer*> m_observers;
 };
 
 

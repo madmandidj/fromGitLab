@@ -9,7 +9,7 @@ class AccountImpl;
 class AccountFactory
 {
 	public:
-		static AccountImpl* Create(const string& _Impl, unsigned int _ID, const string& _name, unsigned int _amount)
+		static AccountImpl* Create(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount)
 
 	protected:
 	

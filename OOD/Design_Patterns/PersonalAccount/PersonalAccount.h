@@ -8,8 +8,8 @@
 class PersonalAccount : public AccountImpl
 {
 	public:
-		PersonalAccount(const string& _Impl, unsigned int _ID, const string& _name, unsigned int _amount)
 		~PersonalAccount();
+		PersonalAccount(const string& _Impl, unsigned int _ID, const string& _name, unsigned int _amount)
 		void virtual Tell();
 	protected:
 	
