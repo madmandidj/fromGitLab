@@ -2,39 +2,35 @@
 #define __BANK_H__
 
 #include<map>
+#include <string>
+using namespace std;
+class Subject;
 
-class AccntImpl;
-
-class Bank
+class Bank : public Subject
 {
-	enum AccountType
-	{
-		Personal,
-		Family,
-		StockX
-	};
-	
 	public:
-		static Bank& CreateBank();
-		virtual void Attach(Observer*);
-    	virtual void Detach(Observer*);
+		static Bank* CreateBank();
+		static void DestroyBank();
+		bool CreateAccount(const string& _Impl, unsigned int _ID, const string& _name, unsigned int _amount)
+		bool RemoveAccount(unsigned int _ID)
+		bool Deposit(unsigned int _ID, unsigned int _amount)
+		bool Withdraw(unsigned int _ID, unsigned int _amount)
+		void InvestInStockAccounts()
+		void GiveBonusToFamilyAccounts() const 
+		void SummonPersonalAccountOwners() const
     	
     protected:
     	virtual ~Bank();
 		
 	private:
-		static Bank m_bank;
-		multimap<string, AccntImpl*> m_accounts;
-		vector<Observer*> m_observers;
+		static Bank* m_bank;
+		multimap<unsigned int, Account*> m_accounts;
 		
 	private:
 		Bank();
 		Bank(const Bank& _bank);
 		Bank& operator= (Bank& _bank);
 }
-
-
-
 
 
 
