@@ -7,8 +7,8 @@ class Subject;
 class Observer
 {
 	public:	
-		virtual ~Observer()
-		virtual Update(Subject* _subject) = 0;
+		virtual ~Observer();
+		virtual void Update(Subject* _subject) = 0;
 
 	protected:
 		Observer();

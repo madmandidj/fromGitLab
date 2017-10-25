@@ -1,13 +1,14 @@
+#include "Account.h"
 #include "../Subject/Subject.h"
 #include "../AccountFactory/AccountFactory.h"
-#include "Account.h"
+#include "../AccountImpl/AccountImpl.h"
 #include <iostream>
 
 using namespace std;
 
 Account::Account(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount, Subject* _subject)
 {
-	m_account = AccountFactory::Create(_impl, _ID, _name, _amount);
+	m_account = AccountFactory::Create(_impl, _name, _ID, _amount);
 	m_subject = _subject; //Check if null pointer
 	m_subject->Attach(_impl, this);
 }
@@ -28,7 +29,8 @@ void Account::Tell()
 
 const string& Account::GetType() const
 {
-	return (const string&) m_account->m_type;
+//	return (const string&) m_account->m_type;
+	return m_account->GetType();
 }
 
 

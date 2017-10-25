@@ -16,7 +16,10 @@ AccountImpl::AccountImpl(const string& _impl, const string& _name, unsigned int 
 AccountImpl::~AccountImpl(){}
 
 
-
+const string& AccountImpl::GetType() const
+{
+	return m_type;
+}
 
 
 

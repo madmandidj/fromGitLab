@@ -1,12 +1,13 @@
 #ifndef __SUBJECT_H__
 #define __SUBJECT_H__
 
-#include<map>
+#include <map>
+#include <string>
 class Observer;
 
 using namespace std;
 
-public Subject
+class Subject
 {
 	public:
 		virtual ~Subject();

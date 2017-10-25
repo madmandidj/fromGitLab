@@ -1,20 +1,24 @@
 #ifndef __ACCOUNT_IMPL_H__
 #define __ACCOUNT_IMPL_H__
 
+#include <string>
+
+using namespace std;
+
 class AccountImpl
 {
 	public:
-		AccountImpl(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount);
+		AccountImpl(const string& _impl, const string& _name, unsigned int _ID, unsigned int _amount);
+		virtual ~AccountImpl();
 		bool Deposit(unsigned int _amount);
 		bool Withdraw(unsigned int _amount);
 		unsigned int GetBalance() const;
 		const string& GetOwner() const;
 		unsigned int GetID() const;
-		unsigned int GetType() const;
+		const string& GetType() const;
 		virtual void Tell() = 0;
 		
 	protected:
-		virtual ~AccountImpl();
 		
 	private:
 		string 			m_type;

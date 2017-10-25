@@ -20,13 +20,13 @@ void Subject::Detach(const string& _accountType, Observer* _observer)
 {
 	pair<multimap<string, Observer*>::iterator, multimap<string, Observer*>::iterator> ret;
 	
-	ret = m_observers.equals_range(_accountType);
+	ret = m_observers.equal_range(_accountType);
 	
-	for (multimap<string, Observer*>iterator it=ret.first; it != ret.second; ++it)
+	for (multimap<string, Observer*>::iterator it=ret.first; it != ret.second; ++it)
 	{
 		if(_observer == it->second)
 		{
-			m_observers->erase(it);
+			m_observers.erase(it);
 			break;
 		}
 	}

@@ -2,6 +2,7 @@
 #define __ACCOUNT_FACTORY_H__
 
 #include <string>
+#include "../Account/Account.h"
 using namespace std;
 class AccountImpl;
 
@@ -9,7 +10,7 @@ class AccountImpl;
 class AccountFactory
 {
 	public:
-		static AccountImpl* Create(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount)
+		static AccountImpl* Create(const string& _impl,  const string& _name, unsigned int _ID, unsigned int _amount);
 
 	protected:
 	

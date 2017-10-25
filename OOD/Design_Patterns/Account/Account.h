@@ -5,13 +5,13 @@
 #include <string>
 
 using namespace std;
-class Subject
+class Subject;
 class AccountImpl;
 
 class Account : public Observer
 {
 	public:
-		~Account()
+		~Account();
 		Account(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount, Subject* _subject);
 		bool Deposit(unsigned int _amount); 
 		bool Withdraw(unsigned int _amount);
@@ -26,7 +26,7 @@ class Account : public Observer
 		// Inherited from Observer:
 		// Subject* m_subject
 	private:
-		AccountImpl* m_account
+		AccountImpl* m_account;
 };
 
 

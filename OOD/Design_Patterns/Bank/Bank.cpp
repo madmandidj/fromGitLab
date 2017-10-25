@@ -1,5 +1,5 @@
 #include "Bank.h"
-#include "Account.h"
+#include "../Account/Account.h"
 
 using namespace std;
 
@@ -18,7 +18,7 @@ Bank* Bank::CreateBank()
 }
 
 
-void Bank::~Bank()
+Bank::~Bank()
 {
 	delete m_bank;
 	
@@ -30,7 +30,7 @@ bool CreateAccount(const string& _impl, unsigned int _ID, const string& _name, u
 {
 	//check if account already exists
 	//check subject not null
-	Account* account = new account(_impl, _ID, _name, _amount, _subject);
+	Account* account = new Account(_impl, _ID, _name, _amount, _subject);
 	
 	m_accounts->insert(pair<string, Account*>(_impl, account));
 	
@@ -44,7 +44,7 @@ bool RemoveAccount(const string& _type, unsigned int _ID)
 	
 	ret = m_accounts.equals_range(_type);
 	
-	for (multimap<string, Account*>iterator it=ret.first; it != ret.second; ++it)
+	for (multimap<string, Account*>::iterator it=ret.first; it != ret.second; ++it)
 	{
 		if(_ID == it->second)
 		{
@@ -53,7 +53,7 @@ bool RemoveAccount(const string& _type, unsigned int _ID)
 		}
 	}
 	
-	return;
+	return true;
 }
 
 
