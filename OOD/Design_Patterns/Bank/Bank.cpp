@@ -1,6 +1,6 @@
 #include "Bank.h"
+#include "../Subject/Subject.h"
 #include "../Account/Account.h"
-
 using namespace std;
 
 
@@ -17,6 +17,7 @@ Bank* Bank::CreateBank()
 	return m_bank;
 }
 
+
 void Bank::DestroyBank()
 {
 	delete m_bank;
@@ -25,17 +26,22 @@ void Bank::DestroyBank()
 }
 
 
-//Bank::Bank(){} 
-
-
 Bank::~Bank(){} 
 
 
 bool Bank::CreateAccount(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount, Subject* _subject)
 {
-	//check if account already exists
-	//check subject not null
+	if (0 == _subject)
+	{
+		//handle NULL pointer
+	}
+	
 	Account* account = new Account(_impl, _ID, _name, _amount, _subject);
+	
+	if (0 == account)
+	{
+		//handle new fail
+	}
 	
 	m_accounts.insert(pair<string, Account*>(_impl, account));
 	
@@ -49,10 +55,13 @@ bool Bank::RemoveAccount(const string& _type, unsigned int _ID)
 	
 	ret = m_accounts.equal_range(_type);
 	
-	for (multimap<string, Account*>::iterator it=ret.first; it != ret.second; ++it)
+	multimap<string, Account*>::iterator it;
+	
+	for (it = ret.first; it != ret.second; ++it)
 	{
 		if(_ID == it->second->GetID())
 		{
+			delete it->second;
 			m_accounts.erase(it);
 			break;
 		}
@@ -62,14 +71,21 @@ bool Bank::RemoveAccount(const string& _type, unsigned int _ID)
 }
 
 
+void Bank::SummonPersonalAccountOwners()
+{
+	Notify("Personal");
+}
 
 
+void Bank::GiveBonusToFamilyAccounts()
+{
+	Notify("Family");
+}
 
 
-
-
-
-
-
+void Bank::InvestInStockAccounts()
+{
+	Notify("Stock");
+}
 
 

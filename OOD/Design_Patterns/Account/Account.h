@@ -13,13 +13,8 @@ class Account : public Observer
 	public:
 		~Account();
 		Account(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount, Subject* _subject);
-		bool Deposit(unsigned int _amount); 
-		bool Withdraw(unsigned int _amount);
-		unsigned int GetBalance() const;
-		const string& GetOwner() const;
 		unsigned int GetID() const; 
 		const string& GetType() const;
-		virtual void Tell(); 
 		virtual void Update(Subject* _subject);
 	
 	protected:

@@ -2,7 +2,6 @@
 #define __ACCOUNT_IMPL_H__
 
 #include <string>
-
 using namespace std;
 
 class AccountImpl
@@ -10,13 +9,8 @@ class AccountImpl
 	public:
 		AccountImpl(const string& _impl, const string& _name, unsigned int _ID, unsigned int _amount);
 		virtual ~AccountImpl();
-		bool Deposit(unsigned int _amount);
-		bool Withdraw(unsigned int _amount);
-		unsigned int GetBalance() const;
-		const string& GetOwner() const;
 		unsigned int GetID() const;
 		const string& GetType() const;
-		virtual void Tell() = 0;
 		
 	protected:
 		

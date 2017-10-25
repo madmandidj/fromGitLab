@@ -13,12 +13,22 @@ Subject::~Subject(){}
 
 void Subject::Attach(const string& _accountType, Observer* _observer)
 {
+	if (0 == _observer)
+	{
+		//handle null pointer
+	}	
+	
 	m_observers.insert(pair<string, Observer*>(_accountType, _observer));
 }
 
 
 void Subject::Detach(const string& _accountType, Observer* _observer)
 {
+	if (0 == _observer)
+	{
+		//handle null pointer
+	}
+	
 	pair<multimap<string, Observer*>::iterator, multimap<string, Observer*>::iterator> ret;
 	
 	ret = m_observers.equal_range(_accountType);

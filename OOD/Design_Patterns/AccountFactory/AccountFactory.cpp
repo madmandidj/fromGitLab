@@ -1,7 +1,4 @@
-
 #include "AccountFactory.h"
-//#include "../AccountImpl/AccountImpl.h"
-//#include "../Account/Account.h"
 #include "../PersonalAccount/PersonalAccount.h"
 #include "../FamilyAccount/FamilyAccount.h"
 #include "../StockAccount/StockAccount.h"

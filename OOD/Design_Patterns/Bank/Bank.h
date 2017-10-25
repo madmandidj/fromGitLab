@@ -12,13 +12,12 @@ class Bank : public Subject
 	public:
 		static Bank* CreateBank();
 		static void DestroyBank();
-		bool CreateAccount(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount, Subject* _subject);
+		bool CreateAccount(const string& _impl, unsigned int _ID, const string& _name, 
+							unsigned int _amount, Subject* _subject);
 		bool RemoveAccount(const string& _type, unsigned int _ID);
-		bool Deposit(unsigned int _ID, unsigned int _amount);
-		bool Withdraw(unsigned int _ID, unsigned int _amount);
-		void InvestInStockAccounts() const;
-		void GiveBonusToFamilyAccounts() const ;
-		void SummonPersonalAccountOwners() const;
+		void InvestInStockAccounts();
+		void GiveBonusToFamilyAccounts();
+		void SummonPersonalAccountOwners();
     	
     protected:
     	virtual ~Bank();

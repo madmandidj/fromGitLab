@@ -11,7 +11,6 @@ class FamilyAccount : public AccountImpl
 		FamilyAccount(const string& _impl, const string& _name, unsigned int _ID, unsigned int _amount);
 		bool AddFamilyMember(unsigned int _ID);
 		bool RemoveFamilyMember(unsigned int _ID);
-		void virtual Tell();
 	protected:
 	
 	private:

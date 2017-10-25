@@ -1,6 +1,9 @@
 #include "StockAccount.h"
+#include <string>
+using namespace std;
 
-StockAccount::StockAccount(const string& _impl, const string& _name, unsigned int _ID, unsigned int _amount) : AccountImpl(_impl, _name, _ID, _amount) {}
+StockAccount::StockAccount(const string& _impl, const string& _name, unsigned int _ID, unsigned int _amount) 
+				: AccountImpl(_impl, _name, _ID, _amount) {}
 	
 
 StockAccount::~StockAccount(){}
@@ -25,11 +28,3 @@ bool StockAccount::RemoveStock(unsigned int _numOfStock)
 	
 	return true;
 }
-
-
-void StockAccount::Tell()
-{
-	//What to tell here?
-}
-
-

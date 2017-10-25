@@ -1,8 +1,8 @@
 #ifndef __OBSERVER_H__
 #define __OBSERVER_H__
 
-
 class Subject;
+using namespace std;
 
 class Observer
 {

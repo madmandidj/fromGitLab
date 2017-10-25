@@ -14,9 +14,10 @@ class Subject
 		virtual ~Subject();
 		virtual void Attach(const string& _accountType, Observer* _observer);
 		virtual void Detach(const string& _accountType, Observer* _observer);
+		virtual void Notify(const string& _accountType);
 		
 	protected:
-		virtual void Notify(const string& _accountType);
+		
 		
 	private:
 		multimap<string, Observer*> m_observers;

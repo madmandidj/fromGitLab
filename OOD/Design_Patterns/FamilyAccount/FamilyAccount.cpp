@@ -1,7 +1,7 @@
 #include "FamilyAccount.h"
 #include "../AccountImpl/AccountImpl.h"
 #include <set>
-
+using namespace std;
 
 FamilyAccount::FamilyAccount(const string& _impl, const string& _name, unsigned int _ID, unsigned int _amount) 
 	: AccountImpl(_impl, _name, _ID, _amount){}
@@ -22,16 +22,6 @@ bool FamilyAccount::RemoveFamilyMember(unsigned int _ID)
 {
 	return m_familyID.erase(_ID);
 }
-
-
-void FamilyAccount::Tell()
-{
-	//What to tell here?
-}
-
-
-
-
 
 
 

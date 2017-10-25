@@ -2,10 +2,8 @@
 #define __ACCOUNT_FACTORY_H__
 
 #include <string>
-#include "../Account/Account.h"
 using namespace std;
 class AccountImpl;
-
 
 class AccountFactory
 {
