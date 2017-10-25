@@ -10,15 +10,15 @@ using namespace std;
 class Subject
 {
 	public:
+		Subject();
 		virtual ~Subject();
 		virtual void Attach(const string& _accountType, Observer* _observer);
 		virtual void Detach(const string& _accountType, Observer* _observer);
 		
 	protected:
-		virtual void Notify(string& _accountType);
+		virtual void Notify(const string& _accountType);
 		
 	private:
-		Subject();
 		multimap<string, Observer*> m_observers;
 };
 

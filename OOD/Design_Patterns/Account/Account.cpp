@@ -34,6 +34,13 @@ const string& Account::GetType() const
 }
 
 
+unsigned int Account::GetID() const
+{
+//	return (const string&) m_account->m_type;
+	return m_account->GetID();
+}
+
+
 void Account::Update(Subject* _subject)
 {
 	if (_subject == m_subject)

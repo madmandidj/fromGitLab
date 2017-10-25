@@ -6,12 +6,13 @@
 class StockAccount : public AccountImpl
 {
 	public:
+		~StockAccount();
 		StockAccount(const string& _impl, const string& _name, unsigned int _ID, unsigned int _amount);
 		bool AddStock(unsigned int _numOfStock);
 		bool RemoveStock(unsigned int _numOfStock);
 		void virtual Tell();
 	protected:
-		~StockAccount();
+		
 	private:
 		size_t m_numOfStock;
 };

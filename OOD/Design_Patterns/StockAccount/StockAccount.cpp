@@ -27,6 +27,9 @@ bool StockAccount::RemoveStock(unsigned int _numOfStock)
 }
 
 
-
+void StockAccount::Tell()
+{
+	//What to tell here?
+}
 
 

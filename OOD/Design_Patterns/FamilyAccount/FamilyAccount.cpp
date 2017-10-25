@@ -24,7 +24,10 @@ bool FamilyAccount::RemoveFamilyMember(unsigned int _ID)
 }
 
 
-
+void FamilyAccount::Tell()
+{
+	//What to tell here?
+}
 
 
 

@@ -22,7 +22,10 @@ const string& AccountImpl::GetType() const
 }
 
 
-
+unsigned int AccountImpl::GetID() const
+{
+	return m_ID;
+}
 
 
 

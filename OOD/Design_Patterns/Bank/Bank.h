@@ -28,7 +28,7 @@ class Bank : public Subject
 		multimap<string, Account*> m_accounts;
 		
 	private:
-		Bank();
+		Bank(){}
 		Bank(const Bank& _bank);
 		Bank& operator= (Bank& _bank);
 };
