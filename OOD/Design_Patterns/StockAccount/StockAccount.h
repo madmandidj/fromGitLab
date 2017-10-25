@@ -7,18 +7,14 @@ class StockAccount
 {
 	public:
 		StockAccount(const string& _Impl, unsigned int _ID, const string& _name, unsigned int _amount)
-		void virtual Tell();
 		bool AddStock(unsigned int _numOfStock);
 		bool RemoveStock(unsigned int _numOfStock);
+		void virtual Tell();
 	protected:
 		
 	private:
 		size_t m_numOfStock;
 };
-
-
-
-
 
 
 

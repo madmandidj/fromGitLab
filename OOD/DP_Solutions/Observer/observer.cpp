@@ -29,7 +29,7 @@ public:
 
 protected:
 	Subject() {}
-	virtual void Notify();
+	virtual void Notify(const string& _accountType);
 private:
     vector<Observer*> m_observers; 
 };

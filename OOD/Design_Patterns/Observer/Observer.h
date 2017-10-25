@@ -6,15 +6,12 @@ class Subject;
 
 class Observer
 {
-	public:
-		Observer();
+	public:	
 		virtual ~Observer()
 		virtual Update(Subject* _subject) = 0;
 
 	protected:
-		
-		
-	private:
+		Observer();
 		Subject* m_subject;
 };
 

@@ -4,8 +4,7 @@
 class AccountImpl
 {
 	public:
-		AccountImpl(const string& _Impl, unsigned int _ID, const string& _name, unsigned int _amount);
-		
+		AccountImpl(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount);
 		bool Deposit(unsigned int _amount);
 		bool Withdraw(unsigned int _amount);
 		unsigned int GetBalance() const;
@@ -13,13 +12,15 @@ class AccountImpl
 		unsigned int GetID() const;
 		unsigned int GetType() const;
 		virtual void Tell() = 0;
+		
 	protected:
 		virtual ~AccountImpl();
+		
 	private:
-		m_balance : int
-		m_owner : string
-		m_ID : unsigned int
-		m_type : unsigned int
+		string 			m_type;
+		string 			m_owner;
+		int 			m_balance;
+		unsigned int 	m_ID;	
 };
 
 

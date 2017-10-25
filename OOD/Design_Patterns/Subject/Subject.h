@@ -2,21 +2,22 @@
 #define __SUBJECT_H__
 
 #include<map>
+class Observer;
 
 using namespace std;
 
 public Subject
 {
 	public:
-		Subject();
 		virtual ~Subject();
-		virtual void Attach(Observer* _observer);
-		virtual void Detach(Observer* _observer);
+		virtual void Attach(const string& _accountType, Observer* _observer);
+		virtual void Detach(const string& _accountType, Observer* _observer);
 		
 	protected:
 		virtual void Notify(string& _accountType);
 		
 	private:
+		Subject();
 		multimap<string, Observer*> m_observers;
 };
 

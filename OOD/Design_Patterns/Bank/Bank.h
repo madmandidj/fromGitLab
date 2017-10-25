@@ -1,7 +1,8 @@
 #ifndef __BANK_H__
 #define __BANK_H__
 
-#include<map>
+#include "../Subject/Subject.h"
+#include <map>
 #include <string>
 using namespace std;
 class Subject;
@@ -11,8 +12,8 @@ class Bank : public Subject
 	public:
 		static Bank* CreateBank();
 		static void DestroyBank();
-		bool CreateAccount(const string& _Impl, unsigned int _ID, const string& _name, unsigned int _amount)
-		bool RemoveAccount(unsigned int _ID)
+		bool CreateAccount(const string& _impl, unsigned int _ID, const string& _name, unsigned int _amount, Subject* _subject)
+		bool RemoveAccount(const string& _type, unsigned int _ID)
 		bool Deposit(unsigned int _ID, unsigned int _amount)
 		bool Withdraw(unsigned int _ID, unsigned int _amount)
 		void InvestInStockAccounts()
@@ -24,7 +25,7 @@ class Bank : public Subject
 		
 	private:
 		static Bank* m_bank;
-		multimap<unsigned int, Account*> m_accounts;
+		multimap<string, Account*> m_accounts;
 		
 	private:
 		Bank();
