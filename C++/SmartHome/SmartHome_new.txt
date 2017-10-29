@@ -59,6 +59,16 @@ Dependancy inversion -
 
 
 
+OpenDoor on floor 2, room 245
+
+multimap<EventType_t, Agent*>
+multimap<Location_t, Agent*>
+
+
+
+EventType_t = "OpenDoor"
+Location_t = "floor2, room 245"
+
 
 
 
