@@ -1,6 +1,6 @@
 #include<stdio.h>
 
-#include"../so_test_1/shared.h"
+#include"../so_test_2/shared.h"
 
 int main(void)
 {

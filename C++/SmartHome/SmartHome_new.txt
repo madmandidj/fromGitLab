@@ -1,0 +1,64 @@
+SmartHome- initializes and starts to run SmartHome
+	SmartHome(string _configFile);
+	~Smarthome();
+		Hub*				m_hub;
+		map<string, Agent*>	m_agents;
+
+Hub- routes events from and to agents
+	Event* 	ReadEvent(queue<Event*> _queue);
+	void	SendEvent(Event* _event, queue<Event*> _queue);
+		multimap<string, Agent*>	m_eventTypeSubscriber;
+		multimap<string, Agent*>	m_locationSubscriber;
+		
+
+Agent- sends/receives events
+	Publish(Event* _event);
+	Subscribe(string _type, string _room, string _floor);
+	DoOnEvent(Event* _event);
+		string			m_id;
+		string			m_type;
+		string			m_room;
+		int 			m_floor;
+		string			m_log;
+		string			m_config;
+		queue<Event*>	m_events;
+	
+
+
+AgentFactory- creates agents
+	CreateAgent(string _type, string _room, string _floor, string _log, string _config);
+
+Event- contains data of event
+	
+		string	m_timestamp;
+		string	m_type;
+		string	m_payload;
+		string	m_location
+
+EventFactory- creates events
+
+
+Payload- contains payload
+
+
+
+----------------
+SOLID
+----------------
+Single responsibility principle
+Open/Close principle - open for extensions. closed for changes.
+Liskov Substitution principle - is-a
+Interface segregation -who has access to what in object
+	*** Everything implemented = class
+	*** At least 1 pure func = ABC
+	*** All pure funcs, none implemented = interface -----
+Dependancy inversion - 
+
+
+
+
+
+
+
+
+

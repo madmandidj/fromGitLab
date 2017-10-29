@@ -9,34 +9,42 @@ using namespace std;
 
 extern "C" unsigned int add(unsigned int a, unsigned int b);
 
-class Event_t
+
+class Triangle : public Shape
 {
-	public:
-		static Event_t& CreateEvent(string _timestamp, string _type, string _data, string _location)
-		{	
-			Event_t event(_timestamp, _type, _data, _location);
-		}
-//		Event_t(string _timestamp, string _type, string _data, string _location) 
-		
-					
-		virtual ~Event_t(){}
-		
-		const string& GetLocation() const {return m_location;}
-		
-	private:
-		Event_t(string _timestamp, string _type, string _data, string _location)
-		{
-			m_timestamp = _timestamp;
-			m_type = _type;
-			m_data = _data;
-			m_location = _location;
-		} 
-		static Event_t m_event;
-		string m_timestamp;
-		string m_type;
-		string m_data;
-		string m_location;
-};
+
+}
+
+extern "C"
+
+//class Event_t
+//{
+//	public:
+//		static Event_t& CreateEvent(string _timestamp, string _type, string _data, string _location)
+//		{	
+//			Event_t event(_timestamp, _type, _data, _location);
+//		}
+////		Event_t(string _timestamp, string _type, string _data, string _location) 
+//		
+//					
+//		virtual ~Event_t(){}
+//		
+//		const string& GetLocation() const {return m_location;}
+//		
+//	private:
+//		Event_t(string _timestamp, string _type, string _data, string _location)
+//		{
+//			m_timestamp = _timestamp;
+//			m_type = _type;
+//			m_data = _data;
+//			m_location = _location;
+//		} 
+//		static Event_t m_event;
+//		string m_timestamp;
+//		string m_type;
+//		string m_data;
+//		string m_location;
+//};
 
 
 
