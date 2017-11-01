@@ -17,9 +17,10 @@ class ConfigLoader
 		ConfigLoader(string _soPath, string _iniPath);
 		~ConfigLoader();
 		bool LoadConfig(multimap<string, Agent*> _agents, Hub* _hub); //TODO: Make AgentContainer class
+		bool LoadConfig();
 		
 	private:
-		bool ParseAgentAttr();
+		bool LoadAgents();
 		bool LoadSharedObject();
 		
 		string 			m_soPath;

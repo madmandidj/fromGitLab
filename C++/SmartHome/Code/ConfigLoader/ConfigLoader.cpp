@@ -1,5 +1,8 @@
 #include "ConfigLoader.h"
 #include<iostream>
+#include <fstream>
+
+using namespace std;
 
 //#include "../Hub/Hub.h"
 //#include "../AgentFactory/AgentFactory.h"
@@ -27,18 +30,27 @@ ConfigLoader::ConfigLoader(string _soPath, string _iniPath)
 
 ConfigLoader::~ConfigLoader()
 {
-	delete m_agentFactory;
+//	delete m_agentFactory;
 }
 
 
-bool ConfigLoader::LoadConfig(multimap<string, Agent*> _agents, Hub* _hub)
+//bool ConfigLoader::LoadConfig(multimap<string, Agent*> _agents, Hub* _hub)
+bool ConfigLoader::LoadConfig() // remove this
 {
-	m_filestream.open(m_iniPath, ios_base::in); 
-	if (true  != m_fileStream)
+//	m_fileStream.open(m_iniPath, ios_base::in); 
+	m_fileStream.open(m_iniPath.c_str(), ios_base::in); 
+//	if (0  != m_fileStream)
+//	{
+//		return false;
+//	}
+	
+	if (false == m_fileStream.good())
 	{
 		return false;
 	}
 	
+	
+	LoadAgents();
 	
 	/*
 		Pseudo Code:
@@ -57,7 +69,7 @@ bool ConfigLoader::LoadConfig(multimap<string, Agent*> _agents, Hub* _hub)
 }
 
 
-bool ConfigLoader::ParseAgentAttr()
+bool ConfigLoader::LoadAgents()
 {
 	bool isEndOfAgent = false;
 	size_t position = 0;
@@ -72,7 +84,7 @@ bool ConfigLoader::ParseAgentAttr()
 	{
 		std::getline(m_fileStream, m_line);
 	
-		if(m_filestream.eof())
+		if(m_fileStream.eof())
 		{
 			break;
 		}
@@ -82,7 +94,7 @@ bool ConfigLoader::ParseAgentAttr()
 		
 		while (!isEndOfAgent)
 		{
-			m_linePosition = _line.find_first_of("[", m_linePosition);
+			m_linePosition = m_line.find_first_of("[", m_linePosition);
 			
 			if (string::npos == position)
 			{
@@ -93,6 +105,7 @@ bool ConfigLoader::ParseAgentAttr()
 			
 			break; //remove
 		}
+		break;//remove
 	}
 }
 
