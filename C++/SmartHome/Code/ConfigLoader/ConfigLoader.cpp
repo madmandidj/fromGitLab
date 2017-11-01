@@ -73,6 +73,8 @@ bool ConfigLoader::LoadAgents()
 {
 	bool isEndOfAgent = false;
 	size_t position = 0;
+	size_t leftPos = 0;
+	size_t rightPos = 0;
 	
 //	AgentAttr* attr = new AgentAttr;	
 //	if (0 == attr)
@@ -83,29 +85,99 @@ bool ConfigLoader::LoadAgents()
 	while(1)
 	{
 		std::getline(m_fileStream, m_line);
-	
+		if(m_fileStream.eof())
+		{
+			break;
+		}
+        leftPos = 0;
+        rightPos = 0;
+
+
+		leftPos = m_line.find_first_of("[", leftPos);
+		if (string::npos == leftPos)
+		{
+			return false;
+		}
+		rightPos = m_line.find_first_of("]", leftPos + 1);
+		string temp_m_ID = m_line.substr(leftPos + 1, rightPos - leftPos - 1);
+		cout << temp_m_ID << endl;
+		
+		
+		std::getline(m_fileStream, m_line);
+		leftPos = 0;
+        rightPos = 0;
+		leftPos = m_line.find_first_of("=", leftPos);
+		if (string::npos == leftPos)
+		{
+			return false;
+		}
+		string temp_m_type = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
+		cout << temp_m_type << endl;
+		
+		
+		std::getline(m_fileStream, m_line);
+		leftPos = 0;
+        rightPos = 0;
+		leftPos = m_line.find_first_of("=", leftPos);
+		if (string::npos == leftPos)
+		{
+			return false;
+		}
+		string temp_m_room = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
+		cout << temp_m_room << endl;
+		
+		
+		std::getline(m_fileStream, m_line);
+		leftPos = 0;
+        rightPos = 0;
+		leftPos = m_line.find_first_of("=", leftPos);
+		if (string::npos == leftPos)
+		{
+			return false;
+		}
+		string temp_m_floor = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
+		cout << temp_m_floor << endl;
+		
+		
+		std::getline(m_fileStream, m_line);
 		if(m_fileStream.eof())
 		{
 			break;
 		}
 		
-		m_linePosition = 0;
-		position = 0;	
-		
-		while (!isEndOfAgent)
+		if ("" == m_line)
 		{
-			m_linePosition = m_line.find_first_of("[", m_linePosition);
-			
-			if (string::npos == position)
-			{
-				return false;
-			}
-			
-			cout << m_linePosition;
-			
-			break; //remove
+		    continue;
 		}
-		break;//remove
+		
+		
+//		leftPos = 0;
+//        rightPos = 0;
+//		leftPos = m_line.find_first_of("=", leftPos);
+//		if (string::npos == leftPos)
+//		{
+//			return false;
+//		}
+//		string temp_m_log = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
+//		cout << temp_m_log << endl;
+		
+		string temp_m_log;
+		string temp_m_config;
+		leftPos = 0;
+        rightPos = 0;
+		rightPos = m_line.find_first_of("=", rightPos);
+		if (string::npos == rightPos)
+		{
+			return false;
+		}
+		string temp_str = m_line.substr(leftPos, rightPos - 1);
+		if (temp_str == "log")
+		{
+		    temp_m_log = m_line.substr(rightPos + 2, m_line.size() - rightPos + 2);
+		}
+		cout << temp_m_log << endl;
+		
+		break; //remove
 	}
 }
 
