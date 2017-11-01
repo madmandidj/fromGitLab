@@ -8,6 +8,11 @@
 ConfigLoader::ConfigLoader(string _soPath, string _iniPath)
 {	
 	m_agentFactory = new AgentFactory;
+	
+	if (0 == m_agentFactory)
+	{
+		// Handle failed new
+	}
 
 	m_soPath = _soPath;
 	
@@ -23,6 +28,13 @@ ConfigLoader::~ConfigLoader()
 
 bool ConfigLoader::LoadConfig(multimap<string, Agent*> _agents, Hub* _hub)
 {
+	m_filestream.open(m_iniPath, ios_base::in); 
+	if (true  != m_fileStream)
+	{
+		return false;
+	}
+	
+	
 	/*
 		Pseudo Code:
 		------------
@@ -40,9 +52,15 @@ bool ConfigLoader::LoadConfig(multimap<string, Agent*> _agents, Hub* _hub)
 }
 
 
-bool ConfigLoader::ParseDevice()
+bool ConfigLoader::ParseAgentAttr()
 {
-
+	AgentAttr* attr = new AgentAttr;	
+	if (0 == attr)
+	{
+		// Handle failed new
+	}
+	
+	
 
 }
 
