@@ -19,11 +19,13 @@ class ConfigLoader
 		bool LoadConfig(multimap<string, Agent*> _agents, Hub* _hub); //TODO: Make AgentContainer class
 		
 	private:
-		bool ParseIniFile();
-		bool LoadSharedObjects();
+		bool ParseAgentAttr();
+		bool LoadSharedObject();
 		
 		string 			m_soPath;
 		string 			m_iniPath;
+		string			m_line;
+		size_t			m_linePosition;
 		ifstream 		m_fileStream;
 		AgentFactory* 	m_agentFactory;
 		

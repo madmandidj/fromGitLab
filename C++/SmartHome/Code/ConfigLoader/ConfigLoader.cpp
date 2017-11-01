@@ -1,4 +1,5 @@
 #include "ConfigLoader.h"
+#include<iostream>
 
 //#include "../Hub/Hub.h"
 //#include "../AgentFactory/AgentFactory.h"
@@ -7,7 +8,7 @@
 
 ConfigLoader::ConfigLoader(string _soPath, string _iniPath)
 {	
-	m_agentFactory = new AgentFactory;
+//	m_agentFactory = new AgentFactory;
 	
 	if (0 == m_agentFactory)
 	{
@@ -17,6 +18,10 @@ ConfigLoader::ConfigLoader(string _soPath, string _iniPath)
 	m_soPath = _soPath;
 	
 	m_iniPath = _iniPath;	
+	
+	m_line = "";
+	
+	m_linePosition = 0;
 }
 
 
@@ -54,14 +59,41 @@ bool ConfigLoader::LoadConfig(multimap<string, Agent*> _agents, Hub* _hub)
 
 bool ConfigLoader::ParseAgentAttr()
 {
-	AgentAttr* attr = new AgentAttr;	
-	if (0 == attr)
+	bool isEndOfAgent = false;
+	size_t position = 0;
+	
+//	AgentAttr* attr = new AgentAttr;	
+//	if (0 == attr)
+//	{
+//		// Handle failed new
+//	}
+	
+	while(1)
 	{
-		// Handle failed new
+		std::getline(m_fileStream, m_line);
+	
+		if(m_filestream.eof())
+		{
+			break;
+		}
+		
+		m_linePosition = 0;
+		position = 0;	
+		
+		while (!isEndOfAgent)
+		{
+			m_linePosition = _line.find_first_of("[", m_linePosition);
+			
+			if (string::npos == position)
+			{
+				return false;
+			}
+			
+			cout << m_linePosition;
+			
+			break; //remove
+		}
 	}
-	
-	
-
 }
 
 
