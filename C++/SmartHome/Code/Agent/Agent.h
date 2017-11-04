@@ -3,7 +3,8 @@
 
 #include<string>
 #include<queue>
-#include<pthread>
+#include<pthread.h>
+
 class Hub;
 class AgentAttr;
 class Event;
@@ -17,31 +18,28 @@ public:
 	Agent(AgentAttr* _attr, Hub* _hub);
 	bool Subscribe(std::string _type, std::string _room, std::string _floor);
 	bool Unsubscribe(std::string _type, std::string _room, std::string _floor);
-	const Event* GenerateEvent();
+	Event* GenerateEvent();
 	bool PublishEvent(Event* _event);
+	bool PushEvent(Event* _event);
+	const Event* PopEvent();
+	std::string GenerateTimestamp() const;
 	const std::string& GetID() const;
 	const std::string& GetType() const;
 	const std::string& GetRoom() const;
 	const std::string& GetFloor() const;
 	const std::string& GetLog() const;
 	const std::string& GetConfig() const;
-	virtual EventAttr* GenerateEventAttr() = 0;
-	virtual Event* ReceiveEvent()= 0;
+	virtual EventAttr* GenerateEventAttr(std::string _type, std::string _room, std::string _floor) = 0;
+//	virtual Event* ReceiveEvent()= 0;
 	
 private:
-//	std::string 	m_ID;
-//	std::string 	m_type;
-//	std::string 	m_room;
-//	std::string 	m_floor;
-//	std::string 	m_log;
-//	std::string 	m_config;
 	Agent(const Agent& _agent);
-	Agent& operator=(const Agent& _agent)
+	Agent& operator=(const Agent& _agent);
 	
-	AgentAttr*		m_attributes;
-	Hub*			m_hub;
-	std::queue		m_queue;
-	pthread_mutex_t	m_mutex;
+	AgentAttr*		        m_attributes;
+	Hub*			        m_hub;
+	std::queue<Event*>		m_queue; //TODO: make class and set size in destructor
+	pthread_mutex_t	        m_mutex;
 };
 
 

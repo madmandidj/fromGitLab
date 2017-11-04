@@ -1,11 +1,13 @@
 #include "Agent.h"
 #include "../Hub/Hub.h"
-#include "../AgentAtrr/AgentAtrr.h"
+#include "../AgentAttr/AgentAttr.h"
 #include "../Event/Event.h"
 #include "../EventAttr/EventAttr.h"
 #include<string>
 #include<queue>
-#include<pthread>
+#include<pthread.h>
+#include<sstream>
+#include<iostream> //REMOVE
 
 Agent::Agent(AgentAttr* _attr, Hub* _hub)
 {
@@ -26,11 +28,11 @@ Agent::Agent(AgentAttr* _attr, Hub* _hub)
 Agent::~Agent()
 {
 	delete m_attributes;
-	pthread_mutex_destroy(&m_lock));
+	pthread_mutex_destroy(&m_mutex);
 }
 
 
-bool Agent::Subscribe(std:string _type, std::string _room, std::string _floor)
+bool Agent::Subscribe(std::string _type, std::string _room, std::string _floor)
 {
 	EventAttr* eventAttr = new EventAttr("", _type, _room, _floor);
 	if (0 == eventAttr)
@@ -42,7 +44,7 @@ bool Agent::Subscribe(std:string _type, std::string _room, std::string _floor)
 }
 
 
-bool Agent::Unsubscribe(std:string _type, std::string _room, std::string _floor)
+bool Agent::Unsubscribe(std::string _type, std::string _room, std::string _floor)
 {
 	EventAttr* eventAttr = new EventAttr("", _type, _room, _floor);
 	if (0 == eventAttr)
@@ -53,16 +55,50 @@ bool Agent::Unsubscribe(std:string _type, std::string _room, std::string _floor)
 	return m_hub->RemoveSubscription(eventAttr, this);
 }	
 
-const Event* Agent::GenerateEvent()
+
+Event* Agent::GenerateEvent()
 {
+	EventAttr* eventAttr = GenerateEventAttr();
+	if (0 == eventAttr)
+	{
+	    //TODO: handle bad alloc
+	}
+	
+	Event* event = new Event(eventAttr);
 	
 }
-
 
 
 bool Agent::PublishEvent(Event* _event)
 {
 	
+}
+
+
+bool Agent::PushEvent(Event* _event)
+{
+    m_queue.push(_event);
+}
+
+
+const Event* Agent::PopEvent()
+{
+    m_queue.pop(); 
+}
+
+
+std::string Agent::GenerateTimestamp() const
+{
+    time_t rawtime = time(0); 
+    struct tm * curTime = localtime (&rawtime);
+    std::string str;
+    std::stringstream strm;
+    
+    strm << "Month= " << curTime->tm_mon << ", " 
+        << "Day= " << curTime->tm_mday << ", " 
+        << "Time= " << curTime->tm_hour << ":" << curTime->tm_min << ":" << curTime->tm_sec;
+    
+    return strm.str(); 
 }
 
 
@@ -72,27 +108,31 @@ const std::string& Agent::GetID() const
 }
 
 
-const std::string& Agent::GetType() const;
+const std::string& Agent::GetType() const
 {
 	return m_attributes->GetType();
 }
 
-const std::string& Agent::GetRoom() const;
+
+const std::string& Agent::GetRoom() const
 {
 	return m_attributes->GetRoom();
 }
 
-const std::string& Agent::GetFloor() const;
+
+const std::string& Agent::GetFloor() const
 {
 	return m_attributes->GetFloor();
 }
 
-const std::string& Agent::GetLog() const;
+
+const std::string& Agent::GetLog() const
 {
 	return m_attributes->GetLog();
 }
 
-const std::string& Agent::GetConfig() const;
+
+const std::string& Agent::GetConfig() const
 {
 	return m_attributes->GetConfig();
 }

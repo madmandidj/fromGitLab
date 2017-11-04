@@ -23,8 +23,8 @@ public:
 	const std::string& GetConfig() const;
 	
 private:
-	Agent(const Agent& _agent);
-	Agent& operator=(const Agent& _agent)
+	AgentAttr(const AgentAttr& _agentAttr);
+	AgentAttr& operator=(const AgentAttr& _agentAttr);
 	
 	std::string		m_ID;
 	std::string 	m_type;
@@ -33,9 +33,6 @@ private:
 	std::string 	m_log;
 	std::string 	m_config;
 };
-
-
-
 
 
 

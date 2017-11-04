@@ -1,4 +1,4 @@
-#include "AgentAtrr.h"
+#include "AgentAttr.h"
 
 
 AgentAttr::~AgentAttr()
@@ -30,27 +30,27 @@ const std::string& AgentAttr::GetID() const
 }
 
 
-const std::string& AgentAttr::GetType() const;
+const std::string& AgentAttr::GetType() const
 {
 	return m_type;
 }
 
-const std::string& AgentAttr::GetRoom() const;
+const std::string& AgentAttr::GetRoom() const
 {
 	return m_room;
 }
 
-const std::string& AgentAttr::GetFloor() const;
+const std::string& AgentAttr::GetFloor() const
 {
 	return m_floor;
 }
 
-const std::string& AgentAttr::GetLog() const;
+const std::string& AgentAttr::GetLog() const
 {
 	return m_log;
 }
 
-const std::string& AgentAttr::GetConfig() const;
+const std::string& AgentAttr::GetConfig() const
 {
 	return m_config;
 }

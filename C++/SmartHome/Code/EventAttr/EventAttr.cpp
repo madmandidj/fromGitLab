@@ -20,31 +20,31 @@ EventAttr::EventAttr(std::string _timestamp,
 }
 
 
-const std::string& GetTimestamp()const
+const std::string& EventAttr::GetTimestamp()const
 {
     return m_timestamp;
 }
 
 
-const std::string& GetType()const
+const std::string& EventAttr::GetType()const
 {
     return m_type;
 }
 
 
-const std::string& GetRoom()const
+const std::string& EventAttr::GetRoom()const
 {
     return m_room;
 }
 
 
-const std::string& GetFloor()const
+const std::string& EventAttr::GetFloor()const
 {
     return m_floor;
 }
 
 
-bool operator==(const EventAttr& _eventAttr) const
+bool EventAttr::operator==(const EventAttr& _eventAttr) const
 {
     if (m_type == _eventAttr.GetType() &&
             m_room == _eventAttr.GetRoom() &&
@@ -57,7 +57,7 @@ bool operator==(const EventAttr& _eventAttr) const
 }
 
 
-bool operator<(const EventAttr& _eventAttr) const
+bool EventAttr::operator<(const EventAttr& _eventAttr) const
 {
     if (*this == _eventAttr)
     {

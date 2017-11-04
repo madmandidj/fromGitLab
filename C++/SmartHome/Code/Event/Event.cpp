@@ -1,6 +1,6 @@
 #include "Event.h"
 #include "../EventAttr/EventAttr.h"
-
+#include <string>
 
 Event::Event(std::string _timestamp,
             std::string _type,
@@ -16,14 +16,19 @@ Event::Event(std::string _timestamp,
     m_attributes = eventAttr;
 }
 
+Event(const EventAttr* _eventAttr)
+{
+    m_attributes = _eventAttr;
+}
 
-Event::~Event
+
+Event::~Event()
 {
     delete m_attributes;
 }
 
 
-const EventAttr* Event::GetAttributes() const
+EventAttr* Event::GetAttributes() const
 {
     return m_attributes;
 }
