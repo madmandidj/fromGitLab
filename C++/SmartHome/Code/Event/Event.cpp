@@ -7,31 +7,16 @@ Event::Event(std::string _timestamp,
             std::string _room,
             std::string _floor)
 {
-//    EventAttr* eventAttr = new EventAttr(_timestamp, _type, _room, _floor);
-//    if (0 == eventAttr)
-//    {
-//        //TODO: handle bad alloc
-//    }
-    
-//    m_attributes = eventAttr;
-
     m_attributes.SetTimeStamp(_timestamp);
     m_attributes.SetType(_type);
     m_attributes.SetRoom(_room);
     m_attributes.SetFloor(_floor);            
-    
-//    m_payload = new Payload;
 }
-
-//Event::Event(const EventAttr* _eventAttr)
-//{
-//    m_attributes = (EventAttr*)_eventAttr;
-//}
 
 
 Event::~Event()
 {
-//    delete m_attributes;
+
 }
 
 const std::string Event::GetTimestamp() const
@@ -64,7 +49,7 @@ const EventAttr& Event::GetAttributes() const
 }
 
 
-Payload_t* Event::GetPayload() const
+Payload_t Event::GetPayload() const
 {
     return m_payload;
 }

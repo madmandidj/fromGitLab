@@ -3,6 +3,7 @@
 
 #include<string>
 #include<map>
+#include <tr1/memory>
 
 class Agent;
 class Event;
@@ -15,7 +16,7 @@ public:
     Hub();
     bool AddSubscription(const EventAttr _eventAttr, const Agent* _agent);
     bool RemoveSubscription(const EventAttr _eventAttr, const Agent* _agent);
-    size_t PublishEvent(Event* _event); //TODO: returns number of distributions
+    size_t PublishEvent(std::tr1::shared_ptr<Event> _event); //TODO: returns number of distributions
     void SetLivePrintMode(bool _shouldLivePrint);
     bool GetLivePrintMode();
 
@@ -25,9 +26,9 @@ protected:
 private:
     Hub(const Hub& _hub);
     Hub& operator=(const Hub& _hub);
-//    std::multimap<EventAttr*, Agent*>    m_subscriptions;
     std::multimap<EventAttr, Agent*>    m_subscriptions;
-    std::multimap<std::string, Event*>   m_liveEvents;
+//    std::multimap<std::string, Event*>   m_liveEvents;
+//    std::multimap<std::string, std::tr1::shared_ptr<Event> >   m_liveEvents;
     bool    m_livePrintMode;
 };
 

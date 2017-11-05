@@ -3,7 +3,6 @@
 #include "../AgentAttr/AgentAttr.h"
 #include "../Event/Event.h"
 #include "../EventAttr/EventAttr.h"
-//#include "../Payload/Payload.h"
 #include<string>
 #include<queue>
 #include<pthread.h>
@@ -35,12 +34,6 @@ Agent::~Agent()
 
 bool Agent::Subscribe(std::string _type, std::string _room, std::string _floor)
 {
-//	EventAttr* eventAttr = new EventAttr("", _type, _room, _floor);
-//	if (0 == eventAttr)
-//	{
-//		//TODO: handle bad alloc
-//	}
-
     EventAttr eventAttr("", _type, _room, _floor);
 	
 	return m_hub->AddSubscription(eventAttr, this);
@@ -49,64 +42,52 @@ bool Agent::Subscribe(std::string _type, std::string _room, std::string _floor)
 
 bool Agent::Unsubscribe(std::string _type, std::string _room, std::string _floor)
 {
-//	EventAttr* eventAttr = new EventAttr("", _type, _room, _floor);
-//	if (0 == eventAttr)
-//	{
-//		//TODO: handle bad alloc
-//	}
-	
 	EventAttr eventAttr("", _type, _room, _floor);
 	
 	return m_hub->RemoveSubscription(eventAttr, this);
 }	
 
 
-Event* Agent::GenerateEvent(std::string _timestamp,
+std::tr1::shared_ptr<Event> Agent::GenerateEvent(std::string _timestamp,
                             std::string _type,
                             std::string _room,
                             std::string _floor)
-{
-//	EventAttr* eventAttr = GenerateEventAttr(std::string _timestamp,
-//                                            std::string _type,
-//                                            std::string _room,
-//                                            std::string _floor);
-//	if (0 == eventAttr)
-//	{
-//	    //TODO: handle bad alloc
-//	}
-	
-	
-	
-	Event* event = new Event(_timestamp,
+{	
+//	Event* event = new Event(_timestamp,
+//                            _type,
+//                            _room,
+//                            _floor);
+    std::tr1::shared_ptr<Event> event(new Event(_timestamp,
                             _type,
                             _room,
-                            _floor);
+                            _floor));
+                            
 	if (0 == event)
 	{
-	    //TODO: handl bad alloc
+	    //TODO: handle bad alloc
 	}
 	
 	return event;
 }
 
 
-bool Agent::PublishEvent(Event* _event)
+bool Agent::PublishEvent(std::tr1::shared_ptr<Event> _event)
 {
     m_hub->PublishEvent(_event);
 	return true;
 }
 
 
-bool Agent::PushEvent(Event* _event)
+bool Agent::PushEvent(std::tr1::shared_ptr<Event> _event)
 {
     m_queue.push(_event);
     return true;
 }
 
 
-const Event* Agent::PopEvent()
+const std::tr1::shared_ptr<Event> Agent::PopEvent()
 {
-    Event* event = m_queue.front(); 
+    std::tr1::shared_ptr<Event> event = m_queue.front(); 
     m_queue.pop();
     return event;
 }
