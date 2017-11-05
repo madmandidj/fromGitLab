@@ -5,7 +5,7 @@
 #include<fstream>
 #include<dlfcn.h>
 
-typedef Agent* (*CreateAgentFunc)(AgentAttr* _agentAttr, Hub* _hub);
+//typedef Agent* (*CreateAgentFunc)(AgentAttr* _agentAttr, Hub* _hub);
 
 using namespace std;
 
@@ -45,8 +45,8 @@ bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, Hub* _hub)
 
 bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 {
-	bool isEndOfAgent = false;
-	size_t position = 0;
+//	bool isEndOfAgent = false;
+//	size_t position = 0;
 	size_t leftPos = 0;
 	size_t rightPos = 0;
 	string temp_ID;
@@ -57,12 +57,18 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 	string temp_config;
 	string temp_str;
 	string soFilePath;
-	void* curSO;
+//	void* curSO;
 	CreateAgentFunc func;
 	
 	while(1)
 	{
 	    std::cout << "***New Agent***" << std::endl;
+	    temp_type = "";
+	    temp_room = "";
+	    temp_floor = "";
+	    temp_log = "";
+	    temp_config = "";
+	    temp_str = "";
 	    //Get next line and check if eof
 		std::getline(m_fileStream, m_line);
 		if(m_fileStream.eof())
@@ -126,30 +132,14 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 		}
 		if ("" == m_line)
 		{
-//		    soFilePath = m_soPath + temp_type;
-//		    curSO = dlopen(soFilePath.c_str(), RTLD_NOW);
-//		    func = (CreateAgentFunc)dlsym(curSO, "CreateAgent");
-//		    AgentAttr* agentAttr = new AgentAttr(temp_ID,
-//		                                            temp_type,
-//		                                            temp_room,
-//		                                            temp_floor);
-//		    if (0 == agentAttr)
-//		    {
-//		        //TODO: handle bad alloc
-//		    }
-//		    
-//		    Agent* agent = func(agentAttr, _hub);
-//		    if (0 == agent)
-//		    {
-//		        //TODO: handle bad alloc
-//		    }
-//		    
-//		    std::cout << "agent ID = "<< agent->GetID() << std::endl;
-//		    
-//		    _agents.push_back(agent);
-		    //TODO: Open relevant .so file
-		    //TODO: Create Agent
-		    //TODO: Add to Agent container
+		    func = GetCreateAgentFunc(temp_type);
+
+            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);            
+
+		    _agents.push_back(agent);
+		    
+		    dlclose(m_so);
+		    
 		    continue;
 		}
 		
@@ -176,6 +166,7 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 		}
 		else
 		{
+		    //REDUNDANT
 		    continue;
 		}
 		
@@ -187,9 +178,14 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 		}
 		if ("" == m_line)
 		{
-		    //TODO: Open relevant .so file
-		    //TODO: Create Agent
-		    //TODO: Add to Agent container
+		    func = GetCreateAgentFunc(temp_type);
+
+            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);            
+
+		    _agents.push_back(agent);
+		    
+		    dlclose(m_so);
+
 		    continue;
 		}
 		
@@ -216,42 +212,53 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 		}
 		if ("" == m_line)
 		{
-		    soFilePath = m_soPath + temp_type + ".so";
-		    curSO = dlopen(soFilePath.c_str(), RTLD_NOW);
-		    func = (CreateAgentFunc)dlsym(curSO, "CreateAgent");
-		    AgentAttr* agentAttr = new AgentAttr(temp_ID,
-		                                            temp_type,
-		                                            temp_room,
-		                                            temp_floor);
-		    if (0 == agentAttr)
-		    {
-		        //TODO: handle bad alloc
-		    }
-		    
-		    Agent* agent = func(agentAttr, _hub);
-		    if (0 == agent)
-		    {
-		        //TODO: handle bad alloc
-		    }
-		    
-		    std::cout << "agent ID = " << agent->GetID() << std::endl;
-		    
+            func = GetCreateAgentFunc(temp_type);
+
+            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);            
+
 		    _agents.push_back(agent);
-		    //TODO: Open relevant .so file
-		    //TODO: Create Agent
-		    //TODO: Add to Agent container
+		    
+		    dlclose(m_so);
 		    continue;
 		}
 	}
+	return true;
 }
 
 
-bool ConfigLoader::LoadSharedObject()
+CreateAgentFunc ConfigLoader::GetCreateAgentFunc(std::string _type)
 {
-    
-    return true;
+    std::string soFilePath;
+    soFilePath = m_soPath + _type + ".so";
+    m_so = dlopen(soFilePath.c_str(), RTLD_NOW);
+    CreateAgentFunc func = (CreateAgentFunc)dlsym(m_so, "CreateAgent");
+		    
+    return func;
 }
 
 
+
+Agent* ConfigLoader::CreateAgent(CreateAgentFunc _func,
+                                    Hub* _hub, 
+                                    std::string _ID, 
+                                    std::string _type, 
+                                    std::string _room, 
+                                    std::string _floor, 
+                                    std::string _log, 
+                                    std::string _config)
+{
+    AgentAttr* agentAttr = new AgentAttr(_ID, _type, _room, _floor, _log, _config);
+    if (0 == agentAttr)
+    {
+        //TODO: handle bad alloc
+    }
+    Agent* agent = _func(agentAttr, _hub);
+    if (0 == agent)
+    {
+        //TODO: handle bad alloc
+    }
+    
+    return agent;
+}
 
 

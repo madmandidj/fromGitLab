@@ -1,11 +1,12 @@
 #ifndef __SMART_HOME_H__
-#endif  __SMART_HOME_H__
+#define  __SMART_HOME_H__
 
 #include<string>
 #include<vector>
 
 class Hub;
 class ConfigLoader;
+class Agent;
 
 class SmartHome
 {
@@ -16,6 +17,7 @@ public:
     void Run();
     void Quit();
     void SetLivePrintMode(bool _shouldLivePrint);
+    size_t GetNumOfAgents() const;
 
 protected:
 

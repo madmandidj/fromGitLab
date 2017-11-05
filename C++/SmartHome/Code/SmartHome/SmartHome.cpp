@@ -23,14 +23,15 @@ SmartHome::SmartHome(std::string _soPath, std::string _iniPath)
 
 SmartHome::~SmartHome()
 {
+    m_agentContainer.clear();
     delete m_hub;
     delete m_configLoader;
 }
 
 
-SmartHome::LoadSmartHome()
+void SmartHome::LoadSmartHome()
 {
-    m_configLoader->LoadConfig();
+    m_configLoader->LoadConfig(m_agentContainer, m_hub);
 }
 
 
@@ -52,7 +53,10 @@ void SmartHome::SetLivePrintMode(bool _shouldLivePrint)
 }
 
 
-
+size_t SmartHome::GetNumOfAgents() const
+{
+    return m_agentContainer.size();
+}
 
 
 
