@@ -3,6 +3,7 @@
 #include "../AgentAttr/AgentAttr.h"
 #include "../Event/Event.h"
 #include "../EventAttr/EventAttr.h"
+//#include "../Payload/Payload.h"
 #include<string>
 #include<queue>
 #include<pthread.h>
@@ -56,16 +57,32 @@ bool Agent::Unsubscribe(std::string _type, std::string _room, std::string _floor
 }	
 
 
-Event* Agent::GenerateEvent()
+Event* Agent::GenerateEvent(std::string _timestamp,
+                            std::string _type,
+                            std::string _room,
+                            std::string _floor)
 {
-	EventAttr* eventAttr = GenerateEventAttr();
-	if (0 == eventAttr)
+//	EventAttr* eventAttr = GenerateEventAttr(std::string _timestamp,
+//                                            std::string _type,
+//                                            std::string _room,
+//                                            std::string _floor);
+//	if (0 == eventAttr)
+//	{
+//	    //TODO: handle bad alloc
+//	}
+	
+	
+	
+	Event* event = new Event(_timestamp,
+                            _type,
+                            _room,
+                            _floor);
+	if (0 == event)
 	{
-	    //TODO: handle bad alloc
+	    //TODO: handl bad alloc
 	}
 	
-	Event* event = new Event(eventAttr);
-	
+	return event;
 }
 
 

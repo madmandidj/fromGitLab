@@ -9,6 +9,7 @@ class Hub;
 class AgentAttr;
 class Event;
 class EventAttr;
+//class Payload;
 
 
 class Agent
@@ -18,7 +19,10 @@ public:
 	Agent(AgentAttr* _attr, Hub* _hub);
 	bool Subscribe(std::string _type, std::string _room, std::string _floor);
 	bool Unsubscribe(std::string _type, std::string _room, std::string _floor);
-	Event* GenerateEvent();
+	Event* GenerateEvent(std::string _timestamp,
+            std::string _type,
+            std::string _room,
+            std::string _floor);
 	bool PublishEvent(Event* _event);
 	bool PushEvent(Event* _event);
 	const Event* PopEvent();
@@ -29,7 +33,7 @@ public:
 	const std::string& GetFloor() const;
 	const std::string& GetLog() const;
 	const std::string& GetConfig() const;
-	virtual EventAttr* GenerateEventAttr(std::string _type, std::string _room, std::string _floor) = 0;
+//	EventAttr* GenerateEventAttr(std::string _type, std::string _room, std::string _floor);
 //	virtual Event* ReceiveEvent()= 0;
 	
 private:

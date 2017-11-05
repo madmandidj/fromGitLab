@@ -14,6 +14,8 @@ Event::Event(std::string _timestamp,
     }
     
     m_attributes = eventAttr;
+    
+    m_payload = "payload";
 }
 
 Event(const EventAttr* _eventAttr)
@@ -31,6 +33,12 @@ Event::~Event()
 EventAttr* Event::GetAttributes() const
 {
     return m_attributes;
+}
+
+
+Payload_t* Event::GetPayload() const
+{
+    return m_payload;
 }
 
 

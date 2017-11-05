@@ -5,6 +5,8 @@
 
 class EventAttr;
 
+typedef Payload_t std::string;
+
 class Event
 {
 public:
@@ -15,6 +17,7 @@ public:
             std::string _floor);
     Event(const EventAttr* _eventAttr);
     EventAttr* GetAttributes() const;
+    Payload_t* GetPayload() const;
     
 protected:
 
@@ -23,6 +26,7 @@ private:
     Event(const Event& _event);
     Event& operator=(const Event& _event);    
     EventAttr*  m_attributes;
+    Payload_t   m_payload;
     //TODO: Payload* // implemented by user
 };
 
