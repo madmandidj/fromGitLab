@@ -13,8 +13,8 @@ public:
 				std::string _type,
 				std::string _room,
 				std::string _floor,
-				std::string _log,
-				std::string _config);	
+				std::string _log = "",
+				std::string _config = "");	
 	const std::string& GetID() const;
 	const std::string& GetType() const;
 	const std::string& GetRoom() const;

@@ -18,7 +18,7 @@ class ConfigLoader
 //		bool LoadConfig();
 		
 	private:
-		bool LoadAgents();
+		bool LoadAgents(std::vector<Agent*>& _agents, Hub* _hub);
 		bool LoadSharedObject();
 		
         std::string 	m_soPath;
