@@ -35,11 +35,13 @@ Agent::~Agent()
 
 bool Agent::Subscribe(std::string _type, std::string _room, std::string _floor)
 {
-	EventAttr* eventAttr = new EventAttr("", _type, _room, _floor);
-	if (0 == eventAttr)
-	{
-		//TODO: handle bad alloc
-	}
+//	EventAttr* eventAttr = new EventAttr("", _type, _room, _floor);
+//	if (0 == eventAttr)
+//	{
+//		//TODO: handle bad alloc
+//	}
+
+    EventAttr eventAttr("", _type, _room, _floor);
 	
 	return m_hub->AddSubscription(eventAttr, this);
 }
@@ -47,11 +49,13 @@ bool Agent::Subscribe(std::string _type, std::string _room, std::string _floor)
 
 bool Agent::Unsubscribe(std::string _type, std::string _room, std::string _floor)
 {
-	EventAttr* eventAttr = new EventAttr("", _type, _room, _floor);
-	if (0 == eventAttr)
-	{
-		//TODO: handle bad alloc
-	}
+//	EventAttr* eventAttr = new EventAttr("", _type, _room, _floor);
+//	if (0 == eventAttr)
+//	{
+//		//TODO: handle bad alloc
+//	}
+	
+	EventAttr eventAttr("", _type, _room, _floor);
 	
 	return m_hub->RemoveSubscription(eventAttr, this);
 }	

@@ -2,8 +2,9 @@
 #define __EVENT_H__
 
 #include <string>
+#include "../EventAttr/EventAttr.h"
 
-class EventAttr;
+//class EventAttr;
 
 typedef std::string Payload_t;
 
@@ -20,7 +21,7 @@ public:
     const std::string GetType() const;
     const std::string GetRoom() const;
     const std::string GetFloor() const;
-    EventAttr* GetAttributes() const;
+    const EventAttr& GetAttributes() const;
     Payload_t* GetPayload() const;
     
 protected:
@@ -29,7 +30,8 @@ protected:
 private:
     Event(const Event& _event);
     Event& operator=(const Event& _event);    
-    EventAttr*  m_attributes;
+//    EventAttr*  m_attributes;
+    EventAttr    m_attributes;
     Payload_t*   m_payload;
     //TODO: Payload* // implemented by user
 };

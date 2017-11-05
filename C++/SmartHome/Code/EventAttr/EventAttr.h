@@ -14,11 +14,19 @@ public:
 				std::string _type,
 				std::string _room,
 				std::string _floor);
+	void SetTimeStamp(const std::string _time);
+	void SetType(const std::string _type);
+	void SetRoom(const std::string _room);
+	void SetFloor(const std::string _floor);
 	const std::string& GetTimestamp()const; 
 	const std::string& GetType()const;
 	const std::string& GetRoom()const;
 	const std::string& GetFloor()const;
 	EventAttr& operator=(const EventAttr& _eventAttr);
+//    EventAttr& operator=(std::string _timestamp,
+//				            std::string _type,
+//				            std::string _room,
+//				            std::string _floor);
 	bool operator==(const EventAttr& _eventAttr) const;
 	bool operator<(const EventAttr& _eventAttr) const;
 
