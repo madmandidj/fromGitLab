@@ -23,9 +23,11 @@ public:
             std::string _type,
             std::string _room,
             std::string _floor);
+            
 	bool PublishEvent(Event* _event);
 	bool PushEvent(Event* _event);
 	const Event* PopEvent();
+	
 	std::string GenerateTimestamp() const;
 	const std::string& GetID() const;
 	const std::string& GetType() const;
@@ -33,6 +35,10 @@ public:
 	const std::string& GetFloor() const;
 	const std::string& GetLog() const;
 	const std::string& GetConfig() const;
+	
+	virtual void DoOnEvent(const Event* _event) = 0;
+	
+//	virtual CreateAgent(AgentAttr* _attr) = 0;
 //	EventAttr* GenerateEventAttr(std::string _type, std::string _room, std::string _floor);
 //	virtual Event* ReceiveEvent()= 0;
 	

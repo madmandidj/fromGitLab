@@ -15,18 +15,41 @@ Event::Event(std::string _timestamp,
     
     m_attributes = eventAttr;
     
-    m_payload = "payload";
+//    m_payload = new Payload;
 }
 
-Event(const EventAttr* _eventAttr)
+Event::Event(const EventAttr* _eventAttr)
 {
-    m_attributes = _eventAttr;
+    m_attributes = (EventAttr*)_eventAttr;
 }
 
 
 Event::~Event()
 {
     delete m_attributes;
+}
+
+const std::string Event::GetTimestamp() const
+{
+    return m_attributes->GetTimestamp();
+}
+
+
+const std::string Event::GetType() const
+{
+    return m_attributes->GetType();
+}
+
+
+const std::string Event::GetRoom() const
+{
+    return m_attributes->GetRoom();
+}
+
+
+const std::string Event::GetFloor() const
+{
+    return m_attributes->GetFloor();
 }
 
 

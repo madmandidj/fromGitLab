@@ -5,7 +5,7 @@
 
 class EventAttr;
 
-typedef Payload_t std::string;
+typedef std::string Payload_t;
 
 class Event
 {
@@ -16,6 +16,10 @@ public:
             std::string _room,
             std::string _floor);
     Event(const EventAttr* _eventAttr);
+    const std::string GetTimestamp() const;
+    const std::string GetType() const;
+    const std::string GetRoom() const;
+    const std::string GetFloor() const;
     EventAttr* GetAttributes() const;
     Payload_t* GetPayload() const;
     
@@ -26,7 +30,7 @@ private:
     Event(const Event& _event);
     Event& operator=(const Event& _event);    
     EventAttr*  m_attributes;
-    Payload_t   m_payload;
+    Payload_t*   m_payload;
     //TODO: Payload* // implemented by user
 };
 

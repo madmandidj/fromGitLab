@@ -88,19 +88,23 @@ Event* Agent::GenerateEvent(std::string _timestamp,
 
 bool Agent::PublishEvent(Event* _event)
 {
-	
+    m_hub->PublishEvent(_event);
+	return true;
 }
 
 
 bool Agent::PushEvent(Event* _event)
 {
     m_queue.push(_event);
+    return true;
 }
 
 
 const Event* Agent::PopEvent()
 {
-    m_queue.pop(); 
+    Event* event = m_queue.front(); 
+    m_queue.pop();
+    return event;
 }
 
 

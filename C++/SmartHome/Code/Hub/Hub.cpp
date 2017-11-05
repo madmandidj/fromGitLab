@@ -104,6 +104,14 @@ size_t Hub::PublishEvent(Event* _event) //TODO: returns number of distributions
     firstIt = agentRange.first;
     secondIt = agentRange.second;
     
+    if (true == GetLivePrintMode())
+    {
+        std::cout << "Hub received: " << _event->GetType() << 
+                    ", at: " << _event->GetTimestamp() <<
+                    ", from room: " << _event->GetRoom() <<
+                    ", from floor:" << _event->GetFloor() << std::endl;
+    }
+    
     if (firstIt == secondIt)
     {
         std::cout << "No subscribers to this event" << std::endl;
@@ -115,44 +123,30 @@ size_t Hub::PublishEvent(Event* _event) //TODO: returns number of distributions
         while(firstIt != secondIt)
         {
             agentPtr = firstIt->second;
-//            if (agentPtr->GetID() == _agent->GetID())
-//            {
-//                m_subscriptions.erase(firstIt);
-//                std::cout << "Subscription removed" << std::endl;
-//                return true;
-//            }
             agentPtr->PushEvent(_event);
             ++firstIt;
             ++count;
+            if (true == GetLivePrintMode())
+            {
+                std::cout << "Hub published event to: " << agentPtr->GetID() << std::endl;
+            }
         }
         std::cout << "Even published" << count << " times" << std::endl;
     }
-    
-//    std::cout << "No matching subscription in the existing bucket" << std::endl;
+
     return count;
-    
-    /*
-    Psuedo code:
-        Get EventAttr
-        For (number of event subscribers)
-        {
-            ++count;
-            publishEvent(Agent*, Event*);
-        }
-        
-    */
 }
 
 
 void Hub::SetLivePrintMode(bool _shouldLivePrint)
 {
-
+    m_livePrintMode = _shouldLivePrint;
 }
 
 
 bool Hub::GetLivePrintMode()
 {
-
+    return m_livePrintMode;
 }
 
 

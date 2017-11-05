@@ -6,6 +6,10 @@ EventAttr::~EventAttr()
     //Empty
 }
 
+EventAttr::EventAttr()
+{
+    //Empty
+}
 
 EventAttr::EventAttr(std::string _timestamp,
 				std::string _type,
@@ -13,10 +17,20 @@ EventAttr::EventAttr(std::string _timestamp,
 				std::string _floor)
 				: m_timestamp(_timestamp),
 				    m_type(_type),
-				    m_room(_room),
-				    m_floor(_floor)
+				    m_floor(_floor),
+				    m_room(_room)				    
 {
     //Empty
+}
+
+EventAttr& EventAttr::operator=(const EventAttr& _eventAttr)
+{
+    m_timestamp = _eventAttr.GetTimestamp();
+    m_type = _eventAttr.GetType();
+    m_floor = _eventAttr.GetFloor();
+    m_room = _eventAttr.GetRoom();
+    
+    return *this;
 }
 
 

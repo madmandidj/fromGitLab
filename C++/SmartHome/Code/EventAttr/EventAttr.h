@@ -9,6 +9,7 @@ class EventAttr
 {
 public:
 	virtual ~EventAttr();
+	EventAttr();
 	EventAttr(std::string _timestamp,
 				std::string _type,
 				std::string _room,
@@ -17,6 +18,7 @@ public:
 	const std::string& GetType()const;
 	const std::string& GetRoom()const;
 	const std::string& GetFloor()const;
+	EventAttr& operator=(const EventAttr& _eventAttr);
 	bool operator==(const EventAttr& _eventAttr) const;
 	bool operator<(const EventAttr& _eventAttr) const;
 
