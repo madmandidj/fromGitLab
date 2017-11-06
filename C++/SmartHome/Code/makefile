@@ -1,4 +1,4 @@
-FLAGS = -g -ansi -pedantic -Wall -Wconversion -m32
+FLAGS = -g -ansi -pedantic -Wall -Wconversion -m32 -pthread
 AGENT_PATH = ./Agent/
 AGENT_ATTR_PATH = ./AgentAttr/
 CONFLOAD_PATH = ./ConfigLoader/

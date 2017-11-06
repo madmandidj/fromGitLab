@@ -22,17 +22,27 @@ HITACHI_SPRINK2000::~HITACHI_SPRINK2000()
 
 void HITACHI_SPRINK2000::DoOnEvent(std::tr1::shared_ptr<Event> _event)
 {
-    std::cout << "Agent" << GetID() << "received event of type " << _event->GetType()
-                << "---> turning on sprinklers" << std::endl;
+    std::cout << "Agent = " << GetID() << "received event" << std::endl;
+    std::cout << "Room = " << GetRoom() << std::endl;
+    std::cout << "Floor = " << GetFloor() << std::endl;
+    std::cout << "Log = " << GetLog() << std::endl;
+    std::cout << "Config = " << GetConfig() << std::endl;
+    std::cout << "Type = " << GetType() << std::endl;
+//    std::cout << "Agent" << GetID() << "received event of type " << _event->GetType()
+//                << "---> turning on sprinklers" << std::endl;
 }
 
 void HITACHI_SPRINK2000::DoRoutine()
 {
-    sleep(2);
+//    sleep(2);
+    while(1)
+    {
+        std::tr1::shared_ptr<Event> event = PopEvent();
     
-    std::tr1::shared_ptr<Event> event = PopEvent();
-    
-    DoOnEvent(event);                           
+        DoOnEvent(event);
+        
+//        sleep(2);
+    }                          
 }
 
 extern "C" HITACHI_SPRINK2000* CreateAgent(AgentAttr* _agentAttr, Hub* _hub)

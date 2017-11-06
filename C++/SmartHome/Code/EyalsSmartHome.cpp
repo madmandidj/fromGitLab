@@ -8,6 +8,8 @@ using namespace std;
 
 int main()
 {
+    string finishProgram;
+    
     string curDirName = get_current_dir_name();
     
     string soPath = curDirName + "/SO/";
@@ -22,7 +24,9 @@ int main()
     
     smrHome->Run();
     
-    cout << smrHome->GetNumOfAgents() << endl;
+//    cout << smrHome->GetNumOfAgents() << endl;
+
+    cin >> finishProgram;
     
     delete smrHome;
                                 

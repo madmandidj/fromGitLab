@@ -91,10 +91,12 @@ bool Agent::PublishEvent(std::tr1::shared_ptr<Event> _event)
 
 bool Agent::PushEvent(std::tr1::shared_ptr<Event> _event)
 {
+    std::cout << std::endl << "********* In Agent::PushEvent:" << __LINE__ << std::endl << std::endl;
     pthread_mutex_lock(&m_mutex);
 
-    if (m_maxQueueSize < m_queue.size())
+    if (m_maxQueueSize > m_queue.size())
     {
+        std::cout << std::endl << "********* In Agent::PushEvent:" << __LINE__ << std::endl << std::endl;
         m_queue.push(_event);
         
         pthread_cond_signal(&m_condVar);
@@ -109,9 +111,14 @@ bool Agent::PushEvent(std::tr1::shared_ptr<Event> _event)
 }
 
 
-const std::tr1::shared_ptr<Event> Agent::PopEvent()
+//const std::tr1::shared_ptr<Event> Agent::PopEvent()
+std::tr1::shared_ptr<Event> Agent::PopEvent()
 {
+    std::cout << std::endl << "********* In Agent::PopEvent:" << __LINE__ << std::endl << std::endl;
+    
     pthread_mutex_lock(&m_mutex);
+    
+    std::cout << std::endl << "********* In Agent::PopEvent:" << __LINE__ << std::endl << std::endl;
     
     while (0 == m_queue.size())
     {
@@ -120,9 +127,15 @@ const std::tr1::shared_ptr<Event> Agent::PopEvent()
     
     std::tr1::shared_ptr<Event> event = m_queue.front(); 
     
+//    std::cout << "here" << std::endl;
+    
     m_queue.pop();
     
+//    std::cout << "here" << std::endl;
+    
     pthread_mutex_unlock(&m_mutex);
+    
+//    std::cout << "here" << std::endl;
     
     return event;
 }
@@ -185,7 +198,17 @@ size_t Agent::GetMaxQueueSize()
 }
 
 
+void Agent::CreateAgentThread()
+{
+    pthread_create(&m_thread, NULL, &AgentTrampoline, this);
+}
 
+void* Agent::AgentTrampoline(void* _agent)
+{
+    ((Agent*)_agent)->DoRoutine();
+    
+    return 0;
+}
 
 
 

@@ -2,6 +2,7 @@
 #include "../../../Agent/Agent.h"
 #include "../../../Event/Event.h"
 #include<iostream> //REMOVE
+#include<unistd.h>
 
 
 SONY_SD101::SONY_SD101(AgentAttr* _agentAttr, Hub* _hub) : Agent::Agent(_agentAttr, _hub)
@@ -32,11 +33,15 @@ void SONY_SD101::DoOnEvent(std::tr1::shared_ptr<Event>)
 
 void SONY_SD101::DoRoutine()
 {
-    std::tr1::shared_ptr<Event> event(new Event(GenerateTimestamp(),
-                                                GetType(),
-                                                GetRoom(),
-                                                GetFloor()));
-    PublishEvent(event);                                            
+    while(1)
+    {
+        std::tr1::shared_ptr<Event> event(new Event(GenerateTimestamp(),
+                                                    GetType(),
+                                                    GetRoom(),
+                                                    GetFloor()));
+        PublishEvent(event);
+        sleep(3);                                            
+    }
 }
 
 
