@@ -27,8 +27,6 @@ private:
     Hub(const Hub& _hub);
     Hub& operator=(const Hub& _hub);
     std::multimap<EventAttr, Agent*>    m_subscriptions;
-//    std::multimap<std::string, Event*>   m_liveEvents;
-//    std::multimap<std::string, std::tr1::shared_ptr<Event> >   m_liveEvents;
     bool    m_livePrintMode;
 };
 

@@ -64,10 +64,6 @@ std::tr1::shared_ptr<Event> Agent::GenerateEvent(std::string _timestamp,
                             std::string _room,
                             std::string _floor)
 {	
-//	Event* event = new Event(_timestamp,
-//                            _type,
-//                            _room,
-//                            _floor);
     std::tr1::shared_ptr<Event> event(new Event(_timestamp,
                             _type,
                             _room,
@@ -98,9 +94,7 @@ bool Agent::PushEvent(std::tr1::shared_ptr<Event> _event)
     {
         std::cout << std::endl << "********* In Agent::PushEvent:" << __LINE__ << std::endl << std::endl;
         m_queue.push(_event);
-        
         pthread_cond_signal(&m_condVar);
-        
         pthread_mutex_unlock(&m_mutex);
         return true;
     }
@@ -111,13 +105,10 @@ bool Agent::PushEvent(std::tr1::shared_ptr<Event> _event)
 }
 
 
-//const std::tr1::shared_ptr<Event> Agent::PopEvent()
 std::tr1::shared_ptr<Event> Agent::PopEvent()
 {
     std::cout << std::endl << "********* In Agent::PopEvent:" << __LINE__ << std::endl << std::endl;
-    
     pthread_mutex_lock(&m_mutex);
-    
     std::cout << std::endl << "********* In Agent::PopEvent:" << __LINE__ << std::endl << std::endl;
     
     while (0 == m_queue.size())
@@ -126,17 +117,9 @@ std::tr1::shared_ptr<Event> Agent::PopEvent()
     }
     
     std::tr1::shared_ptr<Event> event = m_queue.front(); 
-    
-//    std::cout << "here" << std::endl;
-    
     m_queue.pop();
-    
-//    std::cout << "here" << std::endl;
-    
     pthread_mutex_unlock(&m_mutex);
-    
-//    std::cout << "here" << std::endl;
-    
+
     return event;
 }
 

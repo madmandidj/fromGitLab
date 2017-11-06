@@ -8,14 +8,13 @@
 
 Hub::~Hub()
 {
-    //TODO: Destroy Agents
-    //TODO: Destroy remaining live events
+    //Empty
 }
 
 
 Hub::Hub() : m_livePrintMode(true)
 {
- // Empty
+    //Empty
 }
 
 
@@ -123,7 +122,7 @@ size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event) //TODO: returns num
         while(firstIt != secondIt)
         {
             agentPtr = firstIt->second;
-            agentPtr->PushEvent(_event); //TODO: uncomment this when multithreading works
+            agentPtr->PushEvent(_event); 
             ++firstIt;
             ++count;
             if (true == GetLivePrintMode())

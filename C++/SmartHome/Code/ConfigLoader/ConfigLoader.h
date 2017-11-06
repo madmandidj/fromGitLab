@@ -3,9 +3,7 @@
 
 #include <string>
 #include <fstream>
-//#include <map>
 #include<vector>
-//#include<dlfcn.h>
 
 class Hub;
 class Agent;
@@ -19,7 +17,6 @@ class ConfigLoader
 		ConfigLoader(std::string _soPath, std::string _iniPath);
 		~ConfigLoader();
 		bool LoadConfig(std::vector<Agent*>& _agents, Hub* _hub); //TODO: Make AgentContainer class
-//		bool LoadConfig();
 		
 	private:
 		bool LoadAgents(std::vector<Agent*>& _agents, Hub* _hub);
@@ -37,12 +34,30 @@ class ConfigLoader
 		std::string		    m_line;
 		size_t			    m_linePosition;
 		std::ifstream 	    m_fileStream;
-//		void*               m_so;
-		std::vector<void*>  m_soContainer;
-		
-//		AgentFactory* 	m_agentFactory;
-		
+		std::vector<void*>  m_soContainer;	
 };
 
 #endif //#ifndef __CONFIGPARSER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

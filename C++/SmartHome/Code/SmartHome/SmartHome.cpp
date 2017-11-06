@@ -43,7 +43,6 @@ void SmartHome::Run()
     
     while(leftIt != rightIt)
     {
-//        (*leftIt)->DoRoutine();
         (*leftIt)->CreateAgentThread();
         ++leftIt;
     }    
@@ -52,7 +51,7 @@ void SmartHome::Run()
 
 void SmartHome::Quit()
 {
-
+    //TODO: implement if needed
 }
 
 

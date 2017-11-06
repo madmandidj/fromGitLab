@@ -23,8 +23,6 @@ int main()
     smrHome->LoadSmartHome();
     
     smrHome->Run();
-    
-//    cout << smrHome->GetNumOfAgents() << endl;
 
     cin >> finishProgram;
     

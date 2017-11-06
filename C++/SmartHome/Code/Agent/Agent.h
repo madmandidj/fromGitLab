@@ -24,7 +24,6 @@ public:
             std::string _floor);
     bool PublishEvent(std::tr1::shared_ptr<Event> _event);
 	bool PushEvent(std::tr1::shared_ptr<Event> _event);
-//	const std::tr1::shared_ptr<Event> PopEvent();
     std::tr1::shared_ptr<Event> PopEvent();
 	std::string GenerateTimestamp() const;
 	const std::string& GetID() const;

@@ -6,10 +6,12 @@ EventAttr::~EventAttr()
     //Empty
 }
 
+
 EventAttr::EventAttr()
 {
     //Empty
 }
+
 
 EventAttr::EventAttr(std::string _timestamp,
 				std::string _type,
@@ -23,6 +25,7 @@ EventAttr::EventAttr(std::string _timestamp,
     //Empty
 }
 
+
 EventAttr& EventAttr::operator=(const EventAttr& _eventAttr)
 {
     m_timestamp = _eventAttr.GetTimestamp();
@@ -32,19 +35,6 @@ EventAttr& EventAttr::operator=(const EventAttr& _eventAttr)
     
     return *this;
 }
-
-//EventAttr& EventAttr::operator=(std::string _timestamp,
-//				            std::string _type,
-//				            std::string _room,
-//				            std::string _floor)
-//{
-//    m_timestamp = _timestamp;
-//    m_type = _type;
-//    m_floor = _room;
-//    m_room = _floor;
-//    
-//    return *this;
-//}
 
 
 void EventAttr::SetTimeStamp(const std::string _time)
@@ -133,6 +123,7 @@ bool EventAttr::operator<(const EventAttr& _eventAttr) const
     
     return 0 < compareResult ? true : false;
 }
+
 
 
 
