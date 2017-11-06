@@ -1,13 +1,20 @@
 #include "SONY_SD101.h"
 #include "../../../Agent/Agent.h"
+#include "../../../AgentAttr/AgentAttr.h"
 #include "../../../Event/Event.h"
 #include<iostream> //REMOVE
 #include<unistd.h>
+#include<stdio.h>
 
 
 SONY_SD101::SONY_SD101(AgentAttr* _agentAttr, Hub* _hub) : Agent::Agent(_agentAttr, _hub)
 {
-    //Empty
+    if (_agentAttr->GetConfig() != "")
+	{
+		std::string config = _agentAttr->GetConfig();
+		sscanf(config.c_str(), "%u", &m_sleepSec);
+//		std::cout << m_sleepSec << std::endl;
+	}
 }
 
 
@@ -32,7 +39,7 @@ void SONY_SD101::DoRoutine()
                                                     GetRoom(),
                                                     GetFloor()));
         PublishEvent(event);
-        sleep(3);                                            
+        sleep(m_sleepSec);   //TODO: change this to m_sleepSec, and check why doesnt seem to work
     }
 }
 

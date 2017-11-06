@@ -1,15 +1,44 @@
 #include "HITACHI_SPRINK2000.h"
 #include "../../../Agent/Agent.h"
+#include "../../../AgentAttr/AgentAttr.h"
 #include "../../../Event/Event.h"
 #include<unistd.h>
+#include<string>
 #include<iostream>
 
 
 HITACHI_SPRINK2000::HITACHI_SPRINK2000(AgentAttr* _agentAttr, Hub* _hub) : Agent::Agent(_agentAttr, _hub)
 {
-    Subscribe("FIRE", "room_2_a", "1");
-    Subscribe("FIRE", "room_2_a", "1");
-    Subscribe("DOOR_OPEN", "room_2_a", "1");
+	if (_agentAttr->GetConfig() != "")
+	{
+		std::string config = _agentAttr->GetConfig();
+		std::string eventType;
+		std::string eventRoom;
+		std::string eventFloor;
+		size_t curPos = 0;
+		size_t nextPos = 0;
+		while (std::string::npos != nextPos)
+		{
+			nextPos = config.find_first_of(",", curPos);
+			eventType = config.substr(curPos, nextPos-curPos);
+			curPos = nextPos + 1;
+			
+			nextPos = config.find_first_of(",", curPos);
+			eventRoom = config.substr(curPos, nextPos-curPos);
+			curPos = nextPos + 1;
+			
+			nextPos = config.find_first_of(",", curPos);
+			eventFloor = config.substr(curPos, nextPos-curPos);
+			curPos = nextPos + 1;
+			
+			Subscribe(eventType.c_str(), eventRoom.c_str(), eventFloor.c_str());
+		}
+		
+	}
+	
+//    Subscribe("FIRE", "room_2_a", "1");
+//    Subscribe("FIRE", "room_2_a", "1");
+//    Subscribe("DOOR_OPEN", "room_2_a", "1");
 }
 
 

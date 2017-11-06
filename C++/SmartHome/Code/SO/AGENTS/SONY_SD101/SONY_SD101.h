@@ -19,7 +19,7 @@ protected:
 
 
 private:
-    
+    unsigned int m_sleepSec;
 
 };
 

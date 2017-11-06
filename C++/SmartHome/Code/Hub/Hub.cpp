@@ -141,6 +141,7 @@ size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event) //TODO: returns num
     
     if (m_livePrintMode)
     {
+    	std::cout << std::endl;
         std::cout << "Hub: Received " << _event->GetType() << 
                     " " << _event->GetTimestamp() <<
                     " " << _event->GetRoom() << 

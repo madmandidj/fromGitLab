@@ -226,7 +226,6 @@ CreateAgentFunc ConfigLoader::GetCreateAgentFunc(std::string _type)
 }
 
 
-
 Agent* ConfigLoader::CreateAgent(CreateAgentFunc _func,
                                     Hub* _hub, 
                                     std::string _ID, 
