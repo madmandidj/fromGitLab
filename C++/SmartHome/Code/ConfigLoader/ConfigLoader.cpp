@@ -44,6 +44,8 @@ bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, Hub* _hub)
 	
 	LoadAgents(_agents, _hub);
 	
+	std::cout << "ConfigLoader: Finished Loading Agents" << std::endl << std::endl;
+
 	return true;
 }
 
@@ -64,7 +66,6 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 	
 	while(1)
 	{
-	    std::cout << "***New Agent***" << std::endl;
 	    temp_type = "";
 	    temp_room = "";
 	    temp_floor = "";
@@ -88,7 +89,6 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 		}
 		rightPos = m_line.find_first_of("]", leftPos + 1);
 		temp_ID = m_line.substr(leftPos + 1, rightPos - leftPos - 1);
-		cout << temp_ID << endl;
 		
 		//Get Type
 		std::getline(m_fileStream, m_line);
@@ -100,7 +100,6 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 			return false;
 		}
 		temp_type = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
-		cout << temp_type << endl;
 		
 		//Get Room
 		std::getline(m_fileStream, m_line);
@@ -112,7 +111,6 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 			return false;
 		}
 		temp_room = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
-		cout << temp_room << endl;
 		
 		//Get Floor
 		std::getline(m_fileStream, m_line);
@@ -124,7 +122,6 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 			return false;
 		}
 		temp_floor = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
-		cout << temp_floor << endl;
 		
 		//Check if eof
 		std::getline(m_fileStream, m_line);
@@ -156,13 +153,11 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 		if (temp_str == "log")
 		{
 		    temp_log = m_line.substr(rightPos + 2, m_line.size() - rightPos + 2);
-		    cout << temp_log << endl;
 		}
 		//Check if config
 		else if(temp_str == "config")
 		{
 		    temp_config = m_line.substr(rightPos + 2, m_line.size() - rightPos + 2);
-		    cout << temp_config << endl;
 		}
 		else
 		{
@@ -199,7 +194,6 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 		if (temp_str == "config")
 		{
 		    temp_config = m_line.substr(rightPos + 2, m_line.size() - rightPos + 2);
-		    cout << temp_config << endl;
 		}
 		
 		std::getline(m_fileStream, m_line);

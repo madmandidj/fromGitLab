@@ -2,12 +2,14 @@
 #include "../../../Agent/Agent.h"
 #include "../../../Event/Event.h"
 #include<unistd.h>
-#include<iostream> //REMOVE
+#include<iostream>
 
 
 HITACHI_SPRINK2000::HITACHI_SPRINK2000(AgentAttr* _agentAttr, Hub* _hub) : Agent::Agent(_agentAttr, _hub)
 {
     Subscribe("FIRE", "room_2_a", "1");
+    Subscribe("FIRE", "room_2_a", "1");
+    Subscribe("DOOR_OPEN", "room_2_a", "1");
 }
 
 
@@ -19,10 +21,10 @@ HITACHI_SPRINK2000::~HITACHI_SPRINK2000()
 
 void HITACHI_SPRINK2000::DoOnEvent(std::tr1::shared_ptr<Event> _event)
 {
-    std::cout << "Agent: " << GetID() << " received a \"" << _event->GetType() << "\" event" << std::endl;
-    std::cout << "Time: " << _event->GetTimestamp() << std::endl;
-    std::cout << "Room: " << _event->GetRoom() << std::endl;
-    std::cout << "Floor: " << _event->GetFloor() << std::endl;
+    std::cout << "Agent: " << GetID() << " Received " << _event->GetType() << " ";
+    std::cout << _event->GetTimestamp() << " ";
+    std::cout << _event->GetRoom() << " ";
+    std::cout << _event->GetFloor() << std::endl;
 }
 
 void HITACHI_SPRINK2000::DoRoutine()

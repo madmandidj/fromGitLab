@@ -29,9 +29,14 @@ bool Hub::AddSubscription(const EventAttr _eventAttr, const Agent* _agent)
     secondIt = agentRange.second;
 
     if (firstIt == secondIt)
-    {
-        std::cout << "New subscription bucket created, subscription added" << std::endl;
+    {        
         m_subscriptions.insert(std::pair<EventAttr, Agent*>((EventAttr)_eventAttr, (Agent*)_agent));
+		if(m_livePrintMode)
+		{
+			std::cout << "Hub: " << _agent->GetID() <<" subscribed to " << _eventAttr.GetType() << " ";
+			std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
+		}
+		
     }
     else
     {
@@ -41,12 +46,22 @@ bool Hub::AddSubscription(const EventAttr _eventAttr, const Agent* _agent)
             agentPtr = firstIt->second;
             if (agentPtr->GetID() == _agent->GetID())
             {
-                std::cout << "Subscription already exists, returning false" << std::endl;
+				if(m_livePrintMode)
+				{
+					std::cout << "Hub: " << _agent->GetID() <<" ALREADY subscribed to " << _eventAttr.GetType() << " ";
+					std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
+				}
                 return false;
             }
             ++firstIt;
         }
-        std::cout << "New Subscription added to existing bucket" << std::endl;
+        
+		if(m_livePrintMode)
+		{
+			std::cout << "Hub: " << _agent->GetID() <<" subscribed to " << _eventAttr.GetType() << " ";
+			std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
+		}
+        
         m_subscriptions.insert(std::pair<EventAttr, Agent*>((EventAttr)_eventAttr, (Agent*)_agent));
     }   
 
@@ -66,7 +81,12 @@ bool Hub::RemoveSubscription(const EventAttr _eventAttr, const Agent* _agent)
 
     if (firstIt == secondIt)
     {
-        std::cout << "No matching subscription bucket" << std::endl;
+    	if(m_livePrintMode)
+		{
+			std::cout << "Hub: " << _agent->GetID() <<" not subscribed to " << _eventAttr.GetType() << " ";
+			std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
+		}
+//        std::cout << "No matching subscription bucket" << std::endl;
         return false;
     }
     else
@@ -78,14 +98,24 @@ bool Hub::RemoveSubscription(const EventAttr _eventAttr, const Agent* _agent)
             if (agentPtr->GetID() == _agent->GetID())
             {
                 m_subscriptions.erase(firstIt);
-                std::cout << "Subscription removed" << std::endl;
+//                std::cout << "Subscription removed" << std::endl;
+				if(m_livePrintMode)
+				{
+					std::cout << "Hub: " << _agent->GetID() <<" unsibscribed from " << _eventAttr.GetType() << " ";
+					std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
+				}
                 return true;
             }
             ++firstIt;
         }
     }
     
-    std::cout << "No matching subscription in the existing bucket" << std::endl;
+//    std::cout << "No matching subscription in the existing bucket" << std::endl;
+    if(m_livePrintMode)
+	{
+		std::cout << "Hub: " << _agent->GetID() <<" not subscribed to " << _eventAttr.GetType() << " ";
+		std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
+	}
     return false;
 }
 
@@ -103,12 +133,20 @@ size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event) //TODO: returns num
     firstIt = agentRange.first;
     secondIt = agentRange.second;
     
-    if (true == GetLivePrintMode())
+//    if(m_livePrintMode)
+//	{
+//		std::cout << "Hub: " << _agent->GetID() <<" not subscribed to " << _eventAttr.GetType() << " ";
+//		std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
+//	}
+    
+    if (m_livePrintMode)
     {
-        std::cout << "Hub received: " << _event->GetType() << 
-                    ", at: " << _event->GetTimestamp() <<
-                    ", from room: " << _event->GetRoom() <<
-                    ", from floor:" << _event->GetFloor() << std::endl;
+        std::cout << "Hub: Received " << _event->GetType() << 
+                    " " << _event->GetTimestamp() <<
+                    " " << _event->GetRoom() << 
+                    " " << _event->GetFloor() << ", ";
+//                    " " << _event->GetFloor() << std::endl;
+					
     }
     
     if (firstIt == secondIt)
@@ -119,18 +157,25 @@ size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event) //TODO: returns num
     else
     {
         Agent* agentPtr;
+        if (m_livePrintMode)
+        {
+        	std::cout << "Published to: ";
+        }
         while(firstIt != secondIt)
         {
             agentPtr = firstIt->second;
             agentPtr->PushEvent(_event); 
             ++firstIt;
             ++count;
-            if (true == GetLivePrintMode())
+            if (m_livePrintMode)
             {
-                std::cout << "Hub published event to: " << agentPtr->GetID() << std::endl;
+                std::cout << agentPtr->GetID() << ", ";
             }
         }
-        std::cout << "Event published" << count << " times" << std::endl;
+        if (m_livePrintMode)
+        {
+        	std::cout << "Event published " << count << " times" << std::endl;
+    	}
     }
 
     return count;

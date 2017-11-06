@@ -87,12 +87,10 @@ bool Agent::PublishEvent(std::tr1::shared_ptr<Event> _event)
 
 bool Agent::PushEvent(std::tr1::shared_ptr<Event> _event)
 {
-//    std::cout << std::endl << "********* In Agent::PushEvent:" << __LINE__ << std::endl << std::endl;
     pthread_mutex_lock(&m_mutex);
 
     if (m_maxQueueSize > m_queue.size())
     {
-//        std::cout << std::endl << "********* In Agent::PushEvent:" << __LINE__ << std::endl << std::endl;
         m_queue.push(_event);
         pthread_cond_signal(&m_condVar);
         pthread_mutex_unlock(&m_mutex);
@@ -107,9 +105,7 @@ bool Agent::PushEvent(std::tr1::shared_ptr<Event> _event)
 
 std::tr1::shared_ptr<Event> Agent::PopEvent()
 {
-//    std::cout << std::endl << "********* In Agent::PopEvent:" << __LINE__ << std::endl << std::endl;
     pthread_mutex_lock(&m_mutex);
-//    std::cout << std::endl << "********* In Agent::PopEvent:" << __LINE__ << std::endl << std::endl;
     
     while (0 == m_queue.size())
     {
@@ -131,9 +127,12 @@ std::string Agent::GenerateTimestamp() const
     std::string str;
     std::stringstream strm;
     
-    strm << "Month= " << curTime->tm_mon << ", " 
-        << "Day= " << curTime->tm_mday << ", " 
-        << "Time= " << curTime->tm_hour << ":" << curTime->tm_min << ":" << curTime->tm_sec;
+//    strm << "Month = " << curTime->tm_mon + 1 << ", " 
+//        << "Day = " << curTime->tm_mday << ", " 
+//        << "Time = " << curTime->tm_hour << ":" << curTime->tm_min << ":" << curTime->tm_sec;
+	  strm << "(" << curTime->tm_mday << "/" 
+	  << curTime->tm_mon + 1  << "/2017, " 
+	  << curTime->tm_hour << ":" << curTime->tm_min << ":" << curTime->tm_sec << ")";
     
     return strm.str(); 
 }

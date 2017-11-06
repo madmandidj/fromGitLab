@@ -20,6 +20,8 @@ int main()
     
     SmartHome* smrHome = new SmartHome(soPath.c_str(), iniFilePath.c_str());
     
+//    smrHome->SetLivePrintMode(false);
+    
     smrHome->LoadSmartHome();
     
     smrHome->Run();
