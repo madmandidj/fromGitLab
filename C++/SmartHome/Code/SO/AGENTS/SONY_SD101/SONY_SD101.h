@@ -1,7 +1,8 @@
 #ifndef __SONY_SD101_H__
 #define __SONY_SD101_H__
 
-#include "../../Agent/Agent.h"
+#include "../../../Agent/Agent.h"
+#include<tr1/memory>
 //#include "../Payload/Payload.h"
 #include <string>
 
@@ -12,7 +13,9 @@ public:
     SONY_SD101(AgentAttr* _agentAttr, Hub* _hub);
     virtual ~SONY_SD101();
     
-    virtual void DoOnEvent(const Event* _event);
+//    virtual void CreateSubscriptions();
+    virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event);
+    virtual void DoRoutine(); 
     
 //inherited    std::string GenerateTimestamp() const;
 

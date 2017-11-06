@@ -23,6 +23,14 @@ ConfigLoader::ConfigLoader(string _soPath, string _iniPath)
 
 ConfigLoader::~ConfigLoader()
 {
+    std::vector<void*>::iterator leftIt = m_soContainer.begin();
+    std::vector<void*>::iterator rightIt = m_soContainer.end();
+    
+    while(leftIt != rightIt)
+    {
+        dlclose(*leftIt);
+        ++leftIt;
+    }
     //Empty
 }
 
@@ -138,7 +146,7 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 
 		    _agents.push_back(agent);
 		    
-		    dlclose(m_so);
+//		    dlclose(m_so);
 		    
 		    continue;
 		}
@@ -184,7 +192,7 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 
 		    _agents.push_back(agent);
 		    
-		    dlclose(m_so);
+//		    dlclose(m_so);
 
 		    continue;
 		}
@@ -218,7 +226,7 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 
 		    _agents.push_back(agent);
 		    
-		    dlclose(m_so);
+		    //dlclose(m_so);
 		    continue;
 		}
 	}
@@ -229,9 +237,15 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 CreateAgentFunc ConfigLoader::GetCreateAgentFunc(std::string _type)
 {
     std::string soFilePath;
+    void* curSO;
+//    soFilePath = m_soPath + _type + ".so";
+//    m_so = dlopen(soFilePath.c_str(), RTLD_NOW);
+//    CreateAgentFunc func = (CreateAgentFunc)dlsym(m_so, "CreateAgent");
+
     soFilePath = m_soPath + _type + ".so";
-    m_so = dlopen(soFilePath.c_str(), RTLD_NOW);
-    CreateAgentFunc func = (CreateAgentFunc)dlsym(m_so, "CreateAgent");
+    curSO = dlopen(soFilePath.c_str(), RTLD_NOW);
+    m_soContainer.push_back(curSO);
+    CreateAgentFunc func = (CreateAgentFunc)dlsym(curSO, "CreateAgent");
 		    
     return func;
 }

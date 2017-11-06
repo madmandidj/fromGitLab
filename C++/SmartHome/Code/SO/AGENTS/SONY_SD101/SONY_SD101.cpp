@@ -1,6 +1,6 @@
 #include "SONY_SD101.h"
-#include "../../Agent/Agent.h"
-#include "../../Event/Event.h"
+#include "../../../Agent/Agent.h"
+#include "../../../Event/Event.h"
 #include<iostream> //REMOVE
 
 
@@ -18,9 +18,25 @@ SONY_SD101::~SONY_SD101()
 }
 
 
-void SONY_SD101::DoOnEvent(const Event* _event)
+//void SONY_SD101::CreateSubscriptions()
+//{
+//    
+//}
+
+
+void SONY_SD101::DoOnEvent(std::tr1::shared_ptr<Event>)
 {
-    std::cout << "Agent" << GetID() << "received event of type " << _event->GetType() << std::endl;
+    //Empty because this is a sensor
+}
+
+
+void SONY_SD101::DoRoutine()
+{
+    std::tr1::shared_ptr<Event> event(new Event(GenerateTimestamp(),
+                                                GetType(),
+                                                GetRoom(),
+                                                GetFloor()));
+    PublishEvent(event);                                            
 }
 
 

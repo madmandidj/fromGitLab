@@ -1,6 +1,7 @@
 #include "SmartHome.h"
 #include "../Hub/Hub.h"
 #include "../ConfigLoader/ConfigLoader.h"
+#include "../Agent/Agent.h"
 #include<string>
 
 
@@ -37,7 +38,14 @@ void SmartHome::LoadSmartHome()
 
 void SmartHome::Run()
 {
+    std::vector<Agent*>::iterator leftIt = m_agentContainer.begin();
+    std::vector<Agent*>::iterator rightIt = m_agentContainer.end();
     
+    while(leftIt != rightIt)
+    {
+        (*leftIt)->DoRoutine();
+        ++leftIt;
+    }    
 }
 
 

@@ -32,12 +32,14 @@ class ConfigLoader
                                     std::string _floor, 
                                     std::string _log, 
                                     std::string _config);
-        std::string 	m_soPath;
-		std::string 	m_iniPath;
-		std::string		m_line;
-		size_t			m_linePosition;
-		std::ifstream 	m_fileStream;
-		void*           m_so;
+        std::string 	    m_soPath;
+		std::string 	    m_iniPath;
+		std::string		    m_line;
+		size_t			    m_linePosition;
+		std::ifstream 	    m_fileStream;
+//		void*               m_so;
+		std::vector<void*>  m_soContainer;
+		
 //		AgentFactory* 	m_agentFactory;
 		
 };

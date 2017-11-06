@@ -9,6 +9,8 @@
 #include<sstream>
 #include<iostream> //REMOVE
 
+size_t Agent::m_maxQueueSize = 5;
+
 Agent::Agent(AgentAttr* _attr, Hub* _hub)
 {
 	if (0 == _attr || 0 == _hub)
@@ -22,6 +24,14 @@ Agent::Agent(AgentAttr* _attr, Hub* _hub)
 	{
 		delete m_attributes;
 	}
+	
+	if (0 != pthread_cond_init(&m_condVar, NULL))
+	{
+	    pthread_mutex_destroy(&m_mutex);
+		delete m_attributes;
+	}
+	
+	
 }
 
 
@@ -29,6 +39,7 @@ Agent::~Agent()
 {
 	delete m_attributes;
 	pthread_mutex_destroy(&m_mutex);
+	pthread_cond_destroy(&m_condVar);
 }
 
 
@@ -80,15 +91,39 @@ bool Agent::PublishEvent(std::tr1::shared_ptr<Event> _event)
 
 bool Agent::PushEvent(std::tr1::shared_ptr<Event> _event)
 {
-    m_queue.push(_event);
-    return true;
+    pthread_mutex_lock(&m_mutex);
+
+    if (m_maxQueueSize < m_queue.size())
+    {
+        m_queue.push(_event);
+        
+        pthread_cond_signal(&m_condVar);
+        
+        pthread_mutex_unlock(&m_mutex);
+        return true;
+    }
+    
+    pthread_mutex_unlock(&m_mutex);
+    
+    return false;
 }
 
 
 const std::tr1::shared_ptr<Event> Agent::PopEvent()
 {
+    pthread_mutex_lock(&m_mutex);
+    
+    while (0 == m_queue.size())
+    {
+        pthread_cond_wait(&m_condVar, &m_mutex);
+    }
+    
     std::tr1::shared_ptr<Event> event = m_queue.front(); 
+    
     m_queue.pop();
+    
+    pthread_mutex_unlock(&m_mutex);
+    
     return event;
 }
 
@@ -143,6 +178,11 @@ const std::string& Agent::GetConfig() const
 	return m_attributes->GetConfig();
 }
 
+
+size_t Agent::GetMaxQueueSize()
+{
+    return m_maxQueueSize;
+}
 
 
 

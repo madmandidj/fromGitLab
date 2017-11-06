@@ -123,7 +123,7 @@ size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event) //TODO: returns num
         while(firstIt != secondIt)
         {
             agentPtr = firstIt->second;
-            agentPtr->PushEvent(_event);
+//            agentPtr->PushEvent(_event); //TODO: uncomment this when multithreading works
             ++firstIt;
             ++count;
             if (true == GetLivePrintMode())
