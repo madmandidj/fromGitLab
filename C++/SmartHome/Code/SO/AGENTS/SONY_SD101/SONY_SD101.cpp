@@ -7,27 +7,19 @@
 
 SONY_SD101::SONY_SD101(AgentAttr* _agentAttr, Hub* _hub) : Agent::Agent(_agentAttr, _hub)
 {
-    //option: Do something with config string
-    std::cout << "In SD101 constructor" << std::endl;
+    //Empty
 }
 
 
 SONY_SD101::~SONY_SD101()
 {
-    //empty
-    std::cout << "In SD101 destructor" << std::endl;
+    //Empty
 }
-
-
-//void SONY_SD101::CreateSubscriptions()
-//{
-//    
-//}
 
 
 void SONY_SD101::DoOnEvent(std::tr1::shared_ptr<Event>)
 {
-    //Empty because this is a sensor
+    //Empty - SONY_SD101 is a sensor
 }
 
 
@@ -36,7 +28,7 @@ void SONY_SD101::DoRoutine()
     while(1)
     {
         std::tr1::shared_ptr<Event> event(new Event(GenerateTimestamp(),
-                                                    GetType(),
+                                                    "FIRE",
                                                     GetRoom(),
                                                     GetFloor()));
         PublishEvent(event);
@@ -57,15 +49,36 @@ extern "C" SONY_SD101* CreateAgent(AgentAttr* _agentAttr, Hub* _hub)
 }
 
 
-//EventAttr* SONY_SD101::GenerateEventAttr(std::string _type, std::string _room, std::string _floor)
-//{
-//    string time = GenerateTimestamp();
-//    EventAttr* eventAttr = new EventAttr(time, _type, _room, _floor);
-//}
 
-//Payload_SD101::GeneratePayload()
-//{
-//    int sensorReading = 50;
-//    m_smokePercentage = sensorReading;
-//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

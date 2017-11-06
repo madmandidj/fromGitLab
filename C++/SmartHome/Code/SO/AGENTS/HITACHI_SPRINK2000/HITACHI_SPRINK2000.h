@@ -9,13 +9,10 @@
 class HITACHI_SPRINK2000 : public Agent
 {
 public:
-
     HITACHI_SPRINK2000(AgentAttr* _agentAttr, Hub* _hub);
     virtual ~HITACHI_SPRINK2000();
-    
     virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event);
-    virtual void DoRoutine(); 
-    
+    virtual void DoRoutine();    
 //inherited    std::string GenerateTimestamp() const;
 
 protected:
