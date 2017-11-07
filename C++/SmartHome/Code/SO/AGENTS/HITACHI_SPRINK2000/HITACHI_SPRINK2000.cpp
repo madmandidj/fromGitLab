@@ -28,8 +28,6 @@ HITACHI_SPRINK2000::HITACHI_SPRINK2000(AgentAttr* _agentAttr, HubInterface* _hub
 		while (std::string::npos != nextPos) 		
 		{ 	
 			newTokenPos = config.find_first_of("|", curPos);
-//			std::cout << "newTokenPos" << newTokenPos << std::endl;
-//			std::cout << "nextPos" << nextPos << std::endl;
 			while(nextPos < newTokenPos)
 			{
 				nextPos = config.find_first_of(",", curPos);
@@ -45,15 +43,13 @@ HITACHI_SPRINK2000::HITACHI_SPRINK2000(AgentAttr* _agentAttr, HubInterface* _hub
 						++subscriptionCount;
 						continue;
 						
-					case 1:
-//						nextPos = config.find_first_of(",", curPos); 			
+					case 1:			
 						eventFloor = config.substr(curPos, nextPos-curPos); 			
 						curPos = nextPos + 1; 
 						++subscriptionCount;
 						continue;
 					
-					case 2:
-//						nextPos = config.find_first_of(",", curPos); 			
+					case 2:		
 						eventRoom = config.substr(curPos, nextPos-curPos); 			
 						curPos = nextPos + 2;
 						subscriptionCount = 0;
@@ -62,23 +58,7 @@ HITACHI_SPRINK2000::HITACHI_SPRINK2000(AgentAttr* _agentAttr, HubInterface* _hub
 						return;
 				}
 				Subscribe(eventType.c_str(), eventRoom.c_str(), eventFloor.c_str());
-			}
-			
-//			Subscribe(eventType.c_str(), eventRoom.c_str(), eventFloor.c_str()); 		
-					
-//			nextPos = config.find_first_of(",", curPos); 			
-//			eventType = config.substr(curPos, nextPos-curPos); 			
-//			curPos = nextPos + 1;
-//			 										
-//			nextPos = config.find_first_of(",", curPos); 			
-//			eventFloor = config.substr(curPos, nextPos-curPos); 			
-//			curPos = nextPos + 1; 
-//			
-//			nextPos = config.find_first_of(",", curPos); 			
-//			eventRoom = config.substr(curPos, nextPos-curPos); 			
-//			curPos = nextPos + 1; 
-															
-//			Subscribe(eventType.c_str(), eventRoom.c_str(), eventFloor.c_str()); 		
+			}		
 		} 			
 	}
 }

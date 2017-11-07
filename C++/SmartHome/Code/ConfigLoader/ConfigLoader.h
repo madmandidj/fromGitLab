@@ -17,10 +17,10 @@ class ConfigLoader
 	public:
 		virtual ~ConfigLoader();
 		ConfigLoader(std::string _soPath, std::string _iniPath);
-		bool LoadConfig(std::vector<Agent*>& _agents, HubInterface* _hub); // Throws std::bad_alloc
+		bool LoadConfig(std::vector<Agent*>& _agents, HubInterface* _hub); 
 		
 	private:
-		bool LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub);
+		bool LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub); 
 		CreateAgentFunc GetCreateAgentFunc(std::string _type);
 		Agent* CreateAgent(CreateAgentFunc _func,
 									HubInterface* _hub, 

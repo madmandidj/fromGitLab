@@ -11,7 +11,7 @@
 #include<iostream> //REMOVE
 #include<stdexcept>
 
-size_t Agent::m_maxQueueSize = 5;
+size_t Agent::m_maxQueueSize = 1;
 
 Agent::Agent(AgentAttr* _attr, HubInterface* _hub)
 {

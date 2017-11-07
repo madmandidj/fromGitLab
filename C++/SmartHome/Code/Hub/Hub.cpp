@@ -149,18 +149,25 @@ size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event)
     else
     {
         Agent* agentPtr;
-        if (m_livePrintMode)
-        {
-        	std::cout << "Published to: ";
-        }
+//        if (m_livePrintMode)
+//        {
+//        	std::cout << "Published to: ";
+//        }
         while(firstIt != secondIt)
         {
             agentPtr = firstIt->second;
-            agentPtr->PushEvent(_event); 
+            if ((false == agentPtr->PushEvent(_event)) && (true == m_livePrintMode))
+            {
+            	std::cout << agentPtr->GetID() << " Event queue is full";
+            	++firstIt;
+            	++count;
+            	continue;
+            } 
             ++firstIt;
             ++count;
             if (m_livePrintMode)
             {
+            	std::cout << "Published to: ";
                 std::cout << agentPtr->GetID() << ", ";
             }
         }

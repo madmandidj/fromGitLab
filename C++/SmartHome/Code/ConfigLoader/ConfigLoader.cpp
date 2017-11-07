@@ -64,165 +64,92 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub)
 	string temp_str;
 	string soFilePath;
 	CreateAgentFunc func;
-	
-	while(1)
+	while(!m_fileStream.eof())
 	{
-	    temp_type = "";
+		temp_type = "";
 	    temp_room = "";
 	    temp_floor = "";
 	    temp_log = "";
 	    temp_config = "";
 	    temp_str = "";
-	    //Get next line and check if eof
-		std::getline(m_fileStream, m_line);
-		if(m_fileStream.eof())
-		{
-			break;
-		}
-        leftPos = 0;
-        rightPos = 0;
-
-        //Get ID
-		leftPos = m_line.find_first_of("[", leftPos);
-		if (string::npos == leftPos)
-		{
-			return false;
-		}
+	    
+	    //Get ID
+	    std::getline(m_fileStream, m_line);
+	    leftPos = m_line.find_first_of("[", leftPos);
 		rightPos = m_line.find_first_of("]", leftPos + 1);
 		temp_ID = m_line.substr(leftPos + 1, rightPos - leftPos - 1);
 		
-		//Get Type
+		//GetType
 		std::getline(m_fileStream, m_line);
 		leftPos = 0;
         rightPos = 0;
 		leftPos = m_line.find_first_of("=", leftPos);
-		if (string::npos == leftPos)
-		{
-			return false;
-		}
 		temp_type = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
 		
-		//Get Room
+		//GetRoom
 		std::getline(m_fileStream, m_line);
 		leftPos = 0;
         rightPos = 0;
 		leftPos = m_line.find_first_of("=", leftPos);
-		if (string::npos == leftPos)
-		{
-			return false;
-		}
 		temp_room = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
 		
-		//Get Floor
+		//GetFloor
 		std::getline(m_fileStream, m_line);
 		leftPos = 0;
         rightPos = 0;
 		leftPos = m_line.find_first_of("=", leftPos);
-		if (string::npos == leftPos)
-		{
-			return false;
-		}
 		temp_floor = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
 		
-		//Check if eof
+		//GetLog
 		std::getline(m_fileStream, m_line);
-		if(m_fileStream.eof())
-		{
-			break;
-		}
-		if ("" == m_line)
-		{
-		    func = GetCreateAgentFunc(temp_type);
-		    if (0 == func)
-		    {
-		    	return false;
-		    }
-
-            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);
-
-		    _agents.push_back(agent);
-		    
-		    continue;
-		}
+		//Check if blank parameter
 		
-		//Check optional parameters
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		if(m_line == "log =")
+		{
+			continue;
+		}
 		leftPos = 0;
         rightPos = 0;
-		rightPos = m_line.find_first_of("=", rightPos);
-		if (string::npos == rightPos)
-		{
-			return false;
-		}
-		temp_str = m_line.substr(leftPos, rightPos - 1);
-		//Check if log
-		if (temp_str == "log")
-		{
-		    temp_log = m_line.substr(rightPos + 2, m_line.size() - rightPos + 2);
-		}
-		//Check if config
-		else if(temp_str == "config")
-		{
-		    temp_config = m_line.substr(rightPos + 2, m_line.size() - rightPos + 2);
-		}
-		else
-		{
-		    //REDUNDANT
-		    continue;
-		}
+		leftPos = m_line.find_first_of("=", leftPos);
+		temp_log = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
 		
-		//Check if eof
-		std::getline(m_fileStream, m_line);
-		if(m_fileStream.eof())
-		{
-			break;
-		}
-		if ("" == m_line)
-		{
-		    func = GetCreateAgentFunc(temp_type);
-		    if (0 == func)
-		    {
-		    	return false;
-		    }
-
-            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);            
-
-		    _agents.push_back(agent);
-
-		    continue;
-		}
-	
+		//GetConfig
+	    std::getline(m_fileStream, m_line);
 		leftPos = 0;
         rightPos = 0;
-		rightPos = m_line.find_first_of("=", rightPos);
-		if (string::npos == rightPos)
-		{
-			return false;
-		}
-		temp_str = m_line.substr(leftPos, rightPos - 1);
-		//Check if Config
-		if (temp_str == "config")
-		{
-		    temp_config = m_line.substr(rightPos + 2, m_line.size() - rightPos + 2);
-		}
+		leftPos = m_line.find_first_of("=", leftPos);
+		temp_config = m_line.substr(leftPos + 2, m_line.size() - leftPos + 2);
 		
-		std::getline(m_fileStream, m_line);
-		if(m_fileStream.eof())
-		{
-			break;
-		}
-		if ("" == m_line)
-		{
-            func = GetCreateAgentFunc(temp_type);
-            if (0 == func)
-		    {
-		    	return false;
-		    }
-		    
-            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);
-		    _agents.push_back(agent);
-		    continue;
-		}
+		
+		
+		
+		
+		
+		
+		
+		func = GetCreateAgentFunc(temp_type);
+	    if (0 == func)
+	    {
+	    	return false;
+	    }
+
+        Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);
+
+	    _agents.push_back(agent);
+	    
+	    //Get blank line or end of file
+	    std::getline(m_fileStream, m_line);
 	}
+
 	return true;
 }
 
