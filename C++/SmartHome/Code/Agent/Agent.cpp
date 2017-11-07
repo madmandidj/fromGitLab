@@ -36,8 +36,6 @@ Agent::Agent(AgentAttr* _attr, HubInterface* _hub)
 		delete m_attributes;
 		throw std::runtime_error("Agent::Agent, cond init fail");
 	}
-	
-	
 }
 
 
@@ -50,7 +48,7 @@ Agent::~Agent()
 }
 
 
-bool Agent::Subscribe(std::string _type, std::string _room, std::string _floor)
+bool Agent::Subscribe(std::string _type, std::string _room, std::string _floor) const
 {
     EventAttr eventAttr("", _type, _room, _floor);
 	
@@ -58,7 +56,7 @@ bool Agent::Subscribe(std::string _type, std::string _room, std::string _floor)
 }
 
 
-bool Agent::Unsubscribe(std::string _type, std::string _room, std::string _floor)
+bool Agent::Unsubscribe(std::string _type, std::string _room, std::string _floor) const
 {
 	EventAttr eventAttr("", _type, _room, _floor);
 	
@@ -66,20 +64,7 @@ bool Agent::Unsubscribe(std::string _type, std::string _room, std::string _floor
 }	
 
 
-//std::tr1::shared_ptr<Event> Agent::GenerateEvent(std::string _timestamp,
-//                            std::string _type,
-//                            std::string _room,
-//                            std::string _floor)
-//{	
-//    std::tr1::shared_ptr<Event> event(new Event(_timestamp,
-//                            _type,
-//                            _room,
-//                            _floor));
-//	return event;
-//}
-
-
-bool Agent::PublishEvent(std::tr1::shared_ptr<Event> _event)
+bool Agent::PublishEvent(std::tr1::shared_ptr<Event> _event) const
 {
     m_hub->PublishEvent(_event);
 	return true;

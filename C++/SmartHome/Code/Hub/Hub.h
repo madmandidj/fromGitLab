@@ -13,11 +13,11 @@ class EventAttr;
 class Hub : public HubInterface
 {
 public:
-    virtual ~Hub();
     Hub();
+    virtual ~Hub();
     bool AddSubscription(const EventAttr _eventAttr, const Agent* _agent);
     bool RemoveSubscription(const EventAttr _eventAttr, const Agent* _agent);
-    size_t PublishEvent(std::tr1::shared_ptr<Event> _event); //TODO: returns number of distributions
+    size_t PublishEvent(std::tr1::shared_ptr<Event> _event);
     void SetLivePrintMode(bool _shouldLivePrint);
     bool GetLivePrintMode();
 
@@ -28,7 +28,7 @@ private:
     Hub(const Hub& _hub);
     Hub& operator=(const Hub& _hub);
     std::multimap<EventAttr, Agent*>    m_subscriptions;
-    bool    m_livePrintMode;
+    bool    							m_livePrintMode;
 };
 
 

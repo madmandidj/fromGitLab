@@ -12,8 +12,8 @@ class Agent;
 class SmartHome
 {
 public:
+	virtual ~SmartHome();
     SmartHome(std::string _soPath, std::string _iniPath); //Throws std::bad_alloc
-    ~SmartHome();
     void LoadSmartHome(); //Throws std::bad_alloc
     void Run();
     void Quit();

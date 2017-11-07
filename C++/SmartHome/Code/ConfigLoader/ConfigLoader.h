@@ -15,8 +15,8 @@ typedef Agent* (*CreateAgentFunc)(AgentAttr* _agentAttr, HubInterface* _hub);
 class ConfigLoader
 {
 	public:
+		virtual ~ConfigLoader();
 		ConfigLoader(std::string _soPath, std::string _iniPath);
-		~ConfigLoader();
 		bool LoadConfig(std::vector<Agent*>& _agents, HubInterface* _hub); // Throws std::bad_alloc
 		
 	private:

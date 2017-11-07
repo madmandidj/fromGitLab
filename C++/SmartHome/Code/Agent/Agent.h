@@ -17,12 +17,9 @@ class Agent
 public:
 	virtual ~Agent();
 	Agent(AgentAttr* _attr, HubInterface* _hub); // Throws std::runtime_error
-	bool Subscribe(std::string _type, std::string _room, std::string _floor);
-	bool Unsubscribe(std::string _type, std::string _room, std::string _floor);
-//    std::tr1::shared_ptr<Event> GenerateEvent(std::string _timestamp,
-//            std::string _type,
-//            std::string _room,
-//            std::string _floor); // Throws std::bad_alloc
+	bool Subscribe(std::string _type, std::string _room, std::string _floor) const;
+	bool Unsubscribe(std::string _type, std::string _room, std::string _floor) const;
+	void CreateAgentThread();
 	bool PushEvent(std::tr1::shared_ptr<Event> _event);
     const std::string& GetID() const;
 	const std::string& GetType() const;
@@ -33,14 +30,13 @@ public:
 	const pthread_t& GetThread() const;
 	
 protected:
-	bool PublishEvent(std::tr1::shared_ptr<Event> _event);
+	bool PublishEvent(std::tr1::shared_ptr<Event> _event) const;
     std::tr1::shared_ptr<Event> PopEvent();
 	std::string GenerateTimestamp() const; 	
+	static void* AgentTrampoline(void* _agent); // Throws ...
+	virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event) = 0; // Throws ...
+	virtual void DoRoutine() = 0; // Throws ...
 	static size_t GetMaxQueueSize();
-	void CreateAgentThread();
-	static void* AgentTrampoline(void* _agent); // Throws
-	virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event) = 0; // Throws
-	virtual void DoRoutine() = 0; // Throws
 	
 private:
 	Agent(const Agent& _agent);

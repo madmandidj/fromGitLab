@@ -12,8 +12,8 @@ class SONY_SD101 : public Agent
 {
 public:
 //    SONY_SD101(AgentAttr* _agentAttr, Hub* _hub);
+	virtual ~SONY_SD101();
 	SONY_SD101(AgentAttr* _agentAttr, HubInterface* _hub);
-    virtual ~SONY_SD101();
     virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event);
     virtual void DoRoutine(); 
 //inherited    std::string GenerateTimestamp() const;
