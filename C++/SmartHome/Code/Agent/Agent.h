@@ -7,7 +7,6 @@
 #include<tr1/memory>
 #include<stdexcept>
 
-//class Hub;
 class HubInterface;
 class AgentAttr;
 class Event;
@@ -17,41 +16,37 @@ class Agent
 {
 public:
 	virtual ~Agent();
-//	Agent(AgentAttr* _attr, Hub* _hub);
-	Agent(AgentAttr* _attr, HubInterface* _hub);
+	Agent(AgentAttr* _attr, HubInterface* _hub); // Throws std::runtime_error
 	bool Subscribe(std::string _type, std::string _room, std::string _floor);
 	bool Unsubscribe(std::string _type, std::string _room, std::string _floor);
-    std::tr1::shared_ptr<Event> GenerateEvent(std::string _timestamp,
-            std::string _type,
-            std::string _room,
-            std::string _floor);
-    bool PublishEvent(std::tr1::shared_ptr<Event> _event);
+//    std::tr1::shared_ptr<Event> GenerateEvent(std::string _timestamp,
+//            std::string _type,
+//            std::string _room,
+//            std::string _floor); // Throws std::bad_alloc
 	bool PushEvent(std::tr1::shared_ptr<Event> _event);
-    std::tr1::shared_ptr<Event> PopEvent();
-	std::string GenerateTimestamp() const;
-	const std::string& GetID() const;
+    const std::string& GetID() const;
 	const std::string& GetType() const;
 	const std::string& GetRoom() const;
 	const std::string& GetFloor() const;
 	const std::string& GetLog() const;
 	const std::string& GetConfig() const;
-	
-	virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event) = 0;
-	virtual void DoRoutine() = 0;
-	
-	void CreateAgentThread();
-//	void CancelAgentThread();
-	static void* AgentTrampoline(void* _agent);
 	const pthread_t& GetThread() const;
-protected:	
+	
+protected:
+	bool PublishEvent(std::tr1::shared_ptr<Event> _event);
+    std::tr1::shared_ptr<Event> PopEvent();
+	std::string GenerateTimestamp() const; 	
 	static size_t GetMaxQueueSize();
+	void CreateAgentThread();
+	static void* AgentTrampoline(void* _agent); // Throws
+	virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event) = 0; // Throws
+	virtual void DoRoutine() = 0; // Throws
 	
 private:
 	Agent(const Agent& _agent);
 	Agent& operator=(const Agent& _agent);
 	
 	AgentAttr*		                                m_attributes;
-//	Hub*			                                m_hub;
 	HubInterface*			                        m_hub;
 	std::queue<std::tr1::shared_ptr<Event> >		m_queue;
 	pthread_mutex_t	                                m_mutex;

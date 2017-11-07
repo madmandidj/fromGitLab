@@ -12,8 +12,8 @@ public:
 //    HITACHI_SPRINK2000(AgentAttr* _agentAttr, Hub* _hub);
 	HITACHI_SPRINK2000(AgentAttr* _agentAttr, HubInterface* _hub);
     virtual ~HITACHI_SPRINK2000();
-    virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event);
-    virtual void DoRoutine();    
+    virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event); // Throws
+    virtual void DoRoutine(); // Throws    
 //inherited    std::string GenerateTimestamp() const;
 
 protected:

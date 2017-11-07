@@ -33,7 +33,6 @@ ConfigLoader::~ConfigLoader()
 }
 
 
-//bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, Hub* _hub)
 bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, HubInterface* _hub)
 {
 	m_fileStream.open(m_iniPath.c_str(), ios_base::in); 
@@ -52,7 +51,6 @@ bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, HubInterface* _hub)
 }
 
 
-//bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
 bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub)
 {
 	size_t leftPos = 0;
@@ -135,8 +133,12 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub)
 		if ("" == m_line)
 		{
 		    func = GetCreateAgentFunc(temp_type);
+		    if (0 == func)
+		    {
+		    	return false;
+		    }
 
-            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);            
+            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);
 
 		    _agents.push_back(agent);
 		    
@@ -177,6 +179,10 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub)
 		if ("" == m_line)
 		{
 		    func = GetCreateAgentFunc(temp_type);
+		    if (0 == func)
+		    {
+		    	return false;
+		    }
 
             Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);            
 
@@ -207,7 +213,12 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub)
 		if ("" == m_line)
 		{
             func = GetCreateAgentFunc(temp_type);
-            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);            
+            if (0 == func)
+		    {
+		    	return false;
+		    }
+		    
+            Agent* agent = CreateAgent(func, _hub, temp_ID, temp_type, temp_room, temp_floor, temp_log, temp_config);
 		    _agents.push_back(agent);
 		    continue;
 		}
@@ -222,8 +233,16 @@ CreateAgentFunc ConfigLoader::GetCreateAgentFunc(std::string _type)
     void* curSO;
     soFilePath = m_soPath + _type + ".so";
     curSO = dlopen(soFilePath.c_str(), RTLD_NOW);
+    if (0 == curSO)
+    {
+    	return 0;
+    }
     m_soContainer.push_back(curSO);
     CreateAgentFunc func = (CreateAgentFunc)dlsym(curSO, "CreateAgent");
+    if (0 == func)
+    {
+    	return 0;
+    }
 		    
     return func;
 }
@@ -231,7 +250,6 @@ CreateAgentFunc ConfigLoader::GetCreateAgentFunc(std::string _type)
 
 Agent* ConfigLoader::CreateAgent(CreateAgentFunc _func,
 									HubInterface* _hub,
-//                                    Hub* _hub, 
                                     std::string _ID, 
                                     std::string _type, 
                                     std::string _room, 
@@ -240,14 +258,17 @@ Agent* ConfigLoader::CreateAgent(CreateAgentFunc _func,
                                     std::string _config)
 {
     AgentAttr* agentAttr = new AgentAttr(_ID, _type, _room, _floor, _log, _config);
-    if (0 == agentAttr)
+    
+    Agent* agent;
+    
+    try
     {
-        //TODO: handle bad alloc
+		agent = _func(agentAttr, _hub);
     }
-    Agent* agent = _func(agentAttr, _hub);
-    if (0 == agent)
+    catch(std::bad_alloc& _exc)
     {
-        //TODO: handle bad alloc
+    	delete agentAttr;
+    	throw;
     }
     
     return agent;

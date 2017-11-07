@@ -2,22 +2,22 @@
 #include "../Hub/Hub.h"
 #include "../ConfigLoader/ConfigLoader.h"
 #include "../Agent/Agent.h"
+#include<stdexcept>
 #include<string>
 
 
 SmartHome::SmartHome(std::string _soPath, std::string _iniPath)
 {
     m_hub = new Hub();
-    if (0 == m_hub)
-    {
-        //TODO: handle bad alloc
-    }
     
-    m_configLoader = new ConfigLoader(_soPath, _iniPath);
-    if (0 == m_configLoader)
+    try
     {
-        delete m_hub;
-        //TODO: handle bad alloc
+    	m_configLoader = new ConfigLoader(_soPath, _iniPath);
+    }
+    catch(std::bad_alloc& _exc)
+    {
+    	delete m_hub;
+    	throw;
     }
 }
 

@@ -47,7 +47,6 @@ Agent::~Agent()
 	pthread_mutex_destroy(&m_mutex);
 	pthread_cond_destroy(&m_condVar);
 	pthread_cancel(m_thread);
-//	std::cout << "In ~Agent()" << std::endl;
 }
 
 
@@ -67,23 +66,17 @@ bool Agent::Unsubscribe(std::string _type, std::string _room, std::string _floor
 }	
 
 
-std::tr1::shared_ptr<Event> Agent::GenerateEvent(std::string _timestamp,
-                            std::string _type,
-                            std::string _room,
-                            std::string _floor)
-{	
-    std::tr1::shared_ptr<Event> event(new Event(_timestamp,
-                            _type,
-                            _room,
-                            _floor));
-                            
-	if (0 == event)
-	{
-	    throw std::runtime_error("Agent::GenerateEvent, event bad alloc");
-	}
-	
-	return event;
-}
+//std::tr1::shared_ptr<Event> Agent::GenerateEvent(std::string _timestamp,
+//                            std::string _type,
+//                            std::string _room,
+//                            std::string _floor)
+//{	
+//    std::tr1::shared_ptr<Event> event(new Event(_timestamp,
+//                            _type,
+//                            _room,
+//                            _floor));
+//	return event;
+//}
 
 
 bool Agent::PublishEvent(std::tr1::shared_ptr<Event> _event)
@@ -190,14 +183,17 @@ void Agent::CreateAgentThread()
     pthread_create(&m_thread, NULL, &AgentTrampoline, this);
 }
 
-//void Agent::CancelAgentThread()
-//{
-//    pthread_create(&m_thread, NULL, &AgentTrampoline, this);
-//}
 
 void* Agent::AgentTrampoline(void* _agent)
 {
-    ((Agent*)_agent)->DoRoutine();
+	try
+	{	
+    	((Agent*)_agent)->DoRoutine();
+	}
+	catch(...)
+	{
+		throw;
+	}
     
     return 0;
 }

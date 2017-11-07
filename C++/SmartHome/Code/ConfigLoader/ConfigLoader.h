@@ -10,7 +10,6 @@ class HubInterface;
 class Agent;
 class AgentAttr;
 
-//typedef Agent* (*CreateAgentFunc)(AgentAttr* _agentAttr, Hub* _hub);
 typedef Agent* (*CreateAgentFunc)(AgentAttr* _agentAttr, HubInterface* _hub);
 
 class ConfigLoader
@@ -18,22 +17,19 @@ class ConfigLoader
 	public:
 		ConfigLoader(std::string _soPath, std::string _iniPath);
 		~ConfigLoader();
-//		bool LoadConfig(std::vector<Agent*>& _agents, Hub* _hub); 
-		bool LoadConfig(std::vector<Agent*>& _agents, HubInterface* _hub);
+		bool LoadConfig(std::vector<Agent*>& _agents, HubInterface* _hub); // Throws std::bad_alloc
 		
 	private:
-//		bool LoadAgents(std::vector<Agent*>& _agents, Hub* _hub);
 		bool LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub);
 		CreateAgentFunc GetCreateAgentFunc(std::string _type);
 		Agent* CreateAgent(CreateAgentFunc _func,
 									HubInterface* _hub, 
-//                                    Hub* _hub,
                                     std::string _ID, 
                                     std::string _type, 
                                     std::string _room, 
                                     std::string _floor, 
                                     std::string _log, 
-                                    std::string _config);
+                                    std::string _config); // Throws std::bad_alloc
         std::string 	    m_soPath;
 		std::string 	    m_iniPath;
 		std::string		    m_line;

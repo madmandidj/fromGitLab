@@ -3,6 +3,7 @@
 
 #include<string>
 #include<vector>
+#include<tr1/memory>
 
 class Hub;
 class ConfigLoader;
@@ -11,9 +12,9 @@ class Agent;
 class SmartHome
 {
 public:
-    SmartHome(std::string _soPath, std::string _iniPath);
+    SmartHome(std::string _soPath, std::string _iniPath); //Throws std::bad_alloc
     ~SmartHome();
-    void LoadSmartHome();
+    void LoadSmartHome(); //Throws std::bad_alloc
     void Run();
     void Quit();
     void SetLivePrintMode(bool _shouldLivePrint);
@@ -23,7 +24,7 @@ protected:
 
 
 private:
-    Hub*                m_hub;
+    Hub* 				m_hub;
     ConfigLoader*       m_configLoader;
     std::vector<Agent*> m_agentContainer;
 };
