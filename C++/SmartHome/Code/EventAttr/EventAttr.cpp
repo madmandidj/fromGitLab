@@ -87,9 +87,7 @@ const std::string& EventAttr::GetFloor()const
 
 bool EventAttr::operator==(const EventAttr& _eventAttr) const
 {
-    if (m_type == _eventAttr.GetType() &&
-            m_room == _eventAttr.GetRoom() &&
-            m_floor == _eventAttr.GetFloor())
+    if (m_type == _eventAttr.GetType() && m_room == _eventAttr.GetRoom() && m_floor == _eventAttr.GetFloor())
     {
         return true;
     }            
