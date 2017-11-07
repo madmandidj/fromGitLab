@@ -6,10 +6,13 @@
 //#include "../Payload/Payload.h" 
 #include <string>
 
+class HubInterface;
+
 class SONY_SD101 : public Agent
 {
 public:
-    SONY_SD101(AgentAttr* _agentAttr, Hub* _hub);
+//    SONY_SD101(AgentAttr* _agentAttr, Hub* _hub);
+	SONY_SD101(AgentAttr* _agentAttr, HubInterface* _hub);
     virtual ~SONY_SD101();
     virtual void DoOnEvent(std::tr1::shared_ptr<Event> _event);
     virtual void DoRoutine(); 
@@ -24,7 +27,9 @@ private:
 };
 
 
-extern "C" SONY_SD101* CreateAgent(AgentAttr* _agentAttr, Hub* _hub);
+//extern "C" SONY_SD101* CreateAgent(AgentAttr* _agentAttr, Hub* _hub);
+
+extern "C" SONY_SD101* CreateAgent(AgentAttr* _agentAttr, HubInterface* _hub);
 
 //TODO: extern "C" Payload* CreatePayload() 
 

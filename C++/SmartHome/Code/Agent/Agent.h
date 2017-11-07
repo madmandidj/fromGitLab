@@ -6,7 +6,8 @@
 #include<pthread.h>
 #include<tr1/memory>
 
-class Hub;
+//class Hub;
+class HubInterface;
 class AgentAttr;
 class Event;
 class EventAttr;
@@ -15,7 +16,8 @@ class Agent
 {
 public:
 	virtual ~Agent();
-	Agent(AgentAttr* _attr, Hub* _hub);
+//	Agent(AgentAttr* _attr, Hub* _hub);
+	Agent(AgentAttr* _attr, HubInterface* _hub);
 	bool Subscribe(std::string _type, std::string _room, std::string _floor);
 	bool Unsubscribe(std::string _type, std::string _room, std::string _floor);
     std::tr1::shared_ptr<Event> GenerateEvent(std::string _timestamp,
@@ -46,7 +48,8 @@ private:
 	Agent& operator=(const Agent& _agent);
 	
 	AgentAttr*		                                m_attributes;
-	Hub*			                                m_hub;
+//	Hub*			                                m_hub;
+	HubInterface*			                        m_hub;
 	std::queue<std::tr1::shared_ptr<Event> >		m_queue;
 	pthread_mutex_t	                                m_mutex;
 	pthread_cond_t                                  m_condVar;

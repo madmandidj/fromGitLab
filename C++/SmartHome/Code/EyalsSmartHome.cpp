@@ -16,7 +16,7 @@ int main()
     
     string iniFilePath = curDirName + "/INI/Config.ini";
     
-    cout << curDirName << endl;  
+//    cout << curDirName << endl;  
     
     SmartHome* smrHome = new SmartHome(soPath.c_str(), iniFilePath.c_str());
     

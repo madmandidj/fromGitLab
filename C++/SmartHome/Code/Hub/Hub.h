@@ -1,6 +1,7 @@
 #ifndef __HUB_H__
 #define __HUB_H__
 
+#include "../HubInterface/HubInterface.h"
 #include<string>
 #include<map>
 #include <tr1/memory>
@@ -9,7 +10,7 @@ class Agent;
 class Event;
 class EventAttr;
 
-class Hub
+class Hub : public HubInterface
 {
 public:
     virtual ~Hub();

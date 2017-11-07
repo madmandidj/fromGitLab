@@ -1,5 +1,6 @@
 #include "Agent.h"
 #include "../Hub/Hub.h"
+#include "../HubInterface/HubInterface.h"
 #include "../AgentAttr/AgentAttr.h"
 #include "../Event/Event.h"
 #include "../EventAttr/EventAttr.h"
@@ -11,7 +12,8 @@
 
 size_t Agent::m_maxQueueSize = 5;
 
-Agent::Agent(AgentAttr* _attr, Hub* _hub)
+//Agent::Agent(AgentAttr* _attr, Hub* _hub)
+Agent::Agent(AgentAttr* _attr, HubInterface* _hub)
 {
 	if (0 == _attr || 0 == _hub)
 	{

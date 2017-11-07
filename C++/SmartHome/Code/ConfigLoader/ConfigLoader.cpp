@@ -1,5 +1,6 @@
 #include "ConfigLoader.h"
 #include "../AgentAttr/AgentAttr.h"
+#include "../Hub/Hub.h"
 #include "../Agent/Agent.h"
 #include<iostream>
 #include<fstream>
@@ -32,7 +33,8 @@ ConfigLoader::~ConfigLoader()
 }
 
 
-bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, Hub* _hub)
+//bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, Hub* _hub)
+bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, HubInterface* _hub)
 {
 	m_fileStream.open(m_iniPath.c_str(), ios_base::in); 
 	
@@ -50,7 +52,8 @@ bool ConfigLoader::LoadConfig(vector<Agent*>& _agents, Hub* _hub)
 }
 
 
-bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
+//bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, Hub* _hub)
+bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub)
 {
 	size_t leftPos = 0;
 	size_t rightPos = 0;
@@ -227,7 +230,8 @@ CreateAgentFunc ConfigLoader::GetCreateAgentFunc(std::string _type)
 
 
 Agent* ConfigLoader::CreateAgent(CreateAgentFunc _func,
-                                    Hub* _hub, 
+									HubInterface* _hub,
+//                                    Hub* _hub, 
                                     std::string _ID, 
                                     std::string _type, 
                                     std::string _room, 
