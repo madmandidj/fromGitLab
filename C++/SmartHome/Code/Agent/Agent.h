@@ -5,6 +5,7 @@
 #include<queue>
 #include<pthread.h>
 #include<tr1/memory>
+#include<stdexcept>
 
 //class Hub;
 class HubInterface;
@@ -39,7 +40,9 @@ public:
 	virtual void DoRoutine() = 0;
 	
 	void CreateAgentThread();
+//	void CancelAgentThread();
 	static void* AgentTrampoline(void* _agent);
+	const pthread_t& GetThread() const;
 protected:	
 	static size_t GetMaxQueueSize();
 	

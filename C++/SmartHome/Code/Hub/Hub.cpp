@@ -86,7 +86,7 @@ bool Hub::RemoveSubscription(const EventAttr _eventAttr, const Agent* _agent)
 			std::cout << "Hub: " << _agent->GetID() <<" not subscribed to " << _eventAttr.GetType() << " ";
 			std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
 		}
-//        std::cout << "No matching subscription bucket" << std::endl;
+
         return false;
     }
     else
@@ -98,7 +98,7 @@ bool Hub::RemoveSubscription(const EventAttr _eventAttr, const Agent* _agent)
             if (agentPtr->GetID() == _agent->GetID())
             {
                 m_subscriptions.erase(firstIt);
-//                std::cout << "Subscription removed" << std::endl;
+
 				if(m_livePrintMode)
 				{
 					std::cout << "Hub: " << _agent->GetID() <<" unsibscribed from " << _eventAttr.GetType() << " ";
@@ -109,8 +109,7 @@ bool Hub::RemoveSubscription(const EventAttr _eventAttr, const Agent* _agent)
             ++firstIt;
         }
     }
-    
-//    std::cout << "No matching subscription in the existing bucket" << std::endl;
+
     if(m_livePrintMode)
 	{
 		std::cout << "Hub: " << _agent->GetID() <<" not subscribed to " << _eventAttr.GetType() << " ";
@@ -120,7 +119,7 @@ bool Hub::RemoveSubscription(const EventAttr _eventAttr, const Agent* _agent)
 }
 
 
-size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event) //TODO: returns number of distributions
+size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event)
 {
     size_t count = 0;
     EventAttr eventAttr = _event->GetAttributes();
@@ -132,22 +131,14 @@ size_t Hub::PublishEvent(std::tr1::shared_ptr<Event> _event) //TODO: returns num
     agentRange = m_subscriptions.equal_range(eventAttr);
     firstIt = agentRange.first;
     secondIt = agentRange.second;
-    
-//    if(m_livePrintMode)
-//	{
-//		std::cout << "Hub: " << _agent->GetID() <<" not subscribed to " << _eventAttr.GetType() << " ";
-//		std::cout << _eventAttr.GetRoom() << " " << _eventAttr.GetFloor() << std::endl;
-//	}
-    
+
     if (m_livePrintMode)
     {
     	std::cout << std::endl;
         std::cout << "Hub: Received " << _event->GetType() << 
                     " " << _event->GetTimestamp() <<
                     " " << _event->GetRoom() << 
-                    " " << _event->GetFloor() << ", ";
-//                    " " << _event->GetFloor() << std::endl;
-					
+                    " " << _event->GetFloor() << ", ";				
     }
     
     if (firstIt == secondIt)

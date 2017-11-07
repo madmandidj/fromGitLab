@@ -1,9 +1,7 @@
 #ifndef __AGENT_ATTR_H__
 #define __AGENT_ATTR_H__
 
-
 #include<string>
-
 
 class AgentAttr
 {

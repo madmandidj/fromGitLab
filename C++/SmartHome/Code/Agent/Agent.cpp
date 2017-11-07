@@ -9,28 +9,32 @@
 #include<pthread.h>
 #include<sstream>
 #include<iostream> //REMOVE
+#include<stdexcept>
 
 size_t Agent::m_maxQueueSize = 5;
 
-//Agent::Agent(AgentAttr* _attr, Hub* _hub)
 Agent::Agent(AgentAttr* _attr, HubInterface* _hub)
 {
 	if (0 == _attr || 0 == _hub)
 	{
-		//TODO: handle invalid pointers
+		throw std::runtime_error("Agent::Agent, invalid parameter");	
 	}
 	
 	m_attributes = _attr;
+	
 	m_hub = _hub;
+	
 	if (0 != pthread_mutex_init(&m_mutex, NULL))
 	{
 		delete m_attributes;
+		throw std::runtime_error("Agent::Agent, mutex init fail");
 	}
 	
 	if (0 != pthread_cond_init(&m_condVar, NULL))
 	{
 	    pthread_mutex_destroy(&m_mutex);
 		delete m_attributes;
+		throw std::runtime_error("Agent::Agent, cond init fail");
 	}
 	
 	
@@ -42,6 +46,8 @@ Agent::~Agent()
 	delete m_attributes;
 	pthread_mutex_destroy(&m_mutex);
 	pthread_cond_destroy(&m_condVar);
+	pthread_cancel(m_thread);
+//	std::cout << "In ~Agent()" << std::endl;
 }
 
 
@@ -73,7 +79,7 @@ std::tr1::shared_ptr<Event> Agent::GenerateEvent(std::string _timestamp,
                             
 	if (0 == event)
 	{
-	    //TODO: handle bad alloc
+	    throw std::runtime_error("Agent::GenerateEvent, event bad alloc");
 	}
 	
 	return event;
@@ -128,13 +134,10 @@ std::string Agent::GenerateTimestamp() const
     struct tm * curTime = localtime (&rawtime);
     std::string str;
     std::stringstream strm;
-    
-//    strm << "Month = " << curTime->tm_mon + 1 << ", " 
-//        << "Day = " << curTime->tm_mday << ", " 
-//        << "Time = " << curTime->tm_hour << ":" << curTime->tm_min << ":" << curTime->tm_sec;
-	  strm << "(" << curTime->tm_mday << "/" 
-	  << curTime->tm_mon + 1  << "/2017, " 
-	  << curTime->tm_hour << ":" << curTime->tm_min << ":" << curTime->tm_sec << ")";
+
+	strm << "(" << curTime->tm_mday << "/" 
+	<< curTime->tm_mon + 1  << "/2017, " 
+	<< curTime->tm_hour << ":" << curTime->tm_min << ":" << curTime->tm_sec << ")";
     
     return strm.str(); 
 }
@@ -187,6 +190,11 @@ void Agent::CreateAgentThread()
     pthread_create(&m_thread, NULL, &AgentTrampoline, this);
 }
 
+//void Agent::CancelAgentThread()
+//{
+//    pthread_create(&m_thread, NULL, &AgentTrampoline, this);
+//}
+
 void* Agent::AgentTrampoline(void* _agent)
 {
     ((Agent*)_agent)->DoRoutine();
@@ -195,7 +203,10 @@ void* Agent::AgentTrampoline(void* _agent)
 }
 
 
-
+const pthread_t& Agent::GetThread() const
+{
+	return m_thread;
+}
 
 
 

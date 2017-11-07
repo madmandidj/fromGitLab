@@ -24,7 +24,18 @@ SmartHome::SmartHome(std::string _soPath, std::string _iniPath)
 
 SmartHome::~SmartHome()
 {
+	std::vector<Agent*>::iterator begin = m_agentContainer.begin();
+	std::vector<Agent*>::iterator end = m_agentContainer.end();
+	pthread_t thread;
+	while (begin != end)
+	{
+		thread = (*begin)->GetThread();
+		delete *begin;
+		pthread_join(thread, NULL);
+		++begin;
+	}
     m_agentContainer.clear();
+    
     delete m_hub;
     delete m_configLoader;
 }
