@@ -52,27 +52,6 @@ ConfigLoader.o: $(CONFLOAD_PATH)ConfigLoader.cpp $(CONFLOAD_PATH)ConfigLoader.h 
 	
 SmartHome.o: $(SMART_HOME_PATH)SmartHome.cpp $(SMART_HOME_PATH)SmartHome.h   
 	g++ $(FLAGS) -c  $(SMART_HOME_PATH)SmartHome.cpp
-	
-	
-	
-#HITACHI_SPRINK2000.o: $(HIT_SPNK_PATH)HITACHI_SPRINK2000.cpp $(EVENT_PATH)Event.h $(EVENT_ATTR_PATH)EventAttr.h\
-#                       $(AGENT_PATH)Agent.h $(HUB_PATH)Hub.h $(AGENT_ATTR_PATH)AgentAttr.h 
-#	g++ $(AGENT_FLAGS) $(HIT_SPNK_PATH)HITACHI_SPRINK2000.cpp	
-#	
-#HITACHI_SPRINK2000.so: HITACHI_SPRINK2000.o
-#	g++ -shared -o HITACHI_SPRINK2000.so HITACHI_SPRINK2000.o\
-#						Agent.o AgentAttr.o Hub.o Event.o EventAttr.o
-#	mv HITACHI_SPRINK2000.so ./SO/HITACHI_SPRINK2000.so
-#	
-#SONY_SD101.o: $(SONY_SD101_PATH)SONY_SD101.cpp $(EVENT_PATH)Event.h $(EVENT_ATTR_PATH)EventAttr.h\
-#                       $(AGENT_PATH)Agent.h $(HUB_PATH)Hub.h $(AGENT_ATTR_PATH)AgentAttr.h 
-#	g++ $(AGENT_FLAGS) $(SONY_SD101_PATH)SONY_SD101.cpp	
-#	
-#SONY_SD101.so: SONY_SD101.o
-#	g++ -shared -o SONY_SD101.so SONY_SD101.o\
-#						Agent.o AgentAttr.o Hub.o Event.o EventAttr.o
-#	mv SONY_SD101.so ./SO/SONY_SD101.so
-
 
 HITACHI_SPRINK2000.o: $(HIT_SPNK_PATH)HITACHI_SPRINK2000.cpp $(EVENT_PATH)Event.h $(EVENT_ATTR_PATH)EventAttr.h\
                        $(AGENT_PATH)Agent.h $(HUB_INT_PATH)HubInterface.h $(AGENT_ATTR_PATH)AgentAttr.h 
@@ -96,8 +75,7 @@ SONY_SD101.so: SONY_SD101.o
 clean:
 	rm EyalsSmartHome $(objects) SONY_SD101.o ./SO/SONY_SD101.so \
 							HITACHI_SPRINK2000.o ./SO/HITACHI_SPRINK2000.so
-#clean:
-#	rm EyalsSmartHome
+
  
 
 
