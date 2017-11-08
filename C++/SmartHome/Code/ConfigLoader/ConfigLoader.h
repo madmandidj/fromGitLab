@@ -5,7 +5,7 @@
 #include <fstream>
 #include<vector>
 
-class Hub;
+//class Hub;
 class HubInterface;
 class Agent;
 class AgentAttr;

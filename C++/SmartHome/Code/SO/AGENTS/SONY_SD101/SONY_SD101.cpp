@@ -41,7 +41,7 @@ void SONY_SD101::DoRoutine()
                                                     GetRoom(),
                                                     GetFloor()));
         PublishEvent(event);
-        sleep(m_sleepSec);   //TODO: change this to m_sleepSec, and check why doesnt seem to work
+        sleep(m_sleepSec);
     }
 }
 

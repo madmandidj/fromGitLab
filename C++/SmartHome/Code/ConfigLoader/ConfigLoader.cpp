@@ -1,6 +1,7 @@
 #include "ConfigLoader.h"
 #include "../AgentAttr/AgentAttr.h"
-#include "../Hub/Hub.h"
+//#include "../Hub/Hub.h"
+#include "../HubInterface/HubInterface.h"
 #include "../Agent/Agent.h"
 #include<iostream>
 #include<fstream>
@@ -77,7 +78,7 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub)
 	    std::getline(m_fileStream, m_line);
 	    leftPos = m_line.find_first_of("[", leftPos);
 		rightPos = m_line.find_first_of("]", leftPos + 1);
-		temp_ID = m_line.substr(leftPos + 1, rightPos - leftPos - 1);
+		temp_ID = m_line.substr(leftPos + 2, rightPos - leftPos - 2);
 		
 		//GetType
 		std::getline(m_fileStream, m_line);
@@ -103,20 +104,6 @@ bool ConfigLoader::LoadAgents(std::vector<Agent*>& _agents, HubInterface* _hub)
 		//GetLog
 		std::getline(m_fileStream, m_line);
 		//Check if blank parameter
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		if(m_line == "log =")
-		{
-			continue;
-		}
 		leftPos = 0;
         rightPos = 0;
 		leftPos = m_line.find_first_of("=", leftPos);
