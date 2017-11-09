@@ -70,19 +70,78 @@ px = new X;
 compiler generated default constructor is inline.
 
 	
+-------------------------------------------------
+Encapsulation
+Inheritance
+Polymorphism	
+	
+	
+Inheritance
+
+Class B
+{
+	int a;
+	int b;
+};
+Class D : public B
+{
+	int c;
+	int d;
+};	
+
+
+in memory:
+-----	]
+int a
+-----	B
+int b
+-----   ]
+
+-----
+
+-----	]	]
+int a
+-----	B
+int b
+-----	]	D
+int c
+-----
+int d
+-----		]
+
+-----
+	
+So in C will look like:
+-----------------------
+Struct D
+{
+	struct B base;
+	int c;
+	int d;	
+}	
+	
+	
+So if we have:
+D* pd;
+its already pointing to (int a), so --->     (B*)pd	
+
+
+D::D()
+first calls constructor of Base
+While we havent finished constructor of B, we are still of type B
+With destructors it is opposite
+
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+An empty class instance is 1 byte so that objects wont have the same address
+if a class inherits an empty class. and the new class has a data member, than the "dummy" 1-byte is not needed anymore. 
+This is called Empty Class Optimization
+
+
+
+With return values its not always certain if copy constructor will be called 0, 1 or 2 times. 
+This is called Named Return Value Optimization
 	
 	
 	
