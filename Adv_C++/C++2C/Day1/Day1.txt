@@ -1,0 +1,98 @@
+1. When an executable is generated - it has machine code.
+2. Why dont we write in assembly:
+	A. Reduced instruction set chip (RISC)
+	B. Assmebly code is machine dependant and OS dependant. Differs for different machines / OS.
+	C. motiviation for creating language like C is that we want machine independent code. So we need different types of compilers.
+	D. In C++ things happen implicitly.
+	E. First c++ compilers were translators to C (like cfront).
+3. Main thing added by c++ : objects.
+class
+{
+public:
+	int a;
+	int b;
+private
+	int c;
+	int d;
+};	
+
+class looks like a struct
+struct
+{
+	int a;
+	int b;
+	
+	int c;
+	int d;
+};
+
+private/protected/public is only relevant for compiler. In memory, the class and struct look identical.
+private is only "protecting" when calling by name like: c.c ... but if we do: int* p = c.b; ++p; ... then we can access data member c
+
+static data members are in data segment
+class
+{
+public:
+	static int a;
+	int b;
+private
+	static int c;
+	int d;
+};
+	
+static function in c++ (class) is just like a global function in C, which also has a scope.
+static function in c++ (outside of class), is not part of linker "game". its "game" is in compiler.
+everything in the global scope that needs to be differed from other things needs to have a mangled name.
+
+
+CTOR
+DTOR
+COPY_CTOR
+COPY_ASSIGNMENT
+
+class A {...};
+class B {...};
+
+A foo()
+{
+	return A(...);
+}
+
+SO B doesnt need constructor.
+
+
+
+Constructor:
+
+X myX;			***compiler allocates memory for this on stack
+px = new X;
+
+compiler generated default constructor is inline.
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
