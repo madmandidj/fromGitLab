@@ -1,24 +1,52 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
-/*#define PHASE (1)*/
-#define PHASE (2)
-
-
-/*
+/**********************
 Name mangling strategy:
 -----------------------
-Scope, NumOfChars, Name, (C)tor / (F)unction / (O)perator, NumOfParams, ParamType(first and last char),
+Scope, NumOfChars, Name, (C)tor / (F)unction / (O)perator, NumOfParams, Keywords, ParamType(first and last char), Keywords
+**********************/
 
+/*
+class Point2D
+{
+public:
+	Point2D();
+	Point2D(double _x, double _y);
+
+	double GetX() const;
+	double GetY() const;
+	double Distance(const Point2D& _other) const;
+
+	Point2D &operator+=(const Point2D& _other);
+	Point2D &operator*=(double _factor);
+
+private:
+	double m_x;
+	double m_y;		
+};
 */
-
 typedef struct AB7_Point2D
 {
 	double m_x;
 	double m_y;
 }AB7_Point2D;
 
+
+
+/*
+class NamedPoint2D : public Point2D
+{
+public:
+	NamedPoint2D(const char *_name = "origin");
+	NamedPoint2D(double _x, double _y, const char *_name = "anonymous Point");
+	NamedPoint2D(const Point2D& point, const char *_name = "anonymous Point");
+	const char *GetName() const;
+
+private:
+	const char *m_name;	
+};
+*/
 typedef struct AB12_NamedPoint2D
 {
 	AB7_Point2D 	m_Point2D;
@@ -42,40 +70,33 @@ private:
 	static const int s_curvature = 1;	
 };
 */
-typedef struct AB9Rectangle
+typedef struct AB9_Rectangle
 {
 	AB12_NamedPoint2D 	m_NamedPoint2D;
 	AB7_Point2D			m_Point2D;
-}Rectangle;
+}AB9_Rectangle;
+
+static const int AB9_Rectangle_const_it_11_s_curvature = 1;
 
 
-/***** Phase 1 *****{{ */
-#if PHASE >= 1
 
-/*
-class Point2D
-{
-public:
-	Point2D();
-	Point2D(double _x, double _y);
 
-	double GetX() const;
-	double GetY() const;
-	double Distance(const Point2D& _other) const;
 
-	Point2D &operator+=(const Point2D& _other);
-	Point2D &operator*=(double _factor);
 
-private:
-	double m_x;
-	double m_y;		
-};
-*/
-/*typedef struct AB7Point2D*/
-/*{*/
-/*	double m_x;*/
-/*	double m_y;*/
-/*}AB7Point2D;*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 Point2D::Point2D()
@@ -100,6 +121,13 @@ void AB7_Point2D_C_2p_de_de(AB7_Point2D* const _this, double _x, double _y)
 {
 	_this->m_x = _x;
 	_this->m_y = _y;
+	return;
+}
+
+void AB7_Point2D_C_1p_const_ND_ref(AB7_Point2D* const _this, const AB12_NamedPoint2D* const _ND)
+{
+	_this->m_x = _ND->m_Point2D.m_x;
+	_this->m_y = _ND->m_Point2D.m_y;
 	return;
 }
 
@@ -152,9 +180,6 @@ double AB7_Point2D_F_Distance_1p_const_PD_ref_const(const AB7_Point2D* const _th
 }
 
 
-
-
-
 /*
 Point2D& Point2D::operator+=(const Point2D& _other)
 {
@@ -172,10 +197,6 @@ AB7_Point2D* const AB7_Point2D_O_pe_1p_const_PD_ref(AB7_Point2D* const _this, co
 	return _this;
 }
 
-
-
-
-
 /*
 Point2D& Point2D::operator*=(double _factor)
 {
@@ -192,6 +213,232 @@ AB7_Point2D* const AB7_Point2D_O_me_1p_de(AB7_Point2D* const _this, double _fact
 	
 	return _this;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Default CTOR*/
+void AB12_NamedPoint2D_C_0p(AB12_NamedPoint2D* const _this)
+{
+	_this->m_name = "";
+
+	return;
+}
+
+
+/*
+NamedPoint2D::NamedPoint2D(const char *_name)
+: m_name(_name)
+{
+}
+*/
+void AB12_NamedPoint2D_C_1p_const_cr_ptr(AB12_NamedPoint2D* const _this, const char* _name)
+{
+	_this->m_name = _name;
+
+	return;
+}
+
+
+/*
+NamedPoint2D::NamedPoint2D(double _x, double _y, const char *_name)
+: m_name(_name), Point2D(_x, _y)
+{
+}
+*/
+void AB12_NamedPoint2D_C_3p_de_de_const_cr_ptr(AB12_NamedPoint2D* const _this, double _x, double _y, const char* _name)
+{
+	_this->m_name = _name;
+	
+	AB7_Point2D_C_2p_de_de(&(_this->m_Point2D), _x, _y);
+
+	return;
+}
+
+
+/*
+NamedPoint2D::NamedPoint2D(const Point2D& _point, const char *_name)
+: m_name(_name), Point2D(_point)
+{
+}
+*/
+void AB12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(AB12_NamedPoint2D* const _this, const AB7_Point2D* const _point2D, const char* _name)
+{
+	_this->m_name = _name;
+	
+	AB7_Point2D_C_2p_de_de(&(_this->m_Point2D), _point2D->m_x, _point2D->m_y);
+
+	return;
+}
+
+void AB12_NamedPoint2D_C_1p_const_PD_ref(AB12_NamedPoint2D* const _this, const AB7_Point2D* const _point2D)
+{
+	_this->m_name = "anonymous point";
+	
+	AB7_Point2D_C_2p_de_de(&(_this->m_Point2D), _point2D->m_x, _point2D->m_y);
+
+	return;
+}
+
+
+/*
+const char *NamedPoint2D::GetName() const
+{
+	return m_name;
+}
+*/
+
+const char* AB12_NamedPoint2D_F_GetName_0p_const(const AB12_NamedPoint2D* const _this)
+{
+	return _this->m_name;
+}
+
+
+AB12_NamedPoint2D* const AB12_NamedPoint2D_O_me_1p_de(AB12_NamedPoint2D* const _this, double _factor)
+{
+	_this->m_Point2D.m_x *= _factor;
+	_this->m_Point2D.m_y *= _factor;
+	
+	return _this;
+}
+
+
+double AB12_NamedPoint2D_F_Distance_1p_const_PD_ref_const(const AB12_NamedPoint2D* const _this, const AB12_NamedPoint2D* const _other)
+{
+	return AB7_Point2D_F_Distance_1p_const_PD_ref_const(&(_this->m_Point2D), &(_other->m_Point2D));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+Rectangle::Rectangle(const Point2D& _a, const Point2D& _b, const char *_name)
+: m_a(_a, _name), m_b(_b)
+{
+}
+*/
+void AB9_Rectangle_C_3p_const_PD_ref_const_PD_ref_const_cr_ptr(AB9_Rectangle* const _this, const AB7_Point2D* const _PD1, const AB7_Point2D* const _PD2, const char* _name)
+{
+	AB12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(&(_this->m_NamedPoint2D), _PD1, _name);
+	AB12_NamedPoint2D_C_1p_const_PD_ref(&(_this->m_Point2D), _PD2);
+}
+
+
+
+/*
+const char *Rectangle::GetName() const
+{
+	return m_a.GetName();
+}
+*/
+const char* AB9_Rectangle_F_GetName_0p_const(AB9_Rectangle* const _this)
+{
+	return _this->m_NamedPoint2D.GetName();
+}
+
+
+/*
+double Rectangle::CalcArea() const
+{
+	Point2D p1(m_a.GetX(), m_b.GetY());
+	double sideA = m_a.Distance(p1);
+	double sideB = m_a.Distance(Point2D(m_b.GetX(), m_a.GetY()));
+	return sideA * sideB * s_curvature;
+}
+*/
+double AB9_Rectangle_F_CalcArea_0p_const(AB9_Rectangle* const _this)
+{
+	AB7_Point2D p1;
+	double sideA;
+	double sideB;
+	AB7_Point2D temp_AB7_Point2D_1;
+	
+	AB7_Point2D_C_2p_de_de(&p1, _this->m_NamedPoint2D.m_Point2D.m_x, _this.m_Point2D.m_y);
+	sideA = AB12_NamedPoint2D_F_Distance_1p_const_PD_ref_const(AB12_NamedPoint2D_F_Distance_1p_const_PD_ref_const(&(_this->m_NamedPoint2D), &p1));
+	sideB = AB12_NamedPoint2D_F_Distance_1p_const_PD_ref_const(AB7_Point2D_C_2p_de_de(&temp_AB7_Point2D_1, _this.m_Point2D.m_x, _this->m_NamedPoint2D.m_Point2D.m_y))
+	
+	return sideA * sideB * AB9_Rectangle_const_it_11_s_curvature;
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -228,207 +475,7 @@ void A9_pointless_F_0p()
 	return;
 }
 
-#endif
-/* }} ***** Phase 1 *****/
 
-/*----------------------------------------------------------------*/
-
-/***** Phase 2 *****{{ */
-#if PHASE == 2
-
-/*
-class NamedPoint2D : public Point2D
-{
-public:
-	NamedPoint2D(const char *_name = "origin");
-	NamedPoint2D(double _x, double _y, const char *_name = "anonymous Point");
-	NamedPoint2D(const Point2D& point, const char *_name = "anonymous Point");
-	const char *GetName() const;
-
-private:
-	const char *m_name;	
-};
-*/
-
-/*typedef struct AB12NamedPoint2D*/
-/*{*/
-/*	AB7Point2D 	m_Point2D;*/
-/*	const char* m_name;*/
-/*}AB12NamedPoint2D;*/
-
-/*Default CTOR*/
-void AB12_NamedPoint2D_C_0p(AB12_NamedPoint2D* const _this)
-{
-	_this->m_name = "";
-
-	return;
-}
-
-
-
-
-
-
-/*
-NamedPoint2D::NamedPoint2D(const char *_name)
-: m_name(_name)
-{
-}
-*/
-void AB12_NamedPoint2D_C_1p_const_cr_ptr(AB12_NamedPoint2D* const _this, const char* _name)
-{
-	_this->m_name = _name;
-
-	return;
-}
-
-
-
-
-
-/*
-NamedPoint2D::NamedPoint2D(double _x, double _y, const char *_name)
-: m_name(_name), Point2D(_x, _y)
-{
-}
-*/
-void AB12_NamedPoint2D_C_3p_de_de_const_cr_ptr(AB12_NamedPoint2D* const _this, double _x, double _y, const char* _name)
-{
-	_this->m_name = _name;
-	
-	AB7_Point2D_C_2p_de_de(&(_this->m_Point2D), _x, _y);
-
-	return;
-}
-
-
-
-
-
-/*
-NamedPoint2D::NamedPoint2D(const Point2D& _point, const char *_name)
-: m_name(_name), Point2D(_point)
-{
-}
-*/
-void AB12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(AB12_NamedPoint2D* const _this, const AB7_Point2D* const _point2D, const char* _name)
-{
-	_this->m_name = _name;
-	
-	AB7_Point2D_C_2p_de_de(&(_this->m_Point2D), _point2D->m_x, _point2D->m_y);
-
-	return;
-}
-
-void AB12_NamedPoint2D_C_1p_const_PD_ref(AB12_NamedPoint2D* const _this, const AB7_Point2D* const _point2D)
-{
-	_this->m_name = "anonymous point";
-	
-	AB7_Point2D_C_2p_de_de(&(_this->m_Point2D), _point2D->m_x, _point2D->m_y);
-
-	return;
-}
-
-
-
-
-
-/*
-const char *NamedPoint2D::GetName() const
-{
-	return m_name;
-}
-*/
-
-const char* AB12_NamedPoint2D_F_GetName_0p_const(const AB12_NamedPoint2D* const _this)
-{
-	return _this->m_name;
-}
-
-
-AB12_NamedPoint2D* const AB12_NamedPoint2D_O_me_1p_de(AB12_NamedPoint2D* const _this, double _factor)
-{
-	_this->m_Point2D.m_x *= _factor;
-	_this->m_Point2D.m_y *= _factor;
-	
-	return _this;
-}
-
-
-
-
-
-double AB12_NamedPoint2D_F_Distance_1p_const_PD_ref_const(const AB12_NamedPoint2D* const _this, const AB12_NamedPoint2D* const _other)
-{
-/*	double dx;*/
-/*	double dy;*/
-/*	*/
-/*	dx = _this->m_x - _other->m_x;*/
-/*	dy = _this->m_y - _other->m_y;*/
-	return AB7_Point2D_F_Distance_1p_const_PD_ref_const(&(_this->m_Point2D), &(_other->m_Point2D));
-}
-
-
-/*----------------------------------------------------------------*/
-/*
-
-
-
-
-
-/*
-class Rectangle
-{
-public:
-	Rectangle(const Point2D& _a, const Point2D& _b, const char *_name = "anonymous Rectangle");
-
-	const char *GetName() const;
-	double CalcArea() const;
-
-private:
-	NamedPoint2D m_a;
-	Point2D m_b;
-	static const int s_curvature = 1;	
-};
-*/
-
-
-
-
-
-/*
-Rectangle::Rectangle(const Point2D& _a, const Point2D& _b, const char *_name)
-: m_a(_a, _name), m_b(_b)
-{
-}
-*/
-
-
-/*
-const char *Rectangle::GetName() const
-{
-	return m_a.GetName();
-}
-*/
-
-
-
-/*
-double Rectangle::CalcArea() const
-{
-	Point2D p1(m_a.GetX(), m_b.GetY());
-	double sideA = m_a.Distance(p1);
-	double sideB = m_a.Distance(Point2D(m_b.GetX(), m_a.GetY()));
-	return sideA * sideB * s_curvature;
-}
-*/
-
-
-
-
-
-
-/*----------------------------------------------------------------*/
 /*
 void dog()
 {
@@ -457,11 +504,6 @@ void A3_dog_F_0p()
 }
 
 
-
-
-
-
-
 /*
 void area()
 {
@@ -479,10 +521,7 @@ void area()
 
 
 
-#endif
-/* }} ***** Phase 2 *****/
 
-/*----------------------------------------------------------------*/
 
 /*
 int main()
@@ -502,15 +541,9 @@ int main()
 
 int main()
 {
-#if PHASE >= 1
 	A9_pointless_F_0p();
-#endif
-
-#if PHASE >= 2
 	A3_dog_F_0p();
 /*	area();*/
-#endif
-
 	return 0;
 }
 
