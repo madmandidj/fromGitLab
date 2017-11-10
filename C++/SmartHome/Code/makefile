@@ -16,11 +16,11 @@ SO_FLAGS = -shared
 HIT_SPNK_PATH = ./SO/AGENTS/HITACHI_SPRINK2000/
 SONY_SD101_PATH = ./SO/AGENTS/SONY_SD101/
 
-all:EyalsSmartHome HITACHI_SPRINK2000.so SONY_SD101.so
+all:EyalsSmartHome.out HITACHI_SPRINK2000.so SONY_SD101.so
 
 
-EyalsSmartHome: $(objects)
-	g++ $(FLAGS) -o EyalsSmartHome $(objects) -ldl
+EyalsSmartHome.out: $(objects)
+	g++ $(FLAGS) -o EyalsSmartHome.out $(objects) -ldl
 
 EyalsSmartHome.o: EyalsSmartHome.cpp $(SMART_HOME_PATH)SmartHome.h $(CONFLOAD_PATH)ConfigLoader.h 
 	g++ $(FLAGS) -c  EyalsSmartHome.cpp
@@ -73,7 +73,7 @@ SONY_SD101.so: SONY_SD101.o
 
 
 clean:
-	rm EyalsSmartHome $(objects) SONY_SD101.o ./SO/SONY_SD101.so \
+	rm EyalsSmartHome.out $(objects) SONY_SD101.o ./SO/SONY_SD101.so \
 							HITACHI_SPRINK2000.o ./SO/HITACHI_SPRINK2000.so
 
  
