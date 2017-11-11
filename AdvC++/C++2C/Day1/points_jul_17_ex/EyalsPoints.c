@@ -93,7 +93,7 @@ inline double Point2D::GetX() const
 	return m_x;
 }
 */
-/*TODO: directly replace in code where relevant
+/*TODO: directly replace in code where relevant */
 
 
 /*
@@ -102,7 +102,7 @@ inline double Point2D::GetY() const
 	return m_y;
 }
 */
-/*TODO: directly replace in code where relevant
+/*TODO: directly replace in code where relevant */
 
 
 /*
@@ -181,9 +181,9 @@ void A_9_pointless_F_0p()
 	
 	AB_7_Point2D_C_0p(&p0);
 	AB_7_Point2D_C_2p_de_de(&p1, 0, 10);
-	AB_7_Point2D_C_2p_de_de(&dxy, +4, -7);
-	
 	printf("distance p0 --> p1 == %f\n", AB_7_Point2D_F_Distance_1p_const_PD_ref_const(&p0, &p1));
+	
+	AB_7_Point2D_C_2p_de_de(&dxy, +4, -7);
 	AB_7_Point2D_O_pe_1p_const_PD_ref(&p1, &dxy);
 	printf("%f, %f\n", p1.m_x, p1.m_y);
 	printf("now distance p0 --> p1 == %f\n", AB_7_Point2D_F_Distance_1p_const_PD_ref_const(&p0, &p1));
@@ -437,7 +437,7 @@ void A_4_area_F_0p()
 	AB_9_Rectangle_C_3p_const_PD_ref_const_PD_ref_const_cr_ptr(&r, &p0, &p1, NULL);
 	
 	printf("The area of %s is %f\n", r.m_NamedPoint2D.m_name, AB_9_Rectangle_F_CalcArea_0p_const(&r));
-	printf("rectangle size %zu", sizeof(r));
+	printf("rectangle size %u", sizeof(r));
 	
 	return;
 }
