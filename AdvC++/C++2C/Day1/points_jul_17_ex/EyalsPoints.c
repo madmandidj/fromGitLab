@@ -229,14 +229,16 @@ NamedPoint2D::NamedPoint2D(const char *_name)
 */
 void AB_12_NamedPoint2D_C_1p_const_cr_ptr(AB_12_NamedPoint2D* const _this, const char* _name)
 {
-	if (NULL == _name)
-	{
-		_this->m_name = "origin";
-	}
-	else
-	{
+	AB_7_Point2D_C_0p(&(_this->m_Point2D));
+	
+/*	if (NULL == _name)*/
+/*	{*/
+/*		_this->m_name = "origin";*/
+/*	}*/
+/*	else*/
+/*	{*/
 		_this->m_name = _name;
-	}
+/*	}*/
 	
 	return;
 }
@@ -250,17 +252,17 @@ NamedPoint2D::NamedPoint2D(double _x, double _y, const char *_name)
 */
 void AB_12_NamedPoint2D_C_3p_de_de_const_cr_ptr(AB_12_NamedPoint2D* const _this, double _x, double _y, const char* _name)
 {
-	if (NULL == _name)
-	{
-		_this->m_name = "anonymous Point";
-	}
-	else
-	{
-		_this->m_name = _name;
-	}
-	
 	AB_7_Point2D_C_2p_de_de(&(_this->m_Point2D), _x, _y);
-
+	
+/*	if (NULL == _name)*/
+/*	{*/
+/*		_this->m_name = "anonymous Point";*/
+/*	}*/
+/*	else*/
+/*	{*/
+		_this->m_name = _name;
+/*	}*/
+	
 	return;
 }
 
@@ -273,6 +275,8 @@ NamedPoint2D::NamedPoint2D(const Point2D& _point, const char *_name)
 */
 void AB_12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(AB_12_NamedPoint2D* const _this, const AB_7_Point2D* const _point2D, const char* _name)
 {
+	AB_7_Point2D_C_1p_const_PD_ref(&(_this->m_Point2D), _point2D);
+	
 	if (NULL == _name)
 	{
 		_this->m_name = "anonymous Point";
@@ -282,7 +286,7 @@ void AB_12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(AB_12_NamedPoint2D* const
 		_this->m_name = _name;
 	}
 	
-	AB_7_Point2D_C_2p_de_de(&(_this->m_Point2D), _point2D->m_x, _point2D->m_y);
+/*	AB_7_Point2D_C_2p_de_de(&(_this->m_Point2D), _point2D->m_x, _point2D->m_y);*/
 
 	return;
 }
@@ -322,7 +326,8 @@ typedef struct AB_9_Rectangle
 	AB_7_Point2D			m_Point2D;
 }AB_9_Rectangle;
 
-static const int AB_9_Rectangle_const_it_11_s_curvature = 1;
+/*static const int AB_9_Rectangle_const_it_11_s_curvature = 1;*/
+const int AB_9_Rectangle_const_it_11_s_curvature = 1;
 
 
 /*
@@ -333,15 +338,15 @@ Rectangle::Rectangle(const Point2D& _a, const Point2D& _b, const char *_name)
 */
 void AB_9_Rectangle_C_3p_const_PD_ref_const_PD_ref_const_cr_ptr(AB_9_Rectangle* const _this, const AB_7_Point2D* const _PD1, const AB_7_Point2D* const _PD2, const char* _name)
 {
-	if (NULL == _name)
-	{
-		_this->m_NamedPoint2D.m_name = "anonymous Rectangle";
-	}
-	else
-	{
-		_this->m_NamedPoint2D.m_name = _name;
-	}
-	AB_12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(&(_this->m_NamedPoint2D), _PD1, _this->m_NamedPoint2D.m_name);
+/*	if (NULL == _name)*/
+/*	{*/
+/*		_this->m_NamedPoint2D.m_name = "anonymous Rectangle";*/
+/*	}*/
+/*	else*/
+/*	{*/
+/*		_this->m_NamedPoint2D.m_name = _name;*/
+/*	}*/
+	AB_12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(&(_this->m_NamedPoint2D), _PD1, _name);
 	AB_7_Point2D_C_1p_const_PD_ref(&(_this->m_Point2D), _PD2);
 	
 	return;
@@ -369,7 +374,7 @@ double Rectangle::CalcArea() const
 	return sideA * sideB * s_curvature;
 }
 */
-double AB_9_Rectangle_F_CalcArea_0p_const(AB_9_Rectangle* const _this)
+double AB_9_Rectangle_F_CalcArea_0p_const(const AB_9_Rectangle* const _this)
 {
 	AB_7_Point2D p1;
 	double sideA;
@@ -405,12 +410,16 @@ void A_3_dog_F_0p()
 	
 	AB_12_NamedPoint2D_C_3p_de_de_const_cr_ptr(&home, 5, 7, "home");
 	AB_7_Point2D_C_1p_const_PD_ref(&point, (AB_7_Point2D*)(&home));
-	AB_12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(&dog, &point, NULL);
+/*	AB_12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(&dog, &point, NULL);*/
+	AB_12_NamedPoint2D_C_2p_const_PD_ref_const_cr_ptr(&dog, &point, "anonymous Point");
 	AB_7_Point2D_O_me_1p_de((AB_7_Point2D*)(&dog),2);
 	printf("Distance from %s to %s is %f\n", AB_12_NamedPoint2D_F_GetName_0p_const(&home), 
 									AB_12_NamedPoint2D_F_GetName_0p_const(&dog), 
 									AB_7_Point2D_F_Distance_1p_const_PD_ref_const((AB_7_Point2D*)(&home), (AB_7_Point2D*)(&dog)));
-									
+	//Destructors:
+	//dog
+	//point
+	//home								
 	return;
 }
 
@@ -434,9 +443,10 @@ void A_4_area_F_0p()
 	
 	AB_7_Point2D_C_0p(&p0);
 	AB_7_Point2D_C_2p_de_de(&p1, 12, 12);
-	AB_9_Rectangle_C_3p_const_PD_ref_const_PD_ref_const_cr_ptr(&r, &p0, &p1, NULL);
+/*	AB_9_Rectangle_C_3p_const_PD_ref_const_PD_ref_const_cr_ptr(&r, &p0, &p1, NULL);*/
+	AB_9_Rectangle_C_3p_const_PD_ref_const_PD_ref_const_cr_ptr(&r, &p0, &p1, "anonymous Rectangle");
 	
-	printf("The area of %s is %f\n", r.m_NamedPoint2D.m_name, AB_9_Rectangle_F_CalcArea_0p_const(&r));
+	printf("The area of %s is %f\n", r.m_NamedPoint2D.m_name, AB_9_Rectangle_F_CalcArea_0p_const(&r)); //Getname is not inline
 	printf("rectangle size %u", sizeof(r));
 	
 	return;

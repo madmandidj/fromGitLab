@@ -1,0 +1,161 @@
+Polymorphism C++2C:
+-------------------
+
+class B
+{
+	void baz();
+	virtual void foo();
+	virtual void bar();
+};
+
+class D : public B
+{
+	void baz();
+	virtual void foo();
+};
+
+B b, *pb1, *pb2;
+D d, *pd1, *pd2;
+pb1 = &b;
+pb2 = &d;
+pd1 = &d;
+pd2 = &b; //downcast, so this is not allowed by compiler***
+
+b.foo(); 	// calls base
+d.foo(); 	// calls derived
+pb1->foo(); // calls base
+pb2->foo(); // calls derived 
+pd1->foo(); // calls derived
+pd2->foo(); // not relevant 
+
+b.baz(); 	// calls base
+d.baz(); 	// calls derived
+pb1->baz(); // calls base
+pb2->baz(); // calls base
+pd1->baz(); // calls derived
+pd2->baz(); // not relevant 
+
+
+
+Two types related (only) to pointers and references:
+--------------------------------------------
+static type - what type does compiler know during compilation
+dynamic type - what is the type at a given point in time
+
+in the case of baz, there is no need to look at vtable:
+pb1->baz();   is like B::baz()
+pd1->baz();   is like D::baz()
+
+virtual table- all the virtual functions of a particular class
+
+class X
+{
+	int a;
+	int b;
+	virtual ~X();
+};
+size of X is 2 ints and pointer
+
+class X
+{
+	virtual ~X();
+};
+size of X is size of pointer
+
+class Y: public X
+{
+	virtual void f();
+};
+size of Y is still size of pointer
+
+vtable will usually (always) be first
+
+D d;
+(B*) &d;
+(___*) &d;
+
+The virtual pointer is set in the constructor
+Constructor does (not necessarily in this order):
+- calls base ctors
+- set vptr
+- init members (in initialize)
+- code body
+
+
+		dynamic / static link
+		late / early bind (in constructor we have early binding)
+B::B()
+{
+	foo(); // will call foo directly without going to virtual table  ... CHECK WHY??
+}
+
+D::D()
+{
+
+}
+
+with objects, virtual functions can be inline
+with destructors we also need to update the virtual pointer
+
+
+
+
+class B
+{
+	int a; int b;
+};
+
+class D: public B
+{
+	virtual ~D();
+};
+
+D d;
+D* pd = &d;
+B* pb = pd;
+
+
+pd == pb  this wil be true, but they dont hold the same address. Will be true because they point to same object.
+cout << pb;
+cout << pd;
+these will produce different outputs, but are pointing to same object
+will be (char*)pd == (char*)pb + sizeof(vptr_t)
+
+
+Implementing a virtual table:
+-----------------------------
+A struct ?
+
+class A
+{
+	virtual void foo();
+	virtual int bar(int,int);
+};
+
+
+class B : public A
+{
+	virtual void foo();
+	virtual double baz();
+};
+
+
+
+struct VirtA
+{
+	foo_t;
+	bar_t;
+};
+
+
+struct VirtB
+{
+	VirtA;
+	baz_t;
+};
+
+
+By C standards entering a function pointer to void pointer is problematic
+By C standards its ok to cast function and then cast back.
+void* (*)(void*)
+void (*)(void) make an array of these (function pointers) .. where ever place we need the function we do relevant cast.
