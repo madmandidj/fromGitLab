@@ -3,11 +3,6 @@
 
 typedef void (*VirtualFunc)(void);
 
-typedef VirtualFunc* virt_t;
-
-
-
-
 
 /*
 struct Color {
@@ -30,6 +25,10 @@ static void setColor(ColorEnum _color)
 	static const char* pallete[] = {"\x1B[31m", "\x1B[32m", "\033[0m"};
 	puts(pallete[_color]);
 }
+
+
+
+
 
 
 
@@ -77,6 +76,12 @@ void ABC_10_Scaleable_F_5_scale_1p_de(Scaleable* const _this, double _dbl)
 	 /* This call should terminate program because its pure virtual with no implementation */
 	 return;
 }
+
+
+
+
+
+
 
 
 
@@ -186,7 +191,8 @@ void AB_5_Shape_D_0p(Shape* const _this)
 {
 	_this->m_scaleable.m_vTable = shap_virtT;	
 	
-	AB_5_Shape_F_4_draw_0p_const(_this);
+/*	AB_5_Shape_F_4_draw_0p_const(_this);*/
+	((void(*)(const Shape* const))_this->m_scaleable.m_vTable[2])(_this);
 	
 	--AB_5_Shape_NumOfShapes;
 	
@@ -245,7 +251,8 @@ void AB_5_Shape_F_4_draw_1p_Cm_const(const Shape* const _this, ColorEnum _c)
 	
 	setColor(_c);
 	
-	((void(*)(const Shape* const))_this->m_scaleable.m_vTable[1])(_this);
+/*	((void(*)(const Shape* const))_this->m_scaleable.m_vTable[1])(_this);*/
+	((void(*)(const Shape* const))_this->m_scaleable.m_vTable[2])(_this);
 	
 	setColor(DEFAULT);
 	
@@ -290,6 +297,13 @@ static void AB_5_Shape_SF_printInventory()
 	printf("Shape::printInventory - %d\n", AB_5_Shape_NumOfShapes);
 	return;
 }
+
+
+
+
+
+
+
 
 
 
@@ -492,6 +506,23 @@ double AB_6_Circle_F_6_radius_0p_const(const Circle* const _this)
 
 	return _this->m_radius;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -724,6 +755,17 @@ double AB_9_Rectangle_F_4_area_0p_const(const Rectangle* const _this)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 /*
 void report(const Shape& s) {
 	std::puts("-----report-----");
@@ -845,12 +887,10 @@ void disappear() {
 	std::puts("-----disappear-----");
 }
 */
-typedef Circle (*A_9_disappear_F_13_disappearCircle)();
+
 void A_9_disappear_0p_Ce()
 {
 	puts("-----disappear-----");
-	
-/*	typedef Circle (*defaultCircle)();*/
 	
 	puts("-----disappear-----");
 }
@@ -895,7 +935,6 @@ double A_15_diffWhenDoubled_Ce(Circle* const _shape)
 	
 	return a1 - a0;
 }
-
 
 /*
 void doPointerArray(){
@@ -946,9 +985,18 @@ void A_14_doPointerArray_0p()
 	
 	for(i = 0; i < 3; ++i)
 	{
-		((double(*)(const Shape* const))array[i]->m_scaleable.m_vTable[1])(array[i]);
-		((void(*)(const Shape* const))array[i]->m_scaleable.m_vTable[2])(array[i]);
+/*		((double(*)(Shape* const, double))array[i]->m_scaleable.m_vTable[1])(array[i], 1);*/
+/*		((void(*)(const Shape* const))array[i]->m_scaleable.m_vTable[2])(array[i]);*/
 	}
+	
+	((double(*)(Circle* const, double))array[0]->m_scaleable.m_vTable[1])((Circle*)array[0], 2); /*2 is default for circle scale */
+	((void(*)(const Shape* const))array[0]->m_scaleable.m_vTable[2])(array[0]);
+	
+	((double(*)(Shape* const, double))array[1]->m_scaleable.m_vTable[1])(array[1], 4); /*4 is default for rectangle scale */
+	((void(*)(const Shape* const))array[1]->m_scaleable.m_vTable[2])(array[1]);
+	
+	((double(*)(Circle* const, double))array[2]->m_scaleable.m_vTable[1])((Circle*)array[2], 2); /*2 is default for circle scale */
+	((void(*)(const Shape* const))array[2]->m_scaleable.m_vTable[2])(array[2]);
 	
 	printf("area: %f\n", A_15_diffWhenDoubled_Ce((Circle*)array[2]));
 	
@@ -959,21 +1007,43 @@ void A_14_doPointerArray_0p()
 		array[i] = 0;
 	}
 	
+/*	((void(*)(Shape* const))array[0]->m_scaleable.m_vTable[0])(array[0]);*/
+/*	free(array[0]);*/
+/*	array[0] = 0;*/
+/*	*/
+/*	((void(*)(Shape* const))array[1]->m_scaleable.m_vTable[1])(array[1]);*/
+/*	free(array[0]);*/
+/*	array[0] = 0;*/
+	
 	puts("-----doPointerArray-----");
 	
 	return;
 }
-
-
 
 /*
 void dispose(Rectangle* p){
   delete[] p;
 }
 */
-void A_7_dispose_0p(Rectangle* _p)
+void A_7_dispose_1p(Rectangle* _p)
 {
+	size_t numOfRec;
+	size_t index;
+
+	_p = _p - sizeof(size_t);
 	
+	numOfRec = *(size_t*)_p;
+	
+	_p = _p + sizeof(size_t);
+	
+	for(index = 0; index < numOfRec; ++index)
+	{
+		AB_9_Rectangle_D_0p(&_p[index]);
+	}
+	
+	_p = _p - sizeof(size_t);
+	
+	free(_p);
 	
 	return;
 }
@@ -989,6 +1059,203 @@ void A_7_dispose_0p(Rectangle* _p)
 
 
 
+
+
+
+
+
+
+/*
+class Empty {
+public:
+    Empty(int id = 0) { std::printf("Empty::Empty(%d)\n", id); }
+   ~Empty() { std::puts("Empty::~Empty()");}	
+};
+*/
+typedef struct Empty
+{
+	VirtualFunc*	m_vTable;
+}Empty;
+
+
+
+void A_5_Empty_C(Empty* const _this, int _id);
+void A_5_Empty_D(Empty* const _this);
+VirtualFunc empty_virtT[1] = {(VirtualFunc)A_5_Empty_D};
+
+void A_5_Empty_C(Empty* const _this, int _id)
+{
+	printf("Empty::Empty(%d)\n", _id);
+	
+	_this->m_vTable = empty_virtT;
+	
+	return;
+}
+
+void A_5_Empty_D(Empty* const _this)
+{	
+	puts("Empty::~Empty()");
+	
+	_this->m_vTable = empty_virtT;	
+		
+	return;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
+class EmptyEmpty  : public Empty{
+	int m_i;
+
+public:
+	EmptyEmpty(int id) : m_i(id){
+		 std::printf("EmptyEmpty::EmptyEmpty(%d)\n", m_i); 
+	}
+};
+*/
+typedef struct EmptyEmpty
+{
+	Empty	m_empty;
+	int		m_i;
+}EmptyEmpty;
+
+void A_10_EmptyEmpty_C(EmptyEmpty* const _this, int _id);
+
+
+
+void A_10_EmptyEmpty_C(EmptyEmpty* const _this, int _id)
+{
+	printf("EmptyEmpty::EmptyEmpty(%d)\n", _this->m_i); 
+
+	A_5_Empty_C(&(_this->m_empty), _id);
+	
+	_this->m_i = _id;
+	
+	return;
+}
+
+ 
+
+
+
+
+
+
+
+
+
+/*
+class EmptyBag {
+	Empty e1;
+	Empty e2;
+	EmptyEmpty ee;
+public: 
+	EmptyBag() : e2(2), e1(1), ee(2) {
+		std::puts("EmptyBag::EmptyBag()");
+	}
+	~EmptyBag(){
+		std::puts("EmptyBag::~EmptyBag");
+	}	
+};
+*/
+typedef struct EmptyBag
+{
+	Empty 		m_e1;
+	Empty 		m_e2;
+	EmptyEmpty 	m_ee;
+}EmptyBag;
+
+
+void A_8_EmptyBag_C(EmptyBag* const _this) 
+{
+	puts("EmptyBag::EmptyBag()");
+	A_5_Empty_C(&(_this->m_e1), 1);
+	A_5_Empty_C(&(_this->m_e2), 2);
+	A_5_Empty_C(&(_this->m_ee.m_empty), 2);
+	
+	
+}
+void A_8_EmptyBag_D(EmptyBag* const _this)
+{
+	puts("EmptyBag::~EmptyBag");
+}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+int main(int argc, char **argv, char **envp)
+{	
+	std::printf("---------------Start----------------\n");
+    Circle c;
+	Rectangle s(4);
+
+	std::printf("0.-------------------------------\n");		
+	draw(c);
+
+	std::printf("+..............\n");		
+	draw(c);
+
+	std::printf("+..............\n");		
+    draw(s);
+
+	std::printf("+..............\n");		
+	report(c);
+
+	std::printf("1.-------------------------------\n");	
+	
+    doPointerArray();
+
+	std::printf("2.-------------------------------\n");
+
+    doObjArray();
+
+	std::printf("3.-------------------------------\n");
+
+    Shape::printInventory();
+    Circle c2 = c;
+    c2.printInventory();
+
+	std::printf("4.-------------------------------\n");
+   
+    Circle olympics[5];
+	std::printf("olympic diff %f\n", diffWhenDoubled(olympics[1]));
+
+	std::printf("5.-------------------------------\n");
+
+    Rectangle *fourRectangles = new Rectangle[4];
+    dispose(fourRectangles);
+
+	std::printf("6.-------------------------------\n");
+	EmptyBag eb;
+	std::printf("Empty things are: %zu %zu %zu", sizeof(Empty), sizeof(EmptyEmpty), sizeof(EmptyBag) );
+	
+	std::printf("7.-------------------------------\n");
+	disappear();	
+
+	std::printf("---------------END----------------\n");
+
+    return 0;
+}
+*/
 int main(int argc, char **argv, char **envp)
 {	
 	Circle c;
@@ -996,63 +1263,41 @@ int main(int argc, char **argv, char **envp)
 	Rectangle s;
 	Circle c2;
 	Circle olympics[5];
-	Rectangle* fourRectangles
-/*	Rectangle s_temp;*/
-/*	Circle c2;*/
-/*	Circle olympics[5];	*/
-/*	Rectangle* fourRectangles;*/
-/*	EmptyBag eb;*/
+	Rectangle* fourRectangles;
+	EmptyBag eb;
 	
 	printf("---------------Start----------------\n");
-/*    Circle c;*/
-/*	Rectangle s(4);*/
 	AB_6_Circle_C_0p(&c);
 	AB_9_Rectangle_C_1p_it(&s, 4);
 	
-
 	printf("0.-------------------------------\n");	
-/*	draw(c);*/
 	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
 	A_4_draw_1p_Ce(c_temp);
 	AB_6_Circle_D_0p(&c_temp);
 	
-
 	printf("+..............\n");
-/*	draw(c);*/
 	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
 	A_4_draw_1p_Ce(c_temp);
 	AB_6_Circle_D_0p(&c_temp);		
 
 	printf("+..............\n");		
-/*    draw(s);*/
 	A_4_draw_1p_Se_ref((Shape*)&s);
 
 	printf("+..............\n");		
-/*	report(c);*/
 	A_6_report_1p_Se((Shape*)&c);
 
 	printf("1.-------------------------------\n");	
-	
-/*    doPointerArray();*/
     A_14_doPointerArray_0p();
 
 	printf("2.-------------------------------\n");
-/*    doObjArray();*/
 	A_10_doObjArray_0p_Ce();
 
 	printf("3.-------------------------------\n");
-
-/*    Shape::printInventory();*/
-/*    Circle c2 = c;*/
-/*    c2.printInventory();*/
 	AB_5_Shape_SF_printInventory();
 	AB_6_Circle_C_1p_const_Ce_ref(&c2, &c);
 	AB_5_Shape_SF_printInventory();
 
 	printf("4.-------------------------------\n");
-   
-/*    Circle olympics[5];*/
-/*	std::printf("olympic diff %f\n", diffWhenDoubled(olympics[1]));*/
 	AB_6_Circle_C_0p(&olympics[0]);
 	AB_6_Circle_C_0p(&olympics[1]);
 	AB_6_Circle_C_0p(&olympics[2]);
@@ -1060,20 +1305,35 @@ int main(int argc, char **argv, char **envp)
 	AB_6_Circle_C_0p(&olympics[4]);
 	printf("olympic diff %f\n", A_15_diffWhenDoubled_Ce(&olympics[1]));
 	
-
 	printf("5.-------------------------------\n");
-
-/*    Rectangle *fourRectangles = new Rectangle[4];*/
-/*    dispose(fourRectangles);*/
-
-/*	printf("6.-------------------------------\n");*/
-/*	EmptyBag eb;*/
-/*	printf("Empty things are: %zu %zu %zu", sizeof(Empty), sizeof(EmptyEmpty), sizeof(EmptyBag) );*/
+	fourRectangles = malloc(sizeof(size_t) + (4 * sizeof(Rectangle)));
+	*(size_t*)fourRectangles = 4;
+	fourRectangles = fourRectangles + sizeof(size_t);
+	printf("%u\n", *(size_t*)fourRectangles);
+	AB_9_Rectangle_C_0p(&fourRectangles[0]);
+	AB_9_Rectangle_C_0p(&fourRectangles[1]);
+	AB_9_Rectangle_C_0p(&fourRectangles[2]);
+	AB_9_Rectangle_C_0p(&fourRectangles[3]);
+	A_7_dispose_1p(fourRectangles);
 	
-/*	printf("7.-------------------------------\n");*/
-/*	disappear();	*/
+	printf("6.-------------------------------\n");
+	A_8_EmptyBag_C(&eb);
+	printf("Empty things are: %u %u %u", sizeof(Empty), sizeof(EmptyEmpty), sizeof(EmptyBag) );
+	
+	printf("7.-------------------------------\n");
+	A_9_disappear_0p_Ce();
 
 	printf("---------------END----------------\n");
+	
+	A_8_EmptyBag_D(&eb);
+	AB_6_Circle_D_0p(&olympics[4]);
+	AB_6_Circle_D_0p(&olympics[3]);
+	AB_6_Circle_D_0p(&olympics[2]);
+	AB_6_Circle_D_0p(&olympics[1]);
+	AB_6_Circle_D_0p(&olympics[0]);
+	AB_6_Circle_D_0p(&c2);
+	AB_9_Rectangle_D_0p(&s);
+	AB_6_Circle_D_0p(&c);
 	
     return 0;
 }
