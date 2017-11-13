@@ -410,9 +410,11 @@ Circle(const Circle& other)
 */
 void AB_6_Circle_C_1p_const_Ce_ref(Circle* const _this, const Circle* const _other)
 {	
-	_this->m_shape = _other->m_shape;
+/*	_this->m_shape = _other->m_shape;*/
 	
-/*	_this->m_shape.m_scaleable.m_vTable = circ_virtT;*/
+	AB_5_Shape_C_1p_const_Se_const_ptr(&(_this->m_shape), &(_other->m_shape));
+	
+	_this->m_shape.m_scaleable.m_vTable = circ_virtT;
 
 	_this->m_radius = _other->m_radius;
 	
@@ -635,9 +637,10 @@ Rectangle(const Rectangle &other )
 void AB_9_Rectangle_C_1p_const_Re_ref(Rectangle* const _this, const Rectangle* const _other)
 {
 	
-	_this->m_shape = _other->m_shape;
+/*	_this->m_shape = _other->m_shape;*/
+	AB_5_Shape_C_1p_const_Se_const_ptr(&(_this->m_shape), &(_other->m_shape));
 	
-/*	_this->m_shape.m_scaleable.m_vTable = rect_virtT;	*/
+	_this->m_shape.m_scaleable.m_vTable = rect_virtT;	
 
 	_this->m_a = _other->m_a;
 	
@@ -716,6 +719,43 @@ double AB_9_Rectangle_F_4_area_0p_const(const Rectangle* const _this)
 
 
 
+
+
+
+
+
+
+/*
+void report(const Shape& s) {
+	std::puts("-----report-----");
+	s.draw(); 
+	Shape::printInventory();
+	std::puts("-----report-----");
+}
+*/
+void A_6_report_1p_Ce(const Shape* const _s)
+{
+	puts("-----report-----");
+	
+	_s.draw();
+	
+	AB_5_Shape_SF_printInventory();
+	
+	puts("-----report-----");
+	
+	return;
+} 
+
+
+
+
+
+
+
+
+
+
+
 /*
 void draw(Circle c) { 
 	std::puts("-----draw(Circle)-----");
@@ -729,27 +769,36 @@ void draw(Circle c) {
 }
 */
 
+Circle A_4_draw_1p_Ce_var_Ce_4_unit;
+int A_4_draw_1p_Ce_var_Ce_4_unit_isInit = 0;
+
 void A_4_draw_1p_Ce(Circle _c) 
 { 
-	static Circle unit;
+	if (!A_4_draw_1p_Ce_var_Ce_4_unit_isInit)
+	{
+		AB_6_Circle_C_1p_de(&A_4_draw_1p_Ce_var_Ce_4_unit, 1); 
+		
+		A_4_draw_1p_Ce_var_Ce_4_unit_isInit = 1;
+	}
 	
 	puts("-----draw(Circle)-----");
 	
-	AB_6_Circle_C_1p_de(&unit, 1); /* TODO: this should be called only once */
+	AB_6_Circle_F_4_draw_0p_const(&A_4_draw_1p_Ce_var_Ce_4_unit);
 	
-/*	unit.draw();*/
-	AB_6_Circle_F_4_draw_0p_const(&unit);
-	
-	AB_6_Circle_F_5_scale_1p_de(&unit, 3);
-	
-/*	unit.scale(3);*/
+	AB_6_Circle_F_5_scale_1p_de(&A_4_draw_1p_Ce_var_Ce_4_unit, 3);
 	
 	AB_6_Circle_F_4_draw_0p_const(&_c);
 	
-/*	c.draw(); */
-	
 	puts("-----draw(Circle)-----");
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -766,6 +815,7 @@ void A_4_draw_1p_Ce(Circle _c)
 int main(int argc, char **argv, char **envp)
 {	
 	Circle c;
+	Circle c_temp;
 	Rectangle s;
 /*	Circle c2;*/
 /*	Circle olympics[5];	*/
@@ -779,9 +829,11 @@ int main(int argc, char **argv, char **envp)
 	AB_9_Rectangle_C_1p_it(&s, 4);
 	
 
-	printf("0.-------------------------------\n");		
+	printf("0.-------------------------------\n");	
+	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
+	A_4_draw_1p_Ce(c);	
 /*	draw(c);*/
-	A_4_draw_1p_Ce(c);
+	
 
 /*	printf("+..............\n");		*/
 /*	draw(c);*/
@@ -802,7 +854,7 @@ int main(int argc, char **argv, char **envp)
 
 /*	printf("3.-------------------------------\n");*/
 
-    AB_5_Shape_SF_printInventory();
+/*    AB_5_Shape_SF_printInventory();*/
 /*    Circle c2 = c;*/
 /*    c2.printInventory();*/
 
