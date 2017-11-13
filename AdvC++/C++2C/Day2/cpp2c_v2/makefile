@@ -12,6 +12,7 @@ Ver2.txt: Ver2.out
 MyVer2.txt: MyVer2.out
 	./MyVer2.out >> MyVer2.txt
 	
-	
 clean:
 	rm MyVer2.out MyVer2.txt Ver2.out Ver2.txt 
+	
+	

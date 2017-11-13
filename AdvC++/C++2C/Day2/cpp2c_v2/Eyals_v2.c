@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef void (*VirtualFunc)(void);
 
@@ -495,8 +496,6 @@ double AB_6_Circle_F_6_radius_0p_const(const Circle* const _this)
 
 
 
-
-
 /*
 class Rectangle: public Shape {
 public:
@@ -733,7 +732,7 @@ void report(const Shape& s) {
 	std::puts("-----report-----");
 }
 */
-void A_6_report_1p_Ce(const Shape* const _s)
+void A_6_report_1p_Se(const Shape* const _s)
 {
 	puts("-----report-----");
 	
@@ -817,14 +816,167 @@ void doObjArray(){
 */
 void A_10_doObjArray_0p_Ce()
 {
-
+	Shape objects[3];
+	Circle temp_c1;
+	Rectangle temp_r1;
+	Circle temp_c2;
+	
+	AB_6_Circle_C_0p(&temp_c1);
+	AB_5_Shape_C_1p_const_Se_const_ptr(&objects[0], (Shape*)&temp_c1);
+	AB_6_Circle_D_0p(&temp_c1);
+	
+	AB_9_Rectangle_C_1p_it(&temp_r1, 4);
+	AB_5_Shape_C_1p_const_Se_const_ptr(&objects[1], (Shape*)&temp_r1);
+	AB_9_Rectangle_D_0p(&temp_r1);
+	
+	AB_6_Circle_C_1p_de(&temp_c2, 9);
+	AB_5_Shape_C_1p_const_Se_const_ptr(&objects[2], (Shape*)&temp_c2);
+	AB_6_Circle_D_0p(&temp_c2);
+	
 	return;
 } 
 
+/*
+void disappear() {
+	std::puts("-----disappear-----");
+
+	Circle defaultCircle();
+
+	std::puts("-----disappear-----");
+}
+*/
+typedef Circle (*A_9_disappear_F_13_disappearCircle)();
+void A_9_disappear_0p_Ce()
+{
+	puts("-----disappear-----");
+	
+/*	typedef Circle (*defaultCircle)();*/
+	
+	puts("-----disappear-----");
+}
+
+
+/*
+double diffWhenDoubled(Shape& shape){
+	double a0 = shape.area();
+	shape.scale(2);
+	double a1 = shape.area();
+	return a1 - a0;
+}
+*/
+double A_15_diffWhenDoubled_Se(Shape* const _shape)
+{
+	double a0;
+	double a1;
+	
+	a0 = ((double (*)(const Shape* const))_shape->m_scaleable.m_vTable[4])(_shape);
+	((void (*)(Shape* const, double))_shape->m_scaleable.m_vTable[1])(_shape, 2);
+	a1 = ((double (*)(const Shape* const))_shape->m_scaleable.m_vTable[4])(_shape);
+	
+	return a1 - a0;
+}
+
+/*
+double diffWhenDoubled(Circle& shape){
+	double a0 = shape.area();
+	shape.scale(2);
+	double a1 = shape.area();
+	return a1 - a0;
+}
+*/
+double A_15_diffWhenDoubled_Ce(Circle* const _shape)
+{
+	double a0;
+	double a1;
+	
+	a0 = ((double (*)(const Circle* const))_shape->m_shape.m_scaleable.m_vTable[4])(_shape);
+	((void (*)(Circle* const, double))_shape->m_shape.m_scaleable.m_vTable[1])(_shape, 2);
+	a1 = ((double (*)(const Circle* const))_shape->m_shape.m_scaleable.m_vTable[4])(_shape);
+	
+	return a1 - a0;
+}
+
+
+/*
+void doPointerArray(){
+	std::puts("-----doPointerArray-----");
+	Shape *array[] =  {
+	    new Circle(),
+	    new Rectangle(3),
+	    new Circle(4)
+	};
+
+    for(int i = 0; i < 3; ++i){ 
+		array[i]->scale();
+		array[i]->draw();
+	}
+
+	std::printf("area: %f\n", diffWhenDoubled(*array[2]));
+
+    for(int i = 0; i < 3; ++i) { 
+		delete array[i]; 
+		array[i] = 0; 
+	}
+
+	std::puts("-----doPointerArray-----");
+}
+*/
+void A_14_doPointerArray_0p()
+{
+	Shape* 		array[3];
+	Circle* 	temp_c1;
+	Rectangle* 	temp_r1;
+	Circle*		temp_c2;
+	int i;
+	
+	puts("-----doPointerArray-----");
+	
+	temp_c1 = malloc(sizeof(Circle));
+	temp_r1 = malloc(sizeof(Rectangle));
+	temp_c2 = malloc(sizeof(Circle));
+	
+	AB_6_Circle_C_0p(temp_c1);
+	array[0] = (Shape*)temp_c1;
+	
+	AB_9_Rectangle_C_1p_it(temp_r1, 3);
+	array[1] = (Shape*)temp_r1;
+	
+	AB_6_Circle_C_1p_de(temp_c2, 4);
+	array[2] = (Shape*)temp_c2;
+	
+	for(i = 0; i < 3; ++i)
+	{
+		((double(*)(const Shape* const))array[i]->m_scaleable.m_vTable[1])(array[i]);
+		((void(*)(const Shape* const))array[i]->m_scaleable.m_vTable[2])(array[i]);
+	}
+	
+	printf("area: %f\n", A_15_diffWhenDoubled_Ce((Circle*)array[2]));
+	
+	for(i = 0; i < 3; ++i)
+	{
+		((void(*)(Shape* const))array[i]->m_scaleable.m_vTable[0])(array[i]);
+		free(array[i]);
+		array[i] = 0;
+	}
+	
+	puts("-----doPointerArray-----");
+	
+	return;
+}
 
 
 
-
+/*
+void dispose(Rectangle* p){
+  delete[] p;
+}
+*/
+void A_7_dispose_0p(Rectangle* _p)
+{
+	
+	
+	return;
+}
 
 
 
@@ -842,6 +994,10 @@ int main(int argc, char **argv, char **envp)
 	Circle c;
 	Circle c_temp;
 	Rectangle s;
+	Circle c2;
+	Circle olympics[5];
+	Rectangle* fourRectangles
+/*	Rectangle s_temp;*/
 /*	Circle c2;*/
 /*	Circle olympics[5];	*/
 /*	Rectangle* fourRectangles;*/
@@ -855,44 +1011,57 @@ int main(int argc, char **argv, char **envp)
 	
 
 	printf("0.-------------------------------\n");	
-	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
-	A_4_draw_1p_Ce(c);
-	AB_6_Circle_D_0p(&c_temp);	
 /*	draw(c);*/
+	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
+	A_4_draw_1p_Ce(c_temp);
+	AB_6_Circle_D_0p(&c_temp);
 	
 
 	printf("+..............\n");
-	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
-	A_4_draw_1p_Ce(c);
-	AB_6_Circle_D_0p(&c_temp);		
 /*	draw(c);*/
+	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
+	A_4_draw_1p_Ce(c_temp);
+	AB_6_Circle_D_0p(&c_temp);		
 
-/*	printf("+..............\n");		*/
+	printf("+..............\n");		
 /*    draw(s);*/
+	A_4_draw_1p_Se_ref((Shape*)&s);
 
-/*	printf("+..............\n");		*/
+	printf("+..............\n");		
 /*	report(c);*/
+	A_6_report_1p_Se((Shape*)&c);
 
-/*	printf("1.-------------------------------\n");	*/
-/*	*/
+	printf("1.-------------------------------\n");	
+	
 /*    doPointerArray();*/
+    A_14_doPointerArray_0p();
 
-/*	printf("2.-------------------------------\n");*/
-
+	printf("2.-------------------------------\n");
 /*    doObjArray();*/
+	A_10_doObjArray_0p_Ce();
 
-/*	printf("3.-------------------------------\n");*/
+	printf("3.-------------------------------\n");
 
-/*    AB_5_Shape_SF_printInventory();*/
+/*    Shape::printInventory();*/
 /*    Circle c2 = c;*/
 /*    c2.printInventory();*/
+	AB_5_Shape_SF_printInventory();
+	AB_6_Circle_C_1p_const_Ce_ref(&c2, &c);
+	AB_5_Shape_SF_printInventory();
 
-/*	printf("4.-------------------------------\n");*/
+	printf("4.-------------------------------\n");
    
 /*    Circle olympics[5];*/
-/*	printf("olympic diff %f\n", diffWhenDoubled(olympics[1]));*/
+/*	std::printf("olympic diff %f\n", diffWhenDoubled(olympics[1]));*/
+	AB_6_Circle_C_0p(&olympics[0]);
+	AB_6_Circle_C_0p(&olympics[1]);
+	AB_6_Circle_C_0p(&olympics[2]);
+	AB_6_Circle_C_0p(&olympics[3]);
+	AB_6_Circle_C_0p(&olympics[4]);
+	printf("olympic diff %f\n", A_15_diffWhenDoubled_Ce(&olympics[1]));
+	
 
-/*	printf("5.-------------------------------\n");*/
+	printf("5.-------------------------------\n");
 
 /*    Rectangle *fourRectangles = new Rectangle[4];*/
 /*    dispose(fourRectangles);*/
@@ -905,7 +1074,7 @@ int main(int argc, char **argv, char **envp)
 /*	disappear();	*/
 
 	printf("---------------END----------------\n");
-
+	
     return 0;
 }
 
