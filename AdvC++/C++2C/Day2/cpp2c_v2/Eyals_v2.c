@@ -351,7 +351,7 @@ typedef struct Circle
 void AB_6_Circle_C_0p(Circle* const _this);
 void AB_6_Circle_C_1p_de(Circle* const _this, double _r);
 void AB_6_Circle_C_1p_const_Ce_ref(Circle* const _this, const Circle* const _other);
-void AB_6_Circle_F_5_scale_1p_de(const Circle* const _this, double _f); /* virtual */
+void AB_6_Circle_F_5_scale_1p_de(Circle* const _this, double _f); /* virtual */
 void AB_6_Circle_D_0p(Circle* const _this); /* virtual */
 void AB_6_Circle_F_4_draw_0p_const(const Circle* const _this); /* virtual */
 double AB_6_Circle_F_4_area_0p_const(const Circle* const _this); /* virtual */
@@ -372,7 +372,7 @@ void AB_6_Circle_C_0p(Circle* const _this)
 {
 	AB_5_Shape_C_0p(&(_this->m_shape));					/* Calls constructor of base */
 	
-	_this->m_shape.m_scaleable.m_vTable = shap_virtT;	/* set derived virtual pointer */
+	_this->m_shape.m_scaleable.m_vTable = circ_virtT;	/* set derived virtual pointer */
 	
 	_this->m_radius = 1;
 	
@@ -391,7 +391,7 @@ void AB_6_Circle_C_1p_de(Circle* const _this, double _r)
 {
 	AB_5_Shape_C_0p(&(_this->m_shape));					/* Calls constructor of base */
 	
-	_this->m_shape.m_scaleable.m_vTable = shap_virtT;	/* set derived virtual pointer */
+	_this->m_shape.m_scaleable.m_vTable = circ_virtT;	/* set derived virtual pointer */
 	
 	_this->m_radius = _r;
 	
@@ -409,10 +409,10 @@ Circle(const Circle& other)
 }
 */
 void AB_6_Circle_C_1p_const_Ce_ref(Circle* const _this, const Circle* const _other)
-{
-	_this->m_shape.m_scaleable.m_vTable = circ_virtT;	/* set derived virtual pointer */
+{	
+	_this->m_shape = _other->m_shape;
 	
-	AB_5_Shape_C_1p_const_Se_const_ptr(&(_this->m_shape), &(_other->m_shape));
+/*	_this->m_shape.m_scaleable.m_vTable = circ_virtT;*/
 
 	_this->m_radius = _other->m_radius;
 	
@@ -429,6 +429,7 @@ void AB_6_Circle_C_1p_const_Ce_ref(Circle* const _this, const Circle* const _oth
 */
 void AB_6_Circle_D_0p(Circle* const _this)
 {
+	_this->m_shape.m_scaleable.m_vTable = circ_virtT;
 	
 	printf("Circle::~Circle() - %d, r:%f\n", _this->m_shape.m_id, _this->m_radius);
 	
@@ -443,6 +444,7 @@ void draw() const {
 */
 void AB_6_Circle_F_4_draw_0p_const(const Circle* const _this)
 {
+	printf("Circle::draw()  - %d, r:%f\n", _this->m_shape.m_id, _this->m_radius);
 
 	return;
 }
@@ -454,9 +456,12 @@ void scale(double f = 2) {
 	m_radius *= f;
 }
 */
-void AB_6_Circle_F_5_scale_1p_de(const Circle* const _this, double _f)
+void AB_6_Circle_F_5_scale_1p_de(Circle* const _this, double _f)
 {
-
+	printf("Circle::scale(%f)\n", _f);
+	
+	_this->m_radius *= _f;
+	
 	return;
 }
 
@@ -490,12 +495,278 @@ double AB_6_Circle_F_6_radius_0p_const(const Circle* const _this)
 
 
 
+/*
+class Rectangle: public Shape {
+public:
+	Rectangle() : m_a(1), m_b(1) { 
+		std::printf("Rectangle::Rectangle() - %d, [%d, %d]\n", m_id, m_a, m_b);
+	}
+
+	Rectangle(int a) : m_a(a), m_b(a) { 
+		std::printf("Rectangle::Rectangle(int) - %d, [%d, %d]\n", m_id, m_a, m_b);
+	}
+
+	Rectangle(int a, int b) : m_a(a), m_b(b) { 
+		std::printf("Rectangle::Rectangle(int, int) - %d, [%d, %d]\n", m_id, m_a, m_b);
+	}
+	
+	Rectangle(const Rectangle &other ) 
+	: m_a(other.m_a), m_b(other.m_b), Shape(other) { 
+		std::printf("Rectangle::Rectangle(Rectangle&) - %d, a:%d/%d\n", m_id, m_a, m_b);
+	}
+	
+	~Rectangle() { 
+		std::printf("Rectangle::~Rectangle() - %d, [%d, %d]\n", m_id, m_a, m_b);
+	}
+
+	void draw() const { 
+		std::printf("Rectangle::draw()  - %d, [%d, %d]\n", m_id, m_a, m_b);
+	}
+
+    void draw(Color::ColorEnum c) const {
+		std::printf("Rectangle::draw(%d)  - %d, [%d, %d]\n", c, m_id, m_a, m_b);
+	}
+
+	void scale(double f = 4){
+		std::printf("Rectangle::scale(%f)\n", f);
+		m_a *= f;
+		m_b *= f;
+	}
+
+	double area() const {
+		return m_a * m_b;
+	}
+
+private:
+	int m_a, m_b;
+};
+*/
+typedef struct Rectangle
+{
+	Shape	m_shape;
+	int		m_a;
+	int		m_b;
+}Rectangle;
+
+void AB_9_Rectangle_C_0p(Rectangle* const _this);
+void AB_9_Rectangle_C_1p_it(Rectangle* const _this, int _a);
+void AB_9_Rectangle_C_2p_it_it(Rectangle* const _this, int _a, int _b);
+void AB_9_Rectangle_C_1p_const_Re_ref(Rectangle* const _this, const Rectangle* const _other);
+void AB_9_Rectangle_D_0p(Rectangle* const _this); /* virtual */
+void AB_9_Rectangle_F_4_draw_0p_const(const Rectangle* const _this); /* virtual */
+void AB_9_Rectangle_F_4_draw_1p_Re_const(const Rectangle* const _this, ColorEnum _c); /* virtual */
+void AB_9_Rectangle_F_5_scale_1p_de(Rectangle* const _this, double _f); /* virtual */
+double AB_9_Rectangle_F_4_area_0p_const(const Rectangle* const _this); /* virtual */
+
+VirtualFunc rect_virtT[5] = {(VirtualFunc)AB_9_Rectangle_D_0p, 
+								(VirtualFunc)AB_9_Rectangle_F_5_scale_1p_de, 
+								(VirtualFunc)AB_9_Rectangle_F_4_draw_0p_const, 
+								(VirtualFunc)AB_9_Rectangle_F_4_draw_1p_Re_const, 
+								(VirtualFunc)AB_9_Rectangle_F_4_area_0p_const};
+
+/*
+Rectangle() : m_a(1), m_b(1) { 
+	std::printf("Rectangle::Rectangle() - %d, [%d, %d]\n", m_id, m_a, m_b);
+}
+*/
+void AB_9_Rectangle_C_0p(Rectangle* const _this)
+{
+	AB_5_Shape_C_0p(&(_this->m_shape));					/* Calls constructor of base */
+	
+	_this->m_shape.m_scaleable.m_vTable = rect_virtT;	/* set derived virtual pointer */
+	
+	_this->m_a = 1;
+	
+	_this->m_b = 1;
+	
+	printf("Rectangle::Rectangle() - %d, [%d, %d]\n", _this->m_shape.m_id, _this->m_a, _this->m_b);
+	
+	return;
+}
+
+
+/*
+Rectangle(int a) : m_a(a), m_b(a) { 
+	std::printf("Rectangle::Rectangle(int) - %d, [%d, %d]\n", m_id, m_a, m_b);
+}
+*/
+void AB_9_Rectangle_C_1p_it(Rectangle* const _this, int _a)
+{
+	AB_5_Shape_C_0p(&(_this->m_shape));					/* Calls constructor of base */
+	
+	_this->m_shape.m_scaleable.m_vTable = rect_virtT;	/* set derived virtual pointer */
+	
+	_this->m_a = _a;
+	
+	_this->m_b = _a;
+	
+	printf("Rectangle::Rectangle(int) - %d, [%d, %d]\n", _this->m_shape.m_id, _this->m_a, _this->m_b);
+	
+	return;
+}
+
+/*
+Rectangle(int a, int b) : m_a(a), m_b(b) { 
+	std::printf("Rectangle::Rectangle(int, int) - %d, [%d, %d]\n", m_id, m_a, m_b);
+}
+*/
+void AB_9_Rectangle_C_2p_it_it(Rectangle* const _this, int _a, int _b)
+{
+	AB_5_Shape_C_0p(&(_this->m_shape));					/* Calls constructor of base */
+	
+	_this->m_shape.m_scaleable.m_vTable = rect_virtT;	/* set derived virtual pointer */
+	
+	_this->m_a = _a;
+	
+	_this->m_b = _b;
+	
+	printf("Rectangle::Rectangle(int, int) - %d, [%d, %d]\n", _this->m_shape.m_id, _this->m_a, _this->m_b);
+	
+	return;
+}
+
+
+/*
+Rectangle(const Rectangle &other ) 
+: m_a(other.m_a), m_b(other.m_b), Shape(other) { 
+	std::printf("Rectangle::Rectangle(Rectangle&) - %d, a:%d/%d\n", m_id, m_a, m_b);
+}
+*/
+void AB_9_Rectangle_C_1p_const_Re_ref(Rectangle* const _this, const Rectangle* const _other)
+{
+	
+	_this->m_shape = _other->m_shape;
+	
+/*	_this->m_shape.m_scaleable.m_vTable = rect_virtT;	*/
+
+	_this->m_a = _other->m_a;
+	
+	_this->m_b = _other->m_b;
+	
+	return;
+}
+
+/*
+~Rectangle() { 
+	std::printf("Rectangle::~Rectangle() - %d, [%d, %d]\n", m_id, m_a, m_b);
+}
+*/
+void AB_9_Rectangle_D_0p(Rectangle* const _this)
+{
+	_this->m_shape.m_scaleable.m_vTable = rect_virtT;
+	
+	printf("Rectangle::~Rectangle() - %d, [%d, %d]\n", _this->m_shape.m_id, _this->m_a, _this->m_b);
+	
+	AB_5_Shape_D_0p(&(_this->m_shape));
+
+	return;
+}
+
+/*
+void draw() const { 
+	std::printf("Rectangle::draw()  - %d, [%d, %d]\n", m_id, m_a, m_b);
+}
+*/
+void AB_9_Rectangle_F_4_draw_0p_const(const Rectangle* const _this)
+{
+	printf("Rectangle::draw()  - %d, [%d, %d]\n", _this->m_shape.m_id, _this->m_a, _this->m_b);
+	
+	return;
+}
+
+/*
+void draw(Color::ColorEnum c) const {
+	std::printf("Rectangle::draw(%d)  - %d, [%d, %d]\n", c, m_id, m_a, m_b);
+}
+*/
+void AB_9_Rectangle_F_4_draw_1p_Re_const(const Rectangle* const _this, ColorEnum _c)
+{
+	printf("Rectangle::draw(%d)  - %d, [%d, %d]\n", _c, _this->m_shape.m_id, _this->m_a, _this->m_b);
+	
+	return;
+}
+
+/*
+void scale(double f = 4){
+	std::printf("Rectangle::scale(%f)\n", f);
+	m_a *= f;
+	m_b *= f;
+}
+*/
+void AB_9_Rectangle_F_5_scale_1p_de(Rectangle* const _this, double _f)
+{
+	printf("Rectangle::scale(%f)\n", _f);
+	_this->m_a *= _f;
+	_this->m_b *= _f;
+	
+	return;
+}
+
+
+/*
+double area() const {
+	return m_a * m_b;
+}
+*/
+double AB_9_Rectangle_F_4_area_0p_const(const Rectangle* const _this)
+{
+	return _this->m_a * _this->m_b;
+}
+
+
+
+
+/*
+void draw(Circle c) { 
+	std::puts("-----draw(Circle)-----");
+
+	static Circle unit(1);
+	
+	unit.draw();
+	unit.scale(3);
+	c.draw(); 
+	std::puts("-----draw(Circle)-----");
+}
+*/
+
+void A_4_draw_1p_Ce(Circle _c) 
+{ 
+	static Circle unit;
+	
+	puts("-----draw(Circle)-----");
+	
+	AB_6_Circle_C_1p_de(&unit, 1); /* TODO: this should be called only once */
+	
+/*	unit.draw();*/
+	AB_6_Circle_F_4_draw_0p_const(&unit);
+	
+	AB_6_Circle_F_5_scale_1p_de(&unit, 3);
+	
+/*	unit.scale(3);*/
+	
+	AB_6_Circle_F_4_draw_0p_const(&_c);
+	
+/*	c.draw(); */
+	
+	puts("-----draw(Circle)-----");
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 int main(int argc, char **argv, char **envp)
 {	
 	Circle c;
-/*	Rectangle s;*/
+	Rectangle s;
 /*	Circle c2;*/
 /*	Circle olympics[5];	*/
 /*	Rectangle* fourRectangles;*/
@@ -505,9 +776,12 @@ int main(int argc, char **argv, char **envp)
 /*    Circle c;*/
 /*	Rectangle s(4);*/
 	AB_6_Circle_C_0p(&c);
+	AB_9_Rectangle_C_1p_it(&s, 4);
+	
 
 	printf("0.-------------------------------\n");		
-	draw(c);
+/*	draw(c);*/
+	A_4_draw_1p_Ce(c);
 
 /*	printf("+..............\n");		*/
 /*	draw(c);*/
