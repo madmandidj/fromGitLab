@@ -351,8 +351,8 @@ typedef struct Circle
 void AB_6_Circle_C_0p(Circle* const _this);
 void AB_6_Circle_C_1p_de(Circle* const _this, double _r);
 void AB_6_Circle_C_1p_const_Ce_ref(Circle* const _this, const Circle* const _other);
-void AB_6_Circle_F_5_scale_1p_de(Circle* const _this, double _f); /* virtual */
 void AB_6_Circle_D_0p(Circle* const _this); /* virtual */
+void AB_6_Circle_F_5_scale_1p_de(Circle* const _this, double _f); /* virtual */
 void AB_6_Circle_F_4_draw_0p_const(const Circle* const _this); /* virtual */
 double AB_6_Circle_F_4_area_0p_const(const Circle* const _this); /* virtual */
 double AB_6_Circle_F_6_radius_0p_const(const Circle* const _this); /* virtual */
@@ -737,24 +737,36 @@ void A_6_report_1p_Ce(const Shape* const _s)
 {
 	puts("-----report-----");
 	
-	_s.draw();
+	((void(*)(const Shape* const))_s->m_scaleable.m_vTable[2])(_s); /* call draw wiht 0 parameters */
 	
 	AB_5_Shape_SF_printInventory();
 	
 	puts("-----report-----");
 	
 	return;
+}
+
+
+/*
+inline void draw(Shape& obj) { 
+	std::puts("-----draw(Shape&)-----");
+	obj.scale();
+	obj.draw();	
+	std::puts("-----draw(Shape&)-----");
 } 
-
-
-
-
-
-
-
-
-
-
+*/
+void A_4_draw_1p_Se_ref(Shape* const _obj) /*TODO: should be inline */
+{
+	puts("-----draw(Shape&)-----");
+	
+	((void(*)(Shape* const, double _f))_obj->m_scaleable.m_vTable[1])(_obj, 1); /* call scale with 1 param */
+	
+	((void(*)(const Shape* const))_obj->m_scaleable.m_vTable[2])(_obj); /* call draw with 0 parameters */
+	
+	puts("-----draw(Shape&)-----");
+	
+	return;
+}
 
 /*
 void draw(Circle c) { 
@@ -768,20 +780,19 @@ void draw(Circle c) {
 	std::puts("-----draw(Circle)-----");
 }
 */
-
 Circle A_4_draw_1p_Ce_var_Ce_4_unit;
 int A_4_draw_1p_Ce_var_Ce_4_unit_isInit = 0;
 
 void A_4_draw_1p_Ce(Circle _c) 
 { 
+	puts("-----draw(Circle)-----");
+
 	if (!A_4_draw_1p_Ce_var_Ce_4_unit_isInit)
 	{
 		AB_6_Circle_C_1p_de(&A_4_draw_1p_Ce_var_Ce_4_unit, 1); 
 		
 		A_4_draw_1p_Ce_var_Ce_4_unit_isInit = 1;
-	}
-	
-	puts("-----draw(Circle)-----");
+	}	
 	
 	AB_6_Circle_F_4_draw_0p_const(&A_4_draw_1p_Ce_var_Ce_4_unit);
 	
@@ -792,9 +803,23 @@ void A_4_draw_1p_Ce(Circle _c)
 	puts("-----draw(Circle)-----");
 }
 
+/*
+void doObjArray(){
+	Shape objects[] = {
+	    Circle(),
+	    Rectangle(4),
+	    Circle(9)
+	};
 
+    for(int i = 0; i < 3; ++i) 
+		objects[i].draw();
+}
+*/
+void A_10_doObjArray_0p_Ce()
+{
 
-
+	return;
+} 
 
 
 
@@ -831,11 +856,15 @@ int main(int argc, char **argv, char **envp)
 
 	printf("0.-------------------------------\n");	
 	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
-	A_4_draw_1p_Ce(c);	
+	A_4_draw_1p_Ce(c);
+	AB_6_Circle_D_0p(&c_temp);	
 /*	draw(c);*/
 	
 
-/*	printf("+..............\n");		*/
+	printf("+..............\n");
+	AB_6_Circle_C_1p_const_Ce_ref(&c_temp, &c);
+	A_4_draw_1p_Ce(c);
+	AB_6_Circle_D_0p(&c_temp);		
 /*	draw(c);*/
 
 /*	printf("+..............\n");		*/
