@@ -1,23 +1,7 @@
 #ifndef __STRING_H__
 #define __STRING_H__
-/*
-Need:
------
-Default CTOR
-DTOR
-Copy CTOR
-Assignment operator
-CTOR from char*
-operator==
-operator!=
-operator[]
-operator+
-Get_C_Str
-Length
-ToUpper
-ToLower
-*/
-
+namespace advcpp
+{
 
 class Buffer;
 
@@ -55,7 +39,7 @@ private:
 
 
 
-
+} //namespace advcpp
 #endif //#define __STRING_H__
 
 

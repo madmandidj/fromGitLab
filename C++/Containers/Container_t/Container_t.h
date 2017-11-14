@@ -1,7 +1,7 @@
 #ifndef __CONTAINER_T_H__
 #define __CONTAINER_T_H__
 
-#include <stddef.h>
+#include <stdlib.h>
 
 template <class elementType> 
 class Container_t
