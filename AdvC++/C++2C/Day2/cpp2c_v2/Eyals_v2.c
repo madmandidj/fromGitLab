@@ -985,18 +985,9 @@ void A_14_doPointerArray_0p()
 	
 	for(i = 0; i < 3; ++i)
 	{
-/*		((double(*)(Shape* const, double))array[i]->m_scaleable.m_vTable[1])(array[i], 1);*/
-/*		((void(*)(const Shape* const))array[i]->m_scaleable.m_vTable[2])(array[i]);*/
+		((double(*)(Shape* const, double))array[i]->m_scaleable.m_vTable[1])(array[i], 1);
+		((void(*)(const Shape* const))array[i]->m_scaleable.m_vTable[2])(array[i]);
 	}
-	
-	((double(*)(Circle* const, double))array[0]->m_scaleable.m_vTable[1])((Circle*)array[0], 2); /*2 is default for circle scale */
-	((void(*)(const Shape* const))array[0]->m_scaleable.m_vTable[2])(array[0]);
-	
-	((double(*)(Shape* const, double))array[1]->m_scaleable.m_vTable[1])(array[1], 4); /*4 is default for rectangle scale */
-	((void(*)(const Shape* const))array[1]->m_scaleable.m_vTable[2])(array[1]);
-	
-	((double(*)(Circle* const, double))array[2]->m_scaleable.m_vTable[1])((Circle*)array[2], 2); /*2 is default for circle scale */
-	((void(*)(const Shape* const))array[2]->m_scaleable.m_vTable[2])(array[2]);
 	
 	printf("area: %f\n", A_15_diffWhenDoubled_Ce((Circle*)array[2]));
 	
@@ -1006,14 +997,6 @@ void A_14_doPointerArray_0p()
 		free(array[i]);
 		array[i] = 0;
 	}
-	
-/*	((void(*)(Shape* const))array[0]->m_scaleable.m_vTable[0])(array[0]);*/
-/*	free(array[0]);*/
-/*	array[0] = 0;*/
-/*	*/
-/*	((void(*)(Shape* const))array[1]->m_scaleable.m_vTable[1])(array[1]);*/
-/*	free(array[0]);*/
-/*	array[0] = 0;*/
 	
 	puts("-----doPointerArray-----");
 	
