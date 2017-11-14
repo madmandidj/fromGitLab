@@ -1057,20 +1057,19 @@ public:
 */
 typedef struct Empty
 {
-	VirtualFunc*	m_vTable;
+/*	VirtualFunc*	m_vTable;*/
+	char	m_dummy;
 }Empty;
-
-
 
 void A_5_Empty_C(Empty* const _this, int _id);
 void A_5_Empty_D(Empty* const _this);
-VirtualFunc empty_virtT[1] = {(VirtualFunc)A_5_Empty_D};
+/*VirtualFunc empty_virtT[1] = {(VirtualFunc)A_5_Empty_D};*/
 
 void A_5_Empty_C(Empty* const _this, int _id)
 {
 	printf("Empty::Empty(%d)\n", _id);
 	
-	_this->m_vTable = empty_virtT;
+/*	_this->m_vTable = empty_virtT;*/
 	
 	return;
 }
@@ -1079,7 +1078,7 @@ void A_5_Empty_D(Empty* const _this)
 {	
 	puts("Empty::~Empty()");
 	
-	_this->m_vTable = empty_virtT;	
+/*	_this->m_vTable = empty_virtT;	*/
 		
 	return;
 }
@@ -1106,7 +1105,7 @@ public:
 */
 typedef struct EmptyEmpty
 {
-	Empty	m_empty;
+/*	Empty	m_empty;*/
 	int		m_i;
 }EmptyEmpty;
 
@@ -1118,7 +1117,7 @@ void A_10_EmptyEmpty_C(EmptyEmpty* const _this, int _id)
 {
 	printf("EmptyEmpty::EmptyEmpty(%d)\n", _this->m_i); 
 
-	A_5_Empty_C(&(_this->m_empty), _id);
+/*	A_5_Empty_C(&(_this->m_empty), _id);*/
 	
 	_this->m_i = _id;
 	
@@ -1162,7 +1161,7 @@ void A_8_EmptyBag_C(EmptyBag* const _this)
 	puts("EmptyBag::EmptyBag()");
 	A_5_Empty_C(&(_this->m_e1), 1);
 	A_5_Empty_C(&(_this->m_e2), 2);
-	A_5_Empty_C(&(_this->m_ee.m_empty), 2);
+/*	A_5_Empty_C(&(_this->m_ee.m_empty), 2);*/
 	
 	
 }

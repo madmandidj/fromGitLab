@@ -1,0 +1,98 @@
+Learned namespace! woohoo!
+
+
+
+
+
+
+
+
+Casting:
+--------
+char c = 'x'; // in C, 'x' is int and char c is char. in C++ they are both chars. Char by default can also be unsigned.
+int i = c; // in both cases there is a cast which is dependant on value because MSB is sign bit
+unsinged u = i;
+double d = u;
+int* pi = &i; //no cast
+long* pl = pi;
+unsigned uadd = (unsigned int)pi;
+
+
+
+
+const Base *pb;
+Der *pd;
+(Der*)pb; //This removes const!!
+
+types of cast in C++:
+---------------------
+-implicit
+-C cast
+-function style (  int(3.14)  )
+-static_cast
+-dynamic_cast
+-const_cast
+-reinterpret_cast
+
+
+
+static_cast<Apple*>(&myCar); -----> this wont work! car and apple arent related
+
+
+
+Fruit (base)
+^
+|
+|
+Apple (derived)
+
+static_cast<Apple*>(&myFruit); ----> this is possible but i need to know that the myFruit is an apple!
+static cast allows casting in both directions.
+
+
+dynamic_cast<Apple*>(&myFruit) ----> in runtime there is a check that this is actually an apple
+it does this by checking which virtual table is held by the object (not the content of the table but the address of the table).
+Need to enable RTTI (depending on compiler)
+
+dynamic_cast<Apple&>(myComputer) .. this will throw exception ----> std::bad_cast
+
+
+to remove a const:
+f(const Apple* ap)
+{
+	const_cast<Apple*>(ap);
+}
+
+
+to add const: muhammad says const_cast .... mike says static cast with const
+
+
+FROM TODAY .. C STYLE OR FUNCTION STYLE CASTS ONLY ON BUILT IN TYPES.
+POINTERS, REFERENCES, AND USER DEFINED TYPES ONLY WITH static_cast, dynamic_cast, const_cast, reinterpret_cast
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
