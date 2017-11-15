@@ -31,24 +31,24 @@ public:
 		void operator()(T* _deleteThis);
 	};
 	virtual ~Buffer();
-	Buffer();
-	Buffer(size_t _capacity);
-	Buffer(const Buffer& _buf);
-	Buffer& operator=(const Buffer& _buf);
+	explicit Buffer();
+	explicit Buffer(size_t _capacity);
 	bool SetBuffer(const T* _data, size_t _dataSize);
 	const T* GetBuffer() const;
 	bool SetElement(const T& _element, size_t _index);
 	const T& GetElement(size_t _index) const;
 	inline size_t GetCapacity() const;
 	inline size_t GetSize() const;
+	//TODO: AppendElement
+	//TODO: EnsureCapacity
+	//TODO: SetResizeMode //capacity grows by nearest larger multiple of 2 or by percentage
 	
-	
-//		Buffer& Buffer(const Buffer& _buf);
-//		Buffer& operator=(const Buffer& _buf);
 protected:
 
 private:
-	std::tr1::shared_ptr<T> m_buf;
+	Buffer(const Buffer& _buf);
+	Buffer& operator=(const Buffer& _buf);
+	std::tr1::shared_ptr<T> m_data;
 	size_t 					m_capacity;
 	size_t 					m_size;
 };
@@ -66,22 +66,21 @@ void Buffer<T>::BufferDeleter::operator()(T* _deleteThis)
 template <class T> 
 Buffer<T>::~Buffer()
 {
-	//Empty
 	std::cout << "In ~Buffer" << std::endl;
 }
 
 template <class T> 
-Buffer<T>::Buffer() : m_size(0), m_capacity(1)
+Buffer<T>::Buffer() : m_capacity(1), m_size(0)
 {	
-	std::tr1::shared_ptr<T> buffer (new T[m_capacity], BufferDeleter ());
-	m_buf = buffer;
+	std::tr1::shared_ptr<T> data (new T[m_capacity], BufferDeleter ());
+	m_data = data;
 }
 
 template <class T> 
-Buffer<T>::Buffer(size_t _capacity) : m_size(0), m_capacity(_capacity)
+Buffer<T>::Buffer(size_t _capacity) :m_capacity(_capacity), m_size(0)
 {	
-	std::tr1::shared_ptr<T> buffer (new T[m_capacity], BufferDeleter ());
-	m_buf = buffer;
+	std::tr1::shared_ptr<T> data (new T[m_capacity], BufferDeleter());
+	m_data = data;
 }
 
 template <class T> 
@@ -92,19 +91,32 @@ bool Buffer<T>::SetBuffer(const T* _data, size_t _dataSize)
 		return false;
 	}
 	
-	size_t newCapacity = 1;
-	while(newCapacity < _dataSize)
+	if(_dataSize > m_capacity)
 	{
-		newCapacity *= 2;
+		size_t newCapacity = 1;
+		while(newCapacity < _dataSize)
+		{
+			newCapacity *= 2;
+		}
+		std::tr1::shared_ptr<T> data (new T[newCapacity], BufferDeleter ()); //TODO: DoIfFail
+		m_data = data;
+		m_capacity = newCapacity;
+		m_size = _dataSize;
+		try
+		{
+			std::copy(_data, _data + m_size, m_data.get());	
+		}
+		catch(std::exception& _exc)
+		{
+			throw;
+		}
+
+		return true;
 	}
 	
-	std::tr1::shared_ptr<T> buffer (new T[newCapacity], BufferDeleter ());
-	m_buf = buffer;
-	m_capacity = newCapacity;
-	m_size = _dataSize;
 	try
 	{
-		std::copy(_data, _data + m_size, m_buf.get());	
+		std::copy(_data, _data + m_size, m_data.get());	
 	}
 	catch(std::exception& _exc)
 	{
@@ -117,7 +129,7 @@ bool Buffer<T>::SetBuffer(const T* _data, size_t _dataSize)
 template <class T> 
 const T* Buffer<T>::GetBuffer() const
 {
-	return m_buf.get();
+	return m_data.get();
 }
 
 template <class T> 
@@ -128,7 +140,7 @@ bool Buffer<T>::SetElement(const T& _data, size_t _index)
 		throw std::runtime_error("Buffer::SetElement, invalid index");
 	}
 	
-	m_buf.get()[_index] = _data;
+	m_data.get()[_index] = _data;
 	
 	return true;
 }
@@ -141,7 +153,7 @@ const T& Buffer<T>::GetElement(size_t _index) const
 		throw std::runtime_error("Buffer::GetElement, invalid index");
 	}
 	
-	return m_buf.get()[_index];
+	return m_data.get()[_index];
 }
 
 template <class T> 
