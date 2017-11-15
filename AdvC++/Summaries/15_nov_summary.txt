@@ -1,0 +1,58 @@
+String x;
+cont String x;
+
+	x[10] = 'a';
+	cout << x[10];
+
+
+
+
+
+Bitwise constness - if changin data members this is problem
+Logical constness - logically not allowed to change the object. we need to think in logical constness
+
+KEYWORD mutable:
+----------------
+if the object is const, but a data member is mutable, then you can still change it without making compiler yell for object being const.
+
+
+
+
+can put all of this in namespace stringmanip:
+struct  StrManip
+{
+	ToUpper(String&);
+	ToLower(String&);
+	ToCamelCase(String&);
+};
+In c++ we are not afraid of global functions, so we dont need the struct, cna just put them as global functions within a relevant namespace.
+
+use data member buffer by value, not by pointer.
+
+
+ASCII has 128 letters, but char is 8 bits. First 127 are defined by ASCII, and the rest not.
+
+unicode includes all languages in the world except for very few.
+In C++ 2003, we have wchar_t (wide character). Must include all characters in the locale (current system). The size of wchar_t will be 2 byte or 4 byte, so we need to do our string template.
+
+overloading can be used as a tool to let compiler decide for us during compilation.
+
+typedef char MyUTF8; not good because if a function receiving char is defined will be multiple definition
+
+numeric_limits is called a "traits class"
+numeric_limits<int>::max
+
+template specialization
+
+in Functions we have deduction.
+Resolution is the process of deciding which function i called.
+Deduction is the process of deciding which function it needs to create or not (with templates)
+
+
+***typename***
+template<class T>
+class X
+{
+	std::list<T>::iterator	m_t; 
+	SHOULD BE: typename std::list<T>::iterator	m_it; //because iterator is not known during compile time
+}
