@@ -99,10 +99,9 @@ template <class T>
 size_t Buffer<T>::EnsureCapacity(size_t _dataSize)
 {	
 	size_t newCapacity = 1;
-	
+
 	if(_dataSize > m_capacity)
 	{
-		
 		switch (m_resizeMode)
 		{
 			case Double:
@@ -112,7 +111,7 @@ size_t Buffer<T>::EnsureCapacity(size_t _dataSize)
 					newCapacity *= 2;
 				}
 				break;
-				
+			
 			case TenPercent:
 				newCapacity = _dataSize;
 				while(newCapacity < _dataSize)
@@ -121,35 +120,18 @@ size_t Buffer<T>::EnsureCapacity(size_t _dataSize)
 				}
 				break;
 		}
-//		if (Double == m_resizeMode)
-//		{
-//			size_t newCapacity = 1;
-//			while(newCapacity < _dataSize)
-//			{
-//				newCapacity *= 2;
-//			}
-//		}
-//		else
-//		{
-//			size_t newCapacity = _dataSize;
-//			while(newCapacity < _dataSize)
-//			{
-//				newCapacity = (size_t)ceil(newCapacity * 1.1) ;
-//			}
-//		}
-		
+	
 		std::tr1::shared_ptr<T> data (new T[newCapacity], BufferDeleter ()); //TODO: DoIfFail
-			try
-			{
-				std::copy(m_data.get(), m_data.get() + m_size, data.get());	
-			}
-			catch(std::exception& _exc)
-			{
-				throw;
-			} 
-			m_data = data;
-			m_capacity = newCapacity;
-		
+		try
+		{
+			std::copy(m_data.get(), m_data.get() + m_size, data.get());	
+		}
+		catch(std::exception& _exc)
+		{
+			throw;
+		} 
+		m_data = data;
+		m_capacity = newCapacity;
 	}
 	
 	return m_capacity;
@@ -164,37 +146,40 @@ bool Buffer<T>::SetBuffer(const T* _data, size_t _dataSize)
 		return false;
 	}
 	
-	if(_dataSize > m_capacity)
-	{
-		size_t newCapacity = 1;
-		while(newCapacity < _dataSize)
-		{
-			newCapacity *= 2;
-		}
-		std::tr1::shared_ptr<T> data (new T[newCapacity], BufferDeleter ()); //TODO: DoIfFail
-		m_data = data;
-		m_capacity = newCapacity;
-		m_size = _dataSize;
-		try
-		{
-			std::copy(_data, _data + m_size, m_data.get());	
-		}
-		catch(std::exception& _exc)
-		{
-			throw;
-		}
+//	if(_dataSize > m_capacity)
+//	{
+//		size_t newCapacity = 1;
+//		while(newCapacity < _dataSize)
+//		{
+//			newCapacity *= 2;
+//		}
+//		std::tr1::shared_ptr<T> data (new T[newCapacity], BufferDeleter ()); //TODO: DoIfFail
+//		m_data = data;
+//		m_capacity = newCapacity;
+//		m_size = _dataSize;
+//		try
+//		{
+//			std::copy(_data, _data + m_size, m_data.get());	
+//		}
+//		catch(std::exception& _exc)
+//		{
+//			throw;
+//		}
 
-		return true;
-	}
+//		return true;
+		EnsureCapacity(_dataSize);
+//	}
 	
 	try
 	{
-		std::copy(_data, _data + m_size, m_data.get());	
+		std::copy(_data, _data + _dataSize, m_data.get());	
 	}
 	catch(std::exception& _exc)
 	{
 		throw;
 	}
+
+	m_size = _dataSize;
 	
 	return true;
 }

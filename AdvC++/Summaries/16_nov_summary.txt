@@ -1,0 +1,80 @@
+//An interface that doesnt require inheritance or virtual table etc is called duck typing:
+//if it looks like a duck, then its a duck.
+
+template<classT, class MemPolicy = DefMemPolicy>
+class Buffer
+{
+...
+	MemPolicy::CalcNewSize()
+...
+}
+
+class MyLinearMemPolicy
+{
+	static size_t
+	CalcNewSize(size_t)
+};
+
+
+// If we dont do anything in DTOR or copy assignment operator or copy ctor .. then use compiler generated one.
+// The rule of three: if there is a DTOR / copy CTOR/ assignment operator we need to write.. then most likely we need to write all three of them.
+
+//Do a operator+ outside of string class that can handle : 
+String str1,str2;
+
+cout << (str1 + "Moshe"); /// with: 		String operator+(const String& _str);
+cout << ("Moshe" + str1);/// this needs: 	String operator+(const char* _c_str, const String& _str); 
+
+//encapsulation: if i change data private member type, then i will need to change minimum amount of code and wont affect anyone using my class (if there are no friends
+
+//Everything that can be taken out of the class, reinforces the encapsulation
+//Prefer non member non friend functions
+//These kind of functions put above the definition of class so can be seen easily
+
+**********
+Lecture:
+**********
+BitSet
+------
+
+BitSet(size_t _numOfBits)
+op[] 
+set/get
+count() (return num of bits on)
+ostream <<
+op&  	&=
+op|	|=
+op^	^=
+op~	~=
+any()
+all()
+none()
+
+//if size is not the same then we dont allow operations
+//Effectively we want objects of same type to act as objects of different types
+
+template<size_t SIZE>
+class BitSet
+{
+
+}
+
+BS<10429> servers;
+BS<400> sd;
+
+in this case: BitSet()   ----> doesnt need size_t _numOfBits now
+
+in bit world - never use types that are signed. Always use unsigned.
+char we cant know if its signed/unsigned, because it is platform dependant
+
+
+so we need:
+template <size_t SIZE, class T = unsigned int> //unsigned int is default
+{
+
+}
+CTOR should have array of bools
+BitSet(bool _boolarr[]);
+
+
+
