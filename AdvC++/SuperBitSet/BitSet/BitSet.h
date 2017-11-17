@@ -4,7 +4,26 @@
 #include<stddef.h>
 #include<climits>
 #include<iostream>
+#include<exception>
 //#include<limits.h>
+
+
+/*
+BitSet(size_t _numOfBits)
+op[] 
+set/get
+count() (return num of bits on)
+ostream <<
+op&  	&=
+op|	|=
+op^	^=
+op~	~=
+any()
+all()
+none()
+*/
+
+
 namespace advcpp
 {
 
@@ -70,7 +89,7 @@ template<size_t SIZE, class T>
 bool BitSet<SIZE, T>::Get(size_t _bitIndex) const //Should throw
 {
 	T bitMask = 1;
-	for (size_t index = 0; index <= (_bitIndex % (sizeof(T) * CHAR_BIT)); ++index)
+	for (size_t index = 0; index < (_bitIndex % (sizeof(T) * CHAR_BIT)); ++index)
 	{
 		bitMask = bitMask << 1;
 	}
@@ -84,7 +103,7 @@ void BitSet<SIZE, T>::Set(bool _bitVal, size_t _bitIndex) //Should Throw
 	T bitMask = 1;
 	size_t index =0;
 	size_t dummy = 0;
-	for (index = 1; index < (_bitIndex % (sizeof(T) * CHAR_BIT)); ++index)
+	for (index = 0; index < (_bitIndex % (sizeof(T) * CHAR_BIT)); ++index)
 	{
 //		++dummy;
 		bitMask = bitMask << 1;
