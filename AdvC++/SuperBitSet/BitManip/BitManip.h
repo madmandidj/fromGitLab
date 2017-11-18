@@ -1,5 +1,5 @@
-#ifndef __BITMANIP_H__
-#define __BITMANIP_H__
+#ifndef __BIT_MANIP_H__
+#define __BIT_MANIP_H__
 
 #include <stddef.h>
 #include<iostream>
@@ -24,7 +24,7 @@ protected:
 
 private:
 	BitManip();
-	BitManip(const BitManip& _bmnp);
+//	BitManip(const BitManip& _bmnp);
 	BitManip& operator=(const BitManip& _bmnp);
 	T* 					m_bitsPtr;
 	mutable T			m_maskT1;
@@ -175,7 +175,7 @@ inline const size_t BitManip<T>::GetBitsInType()
 	
 	
 }//namespace advcpp
-#endif //#ifndef __BITMANIP_H__
+#endif //#ifndef __BIT_MANIP_H__
 
 
 
