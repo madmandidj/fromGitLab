@@ -40,10 +40,12 @@ public:
 	inline bool Any() const;										//Throws
 	inline bool All() const;										//Throws
 	inline bool None() const;										//Throws
+	
 protected:
 
 private:
-	BitSet(const BitSet& _bitSet);
+	inline BitSet(const BitSet& _bitSet);
+	inline static BitSet<SIZE, T> DoBitwiseOp(const BitSet& _thisBitSet, const BitSet& _otherBitSet, char _operation);
 	size_t				m_numOfBitContainers;
 	T*					m_bitContainerArray;
 	mutable BitManip<T> m_bitManip;
@@ -108,6 +110,14 @@ inline BitSet<SIZE, T>::BitSet(bool _boolArr[], size_t _numOfElements) : m_numOf
 			throw;
 		}
 	}
+}
+
+template<size_t SIZE, class T>
+inline BitSet<SIZE, T>::BitSet(const BitSet& _bitSet)  : m_numOfBitContainers((double)SIZE / m_containerSize) 
+							,m_bitContainerArray(new T[m_numOfBitContainers])
+							,m_bitManip(m_bitContainerArray)
+{
+	*this = _bitSet;
 }
 
 template<size_t SIZE, class T>
@@ -224,6 +234,48 @@ inline BitRef<T> BitSet<SIZE, T>::operator[](size_t _bitIndex)
 }
 
 template<size_t SIZE, class T>
+inline BitSet<SIZE, T> BitSet<SIZE, T>::DoBitwiseOp(const BitSet<SIZE, T>& _thisBitSet, const BitSet<SIZE, T>& _otherBitSet, char _operation)
+{
+	BitSet<SIZE, T> bitSet;
+	bool thisBitState;
+	bool otherBitState;
+	bool newBitState;
+	
+	switch (_operation)
+	{
+	case '|':
+		for (size_t index = 0; index < SIZE; ++index)
+		{
+			thisBitState = _thisBitSet.Get(index);
+			otherBitState = _otherBitSet.Get(index);
+			newBitState = thisBitState | otherBitState;
+			bitSet.Set(newBitState, index);	
+		}
+		break;
+	case '^':
+		for (size_t index = 0; index < SIZE; ++index)
+		{
+			thisBitState = _thisBitSet.Get(index);
+			otherBitState = _otherBitSet.Get(index);
+			newBitState = thisBitState ^ otherBitState;
+			bitSet.Set(newBitState, index);	
+		}
+		break;
+	default:
+		for (size_t index = 0; index < SIZE; ++index)
+		{
+			thisBitState = _thisBitSet.Get(index);
+			otherBitState = _otherBitSet.Get(index);
+			newBitState = thisBitState & otherBitState;
+			bitSet.Set(newBitState, index);	
+		}
+		break;
+	}
+	
+	return bitSet;
+}
+
+template<size_t SIZE, class T>
 inline BitSet<SIZE, T> BitSet<SIZE, T>::operator&(const BitSet<SIZE, T>& _bitSet) const
 {
 	if (SIZE != _bitSet.GetNumOfBits())
@@ -232,18 +284,18 @@ inline BitSet<SIZE, T> BitSet<SIZE, T>::operator&(const BitSet<SIZE, T>& _bitSet
 	}	
 	
 	BitSet<SIZE, T> bitSet;
-	bool thisBitState;
-	bool otherBitState;
-	bool newBitState;
-	
-	for (size_t index = 0; index < SIZE; ++index)
-	{
-		thisBitState = Get(index);
-		otherBitState = _bitSet.Get(index);
-		newBitState = thisBitState & otherBitState;
-		bitSet.Set(newBitState, index);	
-	}
-	
+//	bool thisBitState;
+//	bool otherBitState;
+//	bool newBitState;
+//	
+//	for (size_t index = 0; index < SIZE; ++index)
+//	{
+//		thisBitState = Get(index);
+//		otherBitState = _bitSet.Get(index);
+//		newBitState = thisBitState & otherBitState;
+//		bitSet.Set(newBitState, index);	
+//	}
+	bitSet = DoBitwiseOp(*this, _bitSet, '&');
 	return bitSet;
 }
 
@@ -265,18 +317,18 @@ inline BitSet<SIZE, T> BitSet<SIZE, T>::operator|(const BitSet<SIZE, T>& _bitSet
 	}	
 	
 	BitSet<SIZE, T> bitSet;
-	bool thisBitState;
-	bool otherBitState;
-	bool newBitState;
-	
-	for (size_t index = 0; index < SIZE; ++index)
-	{
-		thisBitState = Get(index);
-		otherBitState = _bitSet.Get(index);
-		newBitState = thisBitState | otherBitState;
-		bitSet.Set(newBitState, index);	
-	}
-	
+//	bool thisBitState;
+//	bool otherBitState;
+//	bool newBitState;
+//	
+//	for (size_t index = 0; index < SIZE; ++index)
+//	{
+//		thisBitState = Get(index);
+//		otherBitState = _bitSet.Get(index);
+//		newBitState = thisBitState | otherBitState;
+//		bitSet.Set(newBitState, index);	
+//	}
+	bitSet = DoBitwiseOp(*this, _bitSet, '|');
 	return bitSet;
 }
 
@@ -297,18 +349,18 @@ inline BitSet<SIZE, T> BitSet<SIZE, T>::operator^(const BitSet<SIZE, T>& _bitSet
 	}	
 	
 	BitSet<SIZE, T> bitSet;
-	bool thisBitState;
-	bool otherBitState;
-	bool newBitState;
-	
-	for (size_t index = 0; index < SIZE; ++index)
-	{
-		thisBitState = Get(index);
-		otherBitState = _bitSet.Get(index);
-		newBitState = thisBitState ^ otherBitState;
-		bitSet.Set(newBitState, index);	
-	}
-	
+//	bool thisBitState;
+//	bool otherBitState;
+//	bool newBitState;
+//	
+//	for (size_t index = 0; index < SIZE; ++index)
+//	{
+//		thisBitState = Get(index);
+//		otherBitState = _bitSet.Get(index);
+//		newBitState = thisBitState ^ otherBitState;
+//		bitSet.Set(newBitState, index);	
+//	}
+	bitSet = DoBitwiseOp(*this, _bitSet, '^');
 	return bitSet;
 }
 
