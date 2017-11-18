@@ -77,8 +77,6 @@ inline BitRef<T>::BitRef(BitRef& _bitRef) : m_bitManip(_bitRef.m_bitManip), m_bi
 	{
 		throw std::runtime_error("BitRef<T>::BitRef(BitRef& _bitRef), invalid index");
 	}
-	
-	//_bitRef.m_bitManip; //TODO: Ask why is this possible? _bitRef is parameter, yet i can access private member???!!!???!!!
 }
 
 template<class T>
