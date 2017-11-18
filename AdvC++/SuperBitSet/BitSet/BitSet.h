@@ -26,6 +26,7 @@ public:
 	inline void Set(bool _bitVal, size_t _bitIndex); 				//Throws
 	inline bool Get(size_t _bitIndex) const; 						//Throws
 	inline size_t Count() const;									//Throws
+	inline bool operator==(const BitSet& _bitSet) const;			//Throws
 	inline bool operator[](size_t _bitIndex) const;					//Throws
 	inline BitRef<T> operator[](size_t _bitIndex);					//Throws
 	inline BitSet operator&(const BitSet& _bitSet) const;			//Throws
@@ -186,6 +187,19 @@ inline size_t BitSet<SIZE, T>::Count() const
 	
 	return result;
 }
+template<size_t SIZE, class T>
+inline bool BitSet<SIZE, T>::operator==(const BitSet& _bitSet) const
+{
+	for (size_t index = 0; index < SIZE; ++index)
+	{
+		if (Get(index) != _bitSet.Get(index))
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
 
 template<size_t SIZE, class T>
 inline bool BitSet<SIZE, T>::operator[](size_t _bitIndex) const
@@ -218,7 +232,6 @@ inline BitSet<SIZE, T> BitSet<SIZE, T>::operator&(const BitSet<SIZE, T>& _bitSet
 	}	
 	
 	BitSet<SIZE, T> bitSet;
-	size_t result = 0;
 	bool thisBitState;
 	bool otherBitState;
 	bool newBitState;
@@ -252,7 +265,6 @@ inline BitSet<SIZE, T> BitSet<SIZE, T>::operator|(const BitSet<SIZE, T>& _bitSet
 	}	
 	
 	BitSet<SIZE, T> bitSet;
-	size_t result = 0;
 	bool thisBitState;
 	bool otherBitState;
 	bool newBitState;
@@ -285,7 +297,6 @@ inline BitSet<SIZE, T> BitSet<SIZE, T>::operator^(const BitSet<SIZE, T>& _bitSet
 	}	
 	
 	BitSet<SIZE, T> bitSet;
-	size_t result = 0;
 	bool thisBitState;
 	bool otherBitState;
 	bool newBitState;
@@ -313,7 +324,6 @@ template<size_t SIZE, class T>
 inline BitSet<SIZE, T>& BitSet<SIZE, T>::Flip(size_t _bitIndex)
 {	
 	BitSet<SIZE, T> bitSet;
-	size_t result = 0;
 	bool bitState;
 	
 	bitState = Get(_bitIndex);
@@ -327,7 +337,6 @@ template<size_t SIZE, class T>
 inline BitSet<SIZE, T>& BitSet<SIZE, T>::Flip()
 {	
 	BitSet<SIZE, T> bitSet;
-	size_t result = 0;
 	bool bitState;
 	
 	for (size_t index = 0; index < SIZE; ++index)

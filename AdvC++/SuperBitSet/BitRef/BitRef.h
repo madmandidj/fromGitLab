@@ -21,6 +21,8 @@ public:
 	inline BitRef(const BitRef& _bitRef); 			//Throws
 	inline BitRef<T>& operator=(const BitRef& _bitRef);
 	inline BitRef<T>& operator=(bool _bitState);
+	inline bool operator==(const BitRef& _bitRef);
+	inline bool operator==(bool _bitState);
 	inline void Set();			
 	inline void Clear(); 		
 	inline bool Get() const; 	
@@ -99,6 +101,18 @@ inline BitRef<T>& BitRef<T>::operator=(const BitRef& _bitRef)
 {
 	*this = _bitRef.Get();
 	return *this;
+}
+
+template<class T>
+inline bool BitRef<T>::operator==(const BitRef& _bitRef)
+{
+	return (Get() == _bitRef.Get());
+}
+
+template<class T>
+inline bool BitRef<T>::operator==(bool _bitState)
+{
+	return (Get() == _bitState);
 }
 
 template<class T>
