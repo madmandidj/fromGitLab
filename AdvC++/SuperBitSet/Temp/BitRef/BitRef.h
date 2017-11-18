@@ -69,6 +69,11 @@ inline BitRef<T>::BitRef(T* _bitsPtr, size_t _bitIndex) : m_bitManip(_bitsPtr), 
 	//Empty
 }
 
+//template<class T>
+//inline BitRef<T>::BitRef(const BitRef& _bitRef) : m_bitManip(_bitRef.GetBitsManip()), m_bitIndex(_bitRef.GetBitIndex())
+//{
+//	//Empty
+//}
 
 template<class T>
 inline BitRef<T>::BitRef(BitRef& _bitRef) : m_bitManip(_bitRef.GetBitsManip()), m_bitIndex(_bitRef.GetBitIndex())
@@ -82,6 +87,12 @@ inline BitRef<T>::BitRef(const BitRef& _bitRef) : m_bitManip(_bitRef.GetBitsMani
 	//Empty
 }
 
+//template<class T>
+//inline BitRef<T>& BitRef<T>::operator=(const BitRef& _bitRef) 
+//{
+//	m_bit
+//}
+
 template<class T>
 inline BitRef<T>& BitRef<T>::operator=(bool _bitState)
 {
@@ -93,6 +104,13 @@ inline BitRef<T>& BitRef<T>::operator=(bool _bitState)
 	Clear();
 	return *this;
 }
+
+//template<class T>
+//inline BitRef<T>& BitRef<T>::operator=(BitRef _bitRef)
+//{
+//	*this = _bitRef.Get();
+//	return *this;
+//}
 
 template<class T>
 inline BitRef<T>& BitRef<T>::operator=(const BitRef& _bitRef)

@@ -9,17 +9,36 @@
 #include<iostream>
 #include<exception>
 
+
+/*
+BitSet(size_t _numOfBits)
+TODO: op[] 
+set/get
+count() (return num of bits on)
+ostream <<
+op&  	&=
+op|	|=
+op^	^=
+flip
+TODO: any()
+TODO: all()
+TODO: none()
+*/
+
 namespace advcpp
 {
+
 ///////////////////////////////////////////////////////////////////////////////
 //CLASS DEFINTION
 template<size_t SIZE, class T = unsigned int>
 class BitSet
 {
 public:
+//	friend class BitManip<T>;
 	inline ~BitSet();
 	inline explicit BitSet(); 										//Throws
 	inline explicit BitSet(bool _boolArr[], size_t _numOfElements); //Throws
+	inline BitSet(const BitSet& _bitSet);
 	inline BitSet& operator=(const BitSet& _bitSet);
 	inline size_t GetNumOfBits() const;
 	inline size_t GetNumOfBitContainers() const;
@@ -34,19 +53,18 @@ public:
 	inline BitSet& operator|=(const BitSet& _bitSet);				//Throws
 	inline BitSet operator^(const BitSet& _bitSet) const;			//Throws
 	inline BitSet& operator^=(const BitSet& _bitSet);				//Throws
-	inline BitSet<SIZE, T>& Flip(size_t _bitIndex);					//Throws
-	inline BitSet<SIZE, T>& Flip();									//Throws
+	inline void Flip(size_t _bitIndex);								//Throws
 	inline bool Any() const;										//Throws
-	inline bool All() const;										//Throws
-	inline bool None() const;										//Throws
 protected:
 
 private:
-	BitSet(const BitSet& _bitSet);
+//	BitSet(const BitSet& _bitSet);
+//	inline static T* GetBitContainerArray();
+	inline static BitSet<SIZE, T> DoBitOperation(BitSet& _thisBitSet, BitSet& _otherBitSet, char _operation); //Throws
 	size_t				m_numOfBitContainers;
 	T*					m_bitContainerArray;
 	mutable BitManip<T> m_bitManip;
-	static const size_t m_containerSize;
+	static const size_t m_containerSize; //TODO: this shouldnt be constant
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,6 +85,38 @@ inline std::ostream& operator<<(std::ostream& _os, const BitSet<SIZE, T>& _bitSe
 	}
 	return _os;
 }
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//PRIVATE MEMBER FUNCTION DEFINITIONS
+//template<size_t SIZE, class T>
+//inline T* BitSet<SIZE, T>::GetBitContainerArray()
+//{
+//	return m_bitContainerArray;
+//}
+
+
+template<size_t SIZE, class T>
+inline BitSet<SIZE, T> BitSet<SIZE, T>::DoBitOperation(BitSet& _thisBitSet, BitSet& _otherBitSet, char _operation)
+{
+	BitSet<SIZE, T> bitSet;
+	size_t result = 0;
+	bool thisBitState;
+	bool otherBitState;
+	bool newBitState;
+	
+	for (size_t index = 0; index < SIZE; ++index)
+	{
+		thisBitState = _thisBitSet.Get(index);
+		otherBitState = _otherBitSet.Get(index);
+		newBitState = thisBitState & otherBitState;
+		bitSet.Set(newBitState, index);	
+	}
+
+	return bitSet;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //MEMBER FUNCTION DEFINITIONS
@@ -107,6 +157,14 @@ inline BitSet<SIZE, T>::BitSet(bool _boolArr[], size_t _numOfElements) : m_numOf
 			throw;
 		}
 	}
+}
+
+template<size_t SIZE, class T>
+inline BitSet<SIZE, T>::BitSet(const BitSet& _bitSet) : m_numOfBitContainers(_bitSet.GetNumOfBitContainers()) 
+							,m_bitContainerArray(new T[m_numOfBitContainers])
+							,m_bitManip(m_bitContainerArray)
+{
+	
 }
 
 template<size_t SIZE, class T>
@@ -217,21 +275,26 @@ inline BitSet<SIZE, T> BitSet<SIZE, T>::operator&(const BitSet<SIZE, T>& _bitSet
 		throw std::runtime_error("BitSet<SIZE, T>::operator&(const BitSet& _bitSet), invalid parameter");
 	}	
 	
-	BitSet<SIZE, T> bitSet;
-	size_t result = 0;
-	bool thisBitState;
-	bool otherBitState;
-	bool newBitState;
+//	BitSet<SIZE, T> bitSet;
+//	size_t result = 0;
+//	bool thisBitState;
+//	bool otherBitState;
+//	bool newBitState;
+//	
+//	for (size_t index = 0; index < SIZE; ++index)
+//	{
+//		thisBitState = Get(index);
+//		otherBitState = _bitSet.Get(index);
+//		newBitState = thisBitState & otherBitState;
+//		bitSet.Set(newBitState, index);	
+//	}
+
+	BitSet<SIZE, T> bitSet1(const_cast<BitSet<SIZE, T>&>(*this));
+	BitSet<SIZE, T> bitSet2(const_cast<BitSet<SIZE, T>&>(_bitSet));
+
+	bitSet1 = DoBitOperation(bitSet1, bitSet2, '&');
 	
-	for (size_t index = 0; index < SIZE; ++index)
-	{
-		thisBitState = Get(index);
-		otherBitState = _bitSet.Get(index);
-		newBitState = thisBitState & otherBitState;
-		bitSet.Set(newBitState, index);	
-	}
-	
-	return bitSet;
+	return bitSet1;
 }
 
 
@@ -310,7 +373,7 @@ inline BitSet<SIZE, T>& BitSet<SIZE, T>::operator^=(const BitSet<SIZE, T>& _bitS
 }
 
 template<size_t SIZE, class T>
-inline BitSet<SIZE, T>& BitSet<SIZE, T>::Flip(size_t _bitIndex)
+inline void BitSet<SIZE, T>::Flip(size_t _bitIndex)
 {	
 	BitSet<SIZE, T> bitSet;
 	size_t result = 0;
@@ -320,24 +383,7 @@ inline BitSet<SIZE, T>& BitSet<SIZE, T>::Flip(size_t _bitIndex)
 	
 	Set(!bitState, _bitIndex);
 	
-	return *this;
-}
-
-template<size_t SIZE, class T>
-inline BitSet<SIZE, T>& BitSet<SIZE, T>::Flip()
-{	
-	BitSet<SIZE, T> bitSet;
-	size_t result = 0;
-	bool bitState;
-	
-	for (size_t index = 0; index < SIZE; ++index)
-	{
-		bitState = Get(index);
-	
-		Set(!bitState, index);
-	}
-	
-	return *this;
+	return;
 }
 
 template<size_t SIZE, class T>
@@ -353,31 +399,6 @@ inline bool BitSet<SIZE, T>::Any() const
 	return false;
 }
 
-template<size_t SIZE, class T>
-inline bool BitSet<SIZE, T>::All() const
-{	
-	for (size_t index = 0; index < SIZE; ++index)
-	{
-		if (false == Get(index))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-template<size_t SIZE, class T>
-inline bool BitSet<SIZE, T>::None() const
-{	
-	for (size_t index = 0; index < SIZE; ++index)
-	{
-		if (true == Get(index))
-		{
-			return false;
-		}
-	}
-	return true;
-}
 
 }//namespace advcpp
 #endif //#ifndef __BIT_SET_H__
