@@ -1,9 +1,9 @@
 #ifndef __BIT_MANIP_H__
 #define __BIT_MANIP_H__
 
-#include <stddef.h>
 #include<iostream>
 #include<climits>
+
 namespace advcpp
 {
 
@@ -19,12 +19,11 @@ public:
 	inline void Set(size_t _index);			//Throws
 	inline void Clear(size_t _index); 		//Throws
 	inline bool Get(size_t _index) const; 	//Throws
-	static const size_t GetBitsInType(); 	//Throws
+	static const size_t GetBitsInType();
 protected:
 
 private:
 	BitManip();
-//	BitManip(const BitManip& _bmnp);
 	BitManip& operator=(const BitManip& _bmnp);
 	T* 					m_bitsPtr;
 	mutable T			m_maskT1;
@@ -71,6 +70,9 @@ std::ostream& operator<<(std::ostream& _os, BitManip<T>& _bitManip)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//PRIVATE MEMBER FUNCTION DEFINITIONS
+
+///////////////////////////////////////////////////////////////////////////////
 //MEMBER FUNCTION DEFINITIONS
 template<class T>
 inline BitManip<T>::~BitManip()
@@ -105,11 +107,8 @@ inline void BitManip<T>::Set(size_t _index)
 	} 
 
 	m_maskT1 = 1;
-	
-	for (size_t index = 0; index < _index; ++index)
-	{
-		m_maskT1 = m_maskT1 << 1;
-	}
+
+	m_maskT1 = m_maskT1 << _index;
 	
 	*m_bitsPtr = *m_bitsPtr | m_maskT1; 
 	
@@ -125,11 +124,8 @@ inline void BitManip<T>::Clear(size_t _index)
 	} 
 
 	m_maskT1 = 1;
-	
-	for (size_t index = 0; index < _index; ++index)
-	{
-		m_maskT1 = m_maskT1 << 1;
-	}
+
+	m_maskT1 = m_maskT1 << _index;
 
 	m_maskT2 = m_maskT1 ^ m_mask_all_1;
 	
@@ -147,11 +143,9 @@ inline bool BitManip<T>::Get(size_t _index) const
 	} 
 	
 	m_maskT1 = 1;
-	
-	for (size_t index = 0; index < _index; ++index)
-	{
-		m_maskT1 = m_maskT1 << 1;
-	}
+
+	m_maskT1 = m_maskT1 << _index;
+
 	return *m_bitsPtr & m_maskT1;
 }	
 	
@@ -161,6 +155,22 @@ inline const size_t BitManip<T>::GetBitsInType()
 {
 	return m_bitsInType;
 }	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

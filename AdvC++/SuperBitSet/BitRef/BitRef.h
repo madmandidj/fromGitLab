@@ -2,9 +2,8 @@
 #define __BIT_REF_H__
 
 #include"../BitManip/BitManip.h"
-#include <stddef.h>
 #include<iostream>
-#include<climits>
+
 namespace advcpp
 {
 
@@ -17,21 +16,18 @@ public:
 	inline ~BitRef();
 	BitRef(){}
 	inline explicit BitRef(T* _bitsPtr, size_t _bitIndex); 	//Throws
-	inline BitRef(BitRef& _bitRef); 			//Throws
-	inline BitRef(const BitRef& _bitRef); 			//Throws
-	inline BitRef<T>& operator=(const BitRef& _bitRef);
-	inline BitRef<T>& operator=(bool _bitState);
-	inline bool operator==(const BitRef& _bitRef);
-	inline bool operator==(bool _bitState);
-	inline void Set();			
-	inline void Clear(); 		
-	inline bool Get() const; 	
+	inline BitRef(BitRef& _bitRef); 						//Throws
+	inline BitRef(const BitRef& _bitRef); 					//Throws
+	inline BitRef<T>& operator=(const BitRef& _bitRef);		//Throws
+	inline BitRef<T>& operator=(bool _bitState);			//Throws
+	inline bool operator==(const BitRef& _bitRef);			//Throws
+	inline bool operator==(bool _bitState);					//Throws
+	inline void Set();										//Throws
+	inline void Clear(); 									//Throws
+	inline bool Get() const; 								//Throws
 	inline size_t GetBitIndex() const;
-	
-protected:
-	
+
 private:
-	inline BitManip<T>& GetBitsManip();
 	BitManip<T> m_bitManip;
 	const size_t m_bitIndex;
 };
@@ -54,6 +50,9 @@ inline std::ostream& operator<<(std::ostream& _os, const BitRef<T>& _bitRef)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//PRIVATE MEMBER FUNCTION DEFINITIONS
+
+///////////////////////////////////////////////////////////////////////////////
 //MEMBER FUNCTION DEFINITIONS
 template<class T>
 inline BitRef<T>::~BitRef()
@@ -68,20 +67,27 @@ inline BitRef<T>::BitRef(T* _bitsPtr, size_t _bitIndex) : m_bitManip(_bitsPtr), 
 	{
 		throw std::runtime_error("BitRef<T>::BitRef(T* _bitsPtr, size_t _bitIndex), invalid index");
 	}
-	//Empty
 }
 
 
 template<class T>
-inline BitRef<T>::BitRef(BitRef& _bitRef) : m_bitManip(_bitRef.GetBitsManip()), m_bitIndex(_bitRef.GetBitIndex())
+inline BitRef<T>::BitRef(BitRef& _bitRef) : m_bitManip(_bitRef.m_bitManip), m_bitIndex(_bitRef.m_bitIndex)
 {
-	//Empty
+	if(m_bitManip.GetBitsInType() <= m_bitIndex)
+	{
+		throw std::runtime_error("BitRef<T>::BitRef(BitRef& _bitRef), invalid index");
+	}
+	
+	//_bitRef.m_bitManip; //TODO: Ask why is this possible? _bitRef is parameter, yet i can access private member???!!!???!!!
 }
 
 template<class T>
-inline BitRef<T>::BitRef(const BitRef& _bitRef) : m_bitManip(_bitRef.GetBitsManip()), m_bitIndex(_bitRef.GetBitIndex())
+inline BitRef<T>::BitRef(const BitRef& _bitRef) : m_bitManip(_bitRef.m_bitManip), m_bitIndex(_bitRef.m_bitIndex)
 {
-	//Empty
+	if(m_bitManip.GetBitsInType() <= m_bitIndex)
+	{
+		throw std::runtime_error("BitRef<T>::BitRef(const BitRef& _bitRef), invalid index");
+	}
 }
 
 template<class T>
@@ -135,12 +141,6 @@ template<class T>
 inline bool BitRef<T>::Get() const
 {	
 	return m_bitManip.Get(m_bitIndex);
-}
-
-template<class T>
-inline BitManip<T>& BitRef<T>::GetBitsManip()
-{	
-	return m_bitManip;
 }
 
 template<class T>
