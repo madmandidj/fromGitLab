@@ -1,4 +1,5 @@
 #include "BitSet.h"
+//#include "BitSet_Helper.h"
 #include<iostream>
 #include<exception>
 #include<stddef.h>
@@ -11,23 +12,21 @@ using namespace std;
 int main()
 {
 	const size_t size = 9;
-	bool boolArr1[size] = {0,1,0,1,0,1,0,1,0};
-	bool boolArr2[size] = {0,1,0,0,0,0,0,1,0};
-	bool boolResult[size] = {0,1,0,0,0,0,0,1,0};
-//	advcpp::BitSet<size, unsigned char> bs1(boolArr1, size);
-//	advcpp::BitSet<size, unsigned char> bs2(boolArr2, size);
-//	advcpp::BitSet<size, unsigned char> bs3(boolResult, size);
-	advcpp::BitSet<size, unsigned char> bs4;
+	bool boolArr1[size] = {1,1,1,1,0,1,1,1,1};
+	bool boolArr2[size] = {1,1,1,1,0,0,1,1,1};
 	
-	cout << bs4[0] << endl;
+	advcpp::BitSet<size, unsigned char> bs1(boolArr1, size);
+	advcpp::BitSet<size, unsigned char> bs2(boolArr2, size);
+//	advcpp::BitSet<size, unsigned char> bs3;
 	
-	bs4[0] = 1;
+	bs1[0] = 1;
 	
-	cout << bs4[0] << endl;
+	cout << bs1[0] << endl;
 	
-	bs4[0] = 0;
+	cout << bs1 << endl;
 	
-	cout << bs4[0] << endl;
+	cout << (bs1 & bs2) << endl;
+	
 	return 0;
 }
 
