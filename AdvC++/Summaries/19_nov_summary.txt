@@ -1,0 +1,83 @@
+Bugzilla is a kind of bugtracker
+--------------------------------
+Erez BitSet code review:
+------------------------
+* int is the natural size of register, so it will be used in the most natural and efficient way.
+* const static data members of class should be at top of class
+* for loop in BitSet Copy CTOR, makes compiler do hard work, so Copy CTOR would be better as compiler generated
+* holding T* data member is advantageous in the case that you want to swap two bitsets (which is O(1), just to switch pointers)
+* operators defined outside of class cna be used symmetrically
+(BS res = bs1 & 0xFeed) is good but (BS res = 0xFeed & bs1) wont work unless the operator functions is defined outside of class so it can receive:
+operator&(bs1,0xfeed) 
+* class Op
+{
+	virtual DoOp(x,y);
+};
+
+
+
+	OP
+^		^
+|		|
+|		|
+Op_OR	OP_AND   (These inherit)
+
+bs OpAnd: public Op
+{
+	virtual DoOp(a,b)
+	{
+		return a & b;
+	}
+}
+
+LoopWithOp(Op, elemPtr elem1, elemPtr elem2)
+{
+	for(...)
+	Op()
+}
+NOT EFFICIENT LIKE THIS!!
+Better to do a template class:
+template <T>
+inline DoLoop(...) <--call here DoOr
+{
+	for(...)
+		T::calc(a,b)
+}
+
+class DoOr
+{
+	static calc(a,b)
+	{
+		return a | b;
+	}
+};
+
+*Its less acceptable today to write "inline" within the decleration of the class
+*Any() can be taken outside of the class, and have it receive the SIZE as a parameter (this is to reduce potential number of code copies because each different SIZE will also generate new code from the template)
+*helper class to hold these functions and have it be a friend
+*if bitref was private then user could not create an instance of it bitref
+----------------------
+After code review
+----------------------
+1. Exercise:
+Vector of integers bector<int>
+------
+cout << something++ ;
+value returned should be the value of something before the ++.
+Always use prefix ++ instead of postfix++ unless there is a very good reaons.
+if we define a for loop, we are forcing the compiler to do things in a certain way.
+"for_each" in "algorithm". algorithms allow operations on containers. they are optimised to work for every container.
+"for_each" iterates on all elements, by order of elements.
+"fill" does not iterate by order.
+So from today we try to tell compiler "what" to do rather than "how" to do it.
+
+list<int> myObjs; .... with values
+for_each(...)
+for_each works different for vector<int> using of template specializations
+----
+template <classT>
+for_each
+----
+template<>
+for_each<set>
+
