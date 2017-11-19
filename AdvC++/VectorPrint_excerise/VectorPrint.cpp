@@ -8,9 +8,25 @@
 
 using namespace std;
 
-void MyFunc (int _i) 
+void MyFuncPrint(int _i) 
 {  
 	cout << ' ' << _i << endl;
+}
+
+
+int MyFuncSum(int _num)
+{
+	static int sum = 0;
+	sum += _num;
+	return sum;
+}
+
+size_t MyFuncToSum(std::vector<int>& _vec) 
+{  
+	for_each(_vec.begin(), _vec.end(), MyFuncSum);
+	int sum = MyFuncSum(0);
+	MyFuncSum(-sum);
+	return sum;
 }
 
 int main()
@@ -22,7 +38,7 @@ int main()
 	{
 		intArr[index] = rand() % size;
 	}
-	
+////EXERCISE 1
 //	//std::vector
 //	cout << "Vector" << endl;
 //	vector<int> vec1(intArr, intArr + size);
@@ -39,13 +55,24 @@ int main()
 //		cout << *it << endl;
 //	}
 
+////EXERCISE 2
+//	cout << "Vector" << endl;
+//	vector<int> vec1(intArr, intArr + size);
+//	for_each(vec1.begin(), vec1.end(), MyFuncPrint);
+//	
+//	cout << "List" << endl;
+//	list<int> list1(intArr, intArr + size);
+//	for_each(list1.begin(), list1.end(), MyFuncPrint);
+
+//EXERCISE 3
 	cout << "Vector" << endl;
 	vector<int> vec1(intArr, intArr + size);
-	for_each(vec1.begin(), vec1.end(), MyFunc);
 	
-	cout << "List" << endl;
-	list<int> list1(intArr, intArr + size);
-	for_each(list1.begin(), list1.end(), MyFunc);
+	for_each(vec1.begin(), vec1.end(), MyFuncPrint);
+	int sum = MyFuncToSum(vec1);
+	cout << "Sum = " << sum << endl;
 	
+	sum = MyFuncToSum(vec1);
+	cout << "Sum = " << sum << endl;
 	return 0;
 }

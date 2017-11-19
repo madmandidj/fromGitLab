@@ -81,3 +81,43 @@ for_each
 template<>
 for_each<set>
 
+-----------
+use for_each to print sum
+for(it = argBegin; it != argEnd; ++it)
+{
+	argFunc(*it);
+}
+return argFunc;
+
+argFunc can be a pointer to function.
+argFunc doesnt have to be a function, could aslo be an operator function call ( operator() )
+Class Accumulator
+{
+	Accumulator():sum(0){}
+	int operator()(int i)
+	{
+	
+	}
+};
+
+Accumulator obj;
+obj(5);
+obj.operator()(5);
+
+This object is called: Functor. This is like a stateful function
+If the class has implemented operator(), than any place that a function can be called can be placed with an object. Need to send object by value
+
+Accumulator_result = for_each(v.b(), v.e(), Accumulator(temp));
+
+inline function that goes through an object reduces code bloating.
+
+***********
+Use algorithm to rewrite BitSet
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-FLAGS = -ansi -pedantic -Wall -g
+FLAGS = -ansi -pedantic -Wall -g -std=c++98
 SET_PATH = ./BitSet/
 MANIP_PATH = ./BitManip/
 REF_PATH = ./BitRef/
