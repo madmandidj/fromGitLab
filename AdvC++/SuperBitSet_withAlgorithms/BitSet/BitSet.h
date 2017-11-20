@@ -54,28 +54,27 @@ public:
 	inline explicit BitSet(); 										//Throws
 	inline explicit BitSet(bool _boolArr[], size_t _numOfBools); 	//Throws
 	inline BitSet& operator=(const BitSet& _bitSet);				//Throws
-//	inline void Set(bool _bitVal, size_t _bitIndex); 				//Throws
-//	inline bool Get(size_t _bitIndex) const; 						//Throws
-	inline size_t Count() const;									//Throws
+//	inline size_t Count() const;									//Throws
 	inline bool operator==(const BitSet& _bitSet) const;			//Throws
 	inline bool operator[](size_t _bitIndex) const;					//Throws
 	inline Bit operator[](size_t _bitIndex);						//Throws
 	inline BitSet operator&(const BitSet& _bitSet) const;			//Throws
 	inline BitSet& operator&=(const BitSet& _bitSet);				//Throws
-	inline BitSet operator|(const BitSet& _bitSet) const;			//Throws
-	inline BitSet& operator|=(const BitSet& _bitSet);				//Throws
-	inline BitSet operator^(const BitSet& _bitSet) const;			//Throws
-	inline BitSet& operator^=(const BitSet& _bitSet);				//Throws
-	inline void operator<<(size_t index);							//Throws
-	inline void operator>>(size_t index);							//Throws
-	inline BitSet<SIZE, T>& Flip(size_t _bitIndex);					//Throws
-	inline BitSet<SIZE, T>& Flip();									//Throws
-	inline bool Any() const;										//Throws
-	inline bool All() const;										//Throws
-	inline bool None() const;										//Throws
+//	inline BitSet operator|(const BitSet& _bitSet) const;			//Throws
+//	inline BitSet& operator|=(const BitSet& _bitSet);				//Throws
+//	inline BitSet operator^(const BitSet& _bitSet) const;			//Throws
+//	inline BitSet& operator^=(const BitSet& _bitSet);				//Throws
+//	inline void operator<<(size_t index);							//Throws
+//	inline void operator>>(size_t index);							//Throws
+//	inline BitSet<SIZE, T>& Flip(size_t _bitIndex);					//Throws
+//	inline BitSet<SIZE, T>& Flip();									//Throws
+//	inline bool Any() const;										//Throws
+//	inline bool All() const;										//Throws
+//	inline bool None() const;										//Throws
 	inline size_t GetElementSize() const;
 	inline size_t GetNumOfElements() const;
-	inline const T* const GetElementArray() const;
+	inline size_t GetNumOfBits() const;
+	inline const T* const GetElementArray() const; //TODO: remove this
 
 private:
 //	inline BitSet(const BitSet& _bitSet);
@@ -95,6 +94,7 @@ inline std::ostream& operator<<(std::ostream& _os, const BitSet<SIZE, T>& _bitSe
 template<size_t SIZE, class T>
 inline std::ostream& operator<<(std::ostream& _os, const BitSet<SIZE, T>& _bitSet)
 {
+	//TODO: Change this to print each bit with a for loop and operator[]
 	const T* const arr = _bitSet.GetElementArray();
 	size_t num = _bitSet.GetNumOfElements();
 	std::for_each(arr, arr + num, advcpp::Printer<(CHAR_BIT * sizeof(T)), T>());
@@ -141,6 +141,57 @@ inline BitSet<SIZE, T>::BitSet(bool _boolArr[], size_t _numOfBits) : m_elementAr
 }
 
 template<size_t SIZE, class T>
+inline BitSet<SIZE, T>& BitSet<SIZE, T>::operator=(const BitSet& _bitSet)
+{
+	if (SIZE != _bitSet.GetNumOfBits())
+	{
+		throw std::runtime_error("BitSet<SIZE, T>::operator=(const BitSet& _bitSet), invalid parameter");
+	}	
+	
+	std::copy(_bitSet.m_elementArray, _bitSet.m_elementArray + _bitSet.m_numOfElements, m_elementArray);
+	
+	return *this;
+}
+
+template<size_t SIZE, class T>
+inline bool BitSet<SIZE, T>::operator==(const BitSet& _bitSet) const
+{
+	size_t numOfBitsInLastElem = SIZE % m_elementSize;
+	
+	if (0 != numOfBitsInLastElem)
+	{
+		if (true == std::equal(m_elementArray, m_elementArray + m_numOfElements - 1, 
+				_bitSet.m_elementArray, advcpp::BitSet_Op_ISEQUAL<T>())) //TODO: Check if functor is actually needed in this case
+		{
+			for (size_t index = SIZE - numOfBitsInLastElem ; index < SIZE ; ++index)
+			{		
+				if ((*this)[index] != _bitSet[index])
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	else
+	{
+		return std::equal(m_elementArray, m_elementArray + m_numOfElements, 
+				_bitSet.m_elementArray, advcpp::BitSet_Op_ISEQUAL<T>()); //TODO: Check if functor is actually needed in this case
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+template<size_t SIZE, class T>
 inline bool BitSet<SIZE, T>::operator[](size_t _bitIndex) const 
 {	
 	if (SIZE <= _bitIndex)
@@ -178,8 +229,6 @@ inline  typename BitSet<SIZE, T>::Bit BitSet<SIZE, T>::operator[](size_t _bitInd
 template<size_t SIZE, class T>
 inline BitSet<SIZE, T> BitSet<SIZE, T>::operator&(const BitSet& _bitSet) const
 {
-//	return BitSetOps<SIZE, T>::Do_Bit_And(*this, _bitSet); //TODO: why does this produce undefined ref
-//	return Do_BitSet_And(*this, _bitSet);
 	BitSet<SIZE, T> bs;
 	size_t numOfBitsInLastElem = SIZE % m_elementSize;
 	
@@ -204,8 +253,12 @@ inline BitSet<SIZE, T> BitSet<SIZE, T>::operator&(const BitSet& _bitSet) const
 	return bs;
 }
 
-
-
+template<size_t SIZE, class T>
+inline BitSet<SIZE, T>& BitSet<SIZE, T>::operator&=(const BitSet& _bitSet)
+{
+	*this = *this & _bitSet;
+	return *this;
+}
 
 
 
@@ -222,6 +275,12 @@ template<size_t SIZE, class T>
 inline size_t BitSet<SIZE, T>::GetNumOfElements() const
 {
 	return m_numOfElements;
+}
+
+template<size_t SIZE, class T>
+inline size_t BitSet<SIZE, T>::GetNumOfBits() const
+{
+	return SIZE;
 }
 
 template<size_t SIZE, class T>
