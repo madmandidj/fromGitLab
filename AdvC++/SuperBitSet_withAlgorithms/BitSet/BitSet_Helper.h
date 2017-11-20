@@ -1,16 +1,14 @@
 #ifndef __BIT_SET_HELPER__
 #define __BIT_SET_HELPER__
 
-#include "BitSet.h"
 #include<iostream>
-
-
-
+#include<algorithm>
 namespace advcpp
 {
-template<size_t SIZE, class T> //Forward declaration for BitSet
+//////////////////////////////////////////////////////////////////
+//BITSET FORWARD DECLARATION
+template<size_t SIZE, class T> 
 class BitSet;
-
 //////////////////////////////////////////////////////////////////
 //PRINTER CLASS
 template<size_t ELEMENT_SIZE, class T>
@@ -40,49 +38,38 @@ inline void Printer<ELEMENT_SIZE, T>::operator()(T _arg)
 	std::cout << "_";
 }
 //////////////////////////////////////////////////////////////////
-//BITSETOPS CLASS
-//template<size_t SIZE, class T>
-//class BitSetOps
+//BITSET_OP CLASS
+//template<class T>
+//class BitSet_Op
 //{
 //public:
-////	friend advcpp::BitSet<SIZE, T>;
-//	BitSetOps();
-//	inline static bool Do_Bit_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS);
-//	inline static T* Do_Element_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS);
-//	inline static advcpp::BitSet<SIZE, T> Do_BitSet_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS);
+//	virtual ~BitSet_Op() = 0;
+//	inline BitSet_Op(){}
 //};
-
-
-//template<size_t SIZE, class T>
-//inline static advcpp::BitSet<SIZE, T> Do_BitSet_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS)
-//{
-//	BitSet<SIZE, T> bitSet;
-//	bool thisBitState;
-//	bool otherBitState;
-//	bool newBitState;
-//	for (size_t index = 0; index < SIZE; ++index)
-//	{
-//		thisBitState = _thisBS[index];
-//		otherBitState = _otherBS[index];
-//		newBitState = thisBitState & otherBitState;
-//		bitSet[index] = newBitState;	
-//	}
+//////////////////////////////////////////////////////////////////
+//DO_BITSET_OP FUNCTION
+template<size_t SIZE, class T, class BitSet_OP> 
+inline void Do_BitSet_OP(T* _thisArr, T* _otherArr, T* _destArr, size_t _numOfElems, size_t _elemSize, BitSet_OP _bitSetOp)
+{
+//	BitSet<SIZE, T> bs;
+//	size_t numOfBitsInLastElem = SIZE % _elemSize;
 //	
-//	return bitSet;
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
+//	if (0 != numOfBitsInLastElem)
+//	{
+		std::transform (_thisArr, _thisArr + _numOfElems - 1, _otherArr, _destArr, _bitSetOp);
+		
+//		for (size_t index = SIZE - numOfBitsInLastElem ; index < SIZE ; ++index)
+//		{		
+//			(bs)[index] = _bitSet[index];
+//		}
+//	}
+//	else
+//	{
+//		std::transform (_thisArr, _thisArr + _numOfElems, _otherArr, _destArr, _bitSetOp);
+//	}
+	
+//	return bs;
+}
 //////////////////////////////////////////////////////////////////
 //BITSET_OP_AND CLASS
 template<class T>
@@ -105,6 +92,27 @@ inline T BitSet_Op_AND<T>::operator()(T& _arg1, T& _arg2)
 	return _arg1 & _arg2;
 }
 //////////////////////////////////////////////////////////////////
+//BITSET_OP_OR CLASS
+template<class T>
+class BitSet_Op_OR
+{
+public:
+	inline BitSet_Op_OR();
+	inline T operator()(T& _arg1, T& _arg2);
+};
+
+template<class T>
+inline BitSet_Op_OR<T>::BitSet_Op_OR()
+{
+	//Empty
+}
+
+template<class T>
+inline T BitSet_Op_OR<T>::operator()(T& _arg1, T& _arg2)
+{
+	return _arg1 | _arg2;
+}
+//////////////////////////////////////////////////////////////////
 //BITSET_OP_ISEQUAL CLASS
 template<class T>
 class BitSet_Op_ISEQUAL
@@ -125,27 +133,6 @@ inline bool BitSet_Op_ISEQUAL<T>::operator()(T& _arg1, T& _arg2)
 {
 	return _arg1 == _arg2;
 }
-
-
-/*
-//TEST SPECIALIZATIONS
-template<typename T>
-void print(T)
-{
-	std::cout << "Not Allowed type" << std::endl;
-}
-
-template<>
-void print(char _yo)
-{
-	std::cout << _yo << std::endl;
-}
-*/
-
-
-
-
-
 
 
 }//namespace advcpp
