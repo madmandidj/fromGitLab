@@ -47,12 +47,14 @@ class BitSetOps
 public:
 	friend advcpp::BitSet<SIZE, T>;
 	BitSetOps();
-	inline static advcpp::BitSet<SIZE, T> Do_Bit_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS);
+	inline static bool Do_Bit_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS);
+	inline static T* Do_Element_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS);
+	inline static advcpp::BitSet<SIZE, T> Do_BitSet_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS);
 };
 
 
 template<size_t SIZE, class T>
-inline static advcpp::BitSet<SIZE, T> Do_Bit_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS)
+inline static advcpp::BitSet<SIZE, T> Do_BitSet_And(const advcpp::BitSet<SIZE, T>& _thisBS, const advcpp::BitSet<SIZE, T>& _otherBS)
 {
 	BitSet<SIZE, T> bitSet;
 	bool thisBitState;
@@ -68,7 +70,65 @@ inline static advcpp::BitSet<SIZE, T> Do_Bit_And(const advcpp::BitSet<SIZE, T>& 
 	
 	return bitSet;
 }
+//////////////////////////////////////////////////////////////////
+//BITSET_OP_AND CLASS
+//template<size_t ELEMENT_SIZE, class T>
+//class BitSet_Op_AND
+//{
+//public:
+//	inline BitSet_Op_AND();
+//	inline T operator()(T& _arg1, T& _arg2);
+//};
 
+//template<size_t ELEMENT_SIZE, class T>
+//inline BitSet_Op_AND<ELEMENT_SIZE, T>::BitSet_Op_AND()
+//{
+//	//Empty
+//}
+
+//template<size_t ELEMENT_SIZE, class T>
+//inline T BitSet_Op_AND<ELEMENT_SIZE, T>::operator()(T& _arg1, T& _arg2)
+//{
+//	std::cout << "yo" << std::endl;
+//	return _arg1 & _arg2;
+//}
+template<class T>
+class BitSet_Op_AND
+{
+public:
+	inline BitSet_Op_AND();
+	inline T operator()(T& _arg1, T& _arg2);
+};
+
+template<class T>
+inline BitSet_Op_AND<T>::BitSet_Op_AND()
+{
+	//Empty
+}
+
+template<class T>
+inline T BitSet_Op_AND<T>::operator()(T& _arg1, T& _arg2)
+{
+	std::cout << "yo" << std::endl;
+	return _arg1 & _arg2;
+}
+//////////////////////////////////////////////////////////////////
+//BIT_OP_AND CLASS
+template<size_t ELEMENT_SIZE, class T>
+class Bit_Op_AND
+{
+public:
+	inline Bit_Op_AND();
+	inline T operator()(T& _arg1, T& _arg2);
+};
+
+
+
+
+
+
+/*
+//TEST SPECIALIZATIONS
 template<typename T>
 void print(T)
 {
@@ -80,7 +140,7 @@ void print(char _yo)
 {
 	std::cout << _yo << std::endl;
 }
-
+*/
 
 
 

@@ -179,8 +179,29 @@ template<size_t SIZE, class T>
 inline BitSet<SIZE, T> BitSet<SIZE, T>::operator&(const BitSet& _bitSet) const
 {
 //	return BitSetOps<SIZE, T>::Do_Bit_And(*this, _bitSet); //TODO: why does this produce undefined ref
-	print(5);
-	return Do_Bit_And(*this, _bitSet);
+//	return Do_BitSet_And(*this, _bitSet);
+	BitSet<SIZE, T> bs;
+	size_t numOfBitsInLastElem = SIZE % m_elementSize;
+	
+	if (0 != numOfBitsInLastElem)
+	{
+		std::transform (m_elementArray, m_elementArray + m_numOfElements - 1, 
+				_bitSet.m_elementArray, bs.m_elementArray, 
+				advcpp::BitSet_Op_AND<T>());
+		
+		for (size_t index = SIZE - numOfBitsInLastElem ; index < SIZE ; ++index)
+		{		
+			(bs)[index] = _bitSet[index];
+		}
+	}
+	else
+	{
+		std::transform (m_elementArray, m_elementArray + m_numOfElements, 
+				_bitSet.m_elementArray, bs.m_elementArray, 
+				advcpp::BitSet_Op_AND<T>());
+	}
+	
+	return bs;
 }
 
 
