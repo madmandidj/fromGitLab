@@ -50,7 +50,7 @@ END_UNIT
 UNIT(OperatorAND)
 	const size_t size = 9;
 	bool boolArr1[size] = {0,1,0,1,0,1,0,1,1};
-	bool boolArr2[size] = {0,1,0,0,0,0,0,1,0};
+	bool boolArr2[size] = {0,1,0,0,0,0,0,1,1};
 	bool boolResult[size] = {0,1,0,0,0,0,0,1,1};
 	advcpp::BitSet<size, unsigned char> bs1(boolArr1, size);
 	advcpp::BitSet<size, unsigned char> bs2(boolArr2, size);
@@ -79,6 +79,25 @@ UNIT(OperatorAND_EQUALS)
 	bs4 = bs1;
 	bs4 &= bs2;
 	
+	ASSERT_THAT(bs3 == bs4);
+END_UNIT
+////////////////////////////////////////////////////////////////////////////
+UNIT(OperatorOR)
+	const size_t size = 9;
+	bool boolArr1[size] = {0,1,0,1,0,1,0,1,0};
+	bool boolArr2[size] = {0,1,0,0,0,0,1,1,1};
+	bool boolResu[size] = {0,1,0,1,0,1,1,1,1};
+	advcpp::BitSet<size, unsigned char> bs1(boolArr1, size);
+	advcpp::BitSet<size, unsigned char> bs2(boolArr2, size);
+	advcpp::BitSet<size, unsigned char> bs3(boolResu, size);
+	advcpp::BitSet<size, unsigned char> bs4;
+	
+	bs4 = bs1 | bs2;
+	
+	cout << bs1 << endl;
+	cout << bs2 << endl;
+	cout << bs3 << endl;
+	cout << bs4 << endl;
 	ASSERT_THAT(bs3 == bs4);
 END_UNIT
 ////////////////////////////////////////////////////////////////////////////
@@ -118,6 +137,7 @@ TEST_SUITE(BitSet)
 	TEST(Default_CTOR_without_type)
 	TEST(OperatorAND)
 	TEST(OperatorAND_EQUALS)
+	TEST(OperatorOR)
 //	TEST(OperatorSUBSCRIPT_returns_bool)
 //	TEST(OperatorSUBSCRIPT_returns_BitRef)
 //	TEST(OperatorLEFT_SHIFT)

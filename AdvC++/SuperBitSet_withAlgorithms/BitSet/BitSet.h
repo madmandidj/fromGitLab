@@ -60,7 +60,7 @@ public:
 	inline Bit operator[](size_t _bitIndex);						//Throws
 	inline BitSet operator&(const BitSet& _bitSet) const;			//Throws
 	inline BitSet& operator&=(const BitSet& _bitSet);				//Throws
-//	inline BitSet operator|(const BitSet& _bitSet) const;			//Throws
+	inline BitSet operator|(const BitSet& _bitSet) const;			//Throws
 //	inline BitSet& operator|=(const BitSet& _bitSet);				//Throws
 //	inline BitSet operator^(const BitSet& _bitSet) const;			//Throws
 //	inline BitSet& operator^=(const BitSet& _bitSet);				//Throws
@@ -95,9 +95,13 @@ template<size_t SIZE, class T>
 inline std::ostream& operator<<(std::ostream& _os, const BitSet<SIZE, T>& _bitSet)
 {
 	//TODO: Change this to print each bit with a for loop and operator[]
-	const T* const arr = _bitSet.GetElementArray();
-	size_t num = _bitSet.GetNumOfElements();
-	std::for_each(arr, arr + num, advcpp::Printer<(CHAR_BIT * sizeof(T)), T>());
+	for(size_t index = 0; index < SIZE; ++index)
+	{
+		std::cout << _bitSet[index];
+	}
+//	const T* const arr = _bitSet.GetElementArray();
+//	size_t num = _bitSet.GetNumOfElements();
+//	std::for_each(arr, arr + num, advcpp::Printer<(CHAR_BIT * sizeof(T)), T>());
 	return _os;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -230,30 +234,17 @@ template<size_t SIZE, class T>
 inline BitSet<SIZE, T> BitSet<SIZE, T>::operator&(const BitSet& _bitSet) const
 {
 	BitSet<SIZE, T> bs;
-//	size_t numOfBitsInLastElem = SIZE % m_elementSize;
-//	
-//	if (0 != numOfBitsInLastElem)
-//	{
-//		std::transform (m_elementArray, m_elementArray + m_numOfElements - 1, 
-//				_bitSet.m_elementArray, bs.m_elementArray, 
-//				advcpp::BitSet_Op_AND<T>());
-//		
-//		for (size_t index = SIZE - numOfBitsInLastElem ; index < SIZE ; ++index)
-//		{		
-//			(bs)[index] = _bitSet[index];
-//		}
-//	}
-//	else
-//	{
-//		std::transform (m_elementArray, m_elementArray + m_numOfElements, 
-//				_bitSet.m_elementArray, bs.m_elementArray, 
-//				advcpp::BitSet_Op_AND<T>());
-//	}
-//	
-//	return bs;
+	size_t numOfBitsInLastElem = SIZE % m_elementSize;
 
-	advcpp::Do_BitSet_OP<SIZE, T>(this->m_elementArray, _bitSet.m_elementArray, bs.m_elementArray, m_numOfElements, m_elementSize, BitSet_Op_AND<T>());
-					
+	advcpp::Do_BitSet_OP<SIZE, T>(this->m_elementArray, _bitSet.m_elementArray, bs.m_elementArray, m_numOfElements, BitSet_Op_AND<T>());
+	
+	if (0 != numOfBitsInLastElem)
+	{
+		for (size_t index = SIZE - numOfBitsInLastElem ; index < SIZE ; ++index)
+		{		
+			(bs)[index] = (*this)[index] & _bitSet[index];
+		}
+	}				
 	return bs;
 }
 
@@ -264,7 +255,23 @@ inline BitSet<SIZE, T>& BitSet<SIZE, T>::operator&=(const BitSet& _bitSet)
 	return *this;
 }
 
+template<size_t SIZE, class T>
+inline BitSet<SIZE, T> BitSet<SIZE, T>::operator|(const BitSet& _bitSet) const
+{
+	BitSet<SIZE, T> bs;
+	size_t numOfBitsInLastElem = SIZE % m_elementSize;
 
+	advcpp::Do_BitSet_OP<SIZE, T>(this->m_elementArray, _bitSet.m_elementArray, bs.m_elementArray, m_numOfElements, BitSet_Op_OR<T>());
+	
+	if (0 != numOfBitsInLastElem)
+	{
+		for (size_t index = SIZE - numOfBitsInLastElem ; index < SIZE ; ++index)
+		{		
+			(bs)[index] = (*this)[index] | _bitSet[index];
+		}
+	}				
+	return bs;
+}
 
 
 

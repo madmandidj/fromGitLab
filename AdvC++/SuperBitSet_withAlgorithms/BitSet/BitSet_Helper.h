@@ -38,37 +38,11 @@ inline void Printer<ELEMENT_SIZE, T>::operator()(T _arg)
 	std::cout << "_";
 }
 //////////////////////////////////////////////////////////////////
-//BITSET_OP CLASS
-//template<class T>
-//class BitSet_Op
-//{
-//public:
-//	virtual ~BitSet_Op() = 0;
-//	inline BitSet_Op(){}
-//};
-//////////////////////////////////////////////////////////////////
 //DO_BITSET_OP FUNCTION
 template<size_t SIZE, class T, class BitSet_OP> 
-inline void Do_BitSet_OP(T* _thisArr, T* _otherArr, T* _destArr, size_t _numOfElems, size_t _elemSize, BitSet_OP _bitSetOp)
+inline void Do_BitSet_OP(T* _thisArr, T* _otherArr, T* _destArr, size_t _numOfElems, BitSet_OP _bitSetOp)
 {
-//	BitSet<SIZE, T> bs;
-//	size_t numOfBitsInLastElem = SIZE % _elemSize;
-//	
-//	if (0 != numOfBitsInLastElem)
-//	{
-		std::transform (_thisArr, _thisArr + _numOfElems - 1, _otherArr, _destArr, _bitSetOp);
-		
-//		for (size_t index = SIZE - numOfBitsInLastElem ; index < SIZE ; ++index)
-//		{		
-//			(bs)[index] = _bitSet[index];
-//		}
-//	}
-//	else
-//	{
-//		std::transform (_thisArr, _thisArr + _numOfElems, _otherArr, _destArr, _bitSetOp);
-//	}
-	
-//	return bs;
+	std::transform (_thisArr, _thisArr + _numOfElems - 1, _otherArr, _destArr, _bitSetOp);
 }
 //////////////////////////////////////////////////////////////////
 //BITSET_OP_AND CLASS
