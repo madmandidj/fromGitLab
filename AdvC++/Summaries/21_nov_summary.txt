@@ -127,3 +127,10 @@ Call Barrier()
 ...
 
 
+HOMEWORK:
+---------
+Singleton class template
+Singleton<Dog>::getInstance()
+Do with atomic operations.
+Write in documentation, what should Dog do in order to really be a singleton
+
