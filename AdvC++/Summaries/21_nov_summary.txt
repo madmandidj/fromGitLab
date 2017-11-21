@@ -1,0 +1,129 @@
+*Sometimes its acceptable to split an h file into hpp and inc
+*The BitSet functions that are taken outside of the class can be "templated" by only using the type, and without the size.
+*Pimpl (pointer to implementation) is the same as Bridge 
+*Maybe better to write "//noexcept" near functions that dont throw, and those that throw to not write a comment
+* adapt the constructor from boolean to be able to be built from smaller size than size of bitset
+* in C++ dont use /* */, but rather only use //. /* */ can cause syntaz errors.
+* can provide two "get" functions. one uses "[]" and doesnt throw exception. other is called "Get" which does throw.
+*instead of function to get num of bits, better to define static const data member
+*void foo(T t)
+{
+	typename T::elem_type arr[100];
+}
+* add comparator less so class can be compatible with stl containers
+* static const data members should be initialized in the class
+* in the world of templates, our default should be "inline".
+* in non-template, we wont put inline if we want to hide this function/impl.
+* main reason to take functions outside of class is to reduce code bloating (for instance having the functions outside not dependant on both template parameters)
+--------------------------
+After Code review:
+--------------------------
+*****globals*****
+--------------------------
+**global namespace pollution
+use namespace/class
+--------------------------
+**affects many parts
+--------------------------
+**multi_thread - race condition
+--------------------------
+**public access
+can use access qualifiers
+--------------------------
+A singleton is a global with some improvements. But still cannot solve "affects many parts"
+a singleton is a type where we only have 1 object of this type
+A logger is an example of a singleton. Every function needs to be able to use the logger and dont want to pass a logger parameter to each function.
+
+File1.cpp			File2.cpp
+---------			---------
+Logger log;			Conf conf;			The order of instantion of these is not guaranteed because we have multiple compilation units
+Global initialization fiasco
+
+Using a static member of a function
+File1.cpp					File2.cpp
+---------					---------
+Logger& Getlogger()			Conf& GetConf()			
+{							{
+	static Logger log;			static Conf conf;
+	return log;					return conf;
+}							}
+
+class Logger
+{
+	Logger() : m_logFile(GetConf().getLogFile())
+	
+}
+
+if we have multithread there is a problem when reaching the declaration of static Logger log.
+
+class MySingleton
+{
+private:
+	MySingleton();
+public:
+	static MySingleton* GetInstance();
+private:
+	static MySingleton* pInstance = 0;
+}
+
+GetInstance()
+{
+	Lock(m_mutex);
+	if (!pInstance)
+	{
+		pInstance = new MySingleton;
+	}
+	return pInstance;
+}
+ *init the mutex in a static way
+
+GetInstance()
+{
+	if (!pInstance) //use this to avoid lock everytime even after the instance is created. Double Check Lock Pattern. Meyers says this doesnt work
+	{
+		Lock(m_mutex);
+		if (!pInstance)
+		{
+			pInstance = new MySingleton;
+		}
+	}
+	return pInstance;
+}
+
+Document on diskonkey: "C++ and the perils of Double Check Lock"
+
+c++ doesnt know about threads which is the jist of the problem with DCLP.
+
+volatile int i=0;
+while(!i)
+...
+compiler cannot make optimization here. volatile means that each time the value is taken from the address without optimization.
+MMIO - memory mapped IO.
+volatile is called volatile, because after you read the value, the value is not reliable anymore.
+volatile is a cv-qualifier. const volatile qualifier.
+const_cast can be used to remove volatile. Dont do this generally!
+
+
+
+CPU1		CPU2		CPU3		CPU4
+cache L1	cache L1	cache L1	cache L1
+
+				Cache L2
+				
+				RAM
+				
+If every thread is using a different cache, it might be that one thread might not "see" the change that another thread did through a different cache because L@ didnt get a chance to be updated yet.
+
+Ostrich Algorithm
+
+Memory Barrier / Fence
+----------------------
+...
+... all these are done before call barrier
+...
+Call Barrier()
+...
+...
+...
+
+
