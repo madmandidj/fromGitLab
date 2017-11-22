@@ -10,11 +10,13 @@ template<class T>
 class Dummy
 {
 public:
+	friend TemplateSingleton<T>::Create();
 	inline ~Dummy();
 	inline Dummy(T _dummy);
 	inline T SetDummy(T _dummy); //Returns new Dummy state
 	inline T GetDummy() const;
 private:
+	inline Dummy(T _dummy);
 	T m_dummy;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////

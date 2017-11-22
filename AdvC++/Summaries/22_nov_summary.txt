@@ -1,0 +1,61 @@
+How to implement a shared pointer?
+----------------------------------
+1. Will be a tempplate class
+2. Needs to implement:
+	CTOR(T*)
+	? CTOR()
+	~DTOR()
+	op=(SP)
+	CTOR(SP)
+	op*
+	op->
+	op==
+	GetPtr()
+	? GetCount()
+	? CastToT*()
+	UseInCond() --- this is like checking for null
+	? inc/dec
+
+
+-----------------------------------
+operator -> is special
+to use it you do recursion to call ->
+if have time read about safe bool
+-----------------------------------
+
+Base* pb = new Derived;
+Derived* pd = new Derived;
+SP<Base> spb(new Derived)
+SP<Derived> spd(new Derived)
+pd == pb;
+pb = pd;
+spb = spd;
+spb == spd;
+
+pd = pb;  <--- shouldnt work also
+spd = spb <--- shoudlnt work also
+
+Safe bool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
