@@ -1,0 +1,234 @@
+------------
+Code Review:
+------------
+Floating point number is built from 4 parts:
+
+
+|__________|__________|_______________|___________|
+ Sign		value		mantisa sign	mantisa
+ 
+ 
+ +			5			+				0
+ 
+ so this represents:
+ 5 * 2 ^ 0 
+
+Fixed point:
+Setting where the point is. All types are whole numbers
+*************
+MyClass()
+: m_x()
+, m_y()
+, m_z()
+{
+
+
+}
+How to catch exception from this?
+put the whole function is a try catch:
+void foo ()
+try
+{
+ // here is body of function
+
+}catch( ){
+
+}
+
+
+MyClass()
+try 
+: m_x()
+, m_y()
+, m_z()
+{
+
+}catch( ) {
+ In this catch we have no data member because they have been destroyed
+ Even though m_x.doRelease() will compile
+}
+
+In our case of SharedPtr:
+MyClass(T* p)
+try :
+m_p(p)
+, m_counter(new...)
+{
+
+}catch( ) 
+{
+	// in constructor, must throw. if i dont write at all, the compiler will do a throw
+}
+***When you write this in a constructor, its a must at the end to throw an exception
+***
+
+Copy and Swap shared ptr copy constructor switches the pointers:
+
+swap(sp& op)
+{
+	sp* temp = ot.m_ptr;
+	ot.m_ptr = m_ptr;
+	m_ptr = tempptr;
+}
+
+SP<> temp(_other);
+
+
+******using derived/base with our SharedPtr
+SP<Base>
+SP<Derived>
+
+The compiler treats SP<Base> and SP<Derived> as completely different and unrelated entities.
+
+So in constructor and assignment operator, we want to be able to receive different types
+template<typename Derivde>
+SharedPtr(const SharedPtr<Derived>&);
+
+template<typename T>
+template<typename Derived>
+inline SharedPtr<T>::SharedPtr(const SharedPtr<Derived>& _other)
+{
+	m_obj = _other.m_obj;
+	m_refCount = _other.m_refCount;
+	__sync_fetch_and_add(m_refCount, 1);
+}
+
+Need to provide copy CTOR
+
+Need that all SharedPointers will be my friend:
+template<class All>
+frien class SharedPtr;
+
+To reduce number of ifs:
+SP<>::S_NULL;
+
+static shared pointer of null
+SP<int>::S_NULL
+SharedPtr(const SharedPtr& = s_null);
+and remove the default constructor
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+Cat cat;
+cat++;
+++cat;
+Cat& operator++()		pre
+Cat operator++(int)		post  (this will have a temp(*this); ++(*this); return temp;
+
+
+operator& 
+operator&&
+
+
+
+if(str && *str)
+looks like 	if(operator&&(str,*str)) - whats the problem with this?
+and logical &&, the order is guaranteed. furthermore, if it doesnt work then the following statements wont be evaluated (e.g. a && b && c .... evaluation goes --->)
+this is called Short Circuit: if left condition is false, we will not check the rest of conditions)
+So dont overload these operators.
+
+for(i=0, j=8; i<j; ++i)
+{
+}
+The comma here is an operator
+
+in macros we use operator ',' also: #define LOG(x) ((cout<<#x),(x))
+
+||, &&, operator,  ----- we do not overload!
+----------------------------------------------------------------------------
+RAII - resource allocation is initialization - manage resources with objects
+Portability issue and dependancy issue.
+pthread_create
+pthread_mutex_t
+
+So: we dont use pthread_mutex_t anymore, and we do abstraction and create sync::Mutex
+on top of this we want to give a good API
+What functions do i need on lock/guard:
+CTOR
+DTOR
+And for Mutex we need:
+CTOR
+DTOR
+Lock
+Unlock
+
+For Files:
+{
+FileGuard fg("moshe.txt");
+.
+.
+.
+.
+.
+.
+}
+
+
+for wrong usage we use assert. With a mutex for instance.
+With Files, even if our code is great, the file might have been deleted after opened or many other things.
+sooo we do:
+{
+FileGuard fg("moshe.txt");
+.
+.
+.
+.
+.
+.
+fg.close();
+}
+-----------------------------------------------------
+-----------------------------------------------------
+-----------------------------------------------------
+Homework:
+---------
+1. Provide these that makes use of not dependant on pthread
+mutex / lock
+Semaphore
+Cond Var
+Thread
+----------
+Our Homework is: Mutex/Lock, CondVar and thread
+----------
+pthread_create(..func, context...)
+
+
+class Thread
+{
+
+virtual void run() = 0;
+
+};
+
+sync::thread()
+
+"Runnable" interface if want to inherit
+
+Thread<MyCar> <-- pellegs suggestion
+
+DnaAnalyzer
+{
+.
+.
+analyze()
+.
+.
+}
+
+-------
+class DnaAnalyzerRunner
+{
+	DA m_da;
+	run(){m_da->analyze();}
+};
+-------
+DA myda;
+Prosche myprivate;
+Runnable dnar(myda, analyze);
+Runnable(myprivate, drive
+
+
+
+

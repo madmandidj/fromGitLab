@@ -18,7 +18,8 @@ public:
 	SharedPtr& operator=(const SharedPtr& _sp);
 	T* const GetPtr() const;
 	T& operator*() const;
-	const SharedPtr* operator->() const;
+//	const SharedPtr* operator->() const; //should return T*
+	T* operator->() const; //should return T*
 	bool operator==(const SharedPtr& _sp);
 	operator bool()const;
 private:
@@ -28,7 +29,6 @@ private:
 	friend void RemoveOwner<T>(SharedPtr<T>& _sp);
 	friend void AddOwner<T>(SharedPtr<T>& _thisSp, const SharedPtr<T>& _otherSp);
 	friend void SetNullSP<T>(SharedPtr<T>& _thisSp);
-	friend void Do_Def_CTOR<T>(SharedPtr<T>& _sp, T* _ptr); //NOT USED YET
 };
 //////////////////////////////////////////////////////////////////////////////////////////
 //Public member functions
@@ -54,7 +54,7 @@ inline SharedPtr<T>::SharedPtr(T* _ptr)
 //		CreateOwner(*this, _ptr);
 //	}
 
-	Do_Def_CTOR(*this, _ptr); //NOT USED YET
+	Do_Def_CTOR(*this, _ptr);
 	
 }
 template<class T>
@@ -78,8 +78,11 @@ inline SharedPtr<T>& SharedPtr<T>::operator=(const SharedPtr& _sp)
 		{
 			SetNullSP(*this);
 		}
-		RemoveOwner(*this);
-		AddOwner(*this, _sp);
+		else
+		{
+			RemoveOwner(*this);
+			AddOwner(*this, _sp);
+		}
 	}
 	return *this;
 }
@@ -91,36 +94,38 @@ inline T* const SharedPtr<T>::GetPtr() const
 template<class T>
 inline T& SharedPtr<T>::operator*() const
 {
-	if (!GetPtr())
-	{
-		//Throw exception
-	}
 	return *m_ptr;
 }
+//template<class T>
+//inline const SharedPtr<T>* SharedPtr<T>::operator->() const
+//{
+//	return this;
+//}
 template<class T>
-inline const SharedPtr<T>* SharedPtr<T>::operator->() const
+inline T* SharedPtr<T>::operator->() const
 {
-	if (!GetPtr())
-	{
-		//Throw exception
-	}
-	return this;
+	return m_ptr;
 }
+//template<class T>
+//inline SharedPtr<T>::operator bool() const
+//{
+//	return !GetPtr() ? false : true;
+//}
 template<class T>
 inline SharedPtr<T>::operator bool() const
 {
-	if (!GetPtr())
-	{
-		//Throw exception
-	}
-	return !GetPtr() ? false : true;
+	return (0 != GetPtr());
 }
+//template<class T>
+//inline bool SharedPtr<T>::operator==(const SharedPtr& _sp)
+//{
+//	return m_ptr == _sp.m_ptr ? true : false;
+//}
 template<class T>
 inline bool SharedPtr<T>::operator==(const SharedPtr& _sp)
 {
-	return m_ptr == _sp.m_ptr ? true : false;
+	return m_ptr == _sp.m_ptr;
 }
-
 
 
 
