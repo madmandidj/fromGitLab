@@ -54,6 +54,7 @@ void Thread<FUNC,ARG>::Join()
 
 
 
+
 }//namespace advcpp
 #endif//#ifndef __THREAD_H__
 
