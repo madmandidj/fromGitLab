@@ -10,24 +10,22 @@ size_t currentWorkingThread = 3;
 
 typedef struct MyStruct
 {
-	pthread_mutex_t& mutex;
-	pthread_cond_t& condvar;
+	pthread_mutex_t& 	m_mutex;
+	pthread_cond_t& 	m_condVar;
 	int&				m_xRef;
-	size_t				m_ID;
+//	size_t				m_ID;
 }MyStruct;
 
 
 
 size_t GetThreadID()
 {
-//	static size_t numOfThreadsEntered = 0;
 	static size_t threadID = 0;
 	return ++threadID;
 }
 
 size_t GetNumOfDoneThreads()
 {
-//	static size_t numOfThreadsEntered = 0;
 	static size_t NumOfDoneThreads = 0;
 	return ++NumOfDoneThreads;
 }
@@ -35,30 +33,26 @@ size_t GetNumOfDoneThreads()
 void* ThreadFunc1(void* mystruct)
 {
 	MyStruct* msPtr = (MyStruct*)mystruct;
-	msPtr->m_mutex.Lock();
-	msPtr->m_condVar.NotifyAll();
-	msPtr->m_ID = GetThreadID();
-	std::cout << "thread " << msPtr->m_ID << " got ID" << std::endl;
-	while (msPtr->m_ID != currentWorkingThread)
+	pthread_mutex_lock(&msPtr->m_mutex);
+//	msPtr->m_ID = GetThreadID();
+	size_t myID = GetThreadID();
+	std::cout << "thread " << myID << " got ID" << std::endl;
+	while (myID != currentWorkingThread)
 	{
-		std::cout << "Thread waiting " << msPtr->m_ID << std::endl;
-		msPtr->m_condVar.Wait(msPtr->m_mutex);
-		std::cout << "Thread awake " << msPtr->m_ID << std::endl;
+		std::cout << "Thread waiting " << myID << std::endl;
+		pthread_cond_wait(&msPtr->m_condVar, &msPtr->m_mutex);
+		std::cout << "Thread awake " << myID << std::endl;
 	}
-	std::cout << "(before increment)x = " << msPtr->m_xRef << std::endl;
-	++(msPtr->m_xRef);
-	std::cout << "(after increment)x = " << msPtr->m_xRef << std::endl;
-	--(msPtr->m_xRef);
-	std::cout << "(after decrement)x = " << msPtr->m_xRef << std::endl;
+	std::cout << "Thread left while loop " << myID << std::endl;
 	--currentWorkingThread;
-//	msPtr->m_mutex.Unlock();
-	msPtr->m_condVar.NotifyOne();
-	msPtr->m_mutex.Unlock();
-	while(currentWorkingThread > 0)
-	{	
-		msPtr->m_condVar.NotifyOne();
-		sleep(1);
-	}
+	pthread_mutex_unlock(&msPtr->m_mutex);
+	pthread_cond_broadcast(&msPtr->m_condVar);
+//	while(currentWorkingThread > 0)
+//	{	
+//		msPtr->m_condVar.NotifyOne();
+//		pthread_cond_broadcast(&msPtr->m_condVar);
+	sleep(1);
+//	}
 	
 
 	return 0;
@@ -68,14 +62,13 @@ int main()
 {
 	pthread_t threads[numOfThreads];
 	int x = 10;
-//	advcpp::Mutex mutex;
-//	advcpp::CondVar condvar;
 	pthread_mutex_t mutex;
 	pthread_cond_t condvar;
 	
-	pthread_cond_init(&m_cond_t, 0)
+	pthread_cond_init(&condvar, 0);
+	pthread_mutex_init(&mutex, 0);
 	
-	MyStruct mystruct = {mutex, condvar, x, 1};
+	MyStruct mystruct = {mutex, condvar, x};
 	
 	for (size_t index = 0; index < numOfThreads; ++index)
 	{

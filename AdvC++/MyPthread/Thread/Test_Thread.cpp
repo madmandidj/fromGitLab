@@ -1,9 +1,10 @@
-#include "CondVar.h"
-#include"../Mutex/Mutex.h"
+#include "../Mutex/Mutex.h"
+#include "../CondVar/CondVar.h"
+#include "Thread.h"
 #include<iostream>
 #include<unistd.h>
 
-const size_t numOfThreads = 3;
+const size_t numOfThreads = 1;
 size_t numOfDoneThreads = 0;
 size_t currentWorkingThread = 3;
 
@@ -59,21 +60,21 @@ void* ThreadFunc1(void* mystruct)
 
 int main()
 {
-	pthread_t threads[numOfThreads];
 	int x = 10;
 	advcpp::Mutex mutex;
 	advcpp::CondVar condvar;
 	MyStruct mystruct = {mutex, condvar, x, 1};
 	
-	for (size_t index = 0; index < numOfThreads; ++index)
-	{
-		pthread_create(&threads[index], 0, ThreadFunc1, &mystruct);	
-	}
-	
-	for (size_t index = 0; index < numOfThreads; ++index)
-	{
-		pthread_join(threads[index], 0);	
-	}
+	advcpp::Thread<void*(*)(void*), MyStruct> thread1(ThreadFunc1, mystruct);
+	advcpp::Thread<void*(*)(void*), MyStruct> thread2(ThreadFunc1, mystruct);
+	advcpp::Thread<void*(*)(void*), MyStruct> thread3(ThreadFunc1, mystruct);
+	thread1.Run();
+	thread2.Run();
+	thread3.Run();
+
+	thread1.Join();
+	thread2.Join();
+	thread3.Join();
 	
 	return 0;
 }
