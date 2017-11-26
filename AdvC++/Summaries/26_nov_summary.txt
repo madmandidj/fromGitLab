@@ -1,0 +1,42 @@
+Code review:
+------------
+POSIX is not cross platform. Windows is not POSIX compliant.
+Possible to pass attributes to our mutex, e.g.: Mutex mtx(Mutex::RECURSIVE)
+If a system doesnt have a native recursive mutex, then we will implement one for that system.
+Can do this by using templates, or different Mutex code for different systems, or giving access to data members.
+-----------------------------------------------------------------------------------
+To deal with access required by condvar of mutex, and the fact that some users will want direct access to raw mutex:
+Create an API thats not trivial, so that only advanced users will easily access it:
+NativeMutex nvMutex(Mutex _mutex);
+******
+If condvar is a friend of mutex, allow acces to private data members via private access functions
+Add documentation for "forbidden" functions (like when you want to forbid copy ctor and assignment operator)
+******
+try to move as many errors to compile time as possible.
+if not, then move to linkage. both are better than erors in runtime.
+To do this properly:
+Class NonCopiable
+{
+private:
+{
+	X(const& x);
+	op=(const& x);
+};
+
+Class Y: private NonCopiable
+{
+
+};
+private inheritance: everything that was private in the base, is private with me.
+Use boost::noncopyable
+
+
+
+
+
+
+
+
+
+
+

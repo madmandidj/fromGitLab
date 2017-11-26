@@ -2,6 +2,7 @@
 #define __MUTEX_H__
 
 #include "pthread.h"
+#include <boost/core/noncopyable.hpp>
 #include<iostream>
 namespace advcpp
 {
