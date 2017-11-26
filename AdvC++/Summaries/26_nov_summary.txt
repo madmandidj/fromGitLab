@@ -30,6 +30,131 @@ Class Y: private NonCopiable
 private inheritance: everything that was private in the base, is private with me.
 Use boost::noncopyable
 
+--------------------------
+Use assert in Mutex constructor for pthread_mutex_init errors
+Problems that are not related to bugs should throw exceptions (memory not available)
+If its bug related, should do assert. Throwing an exception might try to call bug-proned code, or might take a long time to reach catch point or get thrown from the program.
+
+*if we create a library (called eg sync), then we create our own exceptions:
+std::exception
+	^
+	|
+	|
+sync::SyncException
+	^
+	|
+	|
+sync::MutexEx
+	^
+	|
+	|
+sync::Resource
+	^
+	|
+	|
+
+
+class SyncErr: public std::exception
+{
+	SyncErr(   ----  )
+	what()
+};
+
+Code duplication is not about saving writing lots of code. its mainly about compatibility with future changes.
+
+can put mutex as inline, but mutex is a system call, which is relatively slow. Therefore the question of if should be inline is less relevant here.
+*************
+Guard<class M>
+M m;
+m.lock();
+"Better solution" here is to implement a Mutex class for different types of systems. Mutex for linux, Mutex for windows etc...
+Not possible on the same system to create and use two different system mutexes.
+Can do pimpl for mutex. Taking out the pthread_mutex_t from the h of mutex will be beneficial
+
+In the guard DTOR, should catch any exception of what mutex unlock throws.
+----------
+Condvar - can put mutex as data member, and in constructor initialize the data member mutex.
+Both mutex and condvar can be interfaces, with pimpls, and the pimpls will be friends
+Condvar - can make function Wait with some predicate. so call will be condVar.Wait(Predicate)
+Predicate ------   bool IsTrue();
+pred.isTrue();
+with functor, can also pass global function or static function
+------------------------
+thread
+------------------------
+pointer to member function (or member) is not a pointer to a function
+class Person
+{
+	str first;
+	str last;
+};
+
+void GenerateEmail(str(Person::*))
+{
+	for_each(...)
+}
+
+We need a "relative" address, so we need a pointer to member.
+
+-------
+GenerateEmail(&Person::last);
+-------
+cout << pers.pname <----- this wont work because no data member of pname exists
+so use special operator:    cout << pers.*pname      .* means pointer to member  .... here pers is a reference to person
+cout << ppers->*pname  ......  here ppers is a pointer to person
+
+int((Person::*)(int)    this is a pointer to a member function of person with int param and returns int
+int((Person::*)(int) calc = &Person::getIQ;
+Person pmoshe;
+pmoshe->calc(3)
+
+
+Gal:
+explicit Thread_t(T& _class, void* (T::*_func)(void), R _retType);
+data member: void* (T::*m_func)(void);
+convention----functions should be above data members
+m_retVal()    using in this syntax for builtin types is called initializer. For non built in types this will call the Default CTOR.
+pthread_create(&m_trd, 0, Trampulina, static_cast<void*>(this))
+Trampulina should be called start thread
+
+This is a static function!    void* Thread_t<T,R>::Trampulina(void* this)
+{
+	T* obj = &(static_cast<Thread_t<T,R>*>(_this)->m_class);
+	void* (T::*func)(void) = (static_cast<Thread_t<T,R>*>(_this)->m_func);
+	(obj->*func)();
+}
+
+******better to pass T by shared pointer
+Better to do abort in thread destructor if needed. To see if abort needed, use tryjoin.
+Cna provide a mechanism to determine timeout time for retrying abort in DTOR
+
+**********
+T
+
+T()
+
+Runnable(obj, &class::func)
+
+
+
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+END OF CODE REVIEW
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+1. We need to build a PriorityQueue which is thread safe
+Take std::prioroty queue and make it thread safe
+
+2. Make a ThreadPool - a pool is a predefined area of memory that we can take/return to it.
+
+ThreadPool tp(numOfThreads); ----> here num of threads are created and waiting for tasks
+tp.add(task, priority);
+tp.shutdown()  ---- will finish tasks that are already performed (not ones that are waiting in queue) then exit
+
+
+
+
 
 
 

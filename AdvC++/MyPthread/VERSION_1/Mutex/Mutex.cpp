@@ -1,31 +1,28 @@
 #include "Mutex.h"
 #include "errno.h"
 #include<stdio.h>
-#include<assert.h>
-#inclu
 namespace advcpp
 {
 //////////////////////////////////////////////////////////////////////////////////
 ////Mutex public function definitions
 Mutex::~Mutex() //TODO: Do assert and/or throw where relevant
 {
-//	int errVal;
-//	if (0 != (errVal = pthread_mutex_destroy(&m_mutex)))
-//	{
-//		switch (errVal)
-//		{
-//			case EBUSY:
-//				pthread_mutex_unlock(&m_mutex); //TODO: this is me handling a bug of a user so should not do this
-//				pthread_mutex_destroy(&m_mutex);
-//				perror("Mutex Destructor Error"); 
-//				break;
-//			case EINVAL:
-//				perror("Mutex Destructor Error");
-//				break;
-//		}
-//	}
-	int errVal = pthread_mutex_destroy(&m_mutex);
-	assert(0 == errVal);
+	int errVal;
+	if (0 != (errVal = pthread_mutex_destroy(&m_mutex)))
+	{
+		switch (errVal)
+		{
+			case EBUSY:
+				pthread_mutex_unlock(&m_mutex); //TODO: this is me handling a bug of a user so should not do this
+				pthread_mutex_destroy(&m_mutex);
+				perror("Mutex Destructor Error"); 
+				break;
+			case EINVAL:
+				perror("Mutex Destructor Error");
+				break;
+		}
+	}
+
 }
 
 Mutex::Mutex() //TODO: Do assert and/or throw where relevant
@@ -37,7 +34,7 @@ Mutex::Mutex() //TODO: Do assert and/or throw where relevant
 		switch (errVal)
 		{
 			case EAGAIN:
-				throw 
+				perror("Mutex Constructor Error");
 				break;
 			case ENOMEM:
 				perror("Mutex Constructor Error");
