@@ -1,57 +1,33 @@
 #include "Mutex.h"
-#include "errno.h"
+#include "../SyncExceptions/SyncExceptions.h"
+#include <errno.h>
 #include<stdio.h>
 #include<assert.h>
-#inclu
+
 namespace advcpp
 {
 //////////////////////////////////////////////////////////////////////////////////
 ////Mutex public function definitions
-Mutex::~Mutex() //TODO: Do assert and/or throw where relevant
+Mutex::~Mutex()
 {
-//	int errVal;
-//	if (0 != (errVal = pthread_mutex_destroy(&m_mutex)))
-//	{
-//		switch (errVal)
-//		{
-//			case EBUSY:
-//				pthread_mutex_unlock(&m_mutex); //TODO: this is me handling a bug of a user so should not do this
-//				pthread_mutex_destroy(&m_mutex);
-//				perror("Mutex Destructor Error"); 
-//				break;
-//			case EINVAL:
-//				perror("Mutex Destructor Error");
-//				break;
-//		}
-//	}
 	int errVal = pthread_mutex_destroy(&m_mutex);
 	assert(0 == errVal);
 }
 
-Mutex::Mutex() //TODO: Do assert and/or throw where relevant
+Mutex::Mutex()
 {
 	int errVal;
-	
 	if (0 != (errVal = pthread_mutex_init(&m_mutex, 0)))
 	{
+		assert(errVal != EPERM && errVal != EBUSY && errVal != EINVAL);
 		switch (errVal)
 		{
 			case EAGAIN:
-				throw 
-				break;
+				throw NoResources_Exc();
 			case ENOMEM:
-				perror("Mutex Constructor Error");
+				throw NoMemory_Exc();
+			default:
 				break;
-			case EPERM:
-				perror("Mutex Constructor Error");
-				break;
-			case EBUSY:
-				perror("Mutex Constructor Error");
-				break;
-			case EINVAL:
-				perror("Mutex Constructor Error");
-				break;
-				
 		}
 	}
 }
