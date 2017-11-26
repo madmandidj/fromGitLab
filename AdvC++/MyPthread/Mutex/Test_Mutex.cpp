@@ -29,7 +29,10 @@ int main()
 	int x = 17;
 	pthread_t threads[numOfThreads];
 	MyStruct mystruct;
+	
 	advcpp::Mutex mutex;
+//	const size_t numofNoMem = 349164;
+//	advcpp::Mutex NoMemArr[numofNoMem];
 	mystruct.m_mutex = &mutex;
 	mystruct.m_xPtr = &x;
 	

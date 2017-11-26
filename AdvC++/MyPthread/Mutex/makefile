@@ -1,4 +1,4 @@
-FLAGS = -ansi -pedantic -Wall -pthread
+FLAGS = -ansi -pedantic -Wall -pthread -g -std=c++98
 SYNCEXC_PATH = ../SyncExceptions/
 objects = SyncExceptions.o Mutex.o Test_Mutex.o
 

@@ -3,25 +3,25 @@
 
 #include "pthread.h"
 #include "../SyncExceptions/SyncExceptions.h"
-// #include <boost/core/noncopyable.hpp>
+#include <boost/core/noncopyable.hpp>
 #include<iostream>
 namespace advcpp
 {
+//////////////////////////////////////////////////////////////////////////////////
+////Forward declarations
 class CondVar;
 //////////////////////////////////////////////////////////////////////////////////
 ////Mutex class
-class Mutex
+class Mutex : private boost::noncopyable 
 {
 public:
-	~Mutex();		//Mutex is unlocked (if needed), then destroyed
-	Mutex();
-	bool Lock();	//Will block upon success
-	bool Trylock();	//Will block upon success
-	bool Unlock();	
+	~Mutex();		
+	Mutex();		//Throws: NoResources_Exc or NoMemory_Exc
+	void Lock();	//Throws: NoResources_Exc	//TODO: Not Needed if not recursive mutex
+	bool Trylock();	//Throws: NoResources_Exc	//TODO: Not Needed if not recursive mutex
+	void Unlock();	//Throws: NoResources_Exc 	//TODO: Not Needed if not recursive mutex
 	friend class advcpp::CondVar;
 private:
-	Mutex(const Mutex&);
-	Mutex& operator=(const Mutex&);
 	pthread_mutex_t	m_mutex;
 };
 

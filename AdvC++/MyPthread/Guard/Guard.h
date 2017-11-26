@@ -1,20 +1,19 @@
 #ifndef __GUARD_H__
 #define __GUARD_H__
 
+#include <boost/core/noncopyable.hpp>
 namespace advcpp
 {
 //////////////////////////////////////////////////////////////////////////////////
 ////Forward declarations
 class Mutex;
 
-class Guard
+class Guard : private boost::noncopyable
 {
 public:
-	~Guard();
-	Guard(Mutex& _mutex);
+	~Guard();				//If fails, calls abort() -- Refer to Mutex
+	Guard(Mutex& _mutex);	//If fails, calls abort() -- Refer to Mutex
 private:
-	Guard(const Guard&);
-	Guard& operator=(const Guard&);
 	Mutex& m_mutex;
 };
 

@@ -1,6 +1,7 @@
 #ifndef __CONDVAR_H__
 #define __CONDVAR_H__
 
+#include <boost/core/noncopyable.hpp>
 #include <pthread.h>
 #include<iostream>
 namespace advcpp
@@ -8,20 +9,22 @@ namespace advcpp
 //////////////////////////////////////////////////////////////////////////////////
 ////Forward declarations
 class Mutex;
-
-class CondVar
+//////////////////////////////////////////////////////////////////////////////////
+////CondVar class
+class CondVar : private boost::noncopyable 
 {
 public:
 	~CondVar();
-	CondVar();
-	void Wait(Mutex& _mutex);
+	explicit CondVar(Mutex& _mutex); //Throws: NoResources_Exc or NoMemory_Exc
+	void Wait();
 	void NotifyOne();
 	void NotifyAll();
 	
 private:
 	CondVar(const CondVar&);
 	CondVar& operator=(const CondVar&);
-	pthread_cond_t	m_cond_t;
+	pthread_cond_t	m_condVar;
+	Mutex&			m_mutex;
 };
 
 

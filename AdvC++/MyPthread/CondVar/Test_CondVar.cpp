@@ -47,7 +47,8 @@ void* ThreadFunc1(void* mystruct)
 	while (myID != currentWorkingThread)
 	{
 		std::cout << "Thread waiting " << myID << std::endl;
-		msPtr->m_condVar.Wait(msPtr->m_mutex);
+//		msPtr->m_condVar.Wait(msPtr->m_mutex);
+		msPtr->m_condVar.Wait();
 		std::cout << "Thread awake " << myID << std::endl;
 	}
 	DoWork(msPtr);
@@ -62,7 +63,7 @@ int main()
 	pthread_t threads[numOfThreads];
 	int x = 10;
 	advcpp::Mutex mutex;
-	advcpp::CondVar condvar;
+	advcpp::CondVar condvar(mutex);
 	MyStruct mystruct = {mutex, condvar, x, 1};
 	
 	for (size_t index = 0; index < numOfThreads; ++index)

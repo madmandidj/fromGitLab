@@ -32,19 +32,55 @@ Mutex::Mutex()
 	}
 }
 
-bool Mutex::Lock()
+void Mutex::Lock()
 {
-	return (0 == pthread_mutex_lock(&m_mutex));
+	int errVal;
+	if (0 != (errVal = pthread_mutex_lock(&m_mutex)))
+	{
+		assert(errVal != EDEADLK && errVal != EINVAL);
+		switch (errVal)
+		{
+			case EAGAIN:
+				throw NoResources_Exc();
+			default:
+				break;
+		}
+	}
 }
 
 bool Mutex::Trylock()
 {
-	return (0 == pthread_mutex_trylock(&m_mutex));
+	int errVal;
+	if (0 != (errVal = pthread_mutex_trylock(&m_mutex)))
+	{
+		assert(errVal != EINVAL);
+		switch (errVal)
+		{
+			case EBUSY:
+				return false;
+			case EAGAIN:
+				throw NoResources_Exc();
+			default:
+				break;
+		}
+	}
+	return true;
 }
 
-bool Mutex::Unlock()
+void Mutex::Unlock()
 {
-	return (0 == pthread_mutex_unlock(&m_mutex));
+	int errVal;
+	if (0 != (errVal = pthread_mutex_unlock(&m_mutex)))
+	{
+		assert(errVal != EINVAL && errVal != EPERM);
+		switch (errVal)
+		{
+			case EAGAIN:
+				throw NoResources_Exc();
+			default:
+				break;
+		}
+	}
 }
 
 

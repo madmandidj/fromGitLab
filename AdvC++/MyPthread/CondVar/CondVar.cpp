@@ -1,65 +1,54 @@
 #include "CondVar.h"
 #include "../Mutex/Mutex.h"
+#include "../SyncExceptions/SyncExceptions.h"
 #include<stdio.h>
 #include<errno.h>
+#include<assert.h>
 
 namespace advcpp
 {
-
-
+//////////////////////////////////////////////////////////////////////////////////
+////CondVar public function definitions
 CondVar::~CondVar()
 {
+	int errVal = pthread_cond_destroy(&m_condVar);
+	assert(0 == errVal);
+}
+
+CondVar::CondVar(Mutex& _mutex):m_mutex(_mutex)
+{
 	int errVal;
-	if (0 != (errVal = pthread_cond_destroy(&m_cond_t)))
+	if (0 != (errVal = pthread_cond_init(&m_condVar, 0)))
 	{
+		assert(errVal != EBUSY && errVal != EINVAL);
 		switch (errVal)
 		{
-			case EBUSY:
-				perror("CondVar DTOR, EBUSY!");
-				break;
-			case EINVAL:
-				perror("CondVar DTOR, EINVAL!");
-				break;
 			case EAGAIN:
-				perror("CondVar DTOR, EAGAIN!");
-				break;
+				throw NoResources_Exc();
 			case ENOMEM:
-				perror("CondVar DTOR, ENOMEM!");
-				break;	
-		}
-	}
-}
-
-CondVar::CondVar()
-{
-	int errVal;
-	if (0 != (errVal = pthread_cond_init(&m_cond_t, 0)))
-	{
-		switch (errVal)
-		{
-			case EBUSY:
-				perror("CondVar CTOR, EBUSY!");
-				break;
-			case EINVAL:
-				perror("CondVar CTOR, EINVAL!");
+				throw NoMemory_Exc();
+			default:
 				break;
 		}
 	}
 }
 
-void CondVar::Wait(Mutex& _mutex)
+void CondVar::Wait()
 {
-	pthread_cond_wait(&m_cond_t, &_mutex.m_mutex);
+	int errVal = pthread_cond_wait(&m_condVar, &m_mutex.m_mutex);
+	assert(0 == errVal);
 }
 
 void CondVar::NotifyOne()
 {
-	pthread_cond_signal(&m_cond_t);
+	int errVal = pthread_cond_signal(&m_condVar);
+	assert(0 == errVal);
 }
 
 void CondVar::NotifyAll()
 {
-	pthread_cond_broadcast(&m_cond_t);
+	int errVal = pthread_cond_broadcast(&m_condVar);
+	assert(0 == errVal);
 }
 
 
