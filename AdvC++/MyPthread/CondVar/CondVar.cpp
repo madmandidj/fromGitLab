@@ -24,9 +24,9 @@ CondVar::CondVar(Mutex& _mutex):m_mutex(_mutex)
 		switch (errVal)
 		{
 			case EAGAIN:
-				throw NoResources_Exc();
+				throw CondVar_NoResources_Exc();
 			case ENOMEM:
-				throw NoMemory_Exc();
+				throw CondVar_NoMemory_Exc();
 			default:
 				break;
 		}

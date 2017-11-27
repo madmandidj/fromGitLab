@@ -3,27 +3,35 @@
 #include "Thread.h"
 #include<iostream>
 #include<unistd.h>
+#include<vector>
 
-typedef struct Dog
+class Dog
 {
+public:
 	void* Run()
 	{
 		std::cout << "Dog is wagging tail" << std::endl;
 		return 0;
 	}
-}Dog;
+};
 
 int main()
 {
-	int x = 10;
-	advcpp::Mutex mutex;
-	advcpp::CondVar condvar(mutex);
+//	int x = 10;
+//	advcpp::Mutex mutex;
+//	advcpp::CondVar condvar(mutex);
+
+	const size_t numOfThreads = 400;
 	
 	Dog myDog;
 	
-	advcpp::Thread<Dog, &Dog::Run> thread1(&myDog);
+	std::vector< advcpp::Thread<Dog, &Dog::Run>* > threadsVec;
 	
-	thread1.Join();
+	for (size_t index = 0; index < numOfThreads; ++index)
+	{	
+		advcpp::Thread<Dog, &Dog::Run>* thread = new advcpp::Thread<Dog, &Dog::Run>(&myDog);
+		threadsVec.push_back(thread);
+	}
 	
 	return 0;
 }

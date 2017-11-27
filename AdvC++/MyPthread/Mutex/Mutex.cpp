@@ -23,9 +23,9 @@ Mutex::Mutex()
 		switch (errVal)
 		{
 			case EAGAIN:
-				throw NoResources_Exc();
+				throw Mutex_NoResources_Exc();
 			case ENOMEM:
-				throw NoMemory_Exc();
+				throw Mutex_NoMemory_Exc();
 			default:
 				break;
 		}
@@ -41,7 +41,7 @@ void Mutex::Lock()
 		switch (errVal)
 		{
 			case EAGAIN:
-				throw NoResources_Exc();
+				throw Mutex_NoResources_Exc();
 			default:
 				break;
 		}
@@ -59,7 +59,7 @@ bool Mutex::Trylock()
 			case EBUSY:
 				return false;
 			case EAGAIN:
-				throw NoResources_Exc();
+				throw Mutex_NoResources_Exc();
 			default:
 				break;
 		}
@@ -76,7 +76,7 @@ void Mutex::Unlock()
 		switch (errVal)
 		{
 			case EAGAIN:
-				throw NoResources_Exc();
+				throw Mutex_NoResources_Exc();
 			default:
 				break;
 		}
