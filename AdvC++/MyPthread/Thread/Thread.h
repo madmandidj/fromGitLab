@@ -6,7 +6,13 @@
 #include "../Guard/Guard.h"
 #include <boost/core/noncopyable.hpp>
 #include <pthread.h>
-#include <tr1/memory>
+#if (defined (__linux__))
+    #include <tr1/memory>
+#elif (defined (__APPLE__))
+    #include <memory>
+#endif
+
+
 #include<errno.h>
 namespace advcpp
 {

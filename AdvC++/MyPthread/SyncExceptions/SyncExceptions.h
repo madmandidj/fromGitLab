@@ -21,7 +21,6 @@ public:
 #elif (defined (__APPLE__))
     const char* what() const _NOEXCEPT;
 #endif
-/*	const char* what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT; //_NOEXCEPT;*/
 };
 
 class Mutex_NoMemory_Exc : public NoMemory_Exc
@@ -32,7 +31,6 @@ public:
 #elif (defined (__APPLE__))
     const char* what() const _NOEXCEPT;
 #endif
-/*	const char* what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT; //_NOEXCEPT;*/
 };
 /////////////////////////////////////////////////////////////////
 ////CondVar sync exceptions declarations
@@ -44,7 +42,6 @@ public:
 #elif (defined (__APPLE__))
     const char* what() const _NOEXCEPT;
 #endif
-/*	const char* what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT; //_NOEXCEPT;*/
 };
 
 class CondVar_NoMemory_Exc : public NoMemory_Exc
@@ -55,7 +52,6 @@ public:
 #elif (defined (__APPLE__))
     const char* what() const _NOEXCEPT;
 #endif
-/*	const char* what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT; //_NOEXCEPT;*/
 };
 /////////////////////////////////////////////////////////////////
 ////Thread sync exceptions declarations
@@ -67,7 +63,6 @@ public:
 #elif (defined (__APPLE__))
     const char* what() const _NOEXCEPT;
 #endif
-/*	const char* what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT; //_NOEXCEPT;*/
 };
 
 

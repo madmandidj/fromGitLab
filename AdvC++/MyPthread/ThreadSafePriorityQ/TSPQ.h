@@ -1,4 +1,4 @@
-#ifndef __TSPQ_h__
+#ifndef __TSPQ_H__
 #define __TSPQ_H__
 
 #include "../SyncExceptions/SyncExceptions.h"
@@ -132,5 +132,5 @@ bool TSPQ<TYPE>::IsEmpty() const
 }
 
 }//namespace advcpp
-#endif//#ifndef __TSPQ_h__
+#endif//#ifndef __TSPQ_H__
 
