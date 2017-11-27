@@ -33,6 +33,12 @@ int main()
 		threadsVec.push_back(thread);
 	}
 	
+	for (size_t index = 0; index < numOfThreads; ++index)
+	{	
+		(threadsVec.back())->Join();
+		threadsVec.pop_back();
+	}
+	
 	return 0;
 }
 

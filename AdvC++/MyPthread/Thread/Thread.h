@@ -12,7 +12,6 @@ namespace advcpp
 {
 ////////////////////////////////////////////////////////////////////////
 ////Thread class
-
 template<class T, void* (T::*Run)()>
 class Thread  : private boost::noncopyable
 {
@@ -20,17 +19,11 @@ public:
 	explicit Thread(T* _objectPtr); //Throws: NoResources_Exc
 	void Join();
 private:
-	static void* StartThread(void* _objectPtr);
-//	static Mutex				m_mutex;				
+	static void* StartThread(void* _objectPtr);			
 	pthread_t 					m_pthread;
 	T*							m_object;
 //TODO: //	std::tr1::shared_ptr<T>		m_object;
 };
-
-////////////////////////////////////////////////////////////////////////
-////Static data member init
-//template<class T, void* (T::*Run)()>
-//Mutex Thread<T,Run>::m_mutex;
 ////////////////////////////////////////////////////////////////////////
 ////Thread auxiliary function implementations
 template<class T, void* (T::*Run)()>
