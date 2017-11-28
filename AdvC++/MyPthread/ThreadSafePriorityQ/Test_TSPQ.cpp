@@ -32,7 +32,7 @@ int main()
 	FootballTeam hhaifa(1, &myTSPQ);
 	FootballTeam mtelaviv(3, &myTSPQ);
 	FootballTeam htelaviv(6, &myTSPQ);
-	const size_t numOfThreads = 10;
+	const size_t numOfThreads = 100;
 	std::vector< advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* > threadsVec;
 	std::vector<FootballTeam*> teamsVec;
 	
@@ -53,7 +53,7 @@ int main()
 		thread->Join();
 		FootballTeam teamPQ = myTSPQ.Top();
 		std::cout << teamPQ.GetPriority() <<std::endl;
-//		advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* thread = threadsVec.back();
+		myTSPQ.Pop();
 		delete thread;
 		FootballTeam* team = teamsVec.back();
 		delete team;
@@ -61,18 +61,18 @@ int main()
 		teamsVec.pop_back();
 	}
 	
-	while(!myTSPQ.IsEmpty())
-	{
-		FootballTeam teamPQ = myTSPQ.Top();
-		std::cout << teamPQ.GetPriority() <<std::endl;
-		advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* thread = threadsVec.back();
-		delete thread;
-		FootballTeam* team = teamsVec.back();
-		delete team;
-		threadsVec.pop_back();
-		teamsVec.pop_back();
+	// while(!myTSPQ.IsEmpty())
+	// {
+	// 	FootballTeam teamPQ = myTSPQ.Top();
+	// 	std::cout << teamPQ.GetPriority() <<std::endl;
+	// 	advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* thread = threadsVec.back();
+	// 	delete thread;
+	// 	FootballTeam* team = teamsVec.back();
+	// 	delete team;
+	// 	threadsVec.pop_back();
+	// 	teamsVec.pop_back();
 		
-	}
+	// }
 
 	return 0;
 }

@@ -8,8 +8,25 @@
 namespace advcpp
 {
 
-class Task;
-class Runnable;
+template<T>
+class Task
+{
+public:
+	~Task();
+	Task(T* _object, int _priority);
+	bool operator<(const Task* _otherTask) const;
+private:
+	T*	m_object;
+	int m_priority;
+};
+
+class Runnable
+{
+public:
+	void* Run();
+private:
+	//Threadpool pointer
+};
 
 class ThreadPool : private boost::noncopyable 
 {
