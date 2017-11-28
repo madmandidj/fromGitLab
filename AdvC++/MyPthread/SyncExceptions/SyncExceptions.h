@@ -5,7 +5,7 @@
 #if (defined (__linux__))
     #define ENVIRONMENT_NOEXC _GLIBCXX_USE_NOEXCEPT
 #elif (defined (__APPLE__))
-    #define test _NOEXCEPT
+    #define ENVIRONMENT_NOEXC _NOEXCEPT
 #endif
 namespace advcpp
 {

@@ -18,15 +18,12 @@ public:
 	~TSPQ();
 	explicit TSPQ();
 	void Push(TYPE& _element);
-//	TYPE Top() const;
-//	void Pop();
-//	bool IsEmpty() const;
-	TYPE& Pop();
+	const TYPE& Pop();
 private:
 	std::priority_queue<TYPE> m_tspq;
-//	static Mutex m_mutex;
 	mutable Mutex 	m_mutex;
-	mutable CondVar	m_condVar; 
+	mutable CondVar	m_condVar;
+	size_t			m_numOfElem; 
 };
 ////////////////////////////////////////////////////////////////////////
 ////Thread-safe priority queue implementation
@@ -37,7 +34,7 @@ TSPQ<TYPE>::~TSPQ()
 }
 
 template<class TYPE>
-TSPQ<TYPE>::TSPQ():m_condVar(m_mutex)
+TSPQ<TYPE>::TSPQ():m_condVar(m_mutex), m_numOfElem(0)
 {
 	//Empty
 }
@@ -47,39 +44,27 @@ void TSPQ<TYPE>::Push(TYPE& _element)
 {
 	Guard guard(m_mutex);
 	m_tspq.push(_element);
+	if (1 == ++m_numOfElem)
+	{
+		m_condVar.NotifyAll();
+	}
+	
 }
 
 template<class TYPE>
-TYPE& TSPQ<TYPE>::Pop()
+const TYPE& TSPQ<TYPE>::Pop()
 {
 	Guard guard(m_mutex);
-	
+	while (!m_numOfElem)
+	{
+		m_condVar.Wait();
+		m_mutex.Lock();
+	}
+	const TYPE& objRef = m_tspq.top();
 	m_tspq.pop();
-	return;
+	return objRef;
 }
 
-
-//template<class TYPE>
-//TYPE TSPQ<TYPE>::Top() const
-//{
-//	Guard guard(m_mutex);
-//	return m_tspq.top();
-//}
-
-//template<class TYPE>
-//void TSPQ<TYPE>::Pop()
-//{
-//	Guard guard(m_mutex);
-//	m_tspq.pop();
-//	return;
-//}
-
-//template<class TYPE>
-//bool TSPQ<TYPE>::IsEmpty() const
-//{
-//	Guard guard(m_mutex);
-//	return m_tspq.empty();
-//}
 
 }//namespace advcpp
 #endif//#ifndef __TSPQ_H__

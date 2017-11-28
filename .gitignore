@@ -9,3 +9,4 @@
 *.cdr
 *.so
 *.DS_Store
+*.dSYM

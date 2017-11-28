@@ -13,7 +13,7 @@ class MHaifa : public FootBallTeam
 public:
 	MHaifa(int _priority):m_priority(_priority){}
 	virtual int GetPriority() const {return m_priority;}
-	bool operator<(const MHaifa& _rhs)
+	bool operator<(const MHaifa& _rhs) const
 	{
 		return m_priority < _rhs.GetPriority();
 	}
@@ -70,13 +70,14 @@ int main()
 	MHaifa mhfa84(25);
 	MHaifa mhfa00(0);
 	std::priority_queue<MHaifa, std::vector<MHaifa> > myPQ;
-	myPQ.push(mtlv);
-	myPQ.push(mhfa00);
-	myPQ.push(mhfa84);
-	myPQ.push(mhfa);
-	MHaifa ftbPtr = myPQ.top();
-	std::cout << ftbPtr.GetPriority() << std::endl;
-	myPQ.pop();
+	// myPQ.push(mtlv);
+	// myPQ.push(mhfa00);
+	// myPQ.push(mhfa84);
+	// myPQ.push(mhfa);
+	const MHaifa& ftbPtr = myPQ.top();
+	// std::cout << ftbPtr.GetPriority() << std::endl;
+	// myPQ.pop();
+	// myPQ.top();
 //	ftbPtr = myPQ.top();
 //	std::cout << ftbPtr->GetPriority() << std::endl;
 //	myPQ.pop();
