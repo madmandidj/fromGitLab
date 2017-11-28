@@ -1,63 +1,100 @@
 #include "TSPQ.h"
 #include "../Thread/Thread.h"
 #include<iostream>
+//#include<math.h>
+//#include<time.h>
 
-class FootballTeam
+
+class Product
 {
 public:
-	FootballTeam(int _priority, advcpp::TSPQ<FootballTeam>* _tspq):m_tspq(_tspq), m_priority(_priority){}
-	int GetPriority() const {return m_priority;}
-	void* DoSumfink()
+	Product():m_ID(++m_numOfProducts){}
+	int GetID() const {return m_ID;}
+	bool operator<(const Product& _rhs) const
 	{
-		m_tspq->Push(*this);
-		return 0;
-	}
-	bool operator<(const FootballTeam& _rhs) const
-	{
-		return (GetPriority() < _rhs.GetPriority());
+		return (GetID() < _rhs.GetID());
 	}
 private:
-	advcpp::TSPQ<FootballTeam>* m_tspq;
-	int m_priority;
+	static size_t 				m_numOfProducts;
+	size_t						m_ID;
 };
 
+class Producer
+{
+public:
+	Producer(advcpp::TSPQ<Product*>& _tspq):m_tspq(_tspq), m_ID(++m_numOfProducers){}
+	int GetID() const {return m_ID;}
+	void* Produce()
+	{
+		for (size_t index = 0 ; index < 2; ++index)
+		{
+			Product* product = new Product;
+			m_tspq.Push(product);
+			std::cout << "Producer " << m_ID << " pushed: " << product->GetID() << std::endl;	
+		}
+		return 0;
+	}
+private:
+	advcpp::TSPQ<Product*>& 	m_tspq;
+	size_t						m_ID;
+	static size_t 				m_numOfProducers;
+};
+
+class Consumer
+{
+public:
+	Consumer(advcpp::TSPQ<Product*>& _tspq):m_tspq(_tspq), m_ID(++m_numOfConsumers){}
+	int GetID() const {return m_ID;}
+	void* Consume()
+	{
+		for (size_t index = 0 ; index < 3; ++index)
+		{
+			Product* product;
+			m_tspq.Pop(&product);
+			std::cout << "Consumer " << m_ID << " popped: " << product->GetID() << std::endl;
+			delete product;
+		}
+		return 0;
+	}
+private:
+	advcpp::TSPQ<Product*>& 	m_tspq;
+	size_t						m_ID;
+	static size_t 				m_numOfConsumers;
+};
+
+size_t Product::m_numOfProducts = 0;
+size_t Producer::m_numOfProducers = 0;
+size_t Consumer::m_numOfConsumers = 0;
 
 int main()
 {
-	advcpp::TSPQ<FootballTeam> myTSPQ;
-	FootballTeam mhaifa(25, &myTSPQ);
-	FootballTeam hhaifa(1, &myTSPQ);
-	FootballTeam mtelaviv(3, &myTSPQ);
-	FootballTeam htelaviv(6, &myTSPQ);
-	const size_t numOfThreads = 5;
-	std::vector< advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* > threadsVec;
-	std::vector<FootballTeam*> teamsVec;
+//	srand(0);
+	advcpp::TSPQ<Product*> myTSPQ;
+	Producer prod1(myTSPQ);
+	Producer prod2(myTSPQ);
+	Producer prod3(myTSPQ);
+	Consumer cons1(myTSPQ);
+	Consumer cons2(myTSPQ);
+
+	advcpp::Thread<Consumer, &Consumer::Consume> consThread1(&cons1);
+	sleep(1);	
+	advcpp::Thread<Consumer, &Consumer::Consume> consThread2(&cons2);
+	sleep(1);	
 	
-	for (size_t index = 0; index < numOfThreads; ++index)
-	{	
-		FootballTeam* team = new FootballTeam(index, &myTSPQ);
-		advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* thread = new advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>(team);
-		threadsVec.push_back(thread);
-		teamsVec.push_back(team);
-		//team and thread should be stored as pairs so both can be deleted properly, otherwise might delete mismatching thread/team
-	}
-	
-	
-	for (size_t index = 0; index < numOfThreads; ++index)
-	{	
-		
-		advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* thread = threadsVec.back();
-		thread->Join();
-		// FootballTeam teamPQ = myTSPQ.Top();
-		// std::cout << teamPQ.GetPriority() <<std::endl;
-		const FootballTeam& test = myTSPQ.Pop();
-		std::cout << test.GetPriority() <<std::endl;
-		delete thread;
-		FootballTeam* team = teamsVec.back();
-		delete team;
-		threadsVec.pop_back();
-		teamsVec.pop_back();
-	}
+	advcpp::Thread<Producer, &Producer::Produce> prodThread1(&prod1);
+	sleep(1);
+
+	prodThread1.Join();
+	std::cout << "prodthrad1 joined" << std::endl;
+	advcpp::Thread<Producer, &Producer::Produce> prodThread2(&prod2);
+	advcpp::Thread<Producer, &Producer::Produce> prodThread3(&prod3);
+	consThread1.Join();
+	std::cout << "consthread1 joined" << std::endl;
+	consThread2.Join();
+	std::cout << "consthread2 joined" << std::endl;
+	prodThread2.Join();
+	prodThread3.Join();
+	std::cout << "prodThread2 joined" << std::endl;
 
 	return 0;
 }

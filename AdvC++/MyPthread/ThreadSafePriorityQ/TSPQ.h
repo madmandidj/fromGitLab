@@ -18,7 +18,8 @@ public:
 	~TSPQ();
 	explicit TSPQ();
 	void Push(TYPE& _element);
-	const TYPE& Pop();
+//	const TYPE& Pop(TYPE* _poppedObj);
+	void Pop(TYPE* _poppedObj);
 private:
 	std::priority_queue<TYPE> m_tspq;
 	mutable Mutex 	m_mutex;
@@ -43,26 +44,48 @@ template<class TYPE>
 void TSPQ<TYPE>::Push(TYPE& _element)
 {
 	Guard guard(m_mutex);
-	m_tspq.push(_element);
-	if (1 == ++m_numOfElem)
+	try
 	{
-		m_condVar.NotifyAll();
+		m_tspq.push(_element);
+	}catch(std::exception& _exc)
+	{
+		//DO something
 	}
 	
+	if (1 == ++m_numOfElem)
+	{
+		std::cout << "Going to notify All" <<std::endl;
+		m_condVar.NotifyAll();
+	}	
 }
 
 template<class TYPE>
-const TYPE& TSPQ<TYPE>::Pop()
+void TSPQ<TYPE>::Pop(TYPE* _poppedObj)
 {
 	Guard guard(m_mutex);
 	while (!m_numOfElem)
 	{
+		std::cout << "Going to wait" <<std::endl;
 		m_condVar.Wait();
-		m_mutex.Lock();
+		std::cout << "Woke up" <<std::endl;
+//		m_mutex.Lock();
+//		std::cout << "Locked Mutex" <<std::endl;
 	}
-	const TYPE& objRef = m_tspq.top();
-	m_tspq.pop();
-	return objRef;
+	try
+	{
+		*_poppedObj= m_tspq.top();	
+	}catch(std::exception _exc)
+	{
+		//DO something
+	}
+	try
+	{
+		m_tspq.pop();	
+	}catch(std::exception _exc)
+	{
+		//DO something
+	}
+	--m_numOfElem;
 }
 
 

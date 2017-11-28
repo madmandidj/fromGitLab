@@ -7,27 +7,8 @@
 #include <boost/core/noncopyable.hpp>
 namespace advcpp
 {
-
-template<T>
-class Task
-{
-public:
-	~Task();
-	Task(T* _object, int _priority);
-	bool operator<(const Task* _otherTask) const;
-private:
-	T*	m_object;
-	int m_priority;
-};
-
-class Runnable
-{
-public:
-	void* Run();
-private:
-	//Threadpool pointer
-};
-
+////////////////////////////////////////////////////////////////////////
+////ThreadPool class
 class ThreadPool : private boost::noncopyable 
 {
 public:
@@ -36,15 +17,10 @@ public:
 	Add(Task* _task, int _priority);
 	Shutdown();
 private:
-	static bool 									m_shouldShutdown;
-	advcpp::TSPQ<Task>								m_tspq;
-	std::vector< Thread<Runnable, &Runnable::Run> > m_threadContainer;
+	static bool m_shouldShutdown;
+	advcpp::TSPQ<Task> m_tspq;
+	std::vector< Thread<ThreadRoutine, &ThreadRoutine::Run> > m_threadContainer;
 };
-
-
-
-
-
 
 
 
