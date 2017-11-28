@@ -19,7 +19,9 @@ Mutex::Mutex()
 	int errVal;
 	if (0 != (errVal = pthread_mutex_init(&m_mutex, 0)))
 	{
-		assert(errVal != EPERM && errVal != EBUSY && errVal != EINVAL);
+		assert(errVal != EPERM);
+		assert(errVal != EBUSY);
+		assert(errVal != EINVAL);
 		switch (errVal)
 		{
 			case EAGAIN:
@@ -37,7 +39,8 @@ void Mutex::Lock()
 	int errVal;
 	if (0 != (errVal = pthread_mutex_lock(&m_mutex)))
 	{
-		assert(errVal != EDEADLK && errVal != EINVAL);
+		assert(errVal != EDEADLK);
+		assert(errVal != EINVAL);
 		switch (errVal)
 		{
 			case EAGAIN:
@@ -72,7 +75,8 @@ void Mutex::Unlock()
 	int errVal;
 	if (0 != (errVal = pthread_mutex_unlock(&m_mutex)))
 	{
-		assert(errVal != EINVAL && errVal != EPERM);
+		assert(errVal != EINVAL);
+		assert(errVal != EPERM);
 		switch (errVal)
 		{
 			case EAGAIN:

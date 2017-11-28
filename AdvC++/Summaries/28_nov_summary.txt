@@ -1,0 +1,77 @@
+Code review for thread pool:
+-----------------------------
+Conventions is to put constructors first and then destructor
+Mike says that for safePQ, top() is not needed.
+In safepriorityqueue need condvar in case that there is no element in queue when popping topping. **Check what happens when popping or topping with empty priority queue.
+Sarig has task and task runner
+task runner has a data member threadpool&
+shutdown should not be in DTOR of threadpool
+in threadpool, when checking m_shutdown, should be atomic operations
+pthread cancel throws an exception but doesnt inherit from std::exception so not everyone can catch it. abi::__forced_unwind... so dont catch(...), without catching the abi::__forced_unwind . Though, makes sense just to catch std::exception because this is the convention that we want to uphold.
+---------------------------------------------
+---------------------------------------------
+End of code review
+---------------------------------------------
+---------------------------------------------
+Smart pointers take responsibility for a resource, so that we dont "forget" to delete. So we dont have memory leak.
+foo()
+{
+std::auto_ptr
+...
+...
+throw
+...
+...
+}
+
+
+Courses					Lecturers
+-----------				---------
+intro to CS				David
+						Moshe
+calculus				Haim
+
+
+if these are managed by shared ptrs, and if calculus is pointing to moshe, and moshe is pointing to calculus.
+weka pointer points at something, i cant really use it because i dont know if its there. i want to use it i will be get a shared ptr from it. So in example above, one side will be a shared ptr, and other side will be a weak pointer.
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+in our language almost everything we do is an expression.
+int i = 3;
+int j =5;
+3+5     <--this is an expression. type, value, l-value, side-effect
+++i; and expression where the side effect is that i was incremented by one.
+i++ is an rvalue
+in both ++i and i++ the side-effect is the same but the value is different
+
+statement: anyhting that finishes with a ; . if () is a statement
+
+------------------------------------
+------------------------------------
+------------------------------------
+Factorial exercise-
+
+template<unsigned int N>
+struct Factorial
+{
+	static const uint fact = N * Factorial<N-1>::fact;
+};
+
+template<>
+struct Factorial<0>
+{
+	static const uint fact = 1;
+}
+
+This is called metaprogramming! All of this is done during compilation so there is no code bloating. Compilation time will be longer.
+
+
+
+Homework:
+---------
+1. Fibonncai in meta-programming.
+2. Finish ThreadPool. Option to change number of threads on the fly, without stopping tasks.
+3. Shutdown: A) fully graceful - not allowed to put in more tasks. B) whatever hasnt started wont start. C) Brute force

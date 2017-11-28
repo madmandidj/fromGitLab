@@ -9,10 +9,7 @@ public:
 	int GetPriority() const {return m_priority;}
 	void* DoSumfink()
 	{
-//		std::cout << "Football starting to push to queue" << std::endl;
-//		std::cout << "priority = " << m_priority << std::endl;
 		m_tspq->Push(*this);
-//		std::cout << "Football finished to push to queue" << std::endl;
 		return 0;
 	}
 	bool operator<(const FootballTeam& _rhs) const
@@ -49,7 +46,7 @@ int main()
 	for (size_t index = 0; index < numOfThreads; ++index)
 	{	
 		
-		advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* thread = threadsVec[index];
+		advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* thread = threadsVec.back();
 		thread->Join();
 		FootballTeam teamPQ = myTSPQ.Top();
 		std::cout << teamPQ.GetPriority() <<std::endl;
@@ -60,19 +57,6 @@ int main()
 		threadsVec.pop_back();
 		teamsVec.pop_back();
 	}
-	
-	// while(!myTSPQ.IsEmpty())
-	// {
-	// 	FootballTeam teamPQ = myTSPQ.Top();
-	// 	std::cout << teamPQ.GetPriority() <<std::endl;
-	// 	advcpp::Thread<FootballTeam, &FootballTeam::DoSumfink>* thread = threadsVec.back();
-	// 	delete thread;
-	// 	FootballTeam* team = teamsVec.back();
-	// 	delete team;
-	// 	threadsVec.pop_back();
-	// 	teamsVec.pop_back();
-		
-	// }
 
 	return 0;
 }
