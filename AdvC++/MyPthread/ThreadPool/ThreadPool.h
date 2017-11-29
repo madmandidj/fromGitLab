@@ -16,9 +16,10 @@ public:
 	explicit ThreadPool(size_t _numOfThreads);
 	Add(Task* _task, int _priority);
 	Shutdown();
+	Resize();
 private:
 	static bool m_shouldShutdown;
-	advcpp::TSPQ<Task> m_tspq;
+	advcpp::TSPQ<TaskInterface*> m_tspq;
 	std::vector< Thread<ThreadRoutine, &ThreadRoutine::Run> > m_threadContainer;
 };
 

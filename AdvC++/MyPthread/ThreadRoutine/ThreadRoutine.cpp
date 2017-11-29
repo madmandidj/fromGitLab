@@ -17,7 +17,13 @@ void* ThreadRoutine::Run()
 {
 	while(!m_shouldShutdown)
 	{
-		
+		//Pseudo:
+		/*
+		Mark this thread as waiting
+		Pop task from PQ
+		Mark this thread as working
+		Run task
+		*/
 	}
 }
 

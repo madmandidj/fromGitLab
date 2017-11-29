@@ -4,13 +4,13 @@
 namespace advcpp
 {
 
-template<class T>
 ////////////////////////////////////////////////////////////////////////
 ////Task class
+//template<class T>
 class Task
 {
 public:
-	~Task();
+	virtual ~Task() = 0;
 	explicit Task(T* _object); //TODO: Ask is there any meaning for explicit here?
 	bool operator<(const Task* _otherTask) const;
 private:

@@ -1,0 +1,51 @@
+Pre code review:
+----------------
+numeric_limits<T>::max;
+
+Thread(Runnable r)    **Runnable is an interface
+.
+.
+.
+r->run()
+.
+.
+.
+
+Threadable<...,...> inherits from Runnable
+
+
+***********
+with tasks that we dont know how long they will take its a good idea to add a timeout.
+enum should be put within relevant namespace, and also better to have it as part of a class.
+
+Task
+^
+|
+|
+Taskable(obj,(T::*func)
+***********
+template<class T>
+class MyTask : public Task
+	MyTask<DNA_analyzer> dnaATask;
+
+
+Task* task = MakeTask(moshe);
+********
+Task should be a shared pointer
+
+Better to have:
+try{
+	DoX();
+	DoY();
+	DoZ();
+}catch(exception&){
+
+}
+rather than three different try catchs
+KISS - Keep It Simple Stupid
+
+
+
+
+
+
