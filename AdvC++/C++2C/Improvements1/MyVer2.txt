@@ -1,0 +1,15 @@
+---------------Start----------------
+Shape::Shape() - 1
+Circle::Circle() - 1, r:1.000000
+Shape::Shape() - 2
+Rectangle::Rectangle(int) - 2, [4, 4]
+0.-------------------------------
+Shape::Shape(Shape&) - 3 from - 1
+Circle::Circle(Circle&) - 3, r:1.000000
+-----draw(Circle)-----
+Shape::Shape() - 4
+Circle::Circle(double) - 4, r:1.000000
+Circle::draw()  - 4, r:1.000000
+Circle::scale(3.000000)
+Circle::draw()  - 3, r:1.000000
+-----draw(Circle)-----
