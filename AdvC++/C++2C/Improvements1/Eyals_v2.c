@@ -347,6 +347,8 @@ void Circle_Copy_CTOR(Circle* const _this, const Circle* const _other)
 void Circle_DTOR(Circle* const _this)
 {
 	printf("Circle::~Circle() - %d, r:%f\n", _this->m_shape.m_id, _this->m_radius);
+	_this->m_shape.m_scaleable.m_vPtr = shape_vTable;
+	Shape_DTOR((Shape* const)_this);
 }
 /*
 void draw() const { 
@@ -574,20 +576,85 @@ double Rectangle_area(const Rectangle* const _this)
 {
 	return _this->m_a * _this->m_b;
 }
-
-
-
-
-
-
-
-
-
-
-
 /*///////////////////////////////////
 ///////////////////////////////////
 //////////////////////////////////
+void report(const Shape& s) {
+	std::puts("-----report-----");
+	s.draw(); 
+	Shape::printInventory();
+	std::puts("-----report-----");
+}
+
+
+inline void draw(Shape& obj) { 
+	std::puts("-----draw(Shape&)-----");
+	obj.scale();
+	obj.draw();	
+	std::puts("-----draw(Shape&)-----");
+}
+
+
+void draw(Circle c) { 
+	std::puts("-----draw(Circle)-----");
+
+	static Circle unit(1);
+	
+	unit.draw();
+	unit.scale(3);
+	c.draw(); 
+	std::puts("-----draw(Circle)-----");
+}
+
+void doObjArray(){
+	Shape objects[] = {
+	    Circle(),
+	    Rectangle(4),
+	    Circle(9)
+	};
+
+    for(int i = 0; i < 3; ++i) 
+		objects[i].draw();
+}
+
+void disappear() {
+	std::puts("-----disappear-----");
+
+	Circle defaultCircle();
+
+	std::puts("-----disappear-----");
+}
+
+template <class T>
+double diffWhenDoubled(T& shape){
+	double a0 = shape.area();
+	shape.scale(2);
+	double a1 = shape.area();
+	return a1 - a0;
+}
+
+void doPointerArray(){
+	std::puts("-----doPointerArray-----");
+	Shape *array[] =  {
+	    new Circle(),
+	    new Rectangle(3),
+	    new Circle(4)
+	};
+
+    for(int i = 0; i < 3; ++i){ 
+		array[i]->scale();
+		array[i]->draw();
+	}
+
+	std::printf("area: %f\n", diffWhenDoubled(*array[2]));
+
+    for(int i = 0; i < 3; ++i) { 
+		delete array[i]; 
+		array[i] = 0; 
+	}
+
+	std::puts("-----doPointerArray-----");
+}
 
 
 void dispose(Rectangle* p){
@@ -668,15 +735,29 @@ void doObjArray(){
 */
 void doObjArray()
 {
+	Circle cTemp;
+	Rectangle rTemp;
 	Shape objects[3];
-	Circle_Default_CTOR((Circle* const) &objects[0]);
-	Rectangle_CTOR_INT((Rectangle* const) &objects[1], 4);
-	Circle_CTOR_DBL((Circle* const) &objects[2], 9);
+
+	Circle_Default_CTOR(&cTemp);
+	Shape_Copy_CTOR(&objects[0], (Shape* const) &cTemp);
+	Circle_DTOR(&cTemp);
 	
+	Rectangle_CTOR_INT(&rTemp, 4);
+	Shape_Copy_CTOR(&objects[1], (Shape* const) &rTemp);
+	Rectangle_DTOR(&rTemp);
 	
-	Circle_draw((Circle* const) &objects[0]);
-	Rectangle_draw((Rectangle* const) &objects[1]);
-	Circle_draw((Circle* const) &objects[2]);
+	Circle_CTOR_DBL(&cTemp, 9);
+	Shape_Copy_CTOR(&objects[2], (Shape* const) &cTemp);
+	Circle_DTOR(&cTemp);
+	
+	Shape_draw((Shape* const) &objects[0]);
+	Shape_draw((Shape* const) &objects[1]);
+	Shape_draw((Shape* const) &objects[2]);
+	
+	Shape_DTOR((Shape* const) &objects[2]);
+	Shape_DTOR((Shape* const) &objects[1]);
+	Shape_DTOR((Shape* const) &objects[0]);
 }
 /*
 void disappear() {
@@ -739,20 +820,124 @@ void doPointerArray(){
 */
 void doPointerArray()
 {
+	Shape* array[3];
 	puts("-----doPointerArray-----");
+	array[0] = malloc(sizeof(Circle));
+	Circle_Default_CTOR((Circle*)array[0]);
+	array[1] = malloc(sizeof(Rectangle));
+	Rectangle_CTOR_INT((Rectangle*)array[1], 3);
+	array[2] = malloc(sizeof(Circle));
+	Circle_CTOR_DBL((Circle*)array[2], 4);
 	
+	Circle_scale_DBL((Circle* const)array[0], 1);
+	Circle_draw((Circle* const)array[0]);
+	Rectangle_scale_DBL((Rectangle* const)array[1], 1);
+	Rectangle_draw((Rectangle* const)array[1]);
+	Circle_scale_DBL((Circle* const)array[2], 1);
+	Circle_draw((Circle* const)array[2]);
+	
+	printf("area: %f\n", diffWhenDoubled((Circle* const)array[2]));
+	
+	Circle_DTOR((Circle* const)array[0]);
+	array[0] = 0;
+	Rectangle_DTOR((Rectangle* const)array[1]);
+	array[1] = 0;
+	Circle_DTOR((Circle* const)array[2]);
+	array[2] = 0;
+	puts("-----doPointerArray-----");
+}
+/*
+void dispose(Rectangle* p){
+  delete[] p;
+}
+*/
+void dispose(Rectangle** _p)
+{
+	size_t numOfElem;
+	size_t index;
+	
+	numOfElem = *((size_t*)_p - 1);
+	for(index = numOfElem; index > 0; --index)
+	{	
+		Rectangle_DTOR(_p[index -1]);
+		free(_p[index - 1]);
+	}
+}
+/*///////////////////////////////////
+///////////////////////////////////
+//////////////////////////////////
+class Empty {
+public:
+    Empty(int id = 0) { std::printf("Empty::Empty(%d)\n", id); }
+   ~Empty() { std::puts("Empty::~Empty()");}	
+};
+
+class EmptyEmpty  : public Empty{
+	int m_i;
+
+public:
+	EmptyEmpty(int id) : m_i(id){
+		 std::printf("EmptyEmpty::EmptyEmpty(%d)\n", m_i); 
+	}
+};
+
+class EmptyBag {
+	Empty e1;
+	Empty e2;
+	EmptyEmpty ee;
+public: 
+	EmptyBag() : e2(2), e1(1), ee(2) {
+		std::puts("EmptyBag::EmptyBag()");
+	}
+	~EmptyBag(){
+		std::puts("EmptyBag::~EmptyBag");
+	}	
+};
+////////////////////////////////////
+///////////////////////////////////
+/////////////////////////////////*/
+typedef struct Empty
+{
+	char m_dummy;
+}Empty;
+void Empty_Defualt_CTOR(Empty* const _this, int _id)
+{
+	printf("Empty::Empty(%d)\n", _id);
+}
+void Empty_DTOR(Empty* const _this)
+{
+	puts("Empty::~Empty()");
 }
 
+typedef struct EmptyEmpty
+{
+	Empty 	m_empty;
+	int 	m_i;
+}EmptyEmpty;
+void EmptyEmpty_Default_CTOR(EmptyEmpty* const _this, int _id)
+{
+	Empty_Defualt_CTOR(&_this->m_empty, 0);
+	_this->m_i = _id;
+	printf("EmptyEmpty::EmptyEmpty(%d)\n", _this->m_i); 
+}
 
-
-
-
-
-
-
-
-
-
+typedef struct EmptyBag
+{
+	Empty e1;
+	Empty e2;
+	EmptyEmpty ee;
+}EmptyBag;
+void EmptyBag_Default_CTOR(EmptyBag* const _this)
+{
+	Empty_Defualt_CTOR(&_this->e1, 1);
+	Empty_Defualt_CTOR(&_this->e2, 2);
+	EmptyEmpty_Default_CTOR(&_this->ee, 2);
+	puts("EmptyBag::EmptyBag()");
+}
+void EmptyBag_DTOR(EmptyBag* const _this)
+{
+	puts("EmptyBag::~EmptyBag");
+}
 
 
 
@@ -828,10 +1013,12 @@ Local variable declarations
 	Circle c;
 	Circle cTemp;
 	Rectangle s;
-/*	Circle c2 = c;*/
-/*	Circle olympics[5];*/
-/*	Rectangle* fourRectangles;*/
-/*	EmptyBag eb;*/
+/*	Rectangle sTemp;*/
+/*	Shape shpTemp;*/
+	Circle c2;
+	Circle olympics[5];
+	Rectangle** fourRectangles;
+	EmptyBag eb;
 /**************************
 main body 
 **************************/
@@ -840,21 +1027,47 @@ main body
 	Rectangle_CTOR_INT(&s, 4);
 	printf("0.-------------------------------\n");
 	Circle_Copy_CTOR(&cTemp, &c);
-/*	draw_ShapeRef((Shape* const)&cTemp);*/
 	draw_Circle(cTemp);
-/*	printf("+..............\n");*/
-/*	draw_ShapeRef(&c);*/
-/*	printf("+..............\n");*/
-/*	draw_ShapeRef(&s);*/
-/*	printf("+..............\n");*/
-/*	report_ShapeRef(&c);*/
-/*	printf("1.-------------------------------\n");*/
-/*	printf("2.-------------------------------\n");*/
-/*	printf("3.-------------------------------\n");*/
-/*	printf("4.-------------------------------\n");*/
-/*	printf("5.-------------------------------\n");*/
-/*	printf("6.-------------------------------\n");*/
-/*	printf("Empty things are: %zu %zu %zu", sizeof(Empty), sizeof(EmptyEmpty), sizeof(EmptyBag) );*/
+	Circle_DTOR(&cTemp);
+	printf("+..............\n");
+	Circle_Copy_CTOR(&cTemp, &c);
+	draw_Circle(cTemp);
+	Circle_DTOR(&cTemp);
+	printf("+..............\n");
+	draw_ShapeRef((Shape* const)&s);
+	printf("+..............\n");
+	report_ShapeRef((Shape* const)&c);
+	printf("1.-------------------------------\n");
+	doPointerArray();
+	printf("2.-------------------------------\n");
+	doObjArray();
+	printf("3.-------------------------------\n");
+	Shape_printInventory();
+	Circle_Copy_CTOR(&c2, &c);
+	Shape_printInventory();
+	printf("4.-------------------------------\n");
+	Circle_Default_CTOR(&olympics[0]);
+	Circle_Default_CTOR(&olympics[1]);
+	Circle_Default_CTOR(&olympics[2]);
+	Circle_Default_CTOR(&olympics[3]);
+	Circle_Default_CTOR(&olympics[4]);
+	printf("olympic diff %f\n", diffWhenDoubled(&olympics[1]));
+	printf("5.-------------------------------\n");
+	fourRectangles = malloc(sizeof(size_t) + 4 * sizeof(Rectangle*));
+	*(size_t*)fourRectangles = 4;
+	fourRectangles = (Rectangle**)((size_t*)fourRectangles + 1);
+	fourRectangles[0] = malloc(sizeof(Rectangle));
+	fourRectangles[1] = malloc(sizeof(Rectangle));
+	fourRectangles[2] = malloc(sizeof(Rectangle));
+	fourRectangles[3] = malloc(sizeof(Rectangle));
+	Rectangle_Default_CTOR(fourRectangles[0]);
+	Rectangle_Default_CTOR(fourRectangles[1]);
+	Rectangle_Default_CTOR(fourRectangles[2]);
+	Rectangle_Default_CTOR(fourRectangles[3]);
+	dispose(fourRectangles);
+	printf("6.-------------------------------\n");
+	EmptyBag_Default_CTOR(&eb);
+	printf("Empty things are: %u %u %u", sizeof(Empty), sizeof(EmptyEmpty), sizeof(EmptyBag) );
 /*	printf("7.-------------------------------\n");*/
 /*	printf("---------------END----------------\n");*/
 	return 0;
