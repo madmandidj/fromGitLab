@@ -911,12 +911,13 @@ void Empty_DTOR(Empty* const _this)
 
 typedef struct EmptyEmpty
 {
-	Empty 	m_empty;
+/*	Empty 	m_empty;*/
 	int 	m_i;
 }EmptyEmpty;
 void EmptyEmpty_Default_CTOR(EmptyEmpty* const _this, int _id)
 {
-	Empty_Defualt_CTOR(&_this->m_empty, 0);
+/*	Empty_Defualt_CTOR(&_this->m_empty, 0);*/
+	Empty_Defualt_CTOR((Empty* const)&_this, 0);
 	_this->m_i = _id;
 	printf("EmptyEmpty::EmptyEmpty(%d)\n", _this->m_i); 
 }
@@ -931,6 +932,8 @@ void EmptyBag_Default_CTOR(EmptyBag* const _this)
 {
 	Empty_Defualt_CTOR(&_this->e1, 1);
 	Empty_Defualt_CTOR(&_this->e2, 2);
+/*	Empty_Defualt_CTOR((Empty* const)&_this, 1);*/
+/*	Empty_Defualt_CTOR((Empty* const)&_this, 2);*/
 	EmptyEmpty_Default_CTOR(&_this->ee, 2);
 	puts("EmptyBag::EmptyBag()");
 }
@@ -1013,8 +1016,6 @@ Local variable declarations
 	Circle c;
 	Circle cTemp;
 	Rectangle s;
-/*	Rectangle sTemp;*/
-/*	Shape shpTemp;*/
 	Circle c2;
 	Circle olympics[5];
 	Rectangle** fourRectangles;
@@ -1068,8 +1069,24 @@ main body
 	printf("6.-------------------------------\n");
 	EmptyBag_Default_CTOR(&eb);
 	printf("Empty things are: %u %u %u", sizeof(Empty), sizeof(EmptyEmpty), sizeof(EmptyBag) );
-/*	printf("7.-------------------------------\n");*/
-/*	printf("---------------END----------------\n");*/
+	printf("7.-------------------------------\n");
+	disappear();
+	printf("---------------END----------------\n");
+	EmptyBag_DTOR(&eb);
+	Empty_DTOR((Empty* const) &eb.ee);
+	Empty_DTOR(&eb.e2);
+	Empty_DTOR(&eb.e1);
+	Circle_DTOR(&olympics[4]);
+	Circle_DTOR(&olympics[3]);
+	Circle_DTOR(&olympics[2]);
+	Circle_DTOR(&olympics[1]);
+	Circle_DTOR(&olympics[0]);
+	Circle_DTOR(&c2);
+	Rectangle_DTOR(&s);
+	Circle_DTOR(&c);
+	Circle_DTOR(&Circle_unit);
+	
+	
 	return 0;
 }
 
