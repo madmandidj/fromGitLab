@@ -1,0 +1,104 @@
+void bar(const int&)			
+bar(3) - this is possible
+void foo(int&)
+foo(3) - this is not possible
+-----------------------------
+if we are dealing with a reference or a pointer, we dont really know what happens inside during runtime
+X myX;
+X& y = myX;
+if we have an object:
+X myObj;
+myObj.foo();
+or in CTOR and DTOR
+passing by value
+myPtr->Base::foo();
+all of these the static type is known so the function can be called driectly and not through the virtual table
+if we do static_cast<Base*>(ptr)->foo();  ----> this still calls the foo() function of derived because the vtable is still  of the original object, regardless of the cast.
+-----------------------------
+Code review for platform independant thread pool
+-----------------------------
+#ifdef __linux
+.
+.#elif ...
+.
+#elif
+#error <--- this is for protection against OS that are not supported
+#endif
+
+main()
+{
+	Thread t;
+	foo()
+	{
+		SomeClass obj;	
+		t.run(obj);
+	}
+.
+	bar(); ---> this will overwrite the previous place of where obj was written, so use shared pointer for obj
+.
+}
+
+Thread(*** r)
+	r->run()
+	or r()
+	
+Runnable(obj, class::func)
+Runnable(func)
+Runnable(obj,func,arg)
+
+Might be better to have Thread not based on T.
+
+Thread
+^
+|
+|
+|
+template<class T>
+SpecThread
+
+--------------
+Exam overview:
+--------------
+const_cast<B*>(&d)      when defined const D*
+static_cast<B*>(&d)  not possible because D is const
+static_cast<D*>(&b) this cast is possible
+dynamic_cast<B*>(&u) this wont work!
+reinterpret_cast<int>(f)   this wont work! can only work with whole integers
+int i=1;
+if(*reinterpret_cast<char*>(&i)) this can be used to determine if we are little endian or big endian.
+
+
+Struct X{};
+Struct B{X m_z;; int m_i;};
+Struct D: public B
+{
+	D(): m_x3(), m_x1(){}
+	X m_x1, m_x2, m_x3;
+};
+
+-------
+in interviews
+-------
+1. practice data structures
+2. const
+3. explicit
+4. value
+5. pointer
+6. reference
+7. const reference
+8. function calls - whats static and whats through vTable
+9. forgetting to release resources
+10. exceptions
+11. slicing
+
+
+
+
+--------------------------
+--------------------------
+interpreter:
+in runtime translates code
+
+
+
+
