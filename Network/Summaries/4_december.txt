@@ -1,0 +1,215 @@
+Communication world today mostly works on embedded C.
+Its a 6 day course.
+1837 - the telegraph - inof took days or weeks to transmit
+1876 - phone invented
+1915 - first trans-continental and translantic phone connections
+1900's - information transmitted in minutes or hours
+2000's - huge quantities of info transmitted
+-------------
+Components of a Local Area Network:
+Client computers
+Servers - file server, web server, print server
+Hub -
+Router -
+Printer -
+Circuits - 
+
+Local Area Network (LAN) - room, building. a group of PCs that share a circuit
+Metropolitan Area Networks (MAN) - < few 10 kms) - connect LANs and BNs at different locations. Leased lines or other services used to transmit data.
+Wide Are Networks(WAN) - > few 10 kms - Same as MAN except wider scale.
+
+Major standards bodies:
+ISO
+ANSI
+IEEE
+IETF
+
+Unicast - term used to describe comms where a piece of information is sent from one point to another point. one sender one receiver.
+Boradcast - term used to describe comm where a piece of info is sent from one point to all other points. one sender, but info is sent to all connected receivers.
+Multicast - info is sent from one point to a set of other points. may be one sender and info is distributed to a set of receivers. e.g. conference call.
+
+Bandwidth:
+The capacity of the medium to transmit data.
+Analog bandwidth - measurement is in Hertz(Hz) or cycles/sec.
+Digital bandwidth - measurement is in bits per second (bps).
+
+The post model:
+---------------
+Build the fedex model
+
+ISO-OSI seven layers model
+--------------------------
+introduced in 1978 and refined in 1984:
+7. application - the application itself. 
+6. presentation - the format of the data. e.g. want to encrypt the data during transmission.
+5. session - Are we "allowed" to go up to the application. 
+4. transport - Assuring that the package was delivered. assures delivery to specific recipient/
+3. network - Get the "package" to the final destination, and take choices what is the next destination en route to final destination.
+2. data link - sole purpose is to transmit a "package" from one point to other point. This layer does not determine where the next point is.
+1. physical - the transmission medium, transmitter and receiver. zeros and ones.
+
+Today layers 7, 6 and 5 are considered one layer - the application layer. so today its likely a 5 layer diagram.
+layers 2,3 and 4 and implemented by the OS.
+Layer 2 on one side needs to be able to talk with layer 2 on other side, but also layer 3 needs to be able to talk to layer 2.
+* ping is a component of the ICMP protocol to check comms between two.
+
+****
+1. The role of the physical layer is to encode the binary digits that represent data link layer frames into signals and to transmit and receive these signals across the physical media that connect network devices.
+Copper cable
+Fiber
+Wireless
+definition of hardware specs
+encoding and signaling
+data transmission and reception
+topology and physical network design
+PDU
+****
+2. data link layer
+prepare entwork layer packets for transmission and to control access to the physical media.
+allows upper layers to access the media using techniques such as framing.
+Frame - the data link layer PDU
+Node is layer 2 notation for network devices connected to a common medium
+2.1 Logical Link Control(LLC) - establishment and control of logical linke between local devices on a network.
+2.2 Media access control - the procedures used by devices to control acess to the network medium. one of the responsibilities is to identify a collision (e.g. two want to transmit at the same time), and then go back and try to transmit again.
+Layer two adds a "header" and a "trailer". The trailer has CRC (check sum).
+there is addressing here added in header
+****
+3. network layer
+Routing! what is the next destination en route to the final destination
+addressing(IPV4, IPV6)
+Encapsulation(inserts a headr wih source and destination IPs)
+Routing (move a packet over the internet)
+Decapsulation ( open the packet and check the destination host)
+IP is connectionless
+there is addressing here added in header
+****
+4. Transport layer 
+2 main protocols - TCP and UDP
+there is addressing here added in header
+****
+5. Session layer
+Functions at this layer create and maintain dialogs between source and destination applications.
+authentication
+permissions
+session restoration
+****
+6. Presentation layer
+Coding and conversion of app layer data to ensure that data from the source device can be interpreted by the appropriate application on the destination device.
+****
+7. application layer
+-----------------------------------
+-----------------------------------
+-----------------------------------
+Layer 2
+Layer 2 passes a package from one node to another node. Layer 3 gives this command.
+Framing-
+	encapsulate datagram into frame, adding header, trailer. in the context of this layer, package is called a frame.
+Link Access-
+	Addressing:
+	On every communication component has a unique MAC address. Used in frame headers. Introduces "MAC" addresses used in frame headers to identify 		hosts who are part of the networks.
+	Channel access:
+	Defines the set of rules which allows the hosts to use the (possibly shared) medium.
+Flow control:
+	pacing between adjacent sending and receiving nodes
+Error detection:
+	errors caused by signal attenuation, noise
+	receiver detects presence of erros: signals send for retrana
+32 bit IP address
+MAC address: used to get datagram from one interface to another physically connected interface
+48 bit MAC address (for most LANs) burned in the adapter ROM but can be modified
+broadcast MAC address = FF-FF-FF-FF-FF-FF
+MAC address is like social security number/ ID number
+IP address is like a postal address
+
+if layer 2 doesnt know the MAC address:
+ARP: Address Resolution Protocol
+*Each IP node (host router) on LAN has ARP table
+*ARP table: IP/MAC address mappings for some LAN nodes
+ARP request: broadcast to all on the network send MAC addresses.
+ARP table <IP address; MAC address; TTL>
+TTL (Time To Live): time after which address mapping will be forgotten (typically 20 min)
+-----------------------------------
+-----------------------------------
+-----------------------------------
+strace - all system calls to the OS
+valgrind
+--------
+Install WireShark:
+do ifconfig command and learn your IP & MAC address
+Download and install WireShark
+Learn the basic commands and use WireShark
+	- capture
+	- filter
+learn your friend MAC by PING
+Follow the ARP packets in WireShark
+Look the update ARP table (ARP -n)
+
+--------------------------------------------------
+Ethernet Frame Structure:
+sending adapter encapsulates IP datagram in Ethernet frame
+Preamble Dest.Address Source.Address Type/length Data CRC
+
+Preamble: 7 bytes with pattern 10101010 followed by one byte with pattern 10101011. Used to synchronize receiver, sender clcok rates: what is the length, in clock tick, of one bit. 
+addresses: 6 bytes
+
+Ethernet frame has minimal size and maximal size. minimal size is 46 bytes in data. maximum size is 1500. 14 bytes in header.
+if the type is a value between 0000-05DC it is length, if its above it is type
+
+Hub is part of layer 1. hubs also have signal repeters.
+Hub allows to go from circular network pattern to star network pattern, helps to solve cable length, disconnect and infrastructure problems. still we didnt solve the collision and capacity problems.
+
+Learning table:
+MAC|PORT|TTL
+------------
+the "upgraded" hub is called a bridge.
+A multi-bridge is called a switch (switch layer 2) - has the learning table
+
+bridge procedure(in_MAC, in_PORT, out_MAC)
+{
+	lookup in filtering table (out_MAC) receive out_port
+	if (out_port not valid)
+	{
+		then flood;
+	}
+	
+	if (in_port = out_port)
+	{
+		drop the frame;
+	}
+	
+	Otherwise (out_port is valid)
+	{
+		then forward the frame on interface indicated;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
