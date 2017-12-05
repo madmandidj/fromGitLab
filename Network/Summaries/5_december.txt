@@ -1,0 +1,122 @@
+Layer 3:
+--------
+Routing: the network layer has a specific duty: routing. Routing means determination of the partial or total path of a packet. the delivery of a packet from its source to its destination may be a combination of several dliveries: a source-torouter delivery, several router to router and finally a router to destination delivery.
+MTU - maximum transmit unit
+Every network defines what is the maximum packet size that can be transferred
+address of a network. if we want to divide the network into x subnets. what will be the mask of the subnetwork?
+*****************
+*****************
+*****************
+Learn on our own:
+differences of: ip v4 vs. v6
+sub addressing - understand the meaning of sub-addressing:
+A netowkr to divide to x subnet: what will the addreses of the new network and the broadcast
+with a given mask, how many hosts can be placed on this mask? Lie lie gibberish ish lie lie
+Difference between UDP and TCP
+IP implements the job of layer 3
+TCP/UDP implement the job of layer 4
+*****************
+*****************
+*****************
+Layer 4:
+--------
+Flow control, confirm arrival, an addressing level related to where the packet should go.
+Transport layer ... process-to-process delivery
+***common interview question: difference between UDP and TCP
+
+UDP
+User Datagram Protocol
+IP plus port numbers to support demultiplexing
+optional error checking on the packet contents
+
+
+--------
+--------
+--------
+Sockets:
+--------
+--------
+--------
+endpoint of a connection - identified by IP address and Port numbersPrimitive to implement high-level networking interfaces e.g. remot procedure call (RPC)
+
+int sock = socket(AF_INET, SOCK_DGRAM, 0);
+if (sock < 0)
+{
+	perror("socket failed");
+	abort();
+}
+
+socket is a system call (returns an int) - 0 , 1 , 2 are taken so can return 3-1023 (this by default is the possible number of sockets in a process).
+AF_INET says ipv4 or ipv6.
+SOCK_DGRAM and the last parameter (0) say that this is UDP
+
+bind() - binds a certain port and a certain ip
+struct sockaddr_in sin;
+memset(&sin, 0 ,sizeof(sin));
+sin.sin_family = AF_INET;
+sin.sin_addr.s_addr = INADDR_ANY;
+sin.sin_port = htons(server_port); ///// server_port is the number port that i chose between 1024 - 64k
+
+if (bind(sock, (struct sockaddr *) &sin, sizeof(sin)) < 0)
+{
+	perror("bind failed");
+	abort();
+}
+
+htons = host to network short (short is always 16 bit)
+when receive we need to do network to host
+only server calls bind!
+
+Client does: socket(), sendto()...
+Server does: socket(), bind(), recvfrom()....
+
+Send data over UDP:
+-------------------
+struct sockaddr_in sin;
+memset(&sin, 0 ,sizeof(sin));
+sin.sin_family = AF_INET;
+sin.sin_addr.s_addr = inet_addr("128.32.132.214");
+sin.sin_port = htons(1234);
+
+sent_bytes = sendto(sock, data, data_len, 0, (structsockaddr*) &sin, sizeof(sin));
+if (snet_bytes < 0)
+{
+	perror("sendto failed");
+	abort();
+}
+
+Receive data over UDP:
+----------------------
+struct sockaddr_in sin;
+int sin_len = sizeof(sin);
+char buffer[4096];
+int read_bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*) &sin, &sin_len);
+if (read_bytes < 0)
+{
+	perror("recvfrom failed");
+	abort();
+}
+
+
+UDP:
+----
+Initialization
+---socket(AF_INET, SOCK_DGRAM, 0)
+---bind()
+Data tranfer
+..
+..
+..
+close()
+
+********
+********
+********
+********
+1.Build a simple client server UDP
+	one client transmits and server responds
+2. same between different computers (also look at wire shark)
+3. conversation
+4. try to move to ipv6
+
+
