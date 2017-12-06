@@ -16,8 +16,10 @@ void GetInputParam(int _argc, char* _argv[], int* _port)
 		exit(EXIT_FAILURE);
 	}
 
-    while ((option = getopt(_argc, _argv,"p:")) != -1) {
-        switch (option) {
+    while ((option = getopt(_argc, _argv,"p:")) != -1) 
+    {
+        switch (option) 
+        {
              case 'p' :
              	*_port = atoi(optarg);
                  break;
@@ -27,14 +29,16 @@ void GetInputParam(int _argc, char* _argv[], int* _port)
     }
 }
 
-void OpenSocket(int* _sock)
+int OpenSocket()
 {
-	*_sock = socket(AF_INET, SOCK_DGRAM, 0);
-	if (*_sock < 0)
+	int sock;
+	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sock < 0)
 	{
 		perror("socket failed\n");
 		abort();
 	}
+	return sock;
 }
 
 void InitSockAddr(struct sockaddr_in* _sin, int* _port)
@@ -45,19 +49,19 @@ void InitSockAddr(struct sockaddr_in* _sin, int* _port)
 	_sin->sin_port = htons(*_port);
 }
 
-void DoBind(int* _sock, struct sockaddr_in* _sin)
+void DoBind(int _sock, struct sockaddr_in* _sin)
 {
-	if(bind(*_sock, (struct sockaddr*) _sin, sizeof(*_sin)) < 0)
+	if(bind(_sock, (struct sockaddr*) _sin, sizeof(*_sin)) < 0)
 	{
 		perror("bind failed\n");
 		abort();
 	}
 }
 
-int ReadFrom(int* _sock, char* _buffer, struct sockaddr_in* _sin, int* _sin_len)
+int ReadFrom(int _sock, char* _buffer, struct sockaddr_in* _sin, int* _sin_len)
 {
 	int read_bytes;
-	read_bytes = recvfrom(*_sock, _buffer, sizeof(_buffer), 0, (struct sockaddr*) _sin, _sin_len);
+	read_bytes = recvfrom(_sock, _buffer, sizeof(_buffer), 0, (struct sockaddr*) _sin, _sin_len);
 	if (read_bytes < 0)
 	{
 		perror("recvfrom failed\n");
@@ -71,6 +75,20 @@ void ProcessMessage(char* _buffer)
 	_buffer[sizeof(_buffer)] = '\0';
 }
 
+void PrintMessage(char* _buffer)
+{
+	printf("%s\n", _buffer);
+}
+
+void CloseSocket(int _sock)
+{
+	if (close(_sock))
+	{
+		perror("close failed");
+		abort();
+	}
+}
+
 int main(int _argc, char* _argv[])
 {
 	int port;
@@ -82,17 +100,13 @@ int main(int _argc, char* _argv[])
 	sin_len = sizeof(sin);
 
 	GetInputParam(_argc, _argv, &port);
-	OpenSocket(&sock);
+	sock = OpenSocket();
 	InitSockAddr(&sin, &port);
-	DoBind(&sock, &sin);
-	read_bytes = ReadFrom(&sock, buffer, &sin, &sin_len);
+	DoBind(sock, &sin);
+	read_bytes = ReadFrom(sock, buffer, &sin, &sin_len);
 	ProcessMessage(buffer);
-	printf("%s\n", buffer);
-	
-	if (close(sock))
-	{
-		perror("close failed");
-		abort();
-	}
+	PrintMessage(buffer);
+	CloseSocket(sock);
+
 	return 0;
 }
