@@ -25,6 +25,7 @@ Server_t* ServerCreate(AppFunc _func, int _port)
 {
 	int optval = 1;
 	const int back_log = 32;
+	int flags;
 	
 	Server_t* server = malloc(sizeof(Server_t));
 	if (NULL == server)
@@ -37,11 +38,23 @@ Server_t* ServerCreate(AppFunc _func, int _port)
 	server->m_appFunc = _func;
 	
 /*	server->m_serverSock = socket(AF_INET, SOCK_STREAM, O_NONBLOCK);*/
-	server->m_serverSock = socket(AF_INET, SOCK_STREAM, SOCK_NONBLOCK);
+	server->m_serverSock = socket(AF_INET, SOCK_STREAM, 0);
 	if (server->m_serverSock < 0)
 	{
 		free(server);
 		return NULL;
+	}
+	
+	if (-1 == (flags = fcntl(server->m_serverSock, F_GETFL)))
+	{
+		close(server->m_serverSock);
+		free(server);
+	}
+	
+	if (-1 == fcntl(server->m_serverSock, F_SETFL, flags | O_NONBLOCK))
+	{
+		close(server->m_serverSock);
+		free(server);
 	}
 	
 	if (setsockopt(server->m_serverSock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
@@ -94,17 +107,23 @@ static void CheckNewClients(Server_t* _server)
 static void CheckCurrentClients(Server_t* _server)
 {
 	size_t index;
-	char buffer[256];
+	char buffer[BUFFER_LEN];
 	int numOfBytesRead;
 	
 	for (index = 0; index < _server->m_curClientNum; ++index)
 	{
-		numOfBytesRead = read(_server->m_client_sockArr[_server->m_curClientNum], 
+		numOfBytesRead = read(_server->m_client_sockArr[index], 
 								buffer, BUFFER_LEN);
 		if(0 == numOfBytesRead)
 		{
 			/* Handle client closed socket */
 			printf("In Server, client closed socket\n");
+			if (-1 == close(_server->m_client_sockArr[index]))
+			{
+				/*TODO: handle this */
+			}
+			--_server->m_curClientNum;
+			continue;
 		}
 		if(-1 == numOfBytesRead)
 		{
@@ -152,10 +171,9 @@ void ServerDestroy(Server_t* _server)
 ******************************************/
 
 
-
-void* PrintShit(void* _buffer)
+void* PrintIt(void* _buffer)
 {
-	printf("PrintShit: %s", (char*)_buffer);
+	printf("PrintIt: %s", (char*)_buffer);
 	return NULL;
 }
 
@@ -163,7 +181,7 @@ int main()
 {
 	Server_t* server;
 	const int port = 8888;
-	server = ServerCreate(PrintShit, port);
+	server = ServerCreate(PrintIt, port);
 	ServerRun(server);
 	
 	return 0;

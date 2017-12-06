@@ -39,7 +39,7 @@ int main(int _argc, char* _argv[])
 	int sock;
 	struct sockaddr_in sin;
 	int sent_bytes;
-	char data[] = "Maftiya";
+	char data[] = "Maftiya\n\0";
 	int option = 0;
 	int port;
 	char myIP[256];
@@ -67,6 +67,9 @@ int main(int _argc, char* _argv[])
 	
 	numOfBitsWritten = write(sock, data, strlen(data));
 	
+	close(sock);
+	sleep(5);
+	printf("done\n");
 	return 0;
 }
 
