@@ -1,0 +1,228 @@
+TCP - Transmission Control Protocol
+-----------------------------------
+***Connection oriented: Explicit set-up and tear-down of TCP session
+	(datagram - every send, actaully sends a message exactly in the size that i asked for)
+	(in tcp, all of the data sent is one stream)
+***Stream-of-bytes service:
+	Sends and receives a stream of bytes, not messages
+***Reliable, in-order delivery
+	Checksums to detect corrupted data
+	acknowledgements & retransmissions for reliable delivery
+	sequence numbers to detect losses and reorder data
+	*TCP loads the data to the application in the correct order
+***Flow control
+	prevent overflow of the receivers buffer space (the receiving side thus can control the rate of receiving data)
+	(0 can be valid capacity, i.e. cant receive anything)
+***Congestion control
+	Adapt to network congestion for the greater good.
+	if there are many packets loss, the rate of transfer can be reduced.
+	
+Connection oriented:
+--------------------
+Before any data transfer, TCP establishes a connection:
+*One TCP entity is waiting for a connection(server)
+*The other TCP entity(client) contacts the server
+*the actual procedure for setting up connections is more complex.
+*each connection is full duplex.
+There is no concept of packages, only stream of bytes!
+
+TCP format:
+TCP segments have a 20 byte header with >= 0 bytes of data.
+IP header [ TCP header | TCP data]
+the TCP header is opened for the first time only when arriving at final destination.
+sequence number - offset of the firsrt byte relative to the setting up of connection.
+acknowledgement number -  what is the sequence number of the next thing that im expecting to receive.
+window size- what is my capacity to receive data (data rate)
+Flag bits:
+----------
+URG: urgent pointer is valid - if the bit is set, the following bytes contain an urgent message in the range:
+SeqNo <= urgent message <= SeqNo + urgent pointer
+ACK: acknowledgement number is valid. in theory you can send a message without acknowledge num.
+PSH: PUSH flag- notification from sender to the receiver that the receiver should pass all data that it has to the application.
+Normally set by sender when the sender's buffer is empty.
+RST: reset connection
+SYN: synchronize sequence numbers - sent in the first packet when initiating a connection
+FIN: Send is finished with sending - used for closing a connection. both sides of a connection must send a fin
+Window size: each side of the connection advertises the window size. window size is the maximum number of bytes that a receiver can accept. max window size is 65535 bytes.
+TCP checksum: TCP checksum covers over both tcp header and tcp data
+urgent pointer: only valid of URG flag is set.
+
+
+-----------------------
+-----------------------
+-----------------------
+TCP Three-Way Handshake
+-----------------------
+-----------------------
+-----------------------
+Establishing a TCP connection. Each host tells its ISN to the other host
+
+A		B
+SYN----->
+<----SYN ACK
+ACK----->
+Data---->
+Data---->
+
+
+----------------------------------------------
+----------------------------------------------
+----------------------------------------------
+Key Differences between TCP and UDP
+----------------------------------------------
+----------------------------------------------
+----------------------------------------------
+**********************TCP
+*Connection oriented
+*Stream oriented - only reference is to bytes, not messages
+*Reliable - if a patterns arrives erroneous it is thrown. TCP responds what it hasnt received
+*Flow-Control - the receiving side constantly updates the sending side what is the capacity for receiving. prevents loss of data.
+*Congestion Control - checks congestion in the link (between sender and receiver). If more data is lost, there is an assumption that there is congestion. TCP (layer 4) knows to get this info from layer 3.
+*Ordering - loads the data to the application by the order it was sent
+*High overhead - minimum 20 bytes
+*MTU path discover - what is the maximum transmission unit path
+*Only unicast
+
+**********************UDP
+*Connection-less
+*Datagram-oriented - messages
+*Unreliable
+*No Flow-control
+*No congestion control
+*No ordering
+*Low overhead - 8 byte
+*No MTU path discover
+*Unicast, multicast & broadcast
+
+
+TCP client-server
+-----------------
+***Client:
+socket()
+connect()
+send() or write()
+recv() or read()
+close()
+
+***Server:
+socket()
+bind()
+listen()
+accept()
+recv() or read()
+send() or write()
+
+
+int sock = socket(AF_INET, SOCK_STREAM, 0);
+if (sock < 0)
+{
+..
+..
+..
+}
+
+*only for server
+Reusing the same port:
+int optval = 1;
+if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0 )
+{
+	perror("reuse failed");
+	abort();
+}
+
+
+init server:
+same as for UDP
+
+server listen:
+if (listen(sock, back_log) < 0)
+{
+	perror("listen error");
+	abort();
+}
+listen() converts an active socket to passive
+back_log: connection-waiting queue size
+
+
+
+
+------
+Client:
+socket()
+
+Server:
+socket()
+setsockopt()
+bind()
+listen()
+
+
+server:
+accept() - retreives from the queue after the 3way handshake is finished.
+
+client:
+struct sockaddr_in sin;
+memset(&sin, 0, sizeof(sin));
+..
+..
+..
+if(connect(sock, (struct sockaddr*)&sin, sizeof(sin)) <0)
+{
+	perror("connection failed");
+	abort();
+}
+
+
+server:
+struct sockaddr_in client_sin;
+int addr_len = sizeof(client_sin);
+int client_sock = accept(listening_sock, (struct sockaddr*) &client_sin, &addr_len);
+
+
+server checks for new clients, and serves them
+
+
+
+
+
+
+
+TCP server:
+-----------
+init();
+while(1)
+{
+	check new clients(); 		(accept)
+	check current clients(); 	(receive)
+}
+
+***problem with the above: accept can block and receive can block:
+solutions:
+1. one thread on the accept, each new client will make a new thread.
+2 non-blocking is a good solution but still problematic cause busy wait. if server is busy a lot anyway tjhan this is not that much of a problem.
+
+check current clients
+{
+	receive();
+	HERE IS THE APPLICATION
+	send();
+}
+
+Server never falls. if there is an annoying client, kick him!
+sigaction needs to be used for the server.
+
+nonblock on the master and for each new client, after accept need to make the socket non block
+
+
+Homework:
+1. loopback
+2. against another computer
+3. build a server (ADT) with a callback function and a few clients
+4. smart client
+
+to simulate lots of clients:
+data structure of clients. loop on the data structure.
+a client can be connected or disconnected
+if connected, then ~40% do send receive
+					~10% -disconnect
+if disconnect, then ~30% connect

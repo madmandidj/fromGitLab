@@ -1,0 +1,12 @@
+Server ADT:
+-----------
+
+
+
+
+
+typedef struct Server_t
+{
+
+
+}Server_t

@@ -55,6 +55,7 @@ int SendTo(int _sock, char* _data, struct sockaddr_in* _sin)
 {
 	int sent_bytes;
 	sent_bytes = sendto(_sock, _data, strlen(_data) + 1, 0, (struct sockaddr*) _sin, sizeof(*_sin));
+/*	sent_bytes = sendto(_sock, _data, 11, 0, (struct sockaddr*) _sin, sizeof(*_sin));*/
 	if (sent_bytes < 0)
 	{
 		perror("sendto failed\n");
@@ -63,13 +64,21 @@ int SendTo(int _sock, char* _data, struct sockaddr_in* _sin)
 	return sent_bytes;
 }
 
+void CloseSocket(int _sock)
+{
+	if (close(_sock))
+	{
+		perror("close failed");
+		abort();
+	}
+}
 
 int main(int argc, char* argv[])
 {
 	int sock;
 	struct sockaddr_in sin;
 	int sent_bytes;
-	char data[] = "Yooo Hana";
+	char data[] = "Eyal123456789";
 	int option = 0;
 	int port;
 	char myIP[256];
@@ -78,6 +87,7 @@ int main(int argc, char* argv[])
 	sock = OpenSocket();
 	InitSockAddr(&sin, myIP, port);
 	SendTo(sock, data, &sin);
+	CloseSocket(sock);
 	return 0;
 }
 
