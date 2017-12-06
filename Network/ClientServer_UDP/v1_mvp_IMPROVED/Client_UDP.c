@@ -75,27 +75,35 @@ int main(int argc, char* argv[])
 	char myIP[256];
 
 	GetInputParam(argc, argv, &port, myIP);
-	
-/*	sock = socket(AF_INET, SOCK_DGRAM, 0);*/
-/*	if (sock < 0)*/
-/*	{*/
-/*		perror("socket failed\n");*/
-/*		abort();*/
-/*	}*/
 	sock = OpenSocket();
-	
-/*	memset(&sin, 0, sizeof(sin));*/
-/*	sin.sin_family = AF_INET;*/
-/*	sin.sin_addr.s_addr = inet_addr(myIP);*/
-/*	sin.sin_port = htons(port);*/
 	InitSockAddr(&sin, myIP, port);
-
-/*	sent_bytes = sendto(sock, data, strlen(data) + 1, 0, (struct sockaddr*) &sin, sizeof(sin));*/
-/*	if (sent_bytes < 0)*/
-/*	{*/
-/*		perror("sendto failed\n");*/
-/*		abort();*/
-/*	}*/
 	SendTo(sock, data, &sin);
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
