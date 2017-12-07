@@ -1,0 +1,52 @@
+--------
+Mu_talk:
+--------
+***4th of January we finish our course
+Network
+Network++
+Project - SQL, C++ review, C review, DS & algorithms review
+
+Roles:
+-----
+low level c
+high level c++
+java csharp
+
+Look into: 
+----------
+reactor design pattern, database
+
+
+Multiple clients - Select (supports up to 1024 sockets)
+-------------------------------------------------------
+fd_set
+FD_ZERO - clear an fd_set
+FD_ISSET - check if a descriptor is in an fd_set
+FD_SET 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
