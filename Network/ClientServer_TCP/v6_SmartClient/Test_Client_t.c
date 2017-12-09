@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#include<string.h>
 
 #define CLIENT_NUM 50
 #define NUM_OF_REPS 100
@@ -11,9 +12,8 @@ typedef struct SmartClient
 	int			m_isConnected;
 }SmartClient;
 
-int main()
+int main(int _argc, char* _argv[])
 {
-/*	size_t index;*/
 	int randNum;
 	size_t index;
 	size_t reps = 0;
@@ -24,13 +24,29 @@ int main()
 	SmartClient* disconnectedClients[CLIENT_NUM];
 	int numOfDisconnected;
 	Client_t* clientArr[CLIENT_NUM];
-
+	char ip[128];
 	
+	if(1 == _argc)
+	{
+		strcpy(ip, "127.0.0.1");
+	}
+	else if(2 == _argc)
+	{
+		strcpy(ip, _argv[1]);
+	}
+	else
+	{
+		printf("Invalid num of arguments to main()\n");
+		abort();
+	}
+
 	srand(0);
 	for (index = 0; index < CLIENT_NUM; ++index)
 	{
-		smartClientArr[index].m_client = ClientCreate(8888, "127.0.0.1");
-		if (!ClientConnect(smartClientArr[index].m_client, 8888, "127.0.0.1"))
+/*		smartClientArr[index].m_client = ClientCreate(8888, "127.0.0.1");*/
+/*		if (!ClientConnect(smartClientArr[index].m_client, 8888, "127.0.0.1"))*/
+		smartClientArr[index].m_client = ClientCreate(8888, ip);
+		if (!ClientConnect(smartClientArr[index].m_client, 8888, ip))
 		{
 			perror("Client connect error");
 			abort();
@@ -39,33 +55,11 @@ int main()
 		ClientRun(smartClientArr[index].m_client);
 	}
 	
-/*	for(;;)*/
-/*	{*/
-/*		int ThirtyPercentOfClients;*/
-/*		ThirtyPercentOfClients = (CLIENT_NUM*3)/100;*/
-/*		for(index = 0; index < ThirtyPercentOfClients; ++index)*/
-/*		{*/
-/*			*/
-/*		}*/
-/*	}*/
-	
-	
 	for (index = 0; index < CLIENT_NUM; ++index)
 	{
 		ClientDestroy(smartClientArr[index].m_client);
 	}
-	
-	
-	
-/*	ClientRun(clientArr[0]);*/
-/*	*/
-/*	ClientDisconnect(clientArr[0]);*/
-/*	*/
-/*	ClientConnect(clientArr[0], 8888, "127.0.0.1");*/
-/*	*/
-/*	ClientRun(clientArr[0]);*/
-/*	*/
-/*	ClientDestroy(clientArr[0]);*/
+
 
 	return 0;
 }
