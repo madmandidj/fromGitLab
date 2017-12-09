@@ -5,7 +5,8 @@ void* PrintIt(void* _buffer)
 /*	size_t index;*/
 /*	for (index = 0; index < 5; ++index)*/
 /*	{	*/
-		printf("%s", (char*)_buffer);
+		printf("%s", (char*)(_buffer + sizeof(size_t)));
+		printf("%u\n", *(size_t*)_buffer);
 /*	}*/
 /*	fflush(stdout);*/
 	return NULL;
