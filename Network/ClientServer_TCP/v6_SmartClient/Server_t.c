@@ -72,10 +72,6 @@ int ServerRun(Server_t* _server)
 		CheckCurrentClients(_server);
 		sleep(1);
 		++runNum;
-/*		if(runNum >= 110)*/
-/*		{*/
-/*			break;*/
-/*		}*/
 	}
 	
 	return 1; /*TODO: make this relevant */
@@ -170,32 +166,24 @@ static void CheckNewClients(Server_t* _server)
 			//TODO: handle malloc fail
 		}
 		*clientSock = tempClientSock;
-		
-		
-		
-		
 		if (-1 == (flags = fcntl(*clientSock, F_GETFL)))
 		{
 			close(*clientSock);
 			free(_server);
 			return;
 		}
-	
 		if (-1 == fcntl(*clientSock, F_SETFL, flags | O_NONBLOCK))
 		{
 			close(*clientSock);
 			free(_server);
 			return;
 		}
-		
-		
-		
 		ListPushTail(_server->m_clientList, clientSock);
 	}
 	else if (errno != EAGAIN && errno != EWOULDBLOCK)
 	{
 		/* DO something */
-/*		printf("ACCEPT FAILED!!!!\n");*/
+		perror("accpet failed");
 		abort();
 	}
 }

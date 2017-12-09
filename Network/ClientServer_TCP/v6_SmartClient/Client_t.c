@@ -7,7 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#define BUFFER_LEN 4096
+#define BUFFER_LEN 256
 /*************************
 **************************
 Client_t struct definition
@@ -30,17 +30,15 @@ Client_t API function implementations
 ************************************/
 Client_t* ClientCreate(int _port, char* _ip)
 {
-	/*TODO: check valid params */
+	if (NULL == _ip)
+	{
+		return NULL;
+	}
 	Client_t* client = malloc(sizeof(Client_t));
 	if (NULL == client)
 	{
 		return NULL;
 	}
-	
-/*	if (!ClientConnect(client, _port, _ip))*/
-/*	{*/
-/*		return NULL;*/
-/*	}*/
 	
 	return client;
 }
@@ -54,35 +52,24 @@ void ClientDestroy(Client_t* _client)
 void ClientRun(Client_t* _client)
 {
 	static size_t ClientRunNum = 0;
-	char sendData[256];
-	char rcvData[256];
+	char sendData[BUFFER_LEN];
+	char rcvData[BUFFER_LEN];
 	char data[] = "Maftiya\n\0";
 	int numOfBytes;
 	size_t receivedRunNum;
-	char receivedData[256];
+	char receivedData[BUFFER_LEN];
 	
 	++ClientRunNum;
+	
 	memcpy(sendData, &ClientRunNum, sizeof(size_t));
 	memcpy(sendData + sizeof(size_t), data, strlen(data) + 1);
-	
 	write(_client->m_sock, sendData, sizeof(size_t) + strlen(data) + 1);
 	printf("Client sent %u and %s\n", ClientRunNum, data);
 	
 	numOfBytes = read(_client->m_sock, rcvData, BUFFER_LEN);
 	memcpy(&receivedRunNum, rcvData, sizeof(size_t));
 	memcpy(receivedData, rcvData + sizeof(size_t), numOfBytes - sizeof(size_t));
-	
-/*	receivedRunNum = *(size_t*)rcvData;*/
 	printf("Client received %u and %s\n", receivedRunNum, receivedData);
-	
-	
-/*	char data[] = "Maftiya\n\0";*/
-/*	char buffer[strlen(data) + 1];*/
-/*	write(_client->m_sock, &ClientRunNum, sizeof(ClientRunNum));*/
-/*	write(_client->m_sock, data, strlen(data) + 1);*/
-/*	printf("Client sent %s\n", data);*/
-/*	read(_client->m_sock, buffer, BUFFER_LEN);*/
-/*	printf("Client received %s\n", buffer);*/
 }
 
 int ClientConnect(Client_t* _client, int _port, char* _ip)
