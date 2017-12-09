@@ -1,0 +1,61 @@
+TCP - Transmission Control Protocol
+-----------------------------------
+differences with UDP
+---------------------
+Packet header size									UDP: 8 bytes				TCP: 20-60 bytes			
+Transport layer packet entity						UDP: datagram				TCP: segment
+Connection oriented									UDP: no						TCP: yes
+Reliable transport									UDP: no						TCP: yes
+Preserve message boundary							UDP: yes					TCP: no
+Ordered delivery									UDP: no						TCP: yes
+Data checksum										UDP: optional				TCP: yes
+Checksum size (bits)								UDP: 16						TCP: 16
+Partial checksum									UDP: no						TCP: no
+Path MTU											UDP: no						TCP: yes
+Flow control										UDP: no						TCP: yes
+Congestion control									UDP: no						TCP: yes
+Explicit Congestion Notification					UDP: no						TCP: yes
+Multiple streams									UDP: no						TCP: no
+Multi-homing										UDP: no						TCP: no
+Bundling / Nagle (small packet problem)				UDP: no						TCP: yes
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+**********************TCP
+*Connection oriented
+*Stream oriented - only reference is to bytes, not messages
+*Reliable - if a patterns arrives erroneous it is thrown. TCP responds what it hasnt received
+*Flow-Control - the receiving side constantly updates the sending side what is the capacity for receiving. prevents loss of data.
+*Congestion Control - checks congestion in the link (between sender and receiver). If more data is lost, there is an assumption that there is congestion. TCP (layer 4) knows to get this info from layer 3.
+*Ordering - loads the data to the application by the order it was sent
+*High overhead - minimum 20 bytes
+*MTU path discover - what is the maximum transmission unit path
+*Only unicast
+
+**********************UDP
+*Connection-less
+*Datagram-oriented - messages
+*Unreliable
+*No Flow-control
+*No congestion control
+*No ordering
+*Low overhead - 8 byte
+*No MTU path discover
+*Unicast, multicast & broadcast
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Maximum Transmission Unit:
+--------------------------
+In computer networking, the maximum transmission unit (MTU) is the size of the largest network layer protocol data unit that can be communicated in a single network transaction
+A larger MTU brings greater efficiency because each network packet carries more user data while protocol overheads, such as headers or underlying per-packet delays, remain fixed; the resulting higher efficiency means an improvement in bulk protocol throughput. A larger MTU also means processing of fewer packets for the same amount of data. In some systems, per-packet-processing can be a critical performance limitation.
+
+However, this gain is not without a downside. Large packets occupy a slow link for more time than a smaller packet, causing greater delays to subsequent packets, and increasing lag and minimum latency. For example, a 1500-byte packet, the largest allowed by Ethernet at the network layer (and hence over most of the Internet), ties up a 14.4k modem for about one second. Large packets are also problematic in the presence of communications errors. If no forward error correction is used, corruption of a single bit in a packet requires that the entire packet be retransmitted, which can be very costly. At a given bit error rate, larger packets are more likely to be corrupt. Their greater payload makes retransmissions of larger packets take longer. Despite the negative effects on retransmission duration, large packets can still have a net positive effect on end-to-end TCP performance.
+
+Path MTU Discovery:
+-------------------
+The Internet Protocol defines the "Path MTU" of an Internet transmission path as the smallest MTU of any of the IP hops of the "path" between a source and destination. Put another way, the path MTU is the largest packet size that can traverse this path without suffering fragmentation.
+
+RFC 1191 (IPv4) and RFC 1981 (IPv6) describe "Path MTU Discovery", a technique for determining the path MTU between two IP hosts. It works by setting the DF (Don't Fragment) option in the IP headers of outgoing packets. Any device along the path whose MTU is smaller than the packet will drop such packets and send back an ICMP "Destination Unreachable (Datagram Too Big)" message containing its MTU. This information allows the source host to reduce its assumed path MTU appropriately. The process repeats until the MTU becomes small enough to traverse the entire path without fragmentation.
+
+Unfortunately, increasing numbers of networks drop ICMP traffic (for example, to prevent denial-of-service attacks), which prevents path MTU discovery from working. One often detects such blocking in the cases where a connection works for low-volume data but hangs as soon as a host sends a large block of data. For example, with IRC a connecting client might see the initial messages up to and including the initial ping (sent by the server as an anti-spoofing measure), but get no response after that. This is because the large set of welcome messages are sent out in packets bigger than the real MTU. Also, in an IP network, the path from the source address to the destination address often gets modified dynamically, in response to various events (load-balancing, congestion, outages, etc.) - this could result in the path MTU changing (sometimes repeatedly) during a transmission, which may introduce further packet drops before the host finds a new reliable MTU.

@@ -22,7 +22,8 @@ struct Client_t
 Static functions forward declarations
 *************************************
 ************************************/
-static int InitClient(Client_t* _client, int _port, char* _ip);
+int ClientInit(Client_t* _client, int _port, char* _ip);
+/*static int ClientConnect(Client_t* _client, int _port, char* _ip);*/
 /************************************
 *************************************
 Server_t API function implementations
@@ -37,7 +38,7 @@ Client_t* ClientCreate(int _port, char* _ip)
 		return NULL;
 	}
 	
-	if (!InitClient(client, _port, _ip))
+	if (!ClientInit(client, _port, _ip))
 	{
 		return NULL;
 	}
@@ -54,28 +55,18 @@ void ClientDestroy(Client_t* _client)
 void ClientRun(Client_t* _client)
 {
 	char data[] = "Maftiya\n\0";
-	char buffer[BUFFER_LEN];
-	write(_client->m_sock, data, strlen(data));
+	char buffer[strlen(data) + 1];
+	write(_client->m_sock, data, strlen(data) + 1);
 	printf("Client sent %s\n", data);
+/*	sleep(2);*/
 	read(_client->m_sock, buffer, BUFFER_LEN);
 	printf("Client received %s\n", buffer);
 }
 
-/***************************************
-***************************************
-Server_t Static function implementations 
-***************************************
-***************************************/
-static int InitClient(Client_t* _client, int _port, char* _ip)
+int ClientConnect(Client_t* _client, int _port, char* _ip)
 {
 	struct sockaddr_in sin;
 	
-	_client->m_sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (0 > _client->m_sock)
-	{
-		free(_client);
-		return 0;
-	}
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = inet_addr(_ip);
@@ -86,6 +77,29 @@ static int InitClient(Client_t* _client, int _port, char* _ip)
 		return 0;
 	}
 	return 1;
+}
+
+void ClientDisconnect(Client_t* _client)
+{
+	close(_client->m_sock);
+}
+
+/***************************************
+***************************************
+Server_t Static function implementations 
+***************************************
+***************************************/
+int ClientInit(Client_t* _client, int _port, char* _ip)
+{
+	_client->m_sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (0 > _client->m_sock)
+	{
+		free(_client);
+		return 0;
+	}
+	
+	
+	return ClientConnect(_client, _port, _ip);
 }
 
 

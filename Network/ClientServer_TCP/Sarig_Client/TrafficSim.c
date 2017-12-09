@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     char ip[32];
     short port;
     char stream[MAX_MSG_SIZE] = "";
-    char* serverSendMsg = "Client message";
+    char* serverSendMsg = "Client message\n\0";
     
     strcpy(ip, argv[1]);
     port = atoi(argv[2]);

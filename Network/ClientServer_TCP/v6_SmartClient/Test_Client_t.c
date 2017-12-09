@@ -3,7 +3,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#define CLIENT_NUM 10
+#define CLIENT_NUM 1
 #define NUM_OF_REPS 100
 
 int main()
@@ -24,6 +24,15 @@ int main()
 		disconnectedClients[index] = index;
 	}
 	
+	ClientRun(clientArr[0]);
+	
+	ClientDisconnect(clientArr[0]);
+	
+	ClientInit(clientArr[0], 8888, "127.0.0.1");
+	
+	ClientRun(clientArr[0]);
+	
+	ClientDestroy(clientArr[0]);
 	/*
 		
 	*/
@@ -33,19 +42,19 @@ int main()
 /*		clientArr*/
 /*	}*/
 	
-	while (reps < NUM_OF_REPS)
-	{
-		
-		curClient = rand() % NUM_OF_REPS;
-		++reps;
-	}
+/*	while (reps < NUM_OF_REPS)*/
+/*	{*/
+/*		*/
+/*		curClient = rand() % NUM_OF_REPS;*/
+/*		++reps;*/
+/*	}*/
 	
 	
 	
 	
-	Client_t* client;
-	client = ClientCreate(8888, "127.0.0.1");
-	ClientRun(client);
-	ClientDestroy(client);
+/*	Client_t* client;*/
+/*	client = ClientCreate(8888, "127.0.0.1");*/
+/*	ClientRun(client);*/
+/*	ClientDestroy(client);*/
 	return 0;
 }

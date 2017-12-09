@@ -1,0 +1,46 @@
+1 - physical - 
+conveys the bit stream (electrical impulse, light or radio signal) through physical connections, wires, connectors.
+Provides the hardware a means of sending and receiving data on a carrier.
+
+
+2 - data link - 
+Media Access Control (MAC) layer, and Logical Link Control (LLC) layer.
+The MAC sub layer controls how a computer on the network gains access to the data and permission to transmit it.
+The LLC layer controls from synchronization, flow control and error checking. acts as interface between MAC and network layer.
+
+
+3 - network 
+Provides switching and routing technologies, creating logical paths (virtual circuits) for transmitting data from node to node.
+routing, forwarding, addressing, internetworking, error handling, congestion control and packet sequencing are functions of this layer.
+
+4 - transport
+Transparent transfer of data between end systems (hosts) and is responsible for end-to-end error recovery and flow control. ensures complete data transfer.
+
+5 - session
+establishes, manages and terminates connections between applications.
+
+6 - presentation
+Provides independence from differences in data representation (encryption) by translating from application to network format and vice versa.
+Works to transform data into the form that the application layer can accept,  and also formats and encrypts data to be sent across a network, providing freedom from compatibility problems. Sometimes called the syntax layer.
+
+7 - application
+Supports application and end-user processes. communication partners are identified, quality of service is identified, user authentication and privacy are considered. Everything at this layer is application specific.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

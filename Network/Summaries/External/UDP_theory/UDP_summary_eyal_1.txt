@@ -1,0 +1,46 @@
+UDP - User Datagram Protocol
+----------------------------
+Core member of the internet protocol suite. Computer applications can send datagrams to other hosts on an internet protocol (IP) network. Prior communications are not required in order to set up communication channels or data paths. UDP uses a simple connectionless communication model, provides checksums for data integrity, and port numbers for addressing different functions at the source and destination of the datagram. Has no handshaking dialogues, no guarantee of delivery, ordering or duplicate protection. if error correction facilities are needed at the network interface level, an application may use the TCP or SCTP. Time sensitive applications often use UDP because dropping packets is preferable to waiting for packets delayed due to retransmission, which may not be an option in a real-time system.
+
+
+Differences between UDP and TCP:
+--------------------------------
+1. Reliability: 
+Strictly at transport layer, TCP manages message acknowledgement, retransmission and timeout. In TCP theres either no missing data or in case of multiple timeouts, the connection is dropped. ( this does not cover application layer)
+
+
+2. Ordered:
+In tcp, messages are guarantedd to be received at application in the order they were sent. If messages arrive at the wrong order, TCP buffers delay the out-of-order data untill all data can be properly re-ordered and deliverred to application.
+
+
+3. Heavyweight:
+TCP requires 3 packets to set up a socket connection, before any user data can be sent. TCP handles reliability and congestion control.
+
+
+4. Streaming:
+Data is read as a byte stream, no distinguishing indications are transmitted to signal message boundaries
+
+
+
+**********************TCP
+*Connection oriented
+*Stream oriented - only reference is to bytes, not messages
+*Reliable - if a patterns arrives erroneous it is thrown. TCP responds what it hasnt received
+*Flow-Control - the receiving side constantly updates the sending side what is the capacity for receiving. prevents loss of data.
+*Congestion Control - checks congestion in the link (between sender and receiver). If more data is lost, there is an assumption that there is congestion. TCP (layer 4) knows to get this info from layer 3.
+*Ordering - loads the data to the application by the order it was sent
+*High overhead - minimum 20 bytes
+*MTU path discover - what is the maximum transmission unit path
+*Only unicast
+
+**********************UDP
+*Connection-less
+*Datagram-oriented - messages
+*Unreliable
+*No Flow-control
+*No congestion control
+*No ordering
+*Low overhead - 8 byte
+*No MTU path discover
+*Unicast, multicast & broadcast
+

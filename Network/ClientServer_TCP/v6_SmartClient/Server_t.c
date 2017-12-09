@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <stdio.h>
 #define NCLIENTS 64
-#define BUFFER_LEN 4096
+#define BUFFER_LEN 256
 #define BACK_LOG 32
 /*************************
 **************************
@@ -64,11 +64,14 @@ void ServerRun(Server_t* _server)
 /*	while(runNum < 6)*/
 	while(1)
 	{
-		printf("Run number %lu\n", runNum);
+/*		printf("Run number %lu\n", runNum);*/
+		
 		CheckNewClients(_server);
+/*		printf("After check new clients\n");*/
 		CheckCurrentClients(_server);
+/*		printf("After check current clients\n");*/
 		sleep(1);
-/*		++runNum;*/
+		++runNum;
 	}
 }
 
@@ -145,6 +148,7 @@ static void CheckNewClients(Server_t* _server)
 	int addr_len = sizeof(clientSin);
 	int tempClientSock = 0;
 	int* clientSock;
+	int flags;
 	
 	tempClientSock = accept(_server->m_serverSock, (struct sockaddr*) &clientSin, &addr_len);
 	if (0 < tempClientSock)
@@ -155,11 +159,33 @@ static void CheckNewClients(Server_t* _server)
 			//TODO: handle malloc fail
 		}
 		*clientSock = tempClientSock;
+		
+		
+		
+		
+/*		if (-1 == (flags = fcntl(*clientSock, F_GETFL)))*/
+/*		{*/
+/*			close(*clientSock);*/
+/*			free(_server);*/
+/*			return;*/
+/*		}*/
+/*	*/
+/*		if (-1 == fcntl(*clientSock, F_SETFL, flags | O_NONBLOCK))*/
+/*		{*/
+/*			close(*clientSock);*/
+/*			free(_server);*/
+/*			return;*/
+/*		}*/
+		
+		
+		
 		ListPushTail(_server->m_clientList, clientSock);
 	}
 	else if (errno != EAGAIN && errno != EWOULDBLOCK)
 	{
 		/* DO something */
+/*		printf("ACCEPT FAILED!!!!\n");*/
+		abort();
 	}
 }
 
@@ -177,11 +203,14 @@ static void CheckCurrentClients(Server_t* _server)
 
 	while(!ListItrEquals(itr, itrListEnd))
 	{
+/*		printf("Before read in check current clients\n");*/
 		numOfBytesRead = read(*(int*)ListItrGet(itr), buffer, BUFFER_LEN);
+/*		fflush(stdout);*/
 		if(0 == numOfBytesRead)
 		{
 			/* Handle client closed socket */
-			printf("In Server, client closed socket\n");
+			
+/*			printf("In Server, client closed socket\n");*/
 			if (-1 == close(*(int*)ListItrGet(itr)))
 			{
 				/*TODO: handle this */
@@ -196,12 +225,17 @@ static void CheckCurrentClients(Server_t* _server)
 		if(-1 == numOfBytesRead)
 		{
 			/* DO something */
-			printf("Server read failed\n");
+/*			printf("Server read failed, errno = %d\n", errno);*/
+/*			if (errno == EAGAIN && errno == EWOULDBLOCK)*/
+/*			{*/
+/*				continue;*/
+/*			}*/
 			abort();
 		}
+		sleep(1);
 		_server->m_appFunc(buffer);
 /*		write(*(int*)ListItrGet(itr), buffer, BUFFER_LEN);*/
-		write(*(int*)ListItrGet(itr), buffer, 20);
+		write(*(int*)ListItrGet(itr), buffer, numOfBytesRead);
 		itr = ListItrNext(itr);
 	}
 }

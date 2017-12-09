@@ -2,7 +2,12 @@
 #include <stdio.h>
 void* PrintIt(void* _buffer)
 {
-	printf("%s", (char*)_buffer);
+/*	size_t index;*/
+/*	for (index = 0; index < 5; ++index)*/
+/*	{	*/
+		printf("%s", (char*)_buffer);
+/*	}*/
+/*	fflush(stdout);*/
 	return NULL;
 }
 

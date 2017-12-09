@@ -7,6 +7,7 @@
 #include "Client.h"
 #include <stdio.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 
 struct Client
 {
@@ -35,11 +36,28 @@ static int ClientConnectPrivate(int _socketFD, char* _ip, short _port)
     sin.sin_family = AF_INET;
     sin.sin_addr.s_addr = inet_addr(_ip);
     sin.sin_port = htons(_port);
+    int flags;
     if(connect(_socketFD, (struct sockaddr*) &sin, sizeof(sin)) < 0) 
     {
         perror("connect() failed");
         return 0;
     }
+    
+    
+    
+/*	if (-1 == (flags = fcntl(_socketFD, F_GETFL)))*/
+/*	{*/
+/*		close(_socketFD);*/
+/*		return 0;*/
+/*	}*/
+
+/*	if (-1 == fcntl(_socketFD, F_SETFL, flags | O_NONBLOCK))*/
+/*	{*/
+/*		close(_socketFD);*/
+/*		return 0;*/
+/*	}*/
+    
+    
     
     return 1;
 }
