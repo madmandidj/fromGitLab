@@ -19,9 +19,9 @@ TCP requires 3 packets to set up a socket connection, before any user data can b
 
 4. Streaming:
 Data is read as a byte stream, no distinguishing indications are transmitted to signal message boundaries
-
-
-
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 **********************TCP
 *Connection oriented
 *Stream oriented - only reference is to bytes, not messages

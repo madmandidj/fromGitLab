@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <signal.h>
+#include <sys/select.h>
 #define BUFFER_LEN 256
 #define BACK_LOG 1000
 #define MAX_CLIENT_NUM 1000
@@ -25,6 +26,7 @@ struct Server_t
 	List*	m_clientList;
 	AppFunc m_appFunc;
 	int		m_numOfClients;
+	fd_set	m_fdSet;
 };
 /*************************
 **************************
@@ -111,6 +113,8 @@ static int InitServer(Server_t* _server, int _port)
 	int flags;
 	struct sockaddr_in server_sin;
 	
+	FD_ZERO(&_server->m_fdSet);
+	
 	_server->m_serverSock = socket(AF_INET, SOCK_STREAM, 0);
 	if (_server->m_serverSock < 0)
 	{
@@ -118,19 +122,21 @@ static int InitServer(Server_t* _server, int _port)
 		return 0;
 	}
 	
-	if (-1 == (flags = fcntl(_server->m_serverSock, F_GETFL)))
-	{
-		close(_server->m_serverSock);
-		free(_server);
-		return 0;
-	}
+	FD_SET(_server->m_serverSock, &_server->m_fdSet);
 	
-	if (-1 == fcntl(_server->m_serverSock, F_SETFL, flags | O_NONBLOCK))
-	{
-		close(_server->m_serverSock);
-		free(_server);
-		return 0;
-	}
+/*	if (-1 == (flags = fcntl(_server->m_serverSock, F_GETFL)))*/
+/*	{*/
+/*		close(_server->m_serverSock);*/
+/*		free(_server);*/
+/*		return 0;*/
+/*	}*/
+/*	*/
+/*	if (-1 == fcntl(_server->m_serverSock, F_SETFL, flags | O_NONBLOCK))*/
+/*	{*/
+/*		close(_server->m_serverSock);*/
+/*		free(_server);*/
+/*		return 0;*/
+/*	}*/
 	
 	if (setsockopt(_server->m_serverSock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
 	{
@@ -168,6 +174,9 @@ static void CheckNewClients(Server_t* _server)
 	int tempClientSock = 0;
 	int* clientSock;
 	int flags;
+	fd_set fdSet;
+	
+	/*TODO: put select() here*/
 	
 	tempClientSock = accept(_server->m_serverSock, (struct sockaddr*) &clientSin, &addr_len);
 	if (-1 == tempClientSock)
@@ -215,17 +224,6 @@ static void CheckNewClients(Server_t* _server)
 		ListPushTail(_server->m_clientList, clientSock);
 		++_server->m_numOfClients;
 	}
-/*	else if (errno == EAGAIN || errno == EWOULDBLOCK)*/
-/*	{*/
-		/* DO something */
-/*		printf("CheckNewClients, errno is EAGAIN or EWOULDBLOCK\n");*/
-/*		return;*/
-/*	}*/
-/*	else if (errno != EMFILE)*/
-/*	{*/
-/*		perror("accept failed");*/
-/*		abort();*/
-/*	}*/
 }
 
 static void CheckCurrentClients(Server_t* _server)

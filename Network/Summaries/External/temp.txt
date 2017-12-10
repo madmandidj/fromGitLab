@@ -1,0 +1,15 @@
+TCP:
+----
+connection-based
+stream of bytes
+flow control
+congestion control
+unicast
+MTU path discover
+Higher-overhead
+Reliable
+Ordered
+
+
+
+

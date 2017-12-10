@@ -1,0 +1,89 @@
+Resources TCP:
+----------
+http://packetlife.net/blog/2010/jun/7/understanding-tcp-sequence-acknowledgment-numbers/
+http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html
+http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#select
+http://www.tenouk.com/Module41.html
+http://www.firewall.cx/networking-topics/protocols/tcp/134-tcp-seq-ack-numbers.html
+http://www.lovemytool.com/blog/2010/08/practical-tcp-series-sequence-and-acknowledgement-numbers-by-chris-greer.html
+https://www.pluralsight.com/blog/it-ops/networking-basics-tcp-udp-tcpip-osi-models
+https://technet.microsoft.com/en-us/library/cc958821.aspx
+http://www.tcpipguide.com/index.htm
+http://www.brianstorti.com/tcp-flow-control/
+
+NAT:
+----
+http://whatismyipaddress.com/nat
+https://en.wikipedia.org/wiki/Network_address_translation
+https://www.cisco.com/c/en/us/support/docs/ip/network-address-translation-nat/26704-nat-faq-00.html
+https://techterms.com/definition/nat
+https://www.grc.com/nat/nat.htm
+https://www.youtube.com/watch?v=QBqPzHEDzvo
+
+Source port
+destination port
+source ip
+destination ip
+protocol
+			
+IP H, MAC H 	||| 			|
+IP R11, MAC R11 ||| 			| 
+IP R12, MAC R12 ||| 			| 
+IP R21, MAC R21 ||| 			| 
+IP R22, MAC R22 ||| 			| 
+IP S, MAC S		||| 			|
+
+
+
+Source IP		
+Destination IP
+Source MAC
+Destination MAC
+
+
+Problem with select():
+----------------------
+Problem:	A client that connected and fell asleep ... i have no indication that he is not active.
+Solution: 	Timeout
+
+
+
+example:
+T/O = 5 mins
+
+
+activity = select(........, T/O);
+GetTime();
+Calculate time + T/O; ----> this is the timestamp
+
+*** if activity == 0 it means that there was a timeout.
+
+linked list:
+fd1  -> fd2 -> fd3 -> fd4 -> ground
+
+if fd3 is active, then move to beginning of list.
+Then, the new timeout is calculate with the time of last in list.
+
+
+Homework:
+1. Working with select
+2. Working with select and timeout.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
