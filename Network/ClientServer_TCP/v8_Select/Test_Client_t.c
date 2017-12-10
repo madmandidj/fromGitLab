@@ -127,7 +127,7 @@ int main(int _argc, char* _argv[])
 	for (index = 0; index < CLIENT_NUM; ++index)
 	{
 		ClientDestroy(smartClientArr[index].m_client);
-		printf("Destroyed Client %lu\n", index);
+		printf("Destroyed Client %u\n", index);
 	}
 
 	return 0;

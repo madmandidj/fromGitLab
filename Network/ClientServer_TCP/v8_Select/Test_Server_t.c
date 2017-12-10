@@ -5,7 +5,7 @@
 void* PrintIt(void* _buffer)
 {
 	printf("%s", (char*)(_buffer + sizeof(size_t)));
-	printf("%lu\n", *(size_t*)_buffer);
+	printf("%u\n", *(size_t*)_buffer);
 	return NULL;
 }
 

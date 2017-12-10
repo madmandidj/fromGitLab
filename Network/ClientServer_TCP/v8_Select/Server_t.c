@@ -15,6 +15,7 @@
 #define BUFFER_LEN 256
 #define BACK_LOG 1000
 #define MAX_CLIENT_NUM 1000
+
 /*************************
 **************************
 Server_t struct definition
@@ -45,6 +46,7 @@ Static functions forward declarations
 *************************************
 ************************************/
 static int InitServer(Server_t* _server, int _port);
+static void NewRun(Server_t* _server);
 static void CheckNewClients(Server_t* _server);
 static void CheckCurrentClients(Server_t* _server);
 static void DestroySockets(int* _socket, void* _context);
@@ -84,8 +86,9 @@ int ServerRun(Server_t* _server)
 	signal(SIGINT, intHandler);
 	while(keepRunning)
 	{
-		CheckNewClients(_server);
-		CheckCurrentClients(_server);
+		NewRun(_server);
+/*		CheckNewClients(_server);*/
+/*		CheckCurrentClients(_server);*/
 	}
 	
 	return 1;
@@ -167,6 +170,98 @@ static int InitServer(Server_t* _server, int _port)
 	return 1;
 }
 
+
+
+static void NewRun(Server_t* _server)
+{
+	struct sockaddr_in clientSin;
+	int addr_len = sizeof(clientSin);
+	int tempClientSock = 0;
+	int* clientSock;
+	int flags;
+	fd_set fdSet;
+	int activity;
+	size_t fd;
+	size_t index;
+	char buffer[BUFFER_LEN];
+	int numOfBytesRead;
+	ListItr itr;
+	ListItr tempItr;
+	ListItr itrListEnd;
+	int* removedSock;
+	int numOfDone = 0;
+	
+	itr = ListItrBegin(_server->m_clientList);
+	itrListEnd = ListItrEnd(_server->m_clientList);
+	fdSet = _server->m_fdSet;
+	
+	activity = select(MAX_CLIENT_NUM + 1/*Server Socket*/ + 1, &fdSet, NULL, NULL, NULL);
+	if (activity == 0)
+	{
+		printf("activity == 0\n");
+		return;
+	}
+	if (-1 == activity)
+	{
+		perror("select failed");
+		abort();
+	}
+	else
+	{
+		printf("activity > 0\n");
+		if (FD_ISSET(_server->m_serverSock, &fdSet))
+		{
+			CheckNewClients(_server);
+		}
+		
+		numOfDone = 0;
+	
+		while(!ListItrEquals(itr, itrListEnd) && numOfDone <= activity)
+		{
+		/* */
+			printf("here");
+			if (!FD_ISSET(*(int*)ListItrGet(itr), &fdSet))
+			{
+				itr = ListItrNext(itr);
+				continue;
+			}
+		
+			numOfBytesRead = read(*(int*)ListItrGet(itr), buffer, BUFFER_LEN);
+			if(0 == numOfBytesRead)
+			{
+				/* Handle client closed socket */
+				if (-1 == close(*(int*)ListItrGet(itr)))
+				{
+					/*TODO: handle this */
+				}
+				FD_CLR(*(int*)ListItrGet(itr), &_server->m_fdSet);
+				tempItr = ListItrNext(itr);
+				removedSock = ListItrRemove(itr);
+				--_server->m_numOfClients;
+				free(removedSock);
+				itrListEnd = ListItrEnd(_server->m_clientList);
+				itr = tempItr;
+				continue;
+			}
+			if(-1 == numOfBytesRead)
+			{
+				if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNRESET) /*TODO: ECONNRESET should be handled seperately? */
+				{
+					itr = ListItrNext(itr);
+					continue;
+				}
+				printf("Server read failed, errno = %d\n", errno);
+				abort();
+			}
+			_server->m_appFunc(buffer);
+			write(*(int*)ListItrGet(itr), buffer, numOfBytesRead);
+			itr = ListItrNext(itr);
+			++numOfDone;
+		}
+	}
+	return;
+}
+
 static void CheckNewClients(Server_t* _server)
 {
 	struct sockaddr_in clientSin;
@@ -175,8 +270,8 @@ static void CheckNewClients(Server_t* _server)
 	int* clientSock;
 	int flags;
 	fd_set fdSet;
-	
-	/*TODO: put select() here*/
+	int activity;
+	size_t fd;
 	
 	tempClientSock = accept(_server->m_serverSock, (struct sockaddr*) &clientSin, &addr_len);
 	if (-1 == tempClientSock)
@@ -209,66 +304,10 @@ static void CheckNewClients(Server_t* _server)
 			//TODO: handle malloc fail
 		}
 		*clientSock = tempClientSock;
-		if (-1 == (flags = fcntl(*clientSock, F_GETFL)))
-		{
-			close(*clientSock);
-			free(_server);
-			return;
-		}
-		if (-1 == fcntl(*clientSock, F_SETFL, flags | O_NONBLOCK))
-		{
-			close(*clientSock);
-			free(_server);
-			return;
-		}
 		ListPushTail(_server->m_clientList, clientSock);
+		FD_SET(*clientSock, &_server->m_fdSet);
 		++_server->m_numOfClients;
-	}
-}
-
-static void CheckCurrentClients(Server_t* _server)
-{
-	size_t index;
-	char buffer[BUFFER_LEN];
-	int numOfBytesRead;
-	ListItr itr;
-	ListItr tempItr;
-	ListItr itrListEnd;
-	int* removedSock;
-	itr = ListItrBegin(_server->m_clientList);
-	itrListEnd = ListItrEnd(_server->m_clientList);
-
-	while(!ListItrEquals(itr, itrListEnd))
-	{
-		numOfBytesRead = read(*(int*)ListItrGet(itr), buffer, BUFFER_LEN);
-		if(0 == numOfBytesRead)
-		{
-			/* Handle client closed socket */
-			if (-1 == close(*(int*)ListItrGet(itr)))
-			{
-				/*TODO: handle this */
-			}
-			tempItr = ListItrNext(itr);
-			removedSock = ListItrRemove(itr);
-			--_server->m_numOfClients;
-			free(removedSock);
-			itrListEnd = ListItrEnd(_server->m_clientList);
-			itr = tempItr;
-			continue;
-		}
-		if(-1 == numOfBytesRead)
-		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNRESET) /*TODO: ECONNRESET should be handled seperately? */
-			{
-				itr = ListItrNext(itr);
-				continue;
-			}
-			printf("Server read failed, errno = %d\n", errno);
-			abort();
-		}
-		_server->m_appFunc(buffer);
-		write(*(int*)ListItrGet(itr), buffer, numOfBytesRead);
-		itr = ListItrNext(itr);
+		
 	}
 }
 

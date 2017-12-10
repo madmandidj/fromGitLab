@@ -66,7 +66,7 @@ void ClientRun(Client_t* _client)
 /*	numOfBytes = write(_client->m_sock, sendData, sizeof(size_t) + strlen(data) + 1);*/
 	numOfBytes = send(_client->m_sock, sendData, sizeof(size_t) + strlen(data) + 1, MSG_NOSIGNAL);
 	printf("Num of bytes wrote = %d\n",numOfBytes);
-	printf("Client sent %lu and %s\n", ClientRunNum, data);
+	printf("Client sent %u and %s\n", ClientRunNum, data);
 	
 	numOfBytes = read(_client->m_sock, rcvData, BUFFER_LEN);
 	if(0 < numOfBytes)
@@ -74,7 +74,7 @@ void ClientRun(Client_t* _client)
 		printf("Num of bytes read = %d\n",numOfBytes);
 		memcpy(&receivedRunNum, rcvData, sizeof(size_t));
 		memcpy(receivedData, rcvData + sizeof(size_t), numOfBytes - sizeof(size_t));
-		printf("Client received %lu and %s\n", receivedRunNum, receivedData);
+		printf("Client received %u and %s\n", receivedRunNum, receivedData);
 	}
 	else
 	{
