@@ -1,2 +1,120 @@
 1. Use uint32 or uint16 to send data on networks (not int, size_t, etc...)
 2. If we want to transmit something thats more than 8 bits, we need to use htons to get it ready for network format
+-----------------
+-----------------
+-----------------
+Erez code review:
+-----------------
+-----------------
+-----------------
+typedef int clientID;
+
+typedef struct
+{
+	void* 	m_msg;
+	ssize_t	m_size;
+}Message;
+
+typedef enum{LISTEN_FAIL, CONNECTION_REQ, CONNECTION_REQ_DENIED}ServerError;
+
+callback functions:
+typedef void (*MsgReceived)(Server*, ClientId, const Message*);
+typedef void (*ConnectionRequest)(Server*, ClientId); 
+typedef void (*ConnectionLost)(Server*, ClientId);
+typedef void (*ErrorReport)(Server*, ServerError, ClientId);
+
+typedef struct
+{
+	MsgReceived			m_msgReceived;
+	ConnectionRequest	m_connectionRequest;
+	ConnectionLost		m_connectionLost;
+	ErrorReport			m_errorReport;
+}ServerCallbacks;
+
+ServerRemoveClient ----> this can be used in the callback function
+ServerSendToClient ----> this can be used in the callback function
+
+as a parameter, an application should be able to define the max num of clients that it wants to receive (as long as its under the servers maximum number of possible clients)
+
+All of the times related things, move to a different module.
+
+maxSocketNumVal should also go down when the highest numval is removed
+
+m_isrunning can be a data member
+
+ServerCreate function:
+----------------------
+pseudo code:
+1. allocate memory
+2. initialize members
+3. initialize sockets
+
+UpdateDueTime(_server, &timeVal);
+***this can return value, if list is empty then do select with NULL as timeVal param
+
+Izik says that an error from select() is suppose to shutdown the whole server ... or not....
+
+
+in function that handles current clients, dont need to use a counter but can just decrement the activity param
+
+if read fails, throw the client to hell.
+-----------------
+-----------------
+-----------------
+End of Erez code review
+-----------------
+-----------------
+-----------------
+
+
+
+
+DNS (Domain Name System):
+-------------------------
+A network of servers, which is responsible to give us the ip of a server when given a URL.
+Provides mapping from ACCII domain names to IP addresses
+DNS is an applciation that runs over UDP.
+How to find IP address-----> getaddrinfo()
+
+
+DHCP(Dynamic Host Configuration Protocol)
+-----------------------------------------
+https://technet.microsoft.com/en-us/library/dd145320(v=ws.10).aspx
+Bootstrapping problem: 
+Host doesnt have an IP address yet - so host doesnt know what source address to use.
+Host doesnt know who to ask for an IP address - so host doesnt know what destination address to use.
+Solution- shout to discover a server who can help
+broadcast a server-discovery messagesserver sends a reply offering an address
+
+DHCP discover broadcast
+DHCP offer
+DHCP request broadcast
+DHCP ACK
+
+
+
+issues with tcp:
+multithreaded
+no_wait
+select
+----
+select is limited to 1024 sockets.
+still need to check one by one to know who was active.
+-----
+other options: poll function
+poll is not on all systems
+gives more than 1024
+more advanced is called epoll: returns the sockets that were active
+
+
+
+
+
+
+
+
+
+
+
+
+

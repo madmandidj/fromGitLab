@@ -40,14 +40,27 @@ Unfortunately, increasing numbers of networks drop ICMP traffic (for example, to
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 **********************TCP
 *Connection oriented
-*Stream oriented - only reference is to bytes, not messages
+*Stream oriented - only reference is to bytes, not messages. UDP message will be sent whole, while in TCP it might be "broken up" and sent in smaller chunks.
 *Reliable - if a patterns arrives erroneous it is thrown. TCP responds what it hasnt received. The way to notify back what i havent received is through ACK. I dont know how much i am supposed to receive, but i know that i might have received "holes".
 *Flow-Control - the receiving side constantly updates the sending side what is the capacity for receiving. prevents loss of data.
-*Congestion Control - checks congestion in the link (between sender and receiver). If more data is lost, there is an assumption that there is congestion. TCP (layer 4) knows to get this info from layer 3. Retransmission requests are a sign for congestion... also ECN.
+*Congestion Control - checks congestion in the link (between sender and receiver). If more data is lost, there is an assumption that there is congestion. TCP (layer 4) knows to get this info from layer 3. Retransmission requests are a sign for congestion... also ECN (explicit congestion notification)
 *Ordering - loads the data to the application by the order it was sent
 *High overhead - minimum 20 bytes
 *MTU path discover - what is the maximum transmission unit path
 *Only unicast
+
+TCP header:
+    Source TCP port number (2 bytes)
+    Destination TCP port number (2 bytes)
+    Sequence number (4 bytes)
+    Acknowledgment number (4 bytes)
+    TCP data offset (4 bits)
+    Reserved data (3 bits)
+    Control flags (up to 9 bits)
+    Window size (2 bytes)
+    TCP checksum (2 bytes)
+    Urgent pointer (2 bytes)
+    TCP optional data (0-40 bytes)
 
 **********************UDP
 *Connection-less
@@ -58,4 +71,10 @@ Unfortunately, increasing numbers of networks drop ICMP traffic (for example, to
 *No ordering
 *Low overhead - 8 byte
 *No MTU path discover
+
+UDP header:
+    Source port number (2 bytes)
+    Destination port number (2 bytes)
+    Length of data (2 bytes)
+    UDP checksum (2 bytes)
 *Unicast, multicast & broadcast
