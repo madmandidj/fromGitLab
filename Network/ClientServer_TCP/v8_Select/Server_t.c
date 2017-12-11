@@ -28,6 +28,7 @@ struct Server_t
 	AppFunc m_appFunc;
 	int		m_numOfClients;
 	fd_set	m_fdSet;
+	int		m_maxFdVal;
 };
 /*************************
 **************************
@@ -124,9 +125,9 @@ static int InitServer(Server_t* _server, int _port)
 		free(_server);
 		return 0;
 	}
-	
+	_server->m_maxFdVal = _server->m_serverSock;
 	FD_SET(_server->m_serverSock, &_server->m_fdSet);
-	
+	FD_SET(STDIN_FILENO, &_server->m_fdSet);
 /*	if (-1 == (flags = fcntl(_server->m_serverSock, F_GETFL)))*/
 /*	{*/
 /*		close(_server->m_serverSock);*/
@@ -195,7 +196,7 @@ static void NewRun(Server_t* _server)
 	itrListEnd = ListItrEnd(_server->m_clientList);
 	fdSet = _server->m_fdSet;
 	
-	activity = select(MAX_CLIENT_NUM + 1/*Server Socket*/ + 1, &fdSet, NULL, NULL, NULL);
+	activity = select(_server->m_maxFdVal + 1, &fdSet, NULL, NULL, NULL);
 	if (activity == 0)
 	{
 		printf("activity == 0\n");
@@ -209,17 +210,18 @@ static void NewRun(Server_t* _server)
 	else
 	{
 		printf("activity > 0\n");
-		if (FD_ISSET(_server->m_serverSock, &fdSet))
+		if (FD_ISSET(STDIN_FILENO, &fdSet))
 		{
-			CheckNewClients(_server);
+			keepRunning = 0;
+			return;
 		}
 		
 		numOfDone = 0;
 	
-		while(!ListItrEquals(itr, itrListEnd) && numOfDone <= activity)
+		while(!ListItrEquals(itr, itrListEnd) && numOfDone < activity)
 		{
 		/* */
-			printf("here");
+/*			printf("here");*/
 			if (!FD_ISSET(*(int*)ListItrGet(itr), &fdSet))
 			{
 				itr = ListItrNext(itr);
@@ -257,6 +259,11 @@ static void NewRun(Server_t* _server)
 			write(*(int*)ListItrGet(itr), buffer, numOfBytesRead);
 			itr = ListItrNext(itr);
 			++numOfDone;
+		}
+		
+		if (FD_ISSET(_server->m_serverSock, &fdSet))
+		{
+			CheckNewClients(_server);
 		}
 	}
 	return;
@@ -304,6 +311,10 @@ static void CheckNewClients(Server_t* _server)
 			//TODO: handle malloc fail
 		}
 		*clientSock = tempClientSock;
+		if (_server->m_maxFdVal < *clientSock)
+		{
+			_server->m_maxFdVal = *clientSock;
+		}
 		ListPushTail(_server->m_clientList, clientSock);
 		FD_SET(*clientSock, &_server->m_fdSet);
 		++_server->m_numOfClients;
@@ -315,5 +326,5 @@ static void DestroySockets(int* _socket, void* _context)
 {
 	close(*_socket);
 	free(_socket);
-	printf("here\n");
+/*	printf("here\n");*/
 }

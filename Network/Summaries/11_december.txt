@@ -1,0 +1,2 @@
+1. Use uint32 or uint16 to send data on networks (not int, size_t, etc...)
+2. If we want to transmit something thats more than 8 bits, we need to use htons to get it ready for network format
