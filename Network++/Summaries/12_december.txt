@@ -1,0 +1,60 @@
+Make comms more usable with c++ (We're doing TCP and IPv4):
+--------------------------------
+
+--------
+PHASE 1 (select not needed, cna use threads or deal with only 1 client):
+--------
+We will need: 
+Socket (3 types: server(bind listen accept), client(connect), socket allocated by server when client did connect.) 
+(in windows API is similar but socket is not necessarily an int). A typedef is not enough, need a new type.
+htons
+address (need to be able to get by name)
+--------
+PHASE 2
+--------
+Select/epoll (give him a container of sockets and returns the relevant sockets)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

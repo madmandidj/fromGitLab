@@ -1,0 +1,54 @@
+Intro To Linux:
+*************
+Newbie Guide to Linux:
+http://www.linuxnewbieguide.org/
+
+Makefiles:
+http://www.lackof.org/taggart/hacking/make-example/
+http://stackoverflow.com/questions/2463356/make-failure-in-subdirectory-make-not-stopping-build
+http://www.sis.pitt.edu/~mbsclass/tutorial/advanced/makefile/mainmake.htm
+
+Embedded Linux:
+http://sos-linux.svn.sourceforge.net/viewvc/sos-linux/LinuxHebrew/
+
+Data Structures
+*************
+API Design
+http://cacm.acm.org/magazines/2009/5/24646-api-design-matters/fulltext
+
+Libs & Procs
+***********
+Shared Libraries:
+http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html
+
+Network Programming
+*******************
+Man-7:
+man 7 tcp
+man 7 udp
+man 7 ip
+man 7 socket
+
+Network Programming:
+http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html 
+
+Overview/Intro to Linux Security:
+http://www.linuxtopia.org/LinuxSecurity/index.html
+
+
+
+Everything You Ever Wanted To Know About Singletons:
+http://www.devarticles.com/c/a/Cplusplus/C-plus-plus-In-Theory-The-Singleton-Pattern-Part-I/
+http://www.devarticles.com/c/a/Cplusplus/C-plus-plus-In-Theory-The-Singleton-Pattern-Part-2/
+http://www.devarticles.com/c/a/Cplusplus/The-Singleton-Pattern-Revisited/
+http://www.devarticles.com/c/a/Cplusplus/C-plus-in-Theory-Why-the-Double-Check-Lock-Pattern-Isnt-100-ThreadSafe/
+
+
+
+Multi-Threading in C#:
+http://www.albahari.com/threading/part4.aspx#_Reader_Writer_Locks
+http://www.albahari.com/threading/
+
+Linux Kernel Sources: (browse-able)
+http://lxr.linux.no/#linux+v2.6.36/
+
