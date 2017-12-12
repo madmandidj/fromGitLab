@@ -2,6 +2,7 @@
 #define __SOCKET_T_H__
 
 #include "FD_t.h"
+
 namespace netcpp
 {
 class Socket_t
@@ -13,7 +14,6 @@ public:
 	virtual ~Socket_t();
 protected:
 	FD_t 		m_fd;
-	SockAddr_t	m_sockaddr;
 };
 
 
