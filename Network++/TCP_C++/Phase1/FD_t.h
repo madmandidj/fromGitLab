@@ -3,28 +3,20 @@
 namespace netcpp
 {
 //////////////////////////////////////////
-//////// Linux: file descriptor type class
+//////// File descriptor class definition
 //////////////////////////////////////////
 class FD_t
 {
 public:
-	explicit FD_t();
-	FD_t(const FD_t& _fd);
-	FD_t& operator=(const FD_t& _fd);
-	FD_t& operator=(int _rawFD);
-	~FD_t();
+	FD_t& operator=(int _rawFd);
+	bool operator<(int _rawFd) const;
+	bool operator>(int _rawFd) const;
+	bool operator==(int _rawFd) const;
+	int GetRawFD() const;
+
 private:
-	int	m_nativeFd;
+	int	m_rawFd;
 };
-
-
-
-
-
-
-
-
-
 
 
 
