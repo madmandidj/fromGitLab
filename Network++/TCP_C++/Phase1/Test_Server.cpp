@@ -4,7 +4,7 @@ using namespace std;
 
 void* PrintStuffInCPP(void* _context)
 {
-	std::cout << "In PrintStuffInCPP()" << std::endl;
+	std::cout << (char*)_context << std::endl;
 	return 0;
 }
 

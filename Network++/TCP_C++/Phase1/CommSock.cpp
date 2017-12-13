@@ -35,7 +35,8 @@ int CommSock::Receive() const
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNRESET)
 		{
-			throw std::runtime_error("read() returned -1, errno is EAGAIN || EWOULDBLOCK || ECONNRESET");
+//			throw std::runtime_error("read() returned -1, errno is EAGAIN || EWOULDBLOCK || ECONNRESET");
+			return -1;
 		}
 		throw std::runtime_error("read() returned -1, errno is undetermined");
 	}

@@ -14,6 +14,7 @@ public:
 	int Send(void* _data, size_t _length) const;
 	int Receive() const;
 	char* GetBuf() const;
+	friend class Server;
 protected:
 ////    Inherited:
 ////	FD_t 			m_fd;

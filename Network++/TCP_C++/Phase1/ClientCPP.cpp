@@ -1,4 +1,5 @@
 #include "ClientCPP.h"
+#include<iostream>
 #include<string.h>
 namespace netcpp
 {
@@ -29,6 +30,7 @@ void Client::Run()
 	char data[256] = "This is a test\0";
 	Send(data, strlen(data));
 	Receive();
+	std::cout << "Client received: " << m_clientSock.m_buffer << std::endl;
 }
 
 int Client::Send(void* _data, size_t _length) const
@@ -41,7 +43,10 @@ int Client::Receive() const
 	return m_clientSock.Receive();
 }
 
-
+bool Client::IsConnected() const
+{
+	return m_clientSock.m_isConnected;
+}
 
 
 

@@ -11,7 +11,7 @@ public:
 	int Connect(int _port, const char* _ip);
 	int Disconnect();
 	void Run();
-	
+	bool IsConnected() const;
 protected:
 
 private:

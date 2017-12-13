@@ -26,7 +26,14 @@ void Server::Run()
 {
 	while(1)
 	{	
-		CheckNewClients();
+		try
+		{
+			CheckNewClients();
+		}
+		catch(std::exception& _exc)
+		{
+			//TODO: something
+		}
 		CheckCurrentClients();
 	}
 }
@@ -49,7 +56,7 @@ void Server::CheckNewClients()
 	}
 	catch(std::exception& _exc)
 	{
-		std::cout << "CheckNewClients() caught: "<< _exc.what() << std::endl;
+//		std::cout << "CheckNewClients() caught: "<< _exc.what() << std::endl;
 		throw;
 	}
 	
@@ -60,6 +67,7 @@ void Server::CheckCurrentClients()
 {
 	std::list< std::tr1::shared_ptr<Socket_t> >::iterator itCur = m_commSockets.begin();
 	std::list< std::tr1::shared_ptr<Socket_t> >::iterator itEnd = m_commSockets.end();
+	std::list< std::tr1::shared_ptr<Socket_t> >::iterator itTemp;
 	CommSock* commSock;
 	int numOfBytes;
 	while (itCur != itEnd)
@@ -73,10 +81,19 @@ void Server::CheckCurrentClients()
 		{
 			throw;
 		}
+		if(-1 == numOfBytes)
+		{
+			++itCur;
+			continue;
+		}
 		if(0 == numOfBytes)
 		{
+			itTemp = itCur;
+			++itTemp;
 			m_commSockets.erase(itCur);
-			return;
+			itCur = itTemp;
+			itEnd = m_commSockets.end();
+			continue;
 		}
 		char* data = commSock->GetBuf();
 		m_appFunc(data);

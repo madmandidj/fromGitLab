@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include<string.h>
 #include<errno.h>
+#include<stdio.h>
+#include<iostream>
 namespace netcpp
 {
 static const size_t BUFFER_LEN = 256;
@@ -19,6 +21,7 @@ ClientSock::~ClientSock()
 	{
 		close(m_fd.GetRawFD());
 	}
+	std::cout << "~ClientSock()" << std::endl;
 }
 
 ClientSock& ClientSock::operator=(const FD_t& _fd)
@@ -54,6 +57,7 @@ void ClientSock::Disconnect()
 	if (m_isConnected)
 	{
 		close(m_fd.GetRawFD());
+		m_isConnected = false;
 	}
 	else
 	{
@@ -77,6 +81,8 @@ int ClientSock::Send(void* _data, size_t _length) const
 
 int ClientSock::Receive() const
 {
+	static size_t count = 0;
+	
 	if (m_isConnected)
 	{
 		int numOfBytesRead = read(m_fd.GetRawFD(), m_buffer, BUFFER_LEN);
@@ -91,8 +97,11 @@ int ClientSock::Receive() const
 				throw NetCppExc();
 //				throw std::runtime_error("read() returned -1, errno is EAGAIN || EWOULDBLOCK || ECONNRESET");
 			}
+			std::cout << "count is " << count << std::endl;
+			perror("read() returned -1");
 			throw std::runtime_error("read() returned -1, errno is undetermined");
 		}
+		++count;
 		return numOfBytesRead;
 		
 	}

@@ -17,6 +17,7 @@ public:
 	int Send(void* _data, size_t _length) const;
 	int Receive() const;
 	bool isConnected() const;
+	friend class Client;
 protected:
 ////    Inherited:
 ////	FD_t 			m_fd;
