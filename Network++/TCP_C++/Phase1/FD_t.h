@@ -8,6 +8,9 @@ namespace netcpp
 class FD_t
 {
 public:
+/*	FD_t& operator=(const FD_t& _fd);*/
+/*	FD_t();*/
+/*	FD_t(int _rawFd);*/
 	FD_t& operator=(int _rawFd);
 	bool operator<(int _rawFd) const;
 	bool operator>(int _rawFd) const;
@@ -17,8 +20,6 @@ public:
 private:
 	int	m_rawFd;
 };
-
-
 
 
 }//namespace netcpp

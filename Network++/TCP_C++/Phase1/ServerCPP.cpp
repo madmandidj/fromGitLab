@@ -1,15 +1,34 @@
 #include "ServerCPP.h"
 #include "ServerSock.h"
-//#include "FD_t.h"
+#include "CommSock.h"
+#include "FD_t.h"
+#include<iostream>
 namespace netcpp
 {
 static const size_t BACKLOG = 500;
+
 /////////////////////////////////////
 ////Public Function Implementations
 /////////////////////////////////////
-Server::Server(AppFunc _func, int _port):m_servSock(new ServerSock),m_appFunc(_func)
+Server::Server(AppFunc _func, int _port):m_serverSock(new ServerSock(_port, BACKLOG)), m_appFunc(_func)
 {
-	InitializeServer(_port);
+//	std::tr1::shared_ptr<Socket_t> m_server(new ServerSock(_port, BACKLOG));
+//	m_commSockets.insert(m_commSockets.begin(), serverSock);
+//	InitializeServer(_port);
+}
+
+Server::~Server()
+{
+	//Empty
+}
+
+void Server::Run()
+{
+	while(1)
+	{	
+		CheckNewClients();
+		CheckCurrentClients();
+	}
 }
 
 
@@ -17,11 +36,54 @@ Server::Server(AppFunc _func, int _port):m_servSock(new ServerSock),m_appFunc(_f
 /////////////////////////////////////
 ////Private Function Implementations
 /////////////////////////////////////
-void Server::InitializeServer(int _port)
+//void Server::InitializeServer(int _port)
+//{
+////	static_cast<ServerSock*>(m_servSock)->Initialize(_port, BACKLOG);
+//}
+void Server::CheckNewClients()
 {
-	static_cast<ServerSock*>(m_servSock)->Initialize(_port, BACKLOG);
+	std::tr1::shared_ptr<Socket_t> commSock;
+	try
+	{
+		commSock = m_serverSock->AcceptClient();
+	}
+	catch(std::exception& _exc)
+	{
+		std::cout << "CheckNewClients() caught: "<< _exc.what() << std::endl;
+		throw;
+	}
+	
+	m_commSockets.push_front(commSock);
 }
 
+void Server::CheckCurrentClients()
+{
+	std::list< std::tr1::shared_ptr<Socket_t> >::iterator itCur = m_commSockets.begin();
+	std::list< std::tr1::shared_ptr<Socket_t> >::iterator itEnd = m_commSockets.end();
+	CommSock* commSock;
+	int numOfBytes;
+	while (itCur != itEnd)
+	{
+		commSock = dynamic_cast<CommSock*>((*itCur).get());
+		try
+		{
+			numOfBytes = commSock->Receive();
+		}
+		catch(std::exception& _exc)
+		{
+			throw;
+		}
+		if(0 == numOfBytes)
+		{
+			m_commSockets.erase(itCur);
+			return;
+		}
+		char* data = commSock->GetBuf();
+		m_appFunc(data);
+		commSock->Send(data, numOfBytes);
+		++itCur;
+	}
+}
 
 
 }//namespace netcpp

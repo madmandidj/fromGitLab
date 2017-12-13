@@ -1,17 +1,43 @@
 #include "ServerSock.h"
-//#include "FD_t.h"
+#include "CommSock.h"
+#include "FD_t.h"
+#include<stdexcept>
+#include<iostream>
+#include <errno.h>
 
 namespace netcpp
 {
-ServerSock::ServerSock()
+ServerSock::ServerSock(int _port, size_t _backLog)
 {
-	//TODO:
+	Initialize(_port, _backLog);
 }
 
 ServerSock::~ServerSock()
 {
 	//TODO:
 }
+
+std::tr1::shared_ptr<Socket_t> ServerSock::AcceptClient()
+{
+	socklen_t addr_len = sizeof(m_sin.GetRawSin());
+	FD_t fd;
+	fd = accept(m_fd.GetRawFD(), (struct sockaddr*) &m_sin.GetRawSin(), &addr_len);
+	if (fd == -1)
+	{
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+		{
+			throw std::runtime_error("accept() failed with EAGAIN or EWOULDBLOCK");
+		}
+		else
+		{
+			throw std::runtime_error("accept() failed untracked error");
+		}
+	}
+	std::tr1::shared_ptr<Socket_t> commSock(new CommSock(fd));
+	return commSock;
+}
+
+
 
 void ServerSock::Initialize(int _port, size_t _backLog)
 {
@@ -44,3 +70,5 @@ void ServerSock::Initialize(int _port, size_t _backLog)
 
 
 }//namespace netcpp
+
+

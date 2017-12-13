@@ -1,10 +1,7 @@
 #ifndef __SERVERCPP_H__
 #define __SERVERCPP_H__
 #include "Socket_t.h"
-/*#include "ServerSock.h"*/
-/*#include "SockAddrIn_t.h"*/
-/*#include "ServerSock.h"*/
-/*#include "CommSock.h"*/
+#include "ServerSock.h"
 #include <tr1/memory>
 #include <list>
 namespace netcpp
@@ -19,14 +16,13 @@ public:
     ~Server();
     void Run();
 private:
-	void InitializeServer(int _port);
     Server(const Server&);
     Server& operator=(const Server&);
 private:
-/*    std::tr1::shared_ptr<Socket_t> m_servSock;*/
-/*    std::list<std::tr1::shared_ptr<Socket_t> > m_commSockets;*/
-	Socket_t* m_servSock;
-    std::list<Socket_t> m_commSockets;
+	void CheckNewClients();
+	void CheckCurrentClients();
+	std::tr1::shared_ptr<ServerSock> m_serverSock;
+    std::list<std::tr1::shared_ptr<Socket_t> > m_commSockets;
     AppFunc m_appFunc;
 };
 
