@@ -3,7 +3,13 @@
 
 #include<sys/select.h>	//select()
 #include<set>			//std::set
-#include<tr1/memory>	//std::tr1::shared_ptr
+/*#include<tr1/memory>	//std::tr1::shared_ptr*/
+
+#if (defined (__linux__))
+#	include<tr1/memory>	//std::tr1::shared_ptr
+#elif (defined (__APPLE__))
+#	include<memory>	//std::tr1::shared_ptr
+#endif
 
 namespace netcpp
 {
