@@ -1,26 +1,27 @@
 #include "ClientSock.h"
 #include "../NetExceptions/NetExceptions.h"
-#include<stdexcept>
+#include <stdexcept>
 #include <unistd.h>
-#include<string.h>
-#include<errno.h>
-#include<stdio.h>
-#include<iostream>
+#include <string.h>
+#include <errno.h>
+#include <stdio.h>
+#include <iostream>
+
 namespace netcpp
 {
 static const size_t BUFFER_LEN = 256;
-
-ClientSock::ClientSock():m_isConnected(false)
+ClientSock::ClientSock()
 {
 	//Empty
 }
 
 ClientSock::~ClientSock()
 {
-	if (m_isConnected)
-	{
-		close(m_fd.GetRawFD());
-	}
+//	if (m_isConnected)
+//	{
+		Disconnect();
+//		close(m_fd.m_rawFd);
+//	}
 	std::cout << "~ClientSock()" << std::endl;
 }
 
@@ -34,20 +35,19 @@ void ClientSock::Connect(int _port, const char* _ip)
 {
 	if (m_isConnected)
 	{
-		throw std::runtime_error("Client is already connected");
+		throw SocketIsConnectedExc(__FILE__, __LINE__, "in Connect() socket is connected");
 	}
 	m_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_fd < 0)
 	{
-		throw std::runtime_error("Client socket() failed");
+		throw SocketFailedExc(__FILE__, __LINE__, "in Connect(), socket() failed");
 	}
-	
-	memset(&m_sin.GetRawSin(), 0, sizeof(m_sin.GetRawSin())); //TODO: change this to reset()
+	m_sin.Reset();
 	m_sin.SetSockAddrIn(AF_INET, _port, _ip);
 	
-	if (connect(m_fd.GetRawFD(), (struct sockaddr*) &m_sin.GetRawSin(), sizeof(m_sin.GetRawSin())) < 0)
+	if (connect(m_fd.m_rawFd, (struct sockaddr*) &m_sin.m_rawSin, sizeof(m_sin.m_rawSin)) < 0)
 	{
-		throw std::runtime_error("Client connect() failed");
+		throw ConnectFailedExc(__FILE__, __LINE__, "in Connect(), connect() failed");
 	}
 	m_isConnected = true;
 }
@@ -56,27 +56,35 @@ void ClientSock::Disconnect()
 {
 	if (m_isConnected)
 	{
-		close(m_fd.GetRawFD());
+		close(m_fd.m_rawFd);
 		m_isConnected = false;
 	}
 	else
 	{
-		throw std::runtime_error("ClientSock::Disconnect() Client is not connected");
+		throw SocketIsDisconnectedExc(__FILE__, __LINE__, "in Disconnect() socket is disconnected");
 	}
 }
 
 int ClientSock::Send(void* _data, size_t _length) const
 {
-	if (m_isConnected)
+	int numOfBytesSent;
+	
+	if (!m_isConnected)
 	{
-		return send(m_fd.GetRawFD(), _data, _length, MSG_NOSIGNAL);
-//		printf("Num of bytes wrote = %d\n",numOfBytes);
-//		printf("Client sent %lu and %s\n", (long unsigned int)ClientRunNum, data);
+		throw SocketIsDisconnectedExc(__FILE__, __LINE__, "in Send() socket is disconnected");
 	}
 	else
 	{
-		throw std::runtime_error("ClientSock::Send() Client is not connected");
+		numOfBytesSent = send(m_fd.m_rawFd, _data, _length, MSG_NOSIGNAL);
+		if (-1 == numOfBytesSent)
+		{
+			if (errno != EPIPE)
+			{
+				throw UnspecifiedErrnoExc(__FILE__, __LINE__, "send() returned -1");
+			}
+		}
 	}
+	return numOfBytesSent;
 }
 
 int ClientSock::Receive() const
@@ -85,22 +93,18 @@ int ClientSock::Receive() const
 	
 	if (m_isConnected)
 	{
-		int numOfBytesRead = read(m_fd.GetRawFD(), m_buffer, BUFFER_LEN);
+		int numOfBytesRead = read(m_fd.m_rawFd, m_buffer, BUFFER_LEN);
 		if(0 == numOfBytesRead)
 		{
-//			throw std::runtime_error("read() returned 0, Server closed socket");
-			throw ReceivedZeroBytes_exc();
+			throw SocketCloseByPeerExc(__FILE__, __LINE__, "read() returned 0 in Receive()");
 		}
 		if(-1 == numOfBytesRead)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNRESET)
 			{
-				throw EAGAIN_exc();
-//				throw std::runtime_error("read() returned -1, errno is EAGAIN || EWOULDBLOCK || ECONNRESET");
+				throw EagainExc(__FILE__, __LINE__, "read() EAGAIN in Receive()");
 			}
-			std::cout << "count is " << count << std::endl;
-			perror("read() returned -1");
-			throw std::runtime_error("read() returned -1, errno is undetermined");
+			throw UnspecifiedErrnoExc(__FILE__, __LINE__, "read() EAGAIN in Receive()");
 		}
 		++count;
 		return numOfBytesRead;
@@ -111,8 +115,5 @@ int ClientSock::Receive() const
 		throw std::runtime_error("ClientSock::Receive() Client is not connected");
 	}
 }
-
 }//namespace netcpp
-
-
 

@@ -1,7 +1,8 @@
 #include "ClientCPP.h"
 #include "../NetExceptions/NetExceptions.h"
-#include<iostream>
-#include<string.h>
+#include <iostream>
+#include <string.h>
+#include <unistd.h>
 namespace netcpp
 {
 Client::Client()
@@ -29,32 +30,73 @@ int Client::Disconnect()
 void Client::Run()
 {
 	char data[256] = "This is a test\0";
-	Send(data, strlen(data));
+	try
+	{
+		Send(data, strlen(data));
+	}
+	catch(NetCppExc& _exc)
+	{
+		std::cout << "Client caught send exception" << std::endl;
+		std::cout << _exc.what() << std::endl;
+	}
+	catch(std::exception& _exc)
+	{
+		std::cout << "Client caught std::exception" << std::endl;
+		std::cout << _exc.what() << std::endl;
+	}
 	try
 	{
 		Receive();
 	}
-	catch(netcpp::EAGAIN_exc& _exc)
+	catch(EagainExc& _exc)
 	{
-//		std::cout << _exc.what() << std::endl;
 		return;
 	}
-	catch(netcpp::ReceivedZeroBytes_exc _exc)
+	catch(SocketCloseByPeerExc& _exc)
 	{
-//		std::cout << _exc.what() << std::endl;
+		m_clientSock.Disconnect();
+		std::cout << "Socket closed by peer, Client disconnected " << std::endl;
 		return;
+	}
+	catch(NetCppExc& _exc)
+	{
+		std::cout << "Client caught read exception" << std::endl;
+		std::cout << _exc.what() << std::endl;
+	}
+	catch(std::exception& _exc)
+	{
+		std::cout << "Client caught std::exception" << std::endl;
+		std::cout << _exc.what() << std::endl;
 	}
 	std::cout << "Client received: " << m_clientSock.m_buffer << std::endl;
 }
 
 int Client::Send(void* _data, size_t _length) const
 {
-	return m_clientSock.Send(_data, _length);
+	int result;
+	try
+	{
+		result = m_clientSock.Send(_data, _length);
+	}
+	catch(NetCppExc& _exc)
+	{
+		std::cout << _exc.what() << std::endl;
+	}
+	return result;
 }
 
 int Client::Receive() const
 {
-	return m_clientSock.Receive();
+	int result;
+	try
+	{
+		result = m_clientSock.Receive();
+	}
+	catch(NetCppExc& _exc)
+	{
+		std::cout << _exc.what() << std::endl;
+	}
+	return result;
 }
 
 bool Client::IsConnected() const

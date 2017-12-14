@@ -11,8 +11,8 @@ FD_SET_PATH = ./FDSet_t/
 FD_T_PATH = ./FD_t/
 NET_EXC_PATH = ./NetExceptions/
 ################################################
-AllObjects = FD_t.o FDSet_t.o SockAddrIn_t.o CommSock.o ServerSock.o ServerCPP.o Test_Server.o ClientSock.o ClientCPP.o Test_Client.o
-ServerObjects = FD_t.o FDSet_t.o SockAddrIn_t.o CommSock.o ServerSock.o ServerCPP.o Test_Server.o
+AllObjects = FD_t.o SockAddrIn_t.o FDSet_t.o CommSock.o ServerSock.o ServerCPP.o Test_Server.o ClientSock.o ClientCPP.o Test_Client.o
+ServerObjects = FD_t.o SockAddrIn_t.o FDSet_t.o CommSock.o ServerSock.o ServerCPP.o Test_Server.o
 ClientObjects = FD_t.o SockAddrIn_t.o ClientSock.o ClientCPP.o Test_Client.o
 ################################################
 all: ServerTest.out ClientTest.out
@@ -60,24 +60,4 @@ ClientSock.o: $(CLIENT_SOCK_PATH)ClientSock.cpp $(CLIENT_SOCK_PATH)ClientSock.h 
 ################################################
 clean:
 	rm ClientTest.out ServerTest.out $(AllObjects)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

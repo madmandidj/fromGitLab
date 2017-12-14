@@ -37,10 +37,5 @@ bool FD_t::operator==(int _rawFd) const
 {
 	return m_rawFd == _rawFd;
 }
-
-int FD_t::GetRawFD() const
-{
-	return m_rawFd;
-}
-
 }//namespace netcpp
+

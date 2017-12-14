@@ -6,27 +6,12 @@
 #include<csignal>
 using namespace std;
 
-//int main()
-//{
-//	netcpp::Client client;
-//	client.Connect(8888, "127.0.0.1");
-//	client.Run();
-//	sleep(5);
-//	return 0;
-
-
 static bool keepRunning = true;
 
 void intHandler(int dummy) 
 {
     keepRunning = 0;
 }
-	
-	
-
-	
-	
-	
 	
 int main(int _argc, char* _argv[])
 {	
@@ -45,7 +30,7 @@ int main(int _argc, char* _argv[])
 	srand(time(NULL));
 	
 	/*******
-	Check input arguments (IP) and Init
+	Check input arguments
 	*******/
 	if(1 == _argc)
 	{
@@ -103,7 +88,14 @@ int main(int _argc, char* _argv[])
 			{
 				randClient = rand() % CLIENT_NUM;
 			}
-			smartClientArr[randClient].Run();
+			try
+			{
+				smartClientArr[randClient].Run();
+			}
+			catch(std::exception& _exc)
+			{
+				std::cout << _exc.what() << std::endl;
+			}
 			std::cout << "Client " << randClient << "ran" << endl;
 		}
 		/*******
@@ -122,40 +114,31 @@ int main(int _argc, char* _argv[])
 			std::cout << "Client " << randClient << "connected" << endl;
 		}
 	}
-//	/*******
-//	Destroy all Clients after receiving SIGINT
-//	*******/
-//	for (index = 0; index < CLIENT_NUM; ++index)
-//	{
-//		ClientDestroy(smartClientArr[index].m_client);
-//		printf("Destroyed Client %lu\n", (long unsigned int)index);
-//	}
 
 	return 0;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

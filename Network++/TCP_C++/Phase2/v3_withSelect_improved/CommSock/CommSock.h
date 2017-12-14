@@ -2,7 +2,6 @@
 #define __COMMSOCK_H__
 
 #include "../Socket_t/Socket_t.h"
-#include "../FD_t/FD_t.h"
 
 namespace netcpp
 {
@@ -19,11 +18,12 @@ protected:
 ////    Inherited:
 ////	FD_t 			m_fd;
 ////	SockAddrIn_t	m_sin;
+////	bool			m_isConnected;
 private:
 	CommSock(const CommSock&);
 	CommSock& operator=(const CommSock&);
 	mutable char m_buffer[256];
 };
-
 }//namespace netcpp
 #endif//#ifndef __COMMSOCK_H__
+

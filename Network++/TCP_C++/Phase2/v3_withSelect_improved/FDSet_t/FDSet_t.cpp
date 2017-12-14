@@ -1,5 +1,7 @@
 #include "FDSet_t.h"
+#include "../NetExceptions/NetExceptions.h"
 #include<stdexcept>
+
 namespace netcpp
 {
 size_t FDSet_t::m_maxNumOfFd = 1000;
@@ -47,18 +49,18 @@ void FDSet_t::Add(const std::tr1::shared_ptr<Socket_t>& _socket)
 	m_fdVals.insert((_socket.get())->m_fd);
 }
 
-void FDSet_t::Remove(const FD_t& _fd)
-{
-	if(m_fdVals.size() == 0)
-	{
-		throw std::runtime_error("FDSet_t Remove() No fd in set");
-	}
-	FD_CLR(_fd.m_rawFd, &m_fdSet);
-	if (_fd.m_rawFd == m_maxFdVal)
-	{
-		SetNewMaxFdVal(_fd);
-	}
-}
+//void FDSet_t::Remove(const FD_t& _fd)
+//{
+//	if(m_fdVals.size() == 0)
+//	{
+//		throw std::runtime_error("FDSet_t Remove() No fd in set");
+//	}
+//	FD_CLR(_fd.m_rawFd, &m_fdSet);
+//	if (_fd.m_rawFd == m_maxFdVal)
+//	{
+//		SetNewMaxFdVal(_fd);
+//	}
+//}
 
 void FDSet_t::Remove(const std::tr1::shared_ptr<Socket_t>& _socket)
 {
@@ -73,10 +75,10 @@ void FDSet_t::Remove(const std::tr1::shared_ptr<Socket_t>& _socket)
 	}
 }
 
-bool FDSet_t::IsFdActive(const FD_t& _fd) const
-{
-	return FD_ISSET(_fd.m_rawFd, &m_workingFdSet);
-}
+//bool FDSet_t::IsFdActive(const FD_t& _fd) const
+//{
+//	return FD_ISSET(_fd.m_rawFd, &m_workingFdSet);
+//}
 
 bool FDSet_t::IsFdActive(const std::tr1::shared_ptr<Socket_t>& _socket) const
 {
@@ -89,7 +91,8 @@ int FDSet_t::GetActivity() const
 	int activity = select(m_maxFdVal + 1, &m_workingFdSet, NULL, NULL, NULL);
 	if (activity == -1)
 	{
-		throw std::runtime_error("FDSet_t GetActivity() select returned -1");
+//		throw std::runtime_error("FDSet_t GetActivity() select returned -1");
+		throw SelectFailedExc(__FILE__, __LINE__, "select() returned -1");
 	}
 	return activity;
 } 
@@ -101,15 +104,3 @@ void FDSet_t::SetNewMaxFdVal(const FD_t& _fd)
 
 }//namespace netcpp
 
-
-
-
-
-
-
-
-//int main()
-//{
-//	netcpp::FDSet_t fdSet;
-//	return 0;
-//}

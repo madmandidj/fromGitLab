@@ -1,5 +1,6 @@
 #include "ServerCPP.h"
-//#include "ServerSock.h"
+#include "../Socket_t/Socket_t.h"
+#include "../ServerSock/ServerSock.h"
 #include "../CommSock/CommSock.h"
 #include "../FD_t/FD_t.h"
 #include<unistd.h> //STDIN_FILENO
@@ -13,11 +14,8 @@ static const size_t BACKLOG = 1001;
 /////////////////////////////////////
 Server::Server(AppFunc _func, int _port):m_serverSock(new ServerSock(_port, BACKLOG)), m_appFunc(_func)
 {
-//	m_fdSet.Add(const_cast<const ServerSock&>(m_serverSock.get()));
 	m_fdSet.Add(m_serverSock);
 	m_fdSet.Add(STDIN_FILENO);
-//	FD_t fd = STDIN_FILENO;
-	
 }
 
 Server::~Server()
@@ -28,7 +26,6 @@ Server::~Server()
 void Server::Run()
 {
 	int activity;
-	
 	while(1)
 	{	try
 		{
@@ -82,7 +79,6 @@ void Server::CheckNewClients()
 	}
 	catch(std::exception _exc)
 	{
-//		std::cout << _exc.what() << std::endl;
 		return;
 	}
 	m_commSockets.push_front(commSock);
@@ -98,7 +94,7 @@ void Server::CheckCurrentClients()
 	while (itCur != itEnd)
 	{
 		commSock = dynamic_cast<CommSock*>((*itCur).get());
-		if(0 == commSock || !m_fdSet.IsFdActive(*itCur)) //TODO: figure out why IsActive for sockets that shouldnt be
+		if(0 == commSock || !m_fdSet.IsFdActive(*itCur))
 		{
 			++itCur;
 			continue;
@@ -132,6 +128,5 @@ void Server::CheckCurrentClients()
 		++itCur;
 	}
 }
-
-
 }//namespace netcpp
+
