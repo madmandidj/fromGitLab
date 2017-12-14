@@ -37,7 +37,7 @@ void FDSet_t::Add(const FD_t& _fd)
 	m_fdVals.insert(_fd);
 }
 
-void FDSet_t::Add(const std::tr1::shared_ptr<Socket_t>& _socket)
+void FDSet_t::Add(const SharedPtr_t& _socket)
 {
 	if(m_fdVals.size() == m_maxNumOfFd)
 	{
@@ -51,7 +51,7 @@ void FDSet_t::Add(const std::tr1::shared_ptr<Socket_t>& _socket)
 	m_fdVals.insert((_socket.get())->m_fd);
 }
 
-void FDSet_t::Remove(const std::tr1::shared_ptr<Socket_t>& _socket)
+void FDSet_t::Remove(const SharedPtr_t& _socket)
 {
 	if(m_fdVals.size() == 0)
 	{
@@ -64,7 +64,7 @@ void FDSet_t::Remove(const std::tr1::shared_ptr<Socket_t>& _socket)
 	}
 }
 
-bool FDSet_t::IsFdActive(const std::tr1::shared_ptr<Socket_t>& _socket) const
+bool FDSet_t::IsFdActive(const SharedPtr_t& _socket) const
 {
 	return FD_ISSET(_socket.get()->m_fd.m_rawFd, &m_workingFdSet);
 }

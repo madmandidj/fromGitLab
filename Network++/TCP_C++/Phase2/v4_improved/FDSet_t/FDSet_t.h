@@ -7,15 +7,22 @@
 
 #if (defined (__linux__))
 #	include<tr1/memory>	//std::tr1::shared_ptr
+#	define IS_LINUX 1
 #elif (defined (__APPLE__))
 #	include<memory>	//std::tr1::shared_ptr
-#	define std::tr1:: std::
+#	define IS_APPLE 1
 #endif
 
 namespace netcpp
 {
 class FD_t;
 class Socket_t;
+#ifdef IS_LINUX
+typedef std::tr1::shared_ptr<Socket_t> SharedPtr_t;
+#endif
+#ifdef IS_APPLE
+typedef std::shared_ptr<Socket_t> SharedPtr_t;
+#endif
 /////////////////////////////////////////////
 //////// File descriptor set class definition
 /////////////////////////////////////////////
@@ -27,9 +34,9 @@ public:
 	~FDSet_t();
 	void Clear();
 	void Add(const FD_t& _fd);
-	void Add(const std::tr1::shared_ptr<Socket_t>& _socket);
-	void Remove(const std::tr1::shared_ptr<Socket_t>& _socket);
-	bool IsFdActive(const std::tr1::shared_ptr<Socket_t>& _socket) const;
+	void Add(const SharedPtr_t& _socket);
+	void Remove(const SharedPtr_t& _socket);
+	bool IsFdActive(const SharedPtr_t& _socket) const;
 	int GetActivity() const;
 private:
 	void SetNewMaxFdVal(const FD_t& _fd);
