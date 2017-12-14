@@ -9,6 +9,7 @@
 #	include<tr1/memory>	//std::tr1::shared_ptr
 #elif (defined (__APPLE__))
 #	include<memory>	//std::tr1::shared_ptr
+#	define std::tr1:: std::
 #endif
 
 namespace netcpp
