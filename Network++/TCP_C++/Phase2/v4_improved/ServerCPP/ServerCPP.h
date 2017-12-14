@@ -16,10 +16,12 @@ namespace netcpp
 class Socket_t;
 class ServerSock;
 #ifdef IS_LINUX
-	typedef SharedPtr_t SharedPtr_t;
+	typedef std::tr1::shared_ptr<Socket_t> CommSharedPtr_t;
+	typedef std::tr1::shared_ptr<ServerSock> ServSharedPtr_t;
 #endif
 #ifdef IS_APPLE
-	typedef std::shared_ptr<Socket_t> SharedPtr_t;
+	typedef std::shared_ptr<Socket_t> CommSharedPtr_t;
+	typedef std::shared_ptr<ServerSock> ServSharedPtr_t;
 #endif
 typedef void* (*AppFunc)(void*);
 
@@ -32,13 +34,13 @@ public:
 private:
 	void CheckNewClients();
 	void CheckCurrentClients();
-	void RemoveClient(std::list< SharedPtr_t >::iterator& _itCur,
-						std::list< SharedPtr_t >::iterator& _itEnd);
+	void RemoveClient(std::list< CommSharedPtr_t >::iterator& _itCur,
+						std::list< CommSharedPtr_t >::iterator& _itEnd);
     Server(const Server&);
     Server& operator=(const Server&);
 private:
-	std::tr1::shared_ptr<ServerSock> m_serverSock;
-    std::list<SharedPtr_t > m_commSockets;
+	ServSharedPtr_t m_serverSock;
+    std::list<CommSharedPtr_t > m_commSockets;
     FDSet_t m_fdSet;
     AppFunc m_appFunc;
 };
