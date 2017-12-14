@@ -12,14 +12,14 @@ FD_T_PATH = ./FD_t/
 NET_EXC_PATH = ./NetExceptions/
 ################################################
 CommonObjects = FD_t.o SockAddrIn_t.o Socket_t.o
-ServerObjects = $(CommonObjects) FDSet_t.o CommSock.o ServerSock.o ServerCPP.o Test_Server.o
-ClientObjects = $(CommonObjects) ClientSock.o ClientCPP.o Test_Client.o
+ServerObjects = FDSet_t.o CommSock.o ServerSock.o ServerCPP.o Test_Server.o
+ClientObjects = ClientSock.o ClientCPP.o Test_Client.o
 AllObjects = $(CommonObjects) $(ServerObjects) $(ClientObjects)
 ################################################
 all: ServerTest.out ClientTest.out
 ################################################
-ServerTest.out: $(ServerObjects)
-	g++ $(FLAGS) -o ServerTest.out $(ServerObjects)
+ServerTest.out: $(CommonObjects) $(ServerObjects)
+	g++ $(FLAGS) -o ServerTest.out $(ServerObjects) $(CommonObjects)
 
 Test_Server.o: Test_Server.cpp $(SERVER_PATH)ServerCPP.h
 	g++ $(FLAGS) -o Test_Server.o -c Test_Server.cpp
@@ -52,8 +52,8 @@ FDSet_t.o: $(FD_SET_PATH)FDSet_t.cpp $(FD_SET_PATH)FDSet_t.h $(FD_T_PATH)FD_t.h 
 FD_t.o: $(FD_T_PATH)FD_t.cpp $(FD_T_PATH)FD_t.h
 	g++ $(FLAGS) -o FD_t.o -c $(FD_T_PATH)FD_t.cpp
 ################################################
-ClientTest.out: $(ClientObjects)
-	g++ $(FLAGS) -o ClientTest.out $(ClientObjects)
+ClientTest.out: $(CommonObjects) $(ClientObjects)
+	g++ $(FLAGS) -o ClientTest.out $(ClientObjects) $(CommonObjects)
 
 Test_Client.o: Test_Client.cpp $(CLIENT_PATH)ClientCPP.h
 	g++ $(FLAGS) -o Test_Client.o -c Test_Client.cpp
