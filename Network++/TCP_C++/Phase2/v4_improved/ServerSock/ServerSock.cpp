@@ -22,7 +22,7 @@ ServerSock::~ServerSock()
 	}
 }
 
-std::tr1::shared_ptr<Socket_t> ServerSock::AcceptClient()
+SharedPtr_t ServerSock::AcceptClient()
 {
 	socklen_t addr_len = sizeof(m_sin.m_rawSin);
 	FD_t fd;
@@ -38,7 +38,7 @@ std::tr1::shared_ptr<Socket_t> ServerSock::AcceptClient()
 			throw std::runtime_error("accept() failed untracked error");
 		}
 	}
-	std::tr1::shared_ptr<Socket_t> commSock(new CommSock(fd));
+	SharedPtr_t commSock(new CommSock(fd));
 	return commSock;
 }
 
