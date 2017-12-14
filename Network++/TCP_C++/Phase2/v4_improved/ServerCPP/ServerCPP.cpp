@@ -65,7 +65,7 @@ void Server::Run()
 /////////////////////////////////////
 void Server::CheckNewClients()
 {
-	std::tr1::shared_ptr<Socket_t> commSock;
+	SharedPtr_t commSock;
 	try
 	{
 		commSock = m_serverSock->AcceptClient();
@@ -87,8 +87,8 @@ void Server::CheckNewClients()
 
 void Server::CheckCurrentClients()
 {
-	std::list< std::tr1::shared_ptr<Socket_t> >::iterator itCur = m_commSockets.begin();
-	std::list< std::tr1::shared_ptr<Socket_t> >::iterator itEnd = m_commSockets.end();
+	std::list< SharedPtr_t >::iterator itCur = m_commSockets.begin();
+	std::list< SharedPtr_t >::iterator itEnd = m_commSockets.end();
 	CommSock* commSock;
 	int numOfBytes;
 	while (itCur != itEnd)
@@ -125,10 +125,10 @@ void Server::CheckCurrentClients()
 	}
 }
 
-void Server::RemoveClient(std::list< std::tr1::shared_ptr<Socket_t> >::iterator& _itCur,
-							std::list< std::tr1::shared_ptr<Socket_t> >::iterator& _itEnd)
+void Server::RemoveClient(std::list< SharedPtr_t >::iterator& _itCur,
+							std::list< SharedPtr_t >::iterator& _itEnd)
 {
-	std::list< std::tr1::shared_ptr<Socket_t> >::iterator itTemp;
+	std::list< SharedPtr_t >::iterator itTemp;
 	itTemp = _itCur;
 	++itTemp;
 	m_fdSet.Remove(*_itCur);

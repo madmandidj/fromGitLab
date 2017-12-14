@@ -2,8 +2,6 @@
 #define __SERVERSOCK_H__
 
 #include "../Socket_t/Socket_t.h" //includes FD_t.h and SockAddrIn_t.h
-/*#include <tr1/memory>*/
-
 #if (defined (__linux__))
 #	include<tr1/memory>	//std::tr1::shared_ptr
 #	define IS_LINUX 1
@@ -15,10 +13,10 @@
 namespace netcpp
 {
 #ifdef IS_LINUX
-typedef std::tr1::shared_ptr<Socket_t> SharedPtr_t;
+	typedef std::tr1::shared_ptr<Socket_t> SharedPtr_t;
 #endif
 #ifdef IS_APPLE
-typedef std::shared_ptr<Socket_t> SharedPtr_t;
+	typedef std::shared_ptr<Socket_t> SharedPtr_t;
 #endif
 class ServerSock : public Socket_t
 {
