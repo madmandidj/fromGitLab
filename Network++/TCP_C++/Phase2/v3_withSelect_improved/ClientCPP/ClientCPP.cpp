@@ -34,7 +34,7 @@ void Client::Run()
 	{
 		Send(data, strlen(data));
 	}
-	catch(NetCppExc& _exc)
+	catch(NetException& _exc)
 	{
 		std::cout << "Client caught send exception" << std::endl;
 		std::cout << _exc.what() << std::endl;
@@ -58,7 +58,7 @@ void Client::Run()
 		std::cout << "Socket closed by peer, Client disconnected " << std::endl;
 		return;
 	}
-	catch(NetCppExc& _exc)
+	catch(NetException& _exc)
 	{
 		std::cout << "Client caught read exception" << std::endl;
 		std::cout << _exc.what() << std::endl;
@@ -78,7 +78,7 @@ int Client::Send(void* _data, size_t _length) const
 	{
 		result = m_clientSock.Send(_data, _length);
 	}
-	catch(NetCppExc& _exc)
+	catch(NetException& _exc)
 	{
 		std::cout << _exc.what() << std::endl;
 	}
@@ -92,7 +92,7 @@ int Client::Receive() const
 	{
 		result = m_clientSock.Receive();
 	}
-	catch(NetCppExc& _exc)
+	catch(NetException& _exc)
 	{
 		std::cout << _exc.what() << std::endl;
 	}

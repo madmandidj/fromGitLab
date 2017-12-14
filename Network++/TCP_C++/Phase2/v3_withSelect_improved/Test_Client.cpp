@@ -15,7 +15,7 @@ void intHandler(int dummy)
 	
 int main(int _argc, char* _argv[])
 {	
-	const int CLIENT_NUM = 1000;
+	const int CLIENT_NUM = 999;
 	int randClient;
 	size_t index;
 	netcpp::Client smartClientArr[CLIENT_NUM];

@@ -105,6 +105,7 @@ void Server::CheckCurrentClients()
 		}
 		catch(std::exception& _exc)
 		{
+			std::cout << _exc.what() << std::endl;
 			throw;
 		}
 		if(-1 == numOfBytes)

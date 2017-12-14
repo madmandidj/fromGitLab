@@ -91,8 +91,8 @@ int FDSet_t::GetActivity() const
 	int activity = select(m_maxFdVal + 1, &m_workingFdSet, NULL, NULL, NULL);
 	if (activity == -1)
 	{
-//		throw std::runtime_error("FDSet_t GetActivity() select returned -1");
 		throw SelectFailedExc(__FILE__, __LINE__, "select() returned -1");
+//		throw SelectFailedExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "select() returned -1"));
 	}
 	return activity;
 } 

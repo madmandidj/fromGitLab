@@ -36,11 +36,13 @@ void ClientSock::Connect(int _port, const char* _ip)
 	if (m_isConnected)
 	{
 		throw SocketIsConnectedExc(__FILE__, __LINE__, "in Connect() socket is connected");
+//		throw SocketIsConnectedExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "in Connect() socket is connected"));
 	}
 	m_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_fd < 0)
 	{
 		throw SocketFailedExc(__FILE__, __LINE__, "in Connect(), socket() failed");
+//		throw SocketFailedExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "in Connect(), socket() failed"));
 	}
 	m_sin.Reset();
 	m_sin.SetSockAddrIn(AF_INET, _port, _ip);
@@ -48,6 +50,7 @@ void ClientSock::Connect(int _port, const char* _ip)
 	if (connect(m_fd.m_rawFd, (struct sockaddr*) &m_sin.m_rawSin, sizeof(m_sin.m_rawSin)) < 0)
 	{
 		throw ConnectFailedExc(__FILE__, __LINE__, "in Connect(), connect() failed");
+//		throw ConnectFailedExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "in Connect(), connect() failed"));
 	}
 	m_isConnected = true;
 }
@@ -62,6 +65,7 @@ void ClientSock::Disconnect()
 	else
 	{
 		throw SocketIsDisconnectedExc(__FILE__, __LINE__, "in Disconnect() socket is disconnected");
+//		throw SocketIsDisconnectedExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "in Disconnect() socket is disconnected"));
 	}
 }
 
@@ -71,6 +75,7 @@ int ClientSock::Send(void* _data, size_t _length) const
 	
 	if (!m_isConnected)
 	{
+//		throw SocketIsDisconnectedExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "in Send() socket is disconnected"));
 		throw SocketIsDisconnectedExc(__FILE__, __LINE__, "in Send() socket is disconnected");
 	}
 	else
@@ -81,6 +86,7 @@ int ClientSock::Send(void* _data, size_t _length) const
 			if (errno != EPIPE)
 			{
 				throw UnspecifiedErrnoExc(__FILE__, __LINE__, "send() returned -1");
+//				throw UnspecifiedErrnoExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "send() returned -1"));
 			}
 		}
 	}
@@ -97,14 +103,17 @@ int ClientSock::Receive() const
 		if(0 == numOfBytesRead)
 		{
 			throw SocketCloseByPeerExc(__FILE__, __LINE__, "read() returned 0 in Receive()");
+//			throw SocketCloseByPeerExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "read() returned 0 in Receive()"));
 		}
 		if(-1 == numOfBytesRead)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNRESET)
 			{
 				throw EagainExc(__FILE__, __LINE__, "read() EAGAIN in Receive()");
+//				throw EagainExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "read() EAGAIN in Receive()"));
 			}
 			throw UnspecifiedErrnoExc(__FILE__, __LINE__, "read() EAGAIN in Receive()");
+//			throw UnspecifiedErrnoExc(NetException::GenerateWhatStr(__FILE__, __LINE__, "read() EAGAIN in Receive()"));
 		}
 		++count;
 		return numOfBytesRead;
@@ -112,6 +121,7 @@ int ClientSock::Receive() const
 	}
 	else
 	{
+		//TODO: add appropriate NetException
 		throw std::runtime_error("ClientSock::Receive() Client is not connected");
 	}
 }
