@@ -22,7 +22,14 @@ public:
 	}
 };
 
-
+class ReceivedZeroBytes_exc : NetCppExc
+{
+public:
+	const char* what() const ENVIRONMENT_NOEXC
+	{
+		return "read returned 0";
+	}
+};
 
 
 

@@ -1,4 +1,5 @@
 #include "ClientCPP.h"
+#include "../NetExceptions/NetExceptions.h"
 #include<iostream>
 #include<string.h>
 namespace netcpp
@@ -29,7 +30,20 @@ void Client::Run()
 {
 	char data[256] = "This is a test\0";
 	Send(data, strlen(data));
-	Receive();
+	try
+	{
+		Receive();
+	}
+	catch(netcpp::EAGAIN_exc& _exc)
+	{
+//		std::cout << _exc.what() << std::endl;
+		return;
+	}
+	catch(netcpp::ReceivedZeroBytes_exc _exc)
+	{
+//		std::cout << _exc.what() << std::endl;
+		return;
+	}
 	std::cout << "Client received: " << m_clientSock.m_buffer << std::endl;
 }
 

@@ -50,8 +50,9 @@ ClientTest.out: $(ClientObjects)
 Test_Client.o: Test_Client.cpp $(CLIENT_PATH)ClientCPP.h
 	g++ $(FLAGS) -o Test_Client.o -c Test_Client.cpp
 
-ClientCPP.o: $(CLIENT_PATH)ClientCPP.cpp $(CLIENT_PATH)ClientCPP.h $(CLIENT_SOCK_PATH)ClientSock.h
-	g++ $(FLAGS) -o ClientCPP.o -c $(CLIENT_PATH)ClientCPP.cpp
+ClientCPP.o: $(CLIENT_PATH)ClientCPP.cpp $(CLIENT_PATH)ClientCPP.h $(CLIENT_SOCK_PATH)ClientSock.h\
+				$(NET_EXC_PATH)NetExceptions.h
+	g++ $(FLAGS) -o ClientCPP.o -c $(CLIENT_PATH)ClientCPP.cpp 
 
 ClientSock.o: $(CLIENT_SOCK_PATH)ClientSock.cpp $(CLIENT_SOCK_PATH)ClientSock.h $(FD_T_PATH)FD_t.h\
 				$(SOCKET_T_PATH)Socket_t.h $(NET_EXC_PATH)NetExceptions.h

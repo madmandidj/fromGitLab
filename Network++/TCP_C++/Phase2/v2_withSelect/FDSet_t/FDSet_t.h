@@ -33,6 +33,7 @@ private:
 	void SetNewMaxFdVal(const FD_t& _fd);
 private:
 	fd_set m_fdSet;
+	mutable fd_set m_workingFdSet;
 	int m_maxFdVal;
 	size_t m_numOfFd;
 	static size_t m_maxNumOfFd;

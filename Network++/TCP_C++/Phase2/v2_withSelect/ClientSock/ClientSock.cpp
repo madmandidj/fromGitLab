@@ -88,13 +88,14 @@ int ClientSock::Receive() const
 		int numOfBytesRead = read(m_fd.GetRawFD(), m_buffer, BUFFER_LEN);
 		if(0 == numOfBytesRead)
 		{
-			throw std::runtime_error("read() returned 0, Client closed socket");
+//			throw std::runtime_error("read() returned 0, Server closed socket");
+			throw ReceivedZeroBytes_exc();
 		}
 		if(-1 == numOfBytesRead)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNRESET)
 			{
-				throw NetCppExc();
+				throw EAGAIN_exc();
 //				throw std::runtime_error("read() returned -1, errno is EAGAIN || EWOULDBLOCK || ECONNRESET");
 			}
 			std::cout << "count is " << count << std::endl;

@@ -75,18 +75,18 @@ void FDSet_t::Remove(const std::tr1::shared_ptr<Socket_t>& _socket)
 
 bool FDSet_t::IsFdActive(const FD_t& _fd) const
 {
-	return FD_ISSET(_fd.m_rawFd, &m_fdSet);
+	return FD_ISSET(_fd.m_rawFd, &m_workingFdSet);
 }
 
 bool FDSet_t::IsFdActive(const std::tr1::shared_ptr<Socket_t>& _socket) const
 {
-	return FD_ISSET(_socket.get()->m_fd.m_rawFd, &m_fdSet);
+	return FD_ISSET(_socket.get()->m_fd.m_rawFd, &m_workingFdSet);
 }
 
 int FDSet_t::GetActivity() const
 {
-	FDSet_t fdSet = *this;
-	int activity = select(m_maxFdVal + 1, &fdSet.m_fdSet, NULL, NULL, NULL);
+	m_workingFdSet = m_fdSet;
+	int activity = select(m_maxFdVal + 1, &m_workingFdSet, NULL, NULL, NULL);
 	if (activity == -1)
 	{
 		throw std::runtime_error("FDSet_t GetActivity() select returned -1");

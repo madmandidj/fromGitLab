@@ -6,7 +6,7 @@
 #include<iostream>
 namespace netcpp
 {
-static const size_t BACKLOG = 500;
+static const size_t BACKLOG = 1001;
 
 /////////////////////////////////////
 ////Public Function Implementations
@@ -76,9 +76,16 @@ void Server::CheckNewClients()
 	{
 		throw;
 	}
-	
+	try
+	{
+		m_fdSet.Add(commSock);
+	}
+	catch(std::exception _exc)
+	{
+//		std::cout << _exc.what() << std::endl;
+		return;
+	}
 	m_commSockets.push_front(commSock);
-	m_fdSet.Add(commSock);
 }
 
 void Server::CheckCurrentClients()

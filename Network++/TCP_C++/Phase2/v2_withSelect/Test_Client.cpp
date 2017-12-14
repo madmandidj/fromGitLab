@@ -30,7 +30,7 @@ void intHandler(int dummy)
 	
 int main(int _argc, char* _argv[])
 {	
-	const int CLIENT_NUM = 100;
+	const int CLIENT_NUM = 1000;
 	int randClient;
 	size_t index;
 	netcpp::Client smartClientArr[CLIENT_NUM];
@@ -80,7 +80,7 @@ int main(int _argc, char* _argv[])
 		/*******
 		10% of connected clients should disconnect
 		*******/
-		numToDisconnect = (numOfConnected * 10) / 100;
+		numToDisconnect = (numOfConnected * 5) / 100;
 		for(index = 0; index < numToDisconnect; ++index)
 		{
 			randClient = rand() % CLIENT_NUM;
