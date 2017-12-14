@@ -2,6 +2,10 @@
 #define __COMMSOCK_H__
 
 #include "../Socket_t/Socket_t.h" //includes FD_t.h and SockAddrIn_t.h
+#if (defined (__APPLE__))
+#	define MSG_NOSIGNAL 0
+#endif
+
 
 namespace netcpp
 {
