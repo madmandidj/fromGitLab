@@ -52,10 +52,17 @@ int main(int _argc, char* _argv[])
 	*******/
 	for (index = 0; index < CLIENT_NUM; ++index)
 	{
-		smartClientArr[index].Connect(port, ip);
-		std::cout << "Client " << index << "connected" << endl;
-		++numOfConnected;
-		smartClientArr[index].Run();
+		try
+		{
+			smartClientArr[index].Connect(port, ip);
+			std::cout << "Client " << index << "connected" << endl;
+			++numOfConnected;
+			smartClientArr[index].Run();
+		}
+		catch(const std::exception& _exc)
+		{
+			//TODO:
+		}
 	}
 	/*******
 	Do SmartClient Loop

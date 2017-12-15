@@ -13,7 +13,7 @@ void* PrintStuffInCPP(void* _context)
 
 int main()
 {
-	const size_t maxNumOfClients = 1000;
+	const size_t maxNumOfClients = 230;
 	const size_t backLog = maxNumOfClients + 2;
 	try
 	{
