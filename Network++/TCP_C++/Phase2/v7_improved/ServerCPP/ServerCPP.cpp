@@ -45,7 +45,8 @@ void Server::Run()
 					}
 					catch(const std::exception& _exc)
 					{
-						std::cout << __FILE__ << __LINE__ << _exc.what() << std::endl;
+						std::cout << "*****" << __FILE__ << __LINE__ << "*****" << _exc.what() << std::endl;
+						sleep(2);
 //						throw;
 					}
 				}
@@ -59,7 +60,6 @@ void Server::Run()
 		}
 		catch(const std::exception& _exc)
 		{
-			std::cout << __FILE__ << __LINE__ << _exc.what() << std::endl;
 			throw;
 		}
 	
@@ -76,31 +76,19 @@ void Server::CheckNewClients()
 	CommSharedPtr_t commSock;
 	try
 	{
-//		std::cout << "here" << std::endl;
 		commSock = m_serverSock->AcceptClient();
 	}
 	catch(std::exception& _exc)
 	{
-		std::cout << __FILE__ << __LINE__ << _exc.what() << std::endl;
 		throw;
 	}
-	
 	if(m_commSockets.size() == m_maxClientNum)
 	{
-		std::cout << __FILE__ << __LINE__ << "Max client num reached" << std::endl;
-//		CloseCommSock(dynamic_cast<CommSock*>(commSock.get()));
+		std::cout << "Max client num reached" << std::endl;
 		return;
 	}
-	
-
-	if (!m_fdSet.Add(commSock))
-	{
-//		CloseCommSock(dynamic_cast<CommSock*>(commSock.get()));
-//		return;
-	}
-
+	m_fdSet.Add(commSock);
 	m_commSockets.push_front(commSock);	
-	
 	std::cout << "Client connected" << std::endl;
 }
 
@@ -122,7 +110,7 @@ void Server::CheckCurrentClients()
 		{
 			numOfBytes = commSock->Receive();
 		}
-		catch(const SocketCloseByPeerExc& _exc)
+		catch(const SocketCloseByPeerExc& _exc) //TODO: This is redundant!
 		{
 			std::cout << __FILE__ << __LINE__ << _exc.what() << std::endl;
 			RemoveClient(commSock, itCur, itEnd);
@@ -174,7 +162,6 @@ void Server::RemoveClient(CommSock* const _commSock,
 	{
 		throw std::runtime_error("line 163, RemoveClient(), m_fdSet.Remove() failed");
 	}
-//	CloseCommSock(_commSock);
 	m_commSockets.erase(_itCur);
 	_itCur = itTemp;
 	_itEnd = m_commSockets.end();

@@ -30,6 +30,7 @@ int Client::Disconnect()
 void Client::Run()
 {
 	char data[256] = "This is a test\0";
+	size_t result;
 	try
 	{
 		Send(data, strlen(data));
@@ -38,37 +39,45 @@ void Client::Run()
 	{
 		std::cout << "Client caught send exception" << std::endl;
 		std::cout << _exc.what() << std::endl;
+		return;
 	}
 	catch(std::exception& _exc)
 	{
 		std::cout << "Client caught std::exception" << std::endl;
 		std::cout << _exc.what() << std::endl;
+		return;
 	}
 	try
 	{
-		Receive();
+		result = Receive();
 	}
 	catch(EagainExc& _exc)
 	{
 		return;
 	}
-	catch(SocketCloseByPeerExc& _exc)
-	{
-		m_clientSock.Disconnect();
-		std::cout << "Socket closed by peer, Client disconnected " << std::endl;
-		return;
-	}
-	catch(NetException& _exc)
-	{
-		std::cout << "Client caught read exception" << std::endl;
-		std::cout << _exc.what() << std::endl;
-	}
+//	catch(SocketCloseByPeerExc& _exc)
+//	{
+//		m_clientSock.Disconnect();
+//		std::cout << "Socket closed by peer, Client disconnected " << std::endl;
+//		return;
+//	}
+//	catch(NetException& _exc)
+//	{
+//		std::cout << "Client caught read exception" << std::endl;
+//		std::cout << _exc.what() << std::endl;
+//	}
 	catch(std::exception& _exc)
 	{
 		std::cout << "Client caught std::exception" << std::endl;
 		std::cout << _exc.what() << std::endl;
+		return;
 	}
-	std::cout << "Client received: " << m_clientSock.m_buffer << std::endl;
+	if (0 == result)
+	{
+		m_clientSock.Disconnect();
+	}
+	
+	std::cout << "Client received: " << m_clientSock.m_buffer << ", result = " << result << std::endl;
 }
 
 int Client::Send(void* _data, size_t _length) const
@@ -85,9 +94,9 @@ int Client::Send(void* _data, size_t _length) const
 	return result;
 }
 
-int Client::Receive() const
+size_t Client::Receive() const
 {
-	int result;
+	size_t result;
 	try
 	{
 		result = m_clientSock.Receive();

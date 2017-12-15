@@ -16,7 +16,7 @@ public:
 	bool IsConnected() const;
 private:
 	int Send(void* _data, size_t _length) const;
-	int Receive() const;
+	size_t Receive() const;
 	Client(const Client&);
 private:
 	ClientSock m_clientSock;

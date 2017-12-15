@@ -17,7 +17,7 @@ public:
 	void Connect(int _port, const char* _ip);
 	void Disconnect();
 	int Send(void* _data, size_t _length) const;
-	int Receive() const;
+	size_t Receive() const;
 	friend class Client;
 protected:
 ////    Inherited:

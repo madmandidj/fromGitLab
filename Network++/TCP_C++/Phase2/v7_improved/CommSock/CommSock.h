@@ -15,7 +15,7 @@ public:
 	explicit CommSock(const FD_t& _fd);
 	virtual ~CommSock();
 	int Send(void* _data, size_t _length) const;
-	int Receive() const;
+	size_t Receive() const;
 	char* GetBuf() const;
 	friend class Server;
 protected:
