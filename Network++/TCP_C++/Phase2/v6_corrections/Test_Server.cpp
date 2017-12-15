@@ -13,9 +13,11 @@ void* PrintStuffInCPP(void* _context)
 
 int main()
 {
+	const size_t maxNumOfClients = 997;
+	const size_t backLog = maxNumOfClients;
 	try
 	{
-		netcpp::Server server(PrintStuffInCPP, 8888);
+		netcpp::Server server(PrintStuffInCPP, 8888, maxNumOfClients, backLog);
 		server.Run();
 	}
 	catch(const std::exception& _exc)

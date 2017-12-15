@@ -137,6 +137,15 @@ public:
 	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
 };
 
+class TooManyOpenFilesExc : public NetException
+{
+public:
+	TooManyOpenFilesExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
+	:NetException(_fileName, _lineNum, _userStr){}
+	virtual ~TooManyOpenFilesExc() ENVIRONMENT_NOEXC{}
+	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
+};
+
 class UnspecifiedErrnoExc : public NetException
 {
 public:

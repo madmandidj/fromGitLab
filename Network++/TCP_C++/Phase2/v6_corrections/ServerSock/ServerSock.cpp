@@ -41,6 +41,10 @@ SharedPtr_t ServerSock::AcceptClient()
 		{
 			throw EagainExc(__FILE__, __LINE__, "in AcceptClient(), accept() EAGAIN");
 		}
+		else if (errno == EMFILE)
+		{
+			throw TooManyOpenFilesExc(__FILE__, __LINE__, "in AcceptClient(), accept() EMFILE");
+		}
 		else
 		{
 			throw UnspecifiedErrnoExc(__FILE__, __LINE__, "in AcceptClient(), accept() unspecified errno");

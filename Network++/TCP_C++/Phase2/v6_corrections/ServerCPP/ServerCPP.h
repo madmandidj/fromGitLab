@@ -29,7 +29,7 @@ typedef void* (*AppFunc)(void*);
 class Server
 {
 public:
-    explicit Server(AppFunc _func, int _port);
+    explicit Server(AppFunc _func, int _port, size_t _maxClientNum, size_t _backlog);
     ~Server();
     void Run();
 private:
@@ -45,6 +45,7 @@ private:
 	ServSharedPtr_t m_serverSock;
     std::list<CommSharedPtr_t > m_commSockets;
     FDSet_t m_fdSet;
+    size_t m_maxClientNum;
     AppFunc m_appFunc;
 };
 }//namespace netcpp

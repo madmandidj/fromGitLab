@@ -8,12 +8,15 @@
 #include<iostream>
 namespace netcpp
 {
-static const size_t BACKLOG = 1001;
+//static const size_t BACKLOG = 1001;
 
 /////////////////////////////////////
 ////Public Function Implementations
 /////////////////////////////////////
-Server::Server(AppFunc _func, int _port):m_serverSock(new ServerSock(_port, BACKLOG)), m_appFunc(_func)
+Server::Server(AppFunc _func, int _port, size_t _maxClientNum, size_t _backlog):
+								m_serverSock(new ServerSock(_port, _backlog)) 
+								,m_maxClientNum(_maxClientNum)
+								,m_appFunc(_func)									
 {
 	m_fdSet.Add(m_serverSock);
 	m_fdSet.Add(STDIN_FILENO);
@@ -81,11 +84,19 @@ void Server::CheckNewClients()
 		std::cout << __FILE__ << __LINE__ << _exc.what() << std::endl;
 		throw;
 	}
+	
+	if(m_commSockets.size() == m_maxClientNum)
+	{
+		std::cout << __FILE__ << __LINE__ << "Max client num reached" << std::endl;
+		CloseCommSock(dynamic_cast<CommSock*>(commSock.get()));
+		return;
+	}
+	
 
 	if (!m_fdSet.Add(commSock))
 	{
-		CloseCommSock(dynamic_cast<CommSock*>(commSock.get()));
-		return;
+//		CloseCommSock(dynamic_cast<CommSock*>(commSock.get()));
+//		return;
 	}
 
 	m_commSockets.push_front(commSock);	
