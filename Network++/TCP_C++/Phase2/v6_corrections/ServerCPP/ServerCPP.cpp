@@ -73,7 +73,7 @@ void Server::CheckNewClients()
 	CommSharedPtr_t commSock;
 	try
 	{
-		std::cout << "here" << std::endl;
+//		std::cout << "here" << std::endl;
 		commSock = m_serverSock->AcceptClient();
 	}
 	catch(std::exception& _exc)
