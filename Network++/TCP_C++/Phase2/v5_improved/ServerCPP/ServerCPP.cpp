@@ -28,33 +28,76 @@ void Server::Run()
 {
 	int activity;
 	while(1)
-	{	try
+	{	
+//		try
+//		{
+//			activity = m_fdSet.GetActivity();	
+//		}
+//		catch(const std::exception& _exc)
+//		{
+//			std::cout << _exc.what() << std::endl;
+//			throw;
+//		}
+//		if (0 < activity)
+//		{
+//			if(m_fdSet.IsFdActive(m_serverSock))
+//			{
+//				try
+//				{
+//					CheckNewClients();
+//				}
+//				catch(const std::exception& _exc)
+//				{
+//					std::cout << _exc.what() << std::endl;
+//					throw;
+//				}
+//			}
+//			try
+//			{
+//				CheckCurrentClients();
+//			}
+//			catch(const std::exception& _exc)
+//			{
+//				std::cout << _exc.what() << std::endl;
+//				throw;
+//			}
+//		}
+//		else
+//		{
+//			//TODO: when timeout implemented, remove all clients that have timedout
+//			std::cout << "activity = 0" << std::endl;
+//		}
+		try
 		{
 			activity = m_fdSet.GetActivity();	
+			if (0 < activity)
+			{
+				if(m_fdSet.IsFdActive(m_serverSock))
+				{
+					try
+					{					
+						CheckNewClients();
+					}
+					catch(const std::exception& _exc)
+					{
+						std::cout << _exc.what() << std::endl;
+						throw;
+					}
+				}
+				CheckCurrentClients();
+			}
+			else
+			{
+				//TODO: when timeout implemented, remove all clients that have timedout
+				std::cout << "activity = 0" << std::endl;
+			}
 		}
-		catch(std::exception& _exc)
+		catch(const std::exception& _exc)
 		{
+			std::cout << _exc.what() << std::endl;
 			throw;
 		}
-		if (0 < activity)
-		{
-			if(m_fdSet.IsFdActive(m_serverSock))
-			{
-				try
-				{
-					CheckNewClients();
-				}
-				catch(std::exception& _exc)
-				{
-					throw;
-				}
-			}
-			CheckCurrentClients();
-		}
-		else
-		{
-			//TODO: when timeout implemented, remove all clients that have timedout
-		}
+	
 	}
 }
 
@@ -72,6 +115,7 @@ void Server::CheckNewClients()
 	}
 	catch(std::exception& _exc)
 	{
+		std::cout << _exc.what() << std::endl;
 		throw;
 	}
 	try
@@ -80,6 +124,7 @@ void Server::CheckNewClients()
 	}
 	catch(std::exception _exc)
 	{
+		std::cout << _exc.what() << std::endl;
 		return;
 	}
 	m_commSockets.push_front(commSock);
@@ -105,11 +150,13 @@ void Server::CheckCurrentClients()
 		}
 		catch(const SocketCloseByPeerExc& _exc)
 		{
+			std::cout << _exc.what() << std::endl;
 			RemoveClient(itCur, itEnd);
 			continue;
 		}
 		catch(const EagainExc& _exc)
 		{
+			std::cout << _exc.what() << std::endl;
 			++itCur;
 			continue;
 		}
@@ -119,8 +166,24 @@ void Server::CheckCurrentClients()
 			throw;
 		}
 		char* data = commSock->GetBuf();
-		m_appFunc(data);
-		commSock->Send(data, numOfBytes);
+		try
+		{
+			m_appFunc(data);
+		}
+		catch(std::exception& _exc)
+		{
+			std::cout << _exc.what() << std::endl;
+			throw;
+		}
+		try
+		{
+			commSock->Send(data, numOfBytes);
+		}
+		catch(std::exception& _exc)
+		{
+			std::cout << _exc.what() << std::endl;
+			throw;
+		}
 		++itCur;
 	}
 }
@@ -128,6 +191,7 @@ void Server::CheckCurrentClients()
 void Server::RemoveClient(std::list< CommSharedPtr_t >::iterator& _itCur,
 							std::list< CommSharedPtr_t >::iterator& _itEnd)
 {
+	//TODO: add try and catches
 	std::list< CommSharedPtr_t >::iterator itTemp;
 	itTemp = _itCur;
 	++itTemp;

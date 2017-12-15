@@ -5,15 +5,17 @@ using namespace std;
 
 void* PrintStuffInCPP(void* _context)
 {
-	std::cout << (char*)_context << std::endl;
+	static size_t count = 1;
+	std::cout << (char*)_context << " " << count << std::endl;
+	++count;
 	return 0;
 }
 
 int main()
 {
-	netcpp::Server server(PrintStuffInCPP, 8888);
 	try
 	{
+		netcpp::Server server(PrintStuffInCPP, 8888);
 		server.Run();
 	}
 	catch(const std::exception& _exc)

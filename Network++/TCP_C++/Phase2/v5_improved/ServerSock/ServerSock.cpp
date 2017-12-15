@@ -31,11 +31,11 @@ SharedPtr_t ServerSock::AcceptClient()
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 		{
-			throw std::runtime_error("accept() failed with EAGAIN or EWOULDBLOCK");
+			throw EagainExc(__FILE__, __LINE__, "in AcceptClient(), accept() EAGAIN");
 		}
 		else
 		{
-			throw std::runtime_error("accept() failed untracked error");
+			throw UnspecifiedErrnoExc(__FILE__, __LINE__, "in AcceptClient(), accept() unspecified errno");
 		}
 	}
 	SharedPtr_t commSock(new CommSock(fd));
@@ -49,20 +49,20 @@ void ServerSock::Initialize(int _port, size_t _backLog)
 	m_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_fd < 0)
 	{
-		throw std::runtime_error("socket() failed");
+		throw SocketFailedExc(__FILE__, __LINE__, "in Initialize(), socket() failed");
 	}
 	if (setsockopt(m_fd.m_rawFd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
 	{
-		throw std::runtime_error("setsockopt() failed");
+		throw SetSockOptFailedExc(__FILE__, __LINE__, "in Initialize(), setsockopt() failed");
 	}
 	m_sin.SetSockAddrIn(AF_INET, _port, INADDR_ANY);
 	if(bind(m_fd.m_rawFd, ((struct sockaddr*) &(m_sin.m_rawSin)), sizeof(m_sin.m_rawSin)) < 0)
 	{
-		throw std::runtime_error("bind() failed");
+		throw BindFailedExc(__FILE__, __LINE__, "in Initialize(), bind() failed");
 	}
 	if (listen(m_fd.m_rawFd, _backLog) < 0)
 	{
-		throw std::runtime_error("listen() failed");
+		throw ListenFailedExc(__FILE__, __LINE__, "in Initialize(), listen() failed");
 	}
 	m_isConnected = true;
 }

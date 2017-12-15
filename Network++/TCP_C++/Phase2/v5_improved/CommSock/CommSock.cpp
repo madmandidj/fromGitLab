@@ -36,38 +36,37 @@ int CommSock::Send(void* _data, size_t _length) const
 		if (-1 == numOfBytesSent)
 		{
 			if (errno != EPIPE)
-			{
-				throw UnspecifiedErrnoExc(__FILE__, __LINE__, "send() returned -1");
+			{			
+				throw UnspecifiedErrnoExc(__FILE__, __LINE__, "in Send(), unspecified errno");
 			}
+			throw BrokenPipeExc(__FILE__, __LINE__, "in Send(), broken pipe");
 		}
 	}
 	return numOfBytesSent;
 }
 
-int CommSock::Receive() const
+int CommSock::Receive() const //TODO: Change return value to std::string ?
 {
 	if (m_isConnected)
 	{
 		int numOfBytesRead = read(m_fd.m_rawFd, m_buffer, BUFFER_LEN);
 		if(0 == numOfBytesRead)
 		{
-			throw SocketCloseByPeerExc(__FILE__, __LINE__, "read() returned 0 in Receive()");
+			throw SocketCloseByPeerExc(__FILE__, __LINE__, "in Receive(), read() returned 0");
 		}
 		if(-1 == numOfBytesRead)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNRESET)
 			{
-				throw EagainExc(__FILE__, __LINE__, "read() EAGAIN in Receive()");
+				throw EagainExc(__FILE__, __LINE__, "in Receive(), read() EAGAIN");
 			}
-			throw UnspecifiedErrnoExc(__FILE__, __LINE__, "read() EAGAIN in Receive()");
+			throw UnspecifiedErrnoExc(__FILE__, __LINE__, "in Receive(), unspecified errno");
 		}
 		return numOfBytesRead;
-		
 	}
 	else
 	{
-		//TODO: add appropriate NetException
-		throw std::runtime_error("CommSock::Receive() Socket is not connected");
+		throw SocketIsDisconnectedExc(__FILE__, __LINE__, "in Receive(), socket is disconnected");
 	}
 }
 
