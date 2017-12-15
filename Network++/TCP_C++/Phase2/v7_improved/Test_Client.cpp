@@ -116,7 +116,14 @@ int main(int _argc, char* _argv[])
 			{
 				randClient = rand() % CLIENT_NUM;
 			}
-			smartClientArr[randClient].Connect(port, ip);
+			try
+			{
+				smartClientArr[randClient].Connect(port, ip);
+			}
+			catch(const std::exception& _exc)
+			{
+				//TODO:
+			}
 			++numOfConnected;
 			std::cout << "Client " << randClient << "connected" << endl;
 		}
