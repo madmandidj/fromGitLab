@@ -88,7 +88,7 @@ void Server::CheckNewClients()
 	if(m_commSockets.size() == m_maxClientNum)
 	{
 		std::cout << __FILE__ << __LINE__ << "Max client num reached" << std::endl;
-		CloseCommSock(dynamic_cast<CommSock*>(commSock.get()));
+//		CloseCommSock(dynamic_cast<CommSock*>(commSock.get()));
 		return;
 	}
 	
@@ -174,7 +174,7 @@ void Server::RemoveClient(CommSock* const _commSock,
 	{
 		throw std::runtime_error("line 163, RemoveClient(), m_fdSet.Remove() failed");
 	}
-	CloseCommSock(_commSock);
+//	CloseCommSock(_commSock);
 	m_commSockets.erase(_itCur);
 	_itCur = itTemp;
 	_itEnd = m_commSockets.end();
