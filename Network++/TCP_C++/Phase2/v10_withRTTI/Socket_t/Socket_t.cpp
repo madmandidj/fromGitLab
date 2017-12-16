@@ -1,6 +1,8 @@
+//#define _GNU_SOURCE
 #include "Socket_t.h"
 #include "../ServerSock/ServerSock.h"
 #include "../NetExceptions/NetExceptions.h"
+#include <sys/socket.h>
 #include <unistd.h>
 #include <errno.h>
 #include <iostream>
