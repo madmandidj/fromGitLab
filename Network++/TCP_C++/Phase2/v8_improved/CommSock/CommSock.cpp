@@ -52,7 +52,6 @@ size_t CommSock::Receive() const //TODO: Change return value to std::string ?
 		int numOfBytesRead = read(m_fd.m_rawFd, m_buffer, BUFFER_LEN);
 		if(0 == numOfBytesRead)
 		{
-//			throw SocketCloseByPeerExc(__FILE__, __LINE__, "in Receive(), read() returned 0");
 			return 0;
 		}
 		if(-1 == numOfBytesRead)

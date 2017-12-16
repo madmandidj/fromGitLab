@@ -26,14 +26,6 @@ SharedPtr_t ServerSock::AcceptClient()
 {
 	socklen_t addr_len = sizeof(m_sin.m_rawSin);
 	FD_t fd;
-	//*******************************
-	//*******************************
-	//*******************************
-	//TODO: Handle too many clients connecting! SHould this really be handled here, or in layer or two above???
-	// If this should be handled here, than throw exception
-	//*******************************
-	//*******************************
-	//*******************************
 	fd = accept(m_fd.m_rawFd, (struct sockaddr*) &m_sin.m_rawSin, &addr_len);
 	if (fd == -1)
 	{

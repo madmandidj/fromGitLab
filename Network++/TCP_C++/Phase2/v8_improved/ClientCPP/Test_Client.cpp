@@ -80,6 +80,7 @@ int main(int _argc, char* _argv[])
 			//TODO:
 			int mynum =rand() % 100;
 			std::cout << mynum << std::endl;
+			sleep(2);
 		}
 	}
 	/*******
@@ -120,6 +121,7 @@ int main(int _argc, char* _argv[])
 			catch(std::exception& _exc)
 			{
 				std::cout << _exc.what() << std::endl;
+				sleep(2);
 			}
 			std::cout << "Client " << randClient << "ran" << endl;
 		}
@@ -141,6 +143,8 @@ int main(int _argc, char* _argv[])
 			catch(const std::exception& _exc)
 			{
 				//TODO:
+				std::cout << _exc.what() << std::endl;
+				sleep(2);
 			}
 			++numOfConnected;
 			std::cout << "Client " << randClient << "connected" << endl;

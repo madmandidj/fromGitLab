@@ -47,14 +47,14 @@ public:
 	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
 };
 
-class SocketCloseByPeerExc : public NetException
-{
-public:
-	SocketCloseByPeerExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
-	:NetException(_fileName, _lineNum, _userStr){}
-	virtual ~SocketCloseByPeerExc() ENVIRONMENT_NOEXC{}
-	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
-};
+//class SocketCloseByPeerExc : public NetException
+//{
+//public:
+//	SocketCloseByPeerExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
+//	:NetException(_fileName, _lineNum, _userStr){}
+//	virtual ~SocketCloseByPeerExc() ENVIRONMENT_NOEXC{}
+//	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
+//};
 
 class SelectFailedExc : public NetException
 {
