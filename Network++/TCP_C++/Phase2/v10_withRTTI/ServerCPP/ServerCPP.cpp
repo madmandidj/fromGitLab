@@ -110,13 +110,7 @@ void Server::CheckCurrentClients()
 		{
 			numOfBytes = commSock->Receive();
 		}
-//		catch(const SocketCloseByPeerExc& _exc) //TODO: This is redundant!
-//		{
-//			std::cout << __FILE__ << __LINE__ << _exc.what() << std::endl;
-//			RemoveClient(commSock, itCur, itEnd);
-//			continue;
-//		}
-		catch(const EagainExc& _exc)
+		catch(const EagainExc& _exc) //TODO: Change Receive() to return ssize_t, and this can be -1
 		{
 			std::cout << __FILE__ << __LINE__ << _exc.what() << std::endl;
 			++itCur;
@@ -127,20 +121,14 @@ void Server::CheckCurrentClients()
 			std::cout << __FILE__ << __LINE__ << _exc.what() << std::endl;
 			throw;
 		}
-		
-		
-		if (0 == numOfBytes)
+		if (0 == numOfBytes) //TODO: this can be moved to within the Receive try() block?
 		{
 			RemoveClient(commSock, itCur, itEnd);
 			std::cout << "received 0, closed commSock" << std::endl;
 			continue;
 		}
 		
-		char* data = commSock->GetBuf();
-		
-		
-		
-		
+		char* data = commSock->GetBuf(); //TODO: is this redundant because of friendship?
 		
 		try
 		{
@@ -153,7 +141,7 @@ void Server::CheckCurrentClients()
 		}
 		try
 		{
-			commSock->Send(data, numOfBytes);
+			commSock->Send(data, numOfBytes, MSG_NOSIGNAL);
 		}
 		catch(std::exception& _exc)
 		{
@@ -179,7 +167,6 @@ void Server::RemoveClient(CommSock* const _commSock,
 	m_commSockets.erase(_itCur);
 	_itCur = itTemp;
 	_itEnd = m_commSockets.end();
-//	std::cout << "Client disconnected and removed" << std::endl;
 }	
 
 bool Server::CloseCommSock(CommSock* const _commSock)

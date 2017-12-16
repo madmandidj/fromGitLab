@@ -146,6 +146,15 @@ public:
 	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
 };
 
+class IsServerSocketExc : public NetException
+{
+public:
+	IsServerSocketExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
+	:NetException(_fileName, _lineNum, _userStr){}
+	virtual ~IsServerSocketExc() ENVIRONMENT_NOEXC{}
+	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
+};
+
 class NotServerSocketExc : public NetException
 {
 public:

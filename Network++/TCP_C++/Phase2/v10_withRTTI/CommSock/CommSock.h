@@ -14,19 +14,19 @@ class CommSock : public Socket_t
 public:
 	explicit CommSock(const FD_t& _fd);
 	virtual ~CommSock();
-	int Send(void* _data, size_t _length) const;
-	size_t Receive() const;
+//	int Send(void* _data, size_t _length) const;
+//	size_t Receive() const;
 	friend class Server;
 protected:
 ////    Inherited:
 ////	FD_t 			m_fd;
 ////	SockAddrIn_t	m_sin;
 ////	bool			m_isConnected;
+////	mutable char m_buffer[256]; //This should be Msg_t
 private:
 	char* GetBuf() const; //TODO: is this redundant? this will change to msg_t anyway
 	CommSock(const CommSock&);
 	CommSock& operator=(const CommSock&);
-	mutable char m_buffer[256];
 };
 }//namespace netcpp
 #endif//#ifndef __COMMSOCK_H__

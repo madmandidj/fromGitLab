@@ -16,18 +16,18 @@ public:
 	ClientSock& operator=(const FD_t& _fd);
 	void Connect(int _port, const char* _ip);
 	void Disconnect();
-	int Send(void* _data, size_t _length) const;
-	size_t Receive() const;
+/*	int Send(void* _data, size_t _length) const;*/
+/*	size_t Receive() const;*/
 	friend class Client;
 protected:
 ////    Inherited:
 ////	FD_t 			m_fd;
 ////	SockAddrIn_t	m_sin;
 ////	bool			m_isConnected;
+////	mutable char m_buffer[256]; //This should be Msg_t
 private:
 	ClientSock(const ClientSock&);
 	ClientSock& operator=(const ClientSock&);
-	mutable char m_buffer[256];
 };
 }//namespace netcpp
 #endif//#ifndef __CLIENTSOCK_H__

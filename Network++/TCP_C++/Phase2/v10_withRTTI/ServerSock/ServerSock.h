@@ -24,12 +24,12 @@ public:
     explicit ServerSock(int _port, size_t _backLog);
     virtual ~ServerSock();
     SharedPtr_t AcceptClient();
-//    size_t Receive() const{return 0;}//TODO: throw exception for bad use
 protected:
 ////    Inherited:
 ////	FD_t 			m_fd;
 ////	SockAddrIn_t	m_sin;
 ////	bool			m_isConnected;
+////	mutable char m_buffer[256]; //This should be Msg_t
 private:
 		void Initialize(int _port, size_t _backLog);
 	    ServerSock(const ServerSock& _servSock);

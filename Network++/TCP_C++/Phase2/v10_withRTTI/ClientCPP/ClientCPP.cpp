@@ -88,7 +88,8 @@ int Client::Send(void* _data, size_t _length) const
 	int result;
 	try
 	{
-		result = m_clientSock.Send(_data, _length);
+//		result = m_clientSock.Send(_data, _length);
+		result = m_clientSock.Send(_data, _length, MSG_NOSIGNAL);
 	}
 	catch(NetException& _exc)
 	{

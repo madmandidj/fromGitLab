@@ -1,28 +1,15 @@
 #include "ClientSock.h"
-#include "../NetExceptions/NetExceptions.h"
-#include <stdexcept>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
-#include <iostream>
 
 namespace netcpp
 {
-static const size_t BUFFER_LEN = 256;
 ClientSock::ClientSock()
 {
-	//Empty
+	// Empty
 }
 
 ClientSock::~ClientSock()
 {
-	if (m_isConnected)
-	{
-		close(m_fd.m_rawFd);
-		m_isConnected = false;
-	}
-	std::cout << "~ClientSock()" << std::endl;
+	// Empty
 }
 
 ClientSock& ClientSock::operator=(const FD_t& _fd)
@@ -34,61 +21,17 @@ ClientSock& ClientSock::operator=(const FD_t& _fd)
 void ClientSock::Connect(int _port, const char* _ip)
 {
 	ThrowIfConnected(__FILE__, __LINE__, "in Connect() socket is connected");	
-	m_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (m_fd < 0)
-	{
-		throw SocketFailedExc(__FILE__, __LINE__, "in Connect(), socket() failed");
-	}
+	Socket(AF_INET, SOCK_STREAM, 0);
 	m_sin.Reset();
 	m_sin.SetSockAddrIn(AF_INET, _port, _ip);
-	if (connect(m_fd.m_rawFd, (struct sockaddr*) &m_sin.m_rawSin, sizeof(m_sin.m_rawSin)) < 0)
-	{
-		throw ConnectFailedExc(__FILE__, __LINE__, "in Connect(), connect() failed");
-	}
-	m_isConnected = true;
+	Socket_t::Connect();
 }
 
 void ClientSock::Disconnect()
 {
 	ThrowIfDisconnected(__FILE__, __LINE__, "in Disconnect(), socket is disconnected");
-	close(m_fd.m_rawFd);
-	m_isConnected = false;
+	Close();
 }
 
-int ClientSock::Send(void* _data, size_t _length) const
-{
-	ThrowIfDisconnected(__FILE__, __LINE__, "in Send(), socket is disconnected");
-	int numOfBytesSent = send(m_fd.m_rawFd, _data, _length, MSG_NOSIGNAL);
-	if (-1 == numOfBytesSent)
-	{
-		if (errno != EPIPE)
-		{
-			throw UnspecifiedErrnoExc(__FILE__, __LINE__, "in Send(), Unspecified errno");
-		}
-		throw BrokenPipeExc(__FILE__, __LINE__, "in Send(), broken pipe");
-	}
-	return numOfBytesSent;
-
-
-}
-
-size_t ClientSock::Receive() const
-{
-	ThrowIfDisconnected(__FILE__, __LINE__, "in Receive(), socket is disconnected");
-	int numOfBytesRead = read(m_fd.m_rawFd, m_buffer, BUFFER_LEN);
-	if(0 == numOfBytesRead)
-	{
-		return 0;
-	}
-	if(-1 == numOfBytesRead)
-	{
-		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNRESET)
-		{
-			throw EagainExc(__FILE__, __LINE__, "in Receive(), read() EAGAIN in Receive()");
-		}
-		throw UnspecifiedErrnoExc(__FILE__, __LINE__, "in Receive(), Unspecified errno");
-	}
-	return numOfBytesRead;
-}
 }//namespace netcpp
 
