@@ -47,14 +47,14 @@ public:
 	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
 };
 
-//class SocketCloseByPeerExc : public NetException
-//{
-//public:
-//	SocketCloseByPeerExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
-//	:NetException(_fileName, _lineNum, _userStr){}
-//	virtual ~SocketCloseByPeerExc() ENVIRONMENT_NOEXC{}
-//	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
-//};
+class SocketCloseByPeerExc : public NetException
+{
+public:
+	SocketCloseByPeerExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
+	:NetException(_fileName, _lineNum, _userStr){}
+	virtual ~SocketCloseByPeerExc() ENVIRONMENT_NOEXC{}
+	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
+};
 
 class SelectFailedExc : public NetException
 {
@@ -64,6 +64,7 @@ public:
 	virtual ~SelectFailedExc() ENVIRONMENT_NOEXC{}
 	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
 };
+
 
 class SocketIsConnectedExc : public NetException
 {
@@ -98,60 +99,6 @@ public:
 	ConnectFailedExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
 	:NetException(_fileName, _lineNum, _userStr){}
 	virtual ~ConnectFailedExc() ENVIRONMENT_NOEXC{}
-	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
-};
-
-class BrokenPipeExc : public NetException
-{
-public:
-	BrokenPipeExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
-	:NetException(_fileName, _lineNum, _userStr){}
-	virtual ~BrokenPipeExc() ENVIRONMENT_NOEXC{}
-	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
-};
-
-class SetSockOptFailedExc : public NetException
-{
-public:
-	SetSockOptFailedExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
-	:NetException(_fileName, _lineNum, _userStr){}
-	virtual ~SetSockOptFailedExc() ENVIRONMENT_NOEXC{}
-	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
-};
-
-class BindFailedExc : public NetException
-{
-public:
-	BindFailedExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
-	:NetException(_fileName, _lineNum, _userStr){}
-	virtual ~BindFailedExc() ENVIRONMENT_NOEXC{}
-	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
-};
-
-class ListenFailedExc : public NetException
-{
-public:
-	ListenFailedExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
-	:NetException(_fileName, _lineNum, _userStr){}
-	virtual ~ListenFailedExc() ENVIRONMENT_NOEXC{}
-	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
-};
-
-class TooManyOpenFilesExc : public NetException
-{
-public:
-	TooManyOpenFilesExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
-	:NetException(_fileName, _lineNum, _userStr){}
-	virtual ~TooManyOpenFilesExc() ENVIRONMENT_NOEXC{}
-	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
-};
-
-class NotServerSocketExc : public NetException
-{
-public:
-	NotServerSocketExc(const char* _fileName, int _lineNum, std::string _userStr) ENVIRONMENT_NOEXC
-	:NetException(_fileName, _lineNum, _userStr){}
-	virtual ~NotServerSocketExc() ENVIRONMENT_NOEXC{}
 	virtual const char* what() const ENVIRONMENT_NOEXC {return NetException::what();}
 };
 

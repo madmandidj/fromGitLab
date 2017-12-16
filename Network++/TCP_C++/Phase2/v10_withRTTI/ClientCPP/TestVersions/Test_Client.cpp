@@ -4,7 +4,6 @@
 #include<stdlib.h>
 #include<iostream>
 #include<csignal>
-
 using namespace std;
 
 static bool keepRunning = true;
@@ -16,13 +15,10 @@ void intHandler(int dummy)
 	
 int main(int _argc, char* _argv[])
 {	
-//	const int CLIENT_NUM = 999;
-	size_t numOfClients;
+	const int CLIENT_NUM = 999;
 	int randClient;
 	size_t index;
-//	netcpp::Client smartClientArr[CLIENT_NUM];
-	netcpp::Client* smartClientArr;
-	
+	netcpp::Client smartClientArr[CLIENT_NUM];
 	size_t numOfConnected = 0;
 	char ip[128];
 	int port;
@@ -40,33 +36,21 @@ int main(int _argc, char* _argv[])
 	{
 		strcpy(ip, "127.0.0.1");
 		port = 8888;
-		numOfClients = 1000;
 	}
-	else if(2 == _argc)
-	{
-		std::cout << "char* ip(127.0.0.1), int port(8888), int numOfClients(1000)" << std::endl;
-		return 0;
-	}
-	else if(4 == _argc)
+	else if(3 == _argc)
 	{
 		strcpy(ip, _argv[1]);
 		port = atoi(_argv[2]);
-		numOfClients = atoi(_argv[3]);
 	}
 	else
 	{
 		std::cout << "Invalid num of arguments to main() " << std::endl;
 		abort();
 	}
-	
-	
-	smartClientArr = new netcpp::Client[numOfClients];
-	
-	
 	/*******
 	Create and Connect all Clients and Do initial Run
 	*******/
-	for (index = 0; index < numOfClients; ++index)
+	for (index = 0; index < CLIENT_NUM; ++index)
 	{
 		try
 		{
@@ -78,11 +62,6 @@ int main(int _argc, char* _argv[])
 		catch(const std::exception& _exc)
 		{
 			//TODO:
-//			int mynum =rand() % 100;
-			std::cout << _exc.what() << std::endl;
-			delete[] smartClientArr;
-			return 0;
-//			sleep(2);
 		}
 	}
 	/*******
@@ -93,13 +72,13 @@ int main(int _argc, char* _argv[])
 		/*******
 		10% of connected clients should disconnect
 		*******/
-		numToDisconnect = (numOfConnected * 10) / 100;
+		numToDisconnect = (numOfConnected * 5) / 100;
 		for(index = 0; index < numToDisconnect; ++index)
 		{
-			randClient = rand() % numOfClients;
+			randClient = rand() % CLIENT_NUM;
 			while (!smartClientArr[randClient].IsConnected())
 			{
-				randClient = rand() % numOfClients;
+				randClient = rand() % CLIENT_NUM;
 			}
 			smartClientArr[randClient].Disconnect();
 			--numOfConnected;
@@ -111,10 +90,10 @@ int main(int _argc, char* _argv[])
 		numToRun = (numOfConnected * 30) / 100;
 		for(index = 0; index < numToRun; ++index)
 		{
-			randClient = rand() % numOfClients;
+			randClient = rand() % CLIENT_NUM;
 			while (!smartClientArr[randClient].IsConnected())
 			{
-				randClient = rand() % numOfClients;
+				randClient = rand() % CLIENT_NUM;
 			}
 			try
 			{
@@ -123,20 +102,19 @@ int main(int _argc, char* _argv[])
 			catch(std::exception& _exc)
 			{
 				std::cout << _exc.what() << std::endl;
-				sleep(2);
 			}
 			std::cout << "Client " << randClient << "ran" << endl;
 		}
 		/*******
 		30% of disconnected clients should connect
 		*******/
-		numToConnect = (30 *(numOfClients - numOfConnected)) / 100;
+		numToConnect = (30 *(CLIENT_NUM - numOfConnected)) / 100;
 		for(index = 0; index < numToConnect; ++index)
 		{
-			randClient = rand() % numOfClients;
+			randClient = rand() % CLIENT_NUM;
 			while (smartClientArr[randClient].IsConnected())
 			{
-				randClient = rand() % numOfClients;
+				randClient = rand() % CLIENT_NUM;
 			}
 			try
 			{
@@ -145,15 +123,12 @@ int main(int _argc, char* _argv[])
 			catch(const std::exception& _exc)
 			{
 				//TODO:
-				std::cout << _exc.what() << std::endl;
-				sleep(2);
 			}
 			++numOfConnected;
 			std::cout << "Client " << randClient << "connected" << endl;
 		}
 	}
 
-	delete[] smartClientArr;
 	return 0;
 }
 
