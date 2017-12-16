@@ -6,20 +6,26 @@
 #include "../NetExceptions/NetExceptions.h"
 #include<unistd.h> //STDIN_FILENO
 #include<iostream>
+#include<csignal>
 namespace netcpp
 {
-//static const size_t BACKLOG = 1001;
-
+static bool serverShouldRun = true;
+void ServerStopRunning(int _dummy) 
+{
+	serverShouldRun = false;
+}
 /////////////////////////////////////
 ////Public Function Implementations
 /////////////////////////////////////
 Server::Server(AppFunc _func, int _port, size_t _maxClientNum, size_t _backlog):
 								m_serverSock(new ServerSock(_port, _backlog)) 
 								,m_maxClientNum(_maxClientNum)
+								,m_shouldRun(true)
 								,m_appFunc(_func)									
 {
 	m_fdSet.Add(m_serverSock);
 	m_fdSet.Add(STDIN_FILENO);
+	signal(SIGINT, ServerStopRunning);
 }
 
 Server::~Server()
@@ -30,7 +36,7 @@ Server::~Server()
 void Server::Run() //TODO: if server is active on construction, then this is lying. Should connect in run. Maybe server should have GoOnline and GoOffline functions?
 {
 	int activity;
-	while(1)
+	while(serverShouldRun)
 	{	
 		try
 		{
@@ -47,7 +53,6 @@ void Server::Run() //TODO: if server is active on construction, then this is lyi
 					{
 						std::cout << "*****" << __FILE__ << __LINE__ << "*****" << _exc.what() << std::endl;
 						sleep(2);
-//						throw;
 					}
 				}
 				CheckCurrentClients();

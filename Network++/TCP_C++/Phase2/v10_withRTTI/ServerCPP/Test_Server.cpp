@@ -18,6 +18,8 @@ int main(int _argc, char* _argv[]) //port, maxClientNum, backLog
 	int maxClientNum;
 	int backLog;
 	
+	
+	
 	/*******
 	Check input arguments
 	*******/

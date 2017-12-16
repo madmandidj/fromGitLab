@@ -46,7 +46,9 @@ private:
     std::list<CommSharedPtr_t > m_commSockets;
     FDSet_t m_fdSet;
     size_t m_maxClientNum;
+    mutable bool m_shouldRun;
     AppFunc m_appFunc;
 };
+
 }//namespace netcpp
 #endif//#ifndef __SERVERCPP_H__

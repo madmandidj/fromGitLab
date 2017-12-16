@@ -16,11 +16,9 @@ void intHandler(int dummy)
 	
 int main(int _argc, char* _argv[])
 {	
-//	const int CLIENT_NUM = 999;
 	size_t numOfClients;
 	int randClient;
 	size_t index;
-//	netcpp::Client smartClientArr[CLIENT_NUM];
 	netcpp::Client* smartClientArr;
 	
 	size_t numOfConnected = 0;
@@ -30,7 +28,7 @@ int main(int _argc, char* _argv[])
 	size_t numToRun = 0;
 	size_t numToConnect = 0;
 	signal(SIGINT, intHandler);
-//	
+
 	srand(time(NULL));
 	
 	/*******
@@ -77,12 +75,9 @@ int main(int _argc, char* _argv[])
 		}
 		catch(const std::exception& _exc)
 		{
-			//TODO:
-//			int mynum =rand() % 100;
 			std::cout << _exc.what() << std::endl;
 			delete[] smartClientArr;
 			return 0;
-//			sleep(2);
 		}
 	}
 	/*******
@@ -144,7 +139,6 @@ int main(int _argc, char* _argv[])
 			}
 			catch(const std::exception& _exc)
 			{
-				//TODO:
 				std::cout << _exc.what() << std::endl;
 				sleep(2);
 			}
