@@ -11,7 +11,7 @@ class Socket_t
 public:
 	explicit Socket_t();
 	virtual ~Socket_t();
-	FD_t Accept(int _flags = 0);
+	FD_t Accept();
 	void Connect();
 	void Close();
 	int Send(void* _data, size_t _length, int _flags) const;

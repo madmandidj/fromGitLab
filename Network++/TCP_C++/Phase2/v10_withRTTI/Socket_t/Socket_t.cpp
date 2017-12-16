@@ -25,12 +25,12 @@ Socket_t::~Socket_t()
 	std::cout << "~Socket_t, fd = " << m_fd.m_rawFd << std::endl;
 }
 
-FD_t Socket_t::Accept(int _flags) 
+FD_t Socket_t::Accept() 
 {
 	ThrowIfNotServerSocket(__FILE__, __LINE__, ", Accept() this object is not ServerSock");
 	socklen_t addr_len = sizeof(m_sin.m_rawSin);
 	FD_t fd;
-	fd = accept4(m_fd.m_rawFd, (struct sockaddr*) &m_sin.m_rawSin, &addr_len, _flags);
+	fd = accept(m_fd.m_rawFd, (struct sockaddr*) &m_sin.m_rawSin, &addr_len);
 	if (fd == -1)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
