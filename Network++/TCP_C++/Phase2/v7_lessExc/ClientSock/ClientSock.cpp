@@ -90,7 +90,7 @@ int ClientSock::Send(void* _data, size_t _length) const
 
 size_t ClientSock::Receive() const
 {
-	static size_t count = 0;
+//	static size_t count = 0;
 	
 	if (m_isConnected)
 	{
@@ -108,8 +108,8 @@ size_t ClientSock::Receive() const
 			}
 			throw UnspecifiedErrnoExc(__FILE__, __LINE__, "in Receive(), Unspecified errno");
 		}
-		std::cout << "count = " << count << std::endl;
-		++count;
+//		std::cout << "count = " << count << std::endl;
+//		++count;
 		return numOfBytesRead;
 		
 	}

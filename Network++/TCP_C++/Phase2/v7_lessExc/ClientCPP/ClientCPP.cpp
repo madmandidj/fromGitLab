@@ -75,6 +75,8 @@ void Client::Run()
 	if (0 == result)
 	{
 		m_clientSock.Disconnect();
+		std::cout << "Client received 0, disconnected: " << std::endl;
+		return;
 	}
 	
 	std::cout << "Client received: " << m_clientSock.m_buffer << ", result = " << result << std::endl;

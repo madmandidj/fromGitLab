@@ -1,4 +1,4 @@
-#include "./ServerCPP/ServerCPP.h"
+#include "ServerCPP.h"
 //#include "./NetExceptions/NetExceptions.h"
 #include<iostream>
 #include<stdlib.h>
@@ -26,6 +26,11 @@ int main(int _argc, char* _argv[]) //port, maxClientNum, backLog
 		port = 8888;
 		maxClientNum = 1000;
 		backLog = 1000;
+	}
+	else if(2 == _argc)
+	{
+		std::cout << "int port(8888), int maxClientNum(1000), int backLog(1000)" << std::endl;
+		return 0;
 	}
 	else if(3 == _argc)
 	{
