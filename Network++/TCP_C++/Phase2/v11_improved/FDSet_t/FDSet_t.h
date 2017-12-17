@@ -1,8 +1,9 @@
 #ifndef __FDSET_T_H__
 #define __FDSET_T_H__
 
-#include<sys/select.h>	//select()
-#include<set>			//std::set
+#include "../FD_t/FD_t.h"
+#include <sys/select.h>	//select()
+#include <set>			//std::set
 
 #if (defined (__linux__))
 #	include<tr1/memory>	//std::tr1::shared_ptr
@@ -14,7 +15,7 @@
 
 namespace netcpp
 {
-class FD_t;
+//class FD_t;
 class Socket_t;
 #ifdef IS_LINUX
 typedef std::tr1::shared_ptr<Socket_t> SharedPtr_t;
@@ -42,9 +43,8 @@ private:
 private:
 	fd_set m_fdSet;
 	mutable fd_set m_workingFdSet;
-	int m_maxFdVal;
-/*	size_t m_numOfFd;*/
-/*	static size_t m_maxNumOfFd;*/
+//	int m_maxFdVal;
+	FD_t m_maxFdVal;
 	std::set<FD_t> m_fdVals;
 };
 

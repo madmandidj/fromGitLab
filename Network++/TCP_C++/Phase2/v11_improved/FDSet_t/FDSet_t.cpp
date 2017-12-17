@@ -8,7 +8,6 @@
 
 namespace netcpp
 {
-//size_t FDSet_t::m_maxNumOfFd = 1000;
 
 FDSet_t::FDSet_t():m_maxFdVal(0)
 {
@@ -28,7 +27,7 @@ void FDSet_t::Clear()
 bool FDSet_t::Add(const FD_t& _fd)
 {
 	FD_SET(_fd.m_rawFd, &m_fdSet);
-	if (_fd.m_rawFd > m_maxFdVal)
+	if (m_maxFdVal < _fd.m_rawFd)
 	{
 		m_maxFdVal = _fd.m_rawFd;
 	}
@@ -44,10 +43,13 @@ bool FDSet_t::Add(const SharedPtr_t& _socket)
 bool FDSet_t::Remove(const SharedPtr_t& _socket)
 {
 	FD_CLR((_socket.get())->m_fd.m_rawFd, &m_fdSet);
-	if ((_socket.get())->m_fd.m_rawFd == m_maxFdVal)
+	if (m_maxFdVal == (_socket.get())->m_fd.m_rawFd)
 	{
+		m_fdVals.erase(--(m_fdVals.end()));
 		SetNewMaxFdVal((_socket.get())->m_fd);
-	}	
+		return true;
+	}
+	m_fdVals.erase((_socket.get())->m_fd);	
 	return true;
 }
 
@@ -69,11 +71,7 @@ int FDSet_t::GetActivity() const
 
 void FDSet_t::SetNewMaxFdVal(const FD_t& _fd)
 {
-	std::cout << "maxFdVal pre upper-bound " << m_maxFdVal << std::endl;
-//	m_maxFdVal = (m_fdVals.upper_bound(_fd))->m_rawFd;
 	m_maxFdVal = (--(m_fdVals.end()))->m_rawFd;
-	std::cout << "maxFdVal post upper-bound " << m_maxFdVal << std::endl;
-//	sleep(2);
 }
 
 }//namespace netcpp
