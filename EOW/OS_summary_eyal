@@ -1,0 +1,105 @@
+4 conditions for deadlock:
+A. mutual exclusion
+B. hold and wait - process can request new resource before releasing old one
+C. No preemption - resource must be explicitly released by the process
+D. Circular wait
+
+
+CPU
+----
+The CPU executes instruction read from memory. Two categories of instructions:
+1. Those that load values from memory into registers and store values from registers to memory.
+2. Thos that operate on values stored in registers. e.g. adding, subtracting, multiplying or dividng the values in two registers.
+
+Executing a single instruction consists of a particular cycle of events: fetching, decoding, executing and storing:
+1. fetch: get the instruction from memory into the processor
+2. Decode: internally decode what it has to do
+3. execute: take the values from the registers (and add in the case of add)
+4. store: store the result back into another register.
+
+ALU- the arithmetic logic unit takes values in registers and performs any of the multitude of operation the CPU is capable of. Modern processors have a number of ALUs so each can be working independently.
+
+
+
+Memory Heirarchy
+----------------
+The CPU can only directly fetch instructions and data from cache memory, located directly on the processor chip. Cache memory must be loaded in from the main system memory.
+
+DMA- direct memory access is a method of transferring data directly between a peripheral and system RAM.
+
+SMP - symmetric multiprocessing: all CPUs in the system are the same (architecture, clock, speed). multiple processors share all other system resources (memory, disk, etc..)
+
+
+spinlock- in this lock, the processor sits in a tight loop waiting to take the lock.
+semaphore- a mutex is a special case of a semaphore. in a case where multiple rsources available, a semaphore can be set to count accesses to the resources. in the case where the number of resources is one, it is a mutex
+
+Role of OS
+-----------
+1. Abstraction of hardware:  The fundamental operation of the OS is to abstract the hardware to the programmer and user.
+2. Multitasking: Responsible for resource management within the system. Resources such as processor time, memory, disk and user input. The OS needs to arbitrate these resources to the multiple tasks and allow them access in an orderly fashion.
+3. Standardised interfaces: OS support for standardised interfaces enables programmers  to write programs that can run on different hardware platforms. (e.g. open()) from Portable Operating System Interface (POSIX).
+4. Security: As the arbitrator of access to the system, the operating system is responsible for ensuring that only those with the correct permissions can access resources.
+5. Performance: The OS needs to exploit the features of the underlying hardware to make sure it is getting the best possible performance for the operations, and consequently systems programmers need to understand the intimiate details of the architecture they are building for.
+
+
+OS organization
+----------------
+The kernel is the operating system. The kernel communicates to hardware both directly and through drivers. Drivers abstract hardware to the kernel.
+
+Monolithic kernel: The core privileged kernel is large, containing hardware drivers, file system accesses controls, permissions checking and services such as Network File System.
+
+Micorkernel: minimises the possiblity of whole system crash by making the privileged part of the kernel as small as possible. performance is decreased. talking between many different components can decrease performance. Slightly more difficult for the programmer. Seperation between components is implemented with a message passing based system, commonly referred to as inter-process communication or IPC.
+
+Modules: Linux kernel implements a module system, where drivers can be loaded into the running kernel "on the fly" as they are required. drivers are not loaded for devices that are not present in the system. However if hardware is present, modules are loaded directly in the privileged kernel and operate at the same privilege level as the rest of the kernel, so the system is still considered monolithic kernel.
+
+Userspace: The theoretical place that programs are runned by the user. Each program runs in userspace talking to the kernel through system calls. userspace is unprivileged.
+
+
+
+System calls
+------------
+System calls are how userspace programs interact with the kernel.
+
+System call numbers: Each system call has a system call number which is known by both the userspace and the kernel. The ABI application binary interface is very similar to an API but rather being for software is for hardware. The ABI will define which register the system call number should be put in so the kernel can find it when it is asked to do the system call.
+
+Trap: This is the way the programmer communicates to the kernel that we wish to make a system call. specifically, this instruction will tell the hardware to modify the instruction pointer to point the kernels system call handler. Once the userspace calls the break instruction, it has lost control of the program and passed it over to the kernel. The kernel looks in the predefined register for the system call number and looks it up in a table to see which function it should call. The final step is for the kernel to make a jump instruction back to the userspace program so it can continue off where it left from
+
+libc: the standard library that deals with system calls on UNIX like systems.
+
+
+Virtual Memory:
+--------------
+All about making use of address space. The address space of a processor refers to the range of possible addresses that it can use when laoding and storing memory. The address space is limited by the width of the registers.
+
+
+Pages:
+------
+The total address space is divided into individual pages. Generally around 4KB. Page is smallest unit of memory that the operating system and hardware can deal with. Each page has a number of attributes set by the OS including read/write/exec permission for the current page.
+
+
+Physical Memory:
+----------------
+The OS divides the available physical memory into frames. A frame is the conventional name for a chunk of physical memory the same size as the system page size. The OS keeps a frame-table which is a list of all possible pages of physical memory and if they are free or not. The information about where memory is located, how much, attributes and more is passed to the operating system by the BIOS during initialisation.
+
+
+Page Tables:
+------------
+It is the OS job to keep track of which virtual page points to which physical frame. This information is kept in a page table.
+
+
+Virtual Addresses:
+-----------
+Consists of two parts: the page and an offset into that page.
+page- the page componenet of the virtual address acts as an index into the page table. Since the page is the smallest unit of memory allocation within the system there is a trade-off between making pages very small, and thus having very many pages for the operating system to manage, and making pages larger but potentially wasting memory.
+Offset- the last bits of the virtual address are called the offset which is the location difference between the byte address you want and the start of the page. for a 4K page you require 12 bits of offset. When translating a virtual-address to a physical-address we only deal with the page number . The essence of the procedure is to take the page number of the given address and look it up in the page-table to find a pointer to a physical address, to which the offset from the virtual address is added, giving the actual location in system memory.
+
+
+
+Translation Lookaside Buffer (TLB):
+----------------------------------
+Main component of the processor responsible for virtual-memory. It is a cache of virtual-page to physical-frame translations inside the processor.
+If the processor can not find a translation in the TLB, the processor must raise a page fault. When the OS gets a page fault, it needs to go through its page-table to find the correct translation and insert it into the TLB. If OS cannot find a translation in the page table or if the OS finds the process is not authorised to access the page, the OS must kill the process. Segmentation fault is the OS killing a process that has overstepped its bounds. should the translation be found adn the TLB currently full, then one translation needs to be removed before another can be inserted. least recently used
+
+
+
+

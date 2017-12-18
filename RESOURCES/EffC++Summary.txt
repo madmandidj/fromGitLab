@@ -1,0 +1,107 @@
+---------------
+---------------
+Intro
+---------------
+---------------
+Declaration: 
+Tells compiler about the name and type of something but omits certain details. A function decelration reveals its signature, which is parameter and return types. Function signature is the same as its type. Official C++ definition of "signature" excludes the function's return type.
+
+Definition: 
+Provides compilers with the details a decleration omits. For an object the definition is where compilers set aside memory for the object. For a function or a function template, the definition provides the code body. For a class or a class template, the definition lists the members of the class or template.
+
+Initialization:
+is the process of giving an object its first value. For objects generated from structs and classes, initialization is performed by constructors (CTORs).
+
+Default CTOR:
+Can be called without any arguments. This constructor either has no parameters or has a default value for every parameter.
+
+Explicit CTOR:
+Decalring a constructor as explicit prevents it from being used to perform implicit type conversions. Explicit type conversions may still be used. CTORs declared explicit are preferable. Unless there is a good reason for allowing a CTOR to be used for implicit type conversions, declare it explicit.
+
+Copy CTOR:
+Used to initialize an object with a different object of the same type. Particulary important function because it defines how an object is passed by value. Passing by value calls the copy constructor (Note: better to pass by reference to const).
+
+Copy assignment operator:
+Used to copy the value from one object to another of the same type. CAREFUL! If a new object is being defined, a constructor has to be called: Type_t newObj = otherObj; ----> invokes Copy CTOR
+
+Function Objects:
+Objects that act like functions. These come from classes that overload operator(), the function call operator.
+
+Undefined behaviour:
+For a variety of reasons, the behaviour of some constructs in C++ is literally not defined. One cannot reliably predict what will happen at runtime. Undefined behaviour could erase your hard drive, but more likely will make program crash, produce incorrect results, or even sometimes apparantely "work".
+
+Interface:
+Refers to one of the following.
+A functions signature / accessible elements of a class / expressions that must be valid for a template's type parameter.
+
+Client:
+Someone or something that uses the code (typically the interface) you write. Try to make clients lives as easy as you can.
+
+Threading Considerations:
+As a language, C++ has no notion of threads. This book largely limits itself to single-threaded considerations.
+
+TR1:
+Technical Report 1, is a specification for new functionality being added to C++'s standard library. New class and function templates for things like hash tables, refernce counting smart pointers, regular expressions... all are in namespace tr1 thats nested inside the namsespace std
+
+
+
+---------------
+---------------
+Accustomizing yourself to C++
+---------------
+---------------
+ITEM 1: VIEW C++ AS A FEDERATION OF LANGUAGES
+C++ has 4 primary sublanguages:
+	1. C
+	2. Object-oriented C++ - classes, ctor/dtor, encapsulation, inheritance, polymorphism, virtual functions...
+	3. Template C++
+	4. STL
+Keep these sublanguages in mind! For example, pass by value is generally more efficient than pass by reference for built in types but when considering object oriented C++, the existence of user defined ctor and dtor means that pass by reference to const is usually better. This is especially the case with templates. However for STL, iterators and function objects are modeled on pointers in C, so for the STL use pass by value. C++ is a federation of 4 languages.
+Note: Rules for effective C++ programming vary, depending ont he part of C++ you are using.
+
+Item2: PREFER const, enum, and inline to #define
+Solution is to replace macro with a const. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
