@@ -1,0 +1,167 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf830
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww12600\viewh14480\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 struct UIManager\
+\{\
+	Transmitter* m_trans;\
+\};\
+*************************************\
+*************************************\
+struct Reader\
+\{\
+	unsigned int m_systemMode;\
+	unsigned int m_numOfThreads;\
+	char m_cdrPath[256];\
+	pthread_t* m_threadIDs;\
+	Transmitter* m_trans;\
+	Receiver* m_rcvr;\
+	pthread_mutex_t m_newFileMutex;\
+\};\
+*************************************\
+*************************************\
+struct FeederManager\
+\{\
+	Transmitter* m_trans;\
+	Receiver* m_rcvr;\
+	Reader* m_reader;\
+\};\
+*************************************\
+*************************************\
+struct DataGenParams\
+\{\
+	int m_numOfRecords;\
+	size_t m_subMsisdnLength;\
+	size_t m_opMsisdnLength;\
+\};\
+*************************************\
+*************************************\
+struct Receiver\
+\{\
+	key_t m_queueKey;\
+	int m_queueID;\
+	msqid_ds* m_queueStats;\
+\};\
+\
+struct Transmitter\
+\{\
+	key_t m_queueKey;\
+	int m_queueID;\
+	msqid_ds* m_queueStats;\
+\};\
+\
+struct UIcommand\
+\{\
+	unsigned int m_command;\
+	char m_searchKey[32];\
+\};\
+\
+struct Data\
+\{\
+	Record m_rec;\
+	UIcommand m_uiCommand;\
+\};\
+\
+struct Msg\
+\{\
+	long m_channel;\
+	Data m_data;\
+\};\
+*************************************\
+*************************************\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 struct Accumulator\
+\{\
+	Container* m_contSub;\
+	Container* m_contOp;\
+	unsigned int m_numOfSub;\
+	unsigned int m_numOfOp;\
+\};\
+\
+struct Container\
+\{\
+	HashMap* m_storage;\
+\};\
+\
+struct ProcessingManager\
+\{\
+	Accumulator* m_accum;\
+	Processor* m_proc;\
+	Receiver* m_rcvr;\
+\};\
+\
+struct Processor\
+\{\
+	unsigned int m_magicNum;\
+	unsigned int m_systemMode;\
+	unsigned int m_numOfThreads;\
+	pthread_t* m_threadIDs;\
+	Accumulator* m_accum;\
+	Receiver* m_rcvr;\
+\};\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 *************************************\
+*************************************\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 struct Operator\
+\{\
+	char m_operatorBrand[65];\
+	char m_operatorMCCMNC[7];\
+	unsigned int m_outVoice;\
+	unsigned int m_inVoice;\
+	unsigned int m_outSms;\
+	unsigned int m_inSms;\
+	float m_downloadMB;\
+	float m_uploadMB;\
+\};\
+\
+struct Subscriber\
+\{\
+	char m_imsi[16];\
+	char m_msisdn[16];\
+	unsigned int m_outVoiceWithinOp;\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 	unsigned int m_inVoiceWithinOp;\
+	unsigned int m_outVoiceOutsideOp;\
+	unsigned int m_inVoiceOutsideOp;\
+	unsigned int m_outSmsWithinOp;\
+	unsigned int m_inSmsWithinOp;\
+	unsigned int m_outSmsOutsideOp;\
+	unsigned int m_inSmsOutsideOp;\
+	float m_downloadMB;\
+	float m_uploadMB;\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \};\
+\
+struct Record\
+\{\
+	char m_imsi[16];\
+	char m_msisdn[16];\
+	char m_imei[16];\
+	char m_operatorBrand[65];\
+	char m_operatorMCCMNC[7];\
+	CallType m_callType;\
+	char m_callDate[11];\
+	char m_callTime[9];\
+	unsigned int m_duration;\
+	float m_downloadMB;\
+	float m_uploadMB;\
+	char m_partyMsisdn[16];\
+	char m_partyMCCMNC[7];\
+\};\
+\
+enum CallType\
+\{\
+	MOC,\
+	MTC,\
+	SMS_MO,\
+	SMS_MT,\
+	GPRS\
+\};\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 *************************************\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 *************************************}
