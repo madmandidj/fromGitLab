@@ -16,8 +16,8 @@
 #define ITR_NEXT(I) ((Node*)(I)->m_next)
 #define ITR_PREV(I) ((Node*)(I)->m_prev)
 
-typedef struct Node Node;
-typedef Node* Iterator;
+/*typedef struct Node Node;*/
+/*typedef Node* ListItr;*/
 
 struct Node
 {
@@ -48,7 +48,7 @@ List* ListCreate()
 
 void ListDestroy(List* _list, ElementFunc _elemDestroyFunc)
 {
-    Iterator iterator;
+    ListItr iterator;
     if (!_list)
     {
         return;
@@ -90,15 +90,68 @@ ADTErr ListPopHead(List* _list, void** _removedElement)
     {
         return ERR_INVARG;
     }
-    *_removedElement = _list->m_head.m_next->m_data;
-    _list->m_head.m_next->m_next->m_prev = &_list->m_head;
-    _list->m_head.m_next = _list->m_head.m_next->m_next;
+	*_removedElement = NODE_DATA((LIST_FIRST(_list)));
+    NODE_PREV(NODE_NEXT(LIST_FIRST(_list))) = LIST_BEGIN(_list);
+    LIST_FIRST(_list) = NODE_NEXT(LIST_FIRST(_list));
     return ERR_OK;
+}
+
+ADTErr ListPushTail(List* _list, void* _element)
+{
+	Node* newNode;
+	if (!_list || !_element)
+    {
+        return ERR_INVARG;
+    }
+    if (!(newNode = malloc(sizeof(Node))))
+    {
+        return ERR_NOMEM;
+    }
+    NODE_DATA(newNode) = _element;
+    NODE_NEXT(newNode) = LIST_END(_list);
+    NODE_PREV(newNode) = LIST_LAST(_list);
+    NODE_NEXT(LIST_LAST(_list)) = newNode;
+    LIST_LAST(_list) = newNode;
+    return ERR_OK;
+}
+
+ADTErr ListPopTail(List* _list, void** _removedElement)
+{
+	if (!_list || !_removedElement)
+    {
+        return ERR_INVARG;
+    }
+	*_removedElement = NODE_DATA((LIST_LAST(_list)));
+    NODE_NEXT(NODE_PREV(LIST_LAST(_list))) = LIST_END(_list);
+    LIST_LAST(_list) = NODE_PREV(LIST_LAST(_list));
+    return ERR_OK;
+}
+
+ADTErr InsertAfter(List* _list, ListItr _itr, void* _element)
+{
+	if (!_list || !_element)
+    {
+        return ERR_INVARG;
+    }
+    /*
+    pseudo:
+    if (itr is on tail || on last element)
+    {
+    	PushTail
+    }
+    if (itr is on head)
+    {
+    	PushHead
+    }
+    Do Insert
+    
+    
+    */
 }
 
 void ListPrint(List* _list, ElementFunc _elemPrintFunc)
 {
-    Iterator iterator;
+    ListItr iterator;
     if (!_list || !_elemPrintFunc)
     {
         return;
