@@ -127,26 +127,53 @@ ADTErr ListPopTail(List* _list, void** _removedElement)
     return ERR_OK;
 }
 
-ADTErr InsertAfter(List* _list, ListItr _itr, void* _element)
+ListItr ListItrBegin(List* _list)
 {
-	if (!_list || !_element)
+	if (!_list)
+    {
+        return NULL;
+    }
+    return (ListItr) LIST_FIRST(_list);
+}
+
+ListItr ListItrEnd(List* _list)
+{
+	if (!_list)
+    {
+        return NULL;
+    }
+    return (ListItr) LIST_END(_list);
+}
+
+ListItr ListItrNext(ListItr _itr)
+{
+	if (!_itr)
+    {
+        return NULL;
+    }
+    if (ITR_NEXT(_itr) == 0)
+    {
+    	return _itr;
+    }
+    return (ListItr) ITR_NEXT(_itr);
+}
+
+ADTErr ListInsertAfter(ListItr _itr, void* _element)
+{
+	Node* newNode;
+    if (!_element)
     {
         return ERR_INVARG;
     }
-    /*
-    pseudo:
-    if (itr is on tail || on last element)
+    if (!(newNode = malloc(sizeof(Node))))
     {
-    	PushTail
+        return ERR_NOMEM;
     }
-    if (itr is on head)
-    {
-    	PushHead
-    }
-    Do Insert
-    
-    
-    */
+    NODE_NEXT(newNode) = ITR_NEXT(_itr);
+    NODE_PREV(newNode) = (Node*) _itr;
+    NODE_PREV(ITR_NEXT(_itr)) = newNode;
+    NODE_NEXT((Node*)_itr) = newNode;
+	return ERR_OK;
 }
 
 void ListPrint(List* _list, ElementFunc _elemPrintFunc)
