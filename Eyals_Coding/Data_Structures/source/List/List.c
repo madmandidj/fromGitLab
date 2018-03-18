@@ -127,6 +127,17 @@ ADTErr ListPopTail(List* _list, void** _removedElement)
     return ERR_OK;
 }
 
+
+
+
+
+
+
+
+
+
+
+
 ListItr ListItrBegin(List* _list)
 {
 	if (!_list)
@@ -145,6 +156,25 @@ ListItr ListItrEnd(List* _list)
     return (ListItr) LIST_END(_list);
 }
 
+void* ListItrGet(ListItr _itr)
+{
+	if (!_itr)
+    {
+        return NULL;
+    }
+    return ITR_DATA(_itr);
+}
+
+ListItr ListItrSet(ListItr _itr, void* _element)
+{
+	if (!_itr || !_element)
+    {
+        return _itr;
+    }
+    NODE_DATA(_itr) = _element;
+    return _itr;
+}
+
 ListItr ListItrNext(ListItr _itr)
 {
 	if (!_itr)
@@ -158,22 +188,36 @@ ListItr ListItrNext(ListItr _itr)
     return (ListItr) ITR_NEXT(_itr);
 }
 
-ADTErr ListInsertAfter(ListItr _itr, void* _element)
+ListItr ListItrPrev(ListItr _itr)
+{
+	if (!_itr)
+    {
+        return NULL;
+    }
+    if (ITR_PREV(_itr) == 0)
+    {
+    	return _itr;
+    }
+    return (ListItr) ITR_PREV(_itr);
+}
+
+ListItr ListInsertAfter(ListItr _itr, void* _element)
 {
 	Node* newNode;
-    if (!_element)
+    if (!_itr || !_element)
     {
-        return ERR_INVARG;
+        return _itr;
     }
     if (!(newNode = malloc(sizeof(Node))))
     {
-        return ERR_NOMEM;
+        return _itr;
     }
+    NODE_DATA(newNode) = _element;
     NODE_NEXT(newNode) = ITR_NEXT(_itr);
     NODE_PREV(newNode) = (Node*) _itr;
     NODE_PREV(ITR_NEXT(_itr)) = newNode;
     NODE_NEXT((Node*)_itr) = newNode;
-	return ERR_OK;
+	return (ListItr) newNode;
 }
 
 void ListPrint(List* _list, ElementFunc _elemPrintFunc)
