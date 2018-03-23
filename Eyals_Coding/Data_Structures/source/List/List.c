@@ -90,9 +90,16 @@ ADTErr ListPopHead(List* _list, void** _removedElement)
     {
         return ERR_INVARG;
     }
-	*_removedElement = NODE_DATA((LIST_FIRST(_list)));
-    NODE_PREV(NODE_NEXT(LIST_FIRST(_list))) = LIST_BEGIN(_list);
-    LIST_FIRST(_list) = NODE_NEXT(LIST_FIRST(_list));
+    if (LIST_FIRST(_list) == LIST_END(_list))
+    {
+    	*_removedElement = NULL;
+    }
+    else
+    {
+		*_removedElement = NODE_DATA((LIST_FIRST(_list)));
+		NODE_PREV(NODE_NEXT(LIST_FIRST(_list))) = LIST_BEGIN(_list);
+		LIST_FIRST(_list) = NODE_NEXT(LIST_FIRST(_list));
+    }
     return ERR_OK;
 }
 
@@ -121,9 +128,16 @@ ADTErr ListPopTail(List* _list, void** _removedElement)
     {
         return ERR_INVARG;
     }
-	*_removedElement = NODE_DATA((LIST_LAST(_list)));
-    NODE_NEXT(NODE_PREV(LIST_LAST(_list))) = LIST_END(_list);
-    LIST_LAST(_list) = NODE_PREV(LIST_LAST(_list));
+    if (LIST_LAST(_list) == LIST_BEGIN(_list))
+    {
+    	*_removedElement = NULL;
+    }
+    else
+    {
+		*_removedElement = NODE_DATA((LIST_LAST(_list)));
+		NODE_NEXT(NODE_PREV(LIST_LAST(_list))) = LIST_END(_list);
+		LIST_LAST(_list) = NODE_PREV(LIST_LAST(_list));
+	}
     return ERR_OK;
 }
 
@@ -233,7 +247,7 @@ ListItr ListItrPrev(ListItr _itr)
     return (ListItr) ITR_PREV(_itr);
 }
 
-ListItr ListInsertAfter(ListItr _itr, void* _element)
+ListItr ListItrInsertAfter(ListItr _itr, void* _element)
 {
 	Node* newNode;
     if (!_itr || !_element || ListItrNext(_itr) == 0)
@@ -252,7 +266,7 @@ ListItr ListInsertAfter(ListItr _itr, void* _element)
 	return (ListItr) newNode;
 }
 
-ListItr ListInsertBefore(ListItr _itr, void* _element)
+ListItr ListItrInsertBefore(ListItr _itr, void* _element)
 {
 	Node* newNode;
     if (!_itr || !_element || ListItrPrev(_itr) == 0)
@@ -264,14 +278,27 @@ ListItr ListInsertBefore(ListItr _itr, void* _element)
         return _itr;
     }
     NODE_DATA(newNode) = _element;
-    NODE_NEXT(newNode) = ITR_NEXT(_itr);
-    NODE_PREV(newNode) = (Node*) _itr;
-    NODE_PREV(ITR_NEXT(_itr)) = newNode;
-    NODE_NEXT((Node*)_itr) = newNode;
+    NODE_NEXT(newNode) = (Node*) _itr;
+    NODE_PREV(newNode) = ITR_PREV(_itr);
+    NODE_NEXT(ITR_PREV(_itr)) = newNode;
+    NODE_PREV((Node*)_itr) = newNode;
 	return (ListItr) newNode;
 }
 
-
+ListItr ListItrRemove(List* _list, ListItr _itr, void** _removedElement)
+{
+	if (!_itr || !_removedElement || (Node*) _itr == LIST_BEGIN(_list) || (Node*) _itr == LIST_END(_list) )
+    {
+    	*_removedElement = NULL;
+        return _itr;
+    }
+	*_removedElement = ITR_DATA(_itr);
+	NODE_PREV(ITR_NEXT(_itr)) = ITR_PREV(_itr);
+	NODE_NEXT(ITR_PREV(_itr)) = ITR_NEXT(_itr);
+/*	_itr = ITR_PREV(_itr);*/
+	return ITR_PREV(_itr);
+    
+}
 
 
 

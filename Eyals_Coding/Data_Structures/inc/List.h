@@ -23,8 +23,9 @@ void* ListItrGet(ListItr _itr);
 ListItr ListItrSet(ListItr _itr, void* _element);
 ListItr ListItrNext(ListItr _itr);
 ListItr ListItrPrev(ListItr _itr);
-ListItr ListInsertAfter(ListItr _itr, void* _element);
-ListItr ListInsertBefore(ListItr _itr, void* _element);
+ListItr ListItrInsertAfter(ListItr _itr, void* _element);
+ListItr ListItrInsertBefore(ListItr _itr, void* _element);
+ListItr ListItrRemove(List* _list, ListItr _itr, void** _removedElement); /*should all itr functions have list as param?*/
 
 
 #endif/*#ifndef __LIST_H__*/
