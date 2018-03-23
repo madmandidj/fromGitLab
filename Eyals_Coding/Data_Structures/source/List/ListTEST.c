@@ -133,6 +133,32 @@ UNIT(List_PopTail)
     ListDestroy(list, NULL);
 END_UNIT
 
+
+UNIT(List_Set)
+    List* list;
+    ListItr itr;
+    int intArr[10] = {0,1,2,3,4,5,6,7,8,9};
+	void* poppedTail;
+    list = ListCreate();
+    ListPushTail(list, &intArr[1]);
+    ListPushTail(list, &intArr[8]);
+    ListPushTail(list, &intArr[3]);
+    itr = ListItrBegin(list);
+    itr = ListItrNext(itr);
+    itr = ListItrNext(itr);
+	ListItrSet(itr, &intArr[2]);
+	itr = ListItrBegin(list);
+	poppedTail = ListItrGet(itr);
+	ASSERT_THAT(1 == *(int*)poppedTail);
+    ListPopTail(list, &poppedTail);
+    ASSERT_THAT(2 == *(int*)poppedTail);
+    ListPopTail(list, &poppedTail);
+    ASSERT_THAT(8 == *(int*)poppedTail);
+    ListPopTail(list, &poppedTail);
+    ASSERT_THAT(1 == *(int*)poppedTail);
+    ListDestroy(list, NULL);
+END_UNIT
+
 UNIT(List_InsertAfter)
     List* list;
     ListItr itr;
@@ -157,27 +183,7 @@ UNIT(List_InsertAfter)
     ListDestroy(list, NULL);
 END_UNIT
 
-UNIT(List_Set)
-    List* list;
-    ListItr itr;
-    int intArr[10] = {0,1,2,3,4,5,6,7,8,9};
-	void* poppedTail;
-    list = ListCreate();
-    ListPushTail(list, &intArr[1]);
-    ListPushTail(list, &intArr[8]);
-    ListPushTail(list, &intArr[3]);
-    itr = ListItrBegin(list);
-    itr = ListItrNext(itr);
-    itr = ListItrNext(itr);
-	ListItrSet(itr, &intArr[2]);
-    ListPopTail(list, &poppedTail);
-    ASSERT_THAT(2 == *(int*)poppedTail);
-    ListPopTail(list, &poppedTail);
-    ASSERT_THAT(8 == *(int*)poppedTail);
-    ListPopTail(list, &poppedTail);
-    ASSERT_THAT(1 == *(int*)poppedTail);
-    ListDestroy(list, NULL);
-END_UNIT
+
 
 TEST_SUITE(List tests)
     TEST(List_Create)
@@ -189,3 +195,36 @@ TEST_SUITE(List tests)
 	TEST(List_InsertAfter)
 	TEST(List_Set)
 END_SUITE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

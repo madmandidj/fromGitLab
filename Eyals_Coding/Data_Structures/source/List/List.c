@@ -127,14 +127,28 @@ ADTErr ListPopTail(List* _list, void** _removedElement)
     return ERR_OK;
 }
 
+void ListPrint(List* _list, ElementFunc _elemPrintFunc)
+{
+    ListItr iterator;
+    if (!_list || !_elemPrintFunc)
+    {
+        return;
+    }
+    iterator = LIST_FIRST(_list);
+    while(LIST_END(_list) != iterator)
+    {
+        _elemPrintFunc(ITR_DATA(iterator));
+        iterator = ITR_NEXT(iterator);
+    }
+}
 
 
+/*TODO: ForEach() */
 
 
-
-
-
-
+/**********************
+List iterator functions
+**********************/
 
 
 
@@ -144,7 +158,7 @@ ListItr ListItrBegin(List* _list)
     {
         return NULL;
     }
-    return (ListItr) LIST_FIRST(_list);
+    return (ListItr) LIST_BEGIN(_list);
 }
 
 ListItr ListItrEnd(List* _list)
@@ -154,6 +168,24 @@ ListItr ListItrEnd(List* _list)
         return NULL;
     }
     return (ListItr) LIST_END(_list);
+}
+
+ListItr ListItrFirst(List* _list)
+{
+	if (!_list)
+    {
+        return NULL;
+    }
+    return (ListItr) LIST_FIRST(_list);
+}
+
+ListItr ListItrLast(List* _list)
+{
+	if (!_list)
+    {
+        return NULL;
+    }
+    return (ListItr) LIST_LAST(_list);
 }
 
 void* ListItrGet(ListItr _itr)
@@ -204,7 +236,7 @@ ListItr ListItrPrev(ListItr _itr)
 ListItr ListInsertAfter(ListItr _itr, void* _element)
 {
 	Node* newNode;
-    if (!_itr || !_element)
+    if (!_itr || !_element || ListItrNext(_itr) == 0)
     {
         return _itr;
     }
@@ -220,20 +252,34 @@ ListItr ListInsertAfter(ListItr _itr, void* _element)
 	return (ListItr) newNode;
 }
 
-void ListPrint(List* _list, ElementFunc _elemPrintFunc)
+ListItr ListInsertBefore(ListItr _itr, void* _element)
 {
-    ListItr iterator;
-    if (!_list || !_elemPrintFunc)
+	Node* newNode;
+    if (!_itr || !_element || ListItrPrev(_itr) == 0)
     {
-        return;
+        return _itr;
     }
-    iterator = LIST_FIRST(_list);
-    while(LIST_END(_list) != iterator)
+    if (!(newNode = malloc(sizeof(Node))))
     {
-        _elemPrintFunc(ITR_DATA(iterator));
-        iterator = ITR_NEXT(iterator);
+        return _itr;
     }
+    NODE_DATA(newNode) = _element;
+    NODE_NEXT(newNode) = ITR_NEXT(_itr);
+    NODE_PREV(newNode) = (Node*) _itr;
+    NODE_PREV(ITR_NEXT(_itr)) = newNode;
+    NODE_NEXT((Node*)_itr) = newNode;
+	return (ListItr) newNode;
 }
 
-/*TODO: ForEach() */
+
+
+
+
+
+
+
+
+
+
+
 

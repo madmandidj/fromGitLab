@@ -17,11 +17,14 @@ void ListPrint(List* _list, ElementFunc _elemPrintFunc);
 
 ListItr ListItrBegin(List* _list);
 ListItr ListItrEnd(List* _list);
+ListItr ListItrFirst(List* _list);
+ListItr ListItrLast(List* _list);
 void* ListItrGet(ListItr _itr);
 ListItr ListItrSet(ListItr _itr, void* _element);
 ListItr ListItrNext(ListItr _itr);
 ListItr ListItrPrev(ListItr _itr);
 ListItr ListInsertAfter(ListItr _itr, void* _element);
+ListItr ListInsertBefore(ListItr _itr, void* _element);
 
 
 #endif/*#ifndef __LIST_H__*/
