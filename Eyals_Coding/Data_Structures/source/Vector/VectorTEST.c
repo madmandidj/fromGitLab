@@ -19,7 +19,7 @@ void DeletePerson(void* _personPtr)
 
 void PrintInt(void* _intPtr)
 {
-    printf("%lu\n", *(size_t*)_intPtr);
+    printf("%u\n", *(size_t*)_intPtr);
 }
 
 UNIT(VectorCreate_InvalidCapacity)
@@ -48,12 +48,11 @@ END_UNIT
 
 UNIT(VectorAppend_Capacity10_Blocksize2)
     Vector* vector;
-    ADTErr err;
     int intElem1 = 4;
     vector = VectorCreate(10, 2);
     ASSERT_THAT(NULL != vector);
     ASSERT_THAT(VectorItemsNum(vector) == 0);
-    err = VectorAppend(vector, &intElem1);
+    VectorAppend(vector, &intElem1);
     ASSERT_THAT(VectorItemsNum(vector) == 1);
     /*VectorPrint(vector, PrintInt);*/
     VectorDestroy(vector, NULL);
@@ -92,19 +91,18 @@ END_UNIT
 
 UNIT(VectorAppendRemove_Grow_Shrink)
     Vector* vector;
-    ADTErr err;
     int* removedElement;
     size_t index;
     int intArr[10] = {0,1,2,3,4,5,6,7,8,9};
     vector = VectorCreate(3, 2);
     for (index = 0; index < 10; ++index)
     {
-        err = VectorAppend(vector, intArr + index);
+        VectorAppend(vector, intArr + index);
     }
     ASSERT_THAT(VectorItemsNum(vector) == 10);
     for (index = 9; index > 5; --index)
     {
-        err = VectorRemove(vector, (void**)&removedElement);
+        VectorRemove(vector, (void**)&removedElement);
         ASSERT_THAT(*removedElement == intArr[index]);
     }
     VectorDestroy(vector, NULL);
@@ -126,13 +124,13 @@ UNIT(Vector_SetGet)
     ASSERT_THAT(VectorItemsNum(vector) == 2);
     err = VectorSet(vector, 1, &intElem3);
     err = VectorGet(vector, 1, (void**)&gotElem);
+    ASSERT_THAT(err == ERR_OK);
     ASSERT_THAT(*gotElem == 8);
     VectorDestroy(vector, NULL);
 END_UNIT
 
 UNIT(Vector_With_Person)
     Vector* vector;
-    ADTErr err;
     Person Smitty ={50, 1, NULL};
     Smitty.m_mother = malloc(sizeof(Person) * 1);
     vector = VectorCreate(3, 2);
