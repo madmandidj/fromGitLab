@@ -9,7 +9,7 @@ void BubbleSort(Vector* _vector)
 	unsigned int isSorted = FALSE;
 	size_t index;
 	size_t endIndex = 0;
-	size_t vecItemsNum;
+/*	size_t vecItemsNum;*/
 	void* item_L;
 	void* item_R;
 	if (!_vector)
