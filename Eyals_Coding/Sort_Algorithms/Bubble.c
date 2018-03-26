@@ -7,27 +7,30 @@
 void BubbleSort(Vector* _vector)
 {
 	unsigned int isSorted = FALSE;
-	size_t index;
+	size_t index = 0;
+	size_t itemsNum;
 	size_t endIndex = 0;
-/*	size_t vecItemsNum;*/
-	void* item_L;
-	void* item_R;
-	if (!_vector)
+	int* item_L;
+	int* item_R;
+	if (!_vector || VectorItemsNum(_vector) <= 1)
 	{
 		return;
 	}
-	endIndex = VectorItemsNum(_vector) - 1;
+	itemsNum = VectorItemsNum(_vector);
+	endIndex = itemsNum;
 	while(!isSorted)
 	{
-		isSorted = 1;
-		for (index = 0; index < endIndex; ++index)
+		isSorted = 1;		
+		VectorGet(_vector, 0, (void**)&item_R);
+		for (index = 1; index < endIndex; ++index)
 		{
-			VectorGet(_vector, index, &item_L);
-			VectorGet(_vector, index + 1, &item_R);
-			if (*(int*)item_L > *(int*)item_R)
+			item_L = item_R;
+			VectorGet(_vector, index, (void**)&item_R);
+			if (*item_L > *item_R)
 			{
-				VectorSet(_vector, index, item_R);
-				VectorSet(_vector, index + 1, item_L);
+				VectorSet(_vector, index - 1, (void*)item_R);
+				VectorSet(_vector, index, (void*)item_L);
+				item_R = item_L;
 				isSorted = 0;
 			}
 		}
