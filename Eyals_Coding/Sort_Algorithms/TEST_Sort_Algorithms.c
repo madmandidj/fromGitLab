@@ -326,7 +326,10 @@ void Test_Quick_Average(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+/*	VectorPrint(vector, PrintInt);*/
     printf("Time elapsed for Quick %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
+/*	VectorPrint(vector, PrintInt);*/
+	printf("*************************\n");
 	VectorDestroy(vector,NULL);
 	free(intArr);
 }
@@ -372,7 +375,30 @@ void Test_Merge_Average(size_t _numOfInts)
 	free(intArr);
 }
 
+void Test_Merge_Best(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+	QuickSort(vector);
+    printf("Time elapsed for Merge %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
 
+void Test_Merge_Worst(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+	QuickSort(vector);
+	FlipVector(vector);
+    printf("Time elapsed for Merge %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
 
 
 
@@ -380,7 +406,7 @@ int main()
 {
 	srand ((unsigned int)time(NULL));
 	
-	size_t numOfInts = 10;
+	size_t numOfInts = 10000;
 	
 	/*
 	AVERAGE
@@ -398,23 +424,25 @@ int main()
 	BEST
 	*/
 	printf("********************************************************BEST CASE\n");
-/*	Test_Bubble_Best(numOfInts);*/
-/*	Test_Shake_Best(numOfInts);*/
-/*	Test_Insertion_Best(numOfInts);*/
-/*	Test_Shell_Best(numOfInts);*/
-/*	Test_Selection_Best(numOfInts);*/
-/*	Test_Quick_Best(numOfInts);*/
+	Test_Bubble_Best(numOfInts);
+	Test_Shake_Best(numOfInts);
+	Test_Insertion_Best(numOfInts);
+	Test_Shell_Best(numOfInts);
+	Test_Selection_Best(numOfInts);
+	Test_Quick_Best(numOfInts);
+	Test_Merge_Best(numOfInts);
 	
 	/*
 	WORST
 	*/
 	printf("********************************************************WORST CASE\n");
-/*	Test_Bubble_Worst(numOfInts);*/
-/*	Test_Shake_Worst(numOfInts);*/
-/*	Test_Insertion_Worst(numOfInts);*/
-/*	Test_Shell_Worst(numOfInts);*/
-/*	Test_Selection_Worst(numOfInts);*/
-/*	Test_Quick_Worst(numOfInts);*/
+	Test_Bubble_Worst(numOfInts);
+	Test_Shake_Worst(numOfInts);
+	Test_Insertion_Worst(numOfInts);
+	Test_Shell_Worst(numOfInts);
+	Test_Selection_Worst(numOfInts);
+	Test_Quick_Worst(numOfInts);
+	Test_Merge_Worst(numOfInts);
 	
 	return 0;
 }
