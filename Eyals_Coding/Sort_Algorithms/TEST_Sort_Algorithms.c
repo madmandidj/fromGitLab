@@ -137,7 +137,7 @@ void Test_Bubble_Best(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
     printf("Time elapsed for Bubble %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
 	free(intArr);
@@ -149,7 +149,7 @@ void Test_Bubble_Worst(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
 	FlipVector(vector);
     printf("Time elapsed for Bubble %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
@@ -177,7 +177,7 @@ void Test_Shake_Best(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
     printf("Time elapsed for Shake %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
 	free(intArr);
@@ -189,7 +189,7 @@ void Test_Shake_Worst(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
 	FlipVector(vector);
     printf("Time elapsed for Shake %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
@@ -216,7 +216,7 @@ void Test_Insertion_Best(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
     printf("Time elapsed for Insertion %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
 	free(intArr);
@@ -228,7 +228,7 @@ void Test_Insertion_Worst(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
 	FlipVector(vector);
     printf("Time elapsed for Insertion %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
@@ -256,7 +256,7 @@ void Test_Shell_Best(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
     printf("Time elapsed for Shell %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
 	free(intArr);
@@ -268,7 +268,7 @@ void Test_Shell_Worst(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
 	FlipVector(vector);
     printf("Time elapsed for Shell %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
@@ -296,7 +296,7 @@ void Test_Selection_Best(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
     printf("Time elapsed for Selection %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
 	free(intArr);
@@ -308,12 +308,71 @@ void Test_Selection_Worst(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	BubbleSort(vector);
+	QuickSort(vector);
 	FlipVector(vector);
     printf("Time elapsed for Selection %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
 	VectorDestroy(vector,NULL);
 	free(intArr);
 }
+
+/*
+QUICK TESTS
+NOTE: best,worst and average case scenarios are setup different for quick sort than previous sort algorithms
+*/
+
+void Test_Quick_Average(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+    printf("Time elapsed for Quick %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+void Test_Quick_Best(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+	QuickSort(vector);
+    printf("Time elapsed for Quick %u SortedAscending:\t %f\n", _numOfInts,((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+void Test_Quick_Worst(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+	QuickSort(vector);
+	FlipVector(vector);
+    printf("Time elapsed for Quick %u SortedDescending:\t %f\n", _numOfInts,((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+
+/*
+MERGE TESTS
+*/
+
+void Test_Merge_Average(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+    printf("Time elapsed for Merge %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+
 
 
 
@@ -321,7 +380,7 @@ int main()
 {
 	srand ((unsigned int)time(NULL));
 	
-	size_t numOfInts = 10000;
+	size_t numOfInts = 10;
 	
 	/*
 	AVERAGE
@@ -332,26 +391,30 @@ int main()
 	Test_Insertion_Average(numOfInts);
 	Test_Shell_Average(numOfInts);
 	Test_Selection_Average(numOfInts);
+	Test_Quick_Average(numOfInts);
+	Test_Merge_Average(numOfInts);
 	
 	/*
 	BEST
 	*/
 	printf("********************************************************BEST CASE\n");
-	Test_Bubble_Best(numOfInts);
-	Test_Shake_Best(numOfInts);
-	Test_Insertion_Best(numOfInts);
-	Test_Shell_Best(numOfInts);
-	Test_Selection_Best(numOfInts);
+/*	Test_Bubble_Best(numOfInts);*/
+/*	Test_Shake_Best(numOfInts);*/
+/*	Test_Insertion_Best(numOfInts);*/
+/*	Test_Shell_Best(numOfInts);*/
+/*	Test_Selection_Best(numOfInts);*/
+/*	Test_Quick_Best(numOfInts);*/
 	
 	/*
 	WORST
 	*/
 	printf("********************************************************WORST CASE\n");
-	Test_Bubble_Worst(numOfInts);
-	Test_Shake_Worst(numOfInts);
-	Test_Insertion_Worst(numOfInts);
-	Test_Shell_Worst(numOfInts);
-	Test_Selection_Worst(numOfInts);
+/*	Test_Bubble_Worst(numOfInts);*/
+/*	Test_Shake_Worst(numOfInts);*/
+/*	Test_Insertion_Worst(numOfInts);*/
+/*	Test_Shell_Worst(numOfInts);*/
+/*	Test_Selection_Worst(numOfInts);*/
+/*	Test_Quick_Worst(numOfInts);*/
 	
 	return 0;
 }

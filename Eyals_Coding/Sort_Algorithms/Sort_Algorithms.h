@@ -9,5 +9,6 @@ void InsertionSort(Vector* _vector);
 void ShellSort(Vector* _vector);
 void SelectionSort(Vector* _vector);
 void QuickSort(Vector* _vector);
+void MergeSort(Vector* _vector);
 
 #endif/*#ifndef __SORT_ALGORITHMS_H__*/
