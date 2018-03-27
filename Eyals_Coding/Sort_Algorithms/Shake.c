@@ -8,7 +8,7 @@ void ShakeSort(Vector* _vector)
 {
 	unsigned int isSorted = FALSE;
 	size_t index = 0;
-	size_t itemsNum;
+/*	size_t itemsNum;*/
 	size_t startIndex = 0;
 	size_t endIndex = 0;
 	void* item_L;

@@ -329,7 +329,7 @@ void Test_Quick_Average(size_t _numOfInts)
 /*	VectorPrint(vector, PrintInt);*/
     printf("Time elapsed for Quick %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
 /*	VectorPrint(vector, PrintInt);*/
-	printf("*************************\n");
+/*	printf("*************************\n");*/
 	VectorDestroy(vector,NULL);
 	free(intArr);
 }
@@ -370,7 +370,9 @@ void Test_Merge_Average(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+/*	VectorPrint(vector, PrintInt);*/
     printf("Time elapsed for Merge %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
+/*  VectorPrint(vector, PrintInt);*/
 	VectorDestroy(vector,NULL);
 	free(intArr);
 }
@@ -404,9 +406,12 @@ void Test_Merge_Worst(size_t _numOfInts)
 
 int main()
 {
-	srand ((unsigned int)time(NULL));
+	size_t numOfInts = 20000;
+	Vector* dummyVec;
+	dummyVec = VectorCreate(10,10);
+	VectorPrint(dummyVec, (ElementFunc)PrintInt); /* This is to silence warning of not using PrintInt())*/
 	
-	size_t numOfInts = 10000;
+	srand ((unsigned int)time(NULL));
 	
 	/*
 	AVERAGE
@@ -444,6 +449,7 @@ int main()
 	Test_Quick_Worst(numOfInts);
 	Test_Merge_Worst(numOfInts);
 	
+	VectorDestroy(dummyVec,NULL);
 	return 0;
 }
 

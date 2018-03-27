@@ -1,22 +1,24 @@
 #include "Sort_Algorithms.h"
 #include "../Data_Structures/inc/Vector.h"
+/*#include <unistd.h> */
+#include <limits.h>
 
 #define FALSE 0
 #define TRUE 1
 
-static void SwapElements(Vector* _vector, int _index1, int _index2, void* _elem1, void* _elem2)
+static void SwapElements(Vector* _vector, size_t _index1, size_t _index2, void* _elem1, void* _elem2)
 {
 	VectorSet(_vector, _index2, _elem1);
 	VectorSet(_vector, _index1, _elem2);
 }
 
-static int Partition(Vector* _vector, int _low, int _high)
+static size_t Partition(Vector* _vector, size_t _low, size_t _high)
 {
 	int* pivot;
 	int* element_i;
 	int* element_j;
 	int* element_i_plus1;
-	int i, j;
+	size_t i, j;
 	
 	VectorGet(_vector, _high, (void**)&pivot);
 	i = _low - 1;
@@ -37,11 +39,12 @@ static int Partition(Vector* _vector, int _low, int _high)
 	return i+1;
 }
 
-static void QuickSortRec(Vector* _vector, int _low, int _high)
+static void QuickSortRec(Vector* _vector, size_t _low, size_t _high)
 {
-	int partitionIndex;
+	size_t partitionIndex;
+	size_t maxSizet = UINT_MAX;
 	
-	if (_low < _high)
+	if (_low < _high && _high != maxSizet)
     {
         partitionIndex = Partition(_vector, _low, _high);
         QuickSortRec(_vector, _low, partitionIndex - 1);

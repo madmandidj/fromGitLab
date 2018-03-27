@@ -4,13 +4,13 @@
 #define FALSE 0
 #define TRUE 1
 
-void Merge(Vector* _vector, Vector* _resultVec, int _lowL, int _highL, int _lowR, int _highR)
+void Merge(Vector* _vector, Vector* _resultVec, size_t _lowL, size_t _highL, size_t _lowR, size_t _highR)
 {
-	int indexL = _lowL;
-	int indexR = _lowR;
+	size_t indexL = _lowL;
+	size_t indexR = _lowR;
 	int* itemL;
 	int* itemR;
-	int curResultIndex = _lowL;
+	size_t curResultIndex = _lowL;
 
 	while(curResultIndex <= _highR && indexL <= _highL && indexR <= _highR)
 	{
@@ -51,9 +51,9 @@ void Merge(Vector* _vector, Vector* _resultVec, int _lowL, int _highL, int _lowR
 	}
 }
 
-void MergeSortRec(Vector* _vector, Vector* _resultVec, int _low, int _high)
+void MergeSortRec(Vector* _vector, Vector* _resultVec, size_t _low, size_t _high)
 {
-	int midIndex;
+	size_t midIndex;
 	if (_low >= _high)
 	{
 		return;
