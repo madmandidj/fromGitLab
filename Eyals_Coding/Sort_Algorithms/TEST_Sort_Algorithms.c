@@ -363,7 +363,6 @@ void Test_Quick_Worst(size_t _numOfInts)
 /*
 MERGE TESTS
 */
-
 void Test_Merge_Average(size_t _numOfInts)
 {
 	int* intArr;
@@ -403,10 +402,35 @@ void Test_Merge_Worst(size_t _numOfInts)
 }
 
 
+/*
+COUNTING TESTS
+*/
+void Test_Counting_Average(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+	VectorPrint(vector, (ElementFunc)PrintInt);
+    printf("Time elapsed for Counting %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
+	VectorPrint(vector, (ElementFunc)PrintInt);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+
+
+
+
+
+
+
+
+
 
 int main()
 {
-	size_t numOfInts = 20000;
+	size_t numOfInts = 10;
 	Vector* dummyVec;
 	dummyVec = VectorCreate(10,10);
 	VectorPrint(dummyVec, (ElementFunc)PrintInt); /* This is to silence warning of not using PrintInt())*/
@@ -424,6 +448,7 @@ int main()
 	Test_Selection_Average(numOfInts);
 	Test_Quick_Average(numOfInts);
 	Test_Merge_Average(numOfInts);
+	Test_Counting_Average(numOfInts);
 	
 	/*
 	BEST
