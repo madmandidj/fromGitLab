@@ -62,13 +62,11 @@ static void DoRadixSort(Vector* _vector, Vector** _vecArray, size_t _numOfItems,
 	int* elementPtr;
 	int elementVal;
 	int digitVal;
-	int divRound = 1;
 	size_t vecNumOfItems;
 	size_t vecItemIndex;
 	size_t curNumOfItems = 0;
-	int checkDivFactor;
 	int preModDivFactor = 1;
-	int counter = 0;
+	int counter = 1;
 	
 	while (counter < _curDigit)
 	{
@@ -80,7 +78,7 @@ static void DoRadixSort(Vector* _vector, Vector** _vecArray, size_t _numOfItems,
 	{
 		VectorGet(_vector, index, (void**)&elementPtr);
 		elementVal = *elementPtr;
-		elementVal = (elementVal / DEC_DIGIT_NUM <= 0) ? elementVal : elementVal / preModDivFactor;
+		elementVal /= preModDivFactor;
 		if (elementVal <= 0)
 		{
 			VectorAppend(_vecArray[0], (void*)elementPtr);
@@ -89,36 +87,7 @@ static void DoRadixSort(Vector* _vector, Vector** _vecArray, size_t _numOfItems,
 		digitVal = elementVal % DEC_DIGIT_NUM;
 		VectorAppend(_vecArray[digitVal], (void*)elementPtr);
 	}
-	/*
-	for (index = 0; index < _numOfItems; ++index)
-	{
-		divRound = 1;
-		checkDivFactor = 1;
-		counter = 0;
-		VectorGet(_vector, index, (void**)&elementPtr);
-		elementVal = *elementPtr;
-					
-		while(counter < (_maxNumOfDigits - 2 + _curDigit))
-		{
-			checkDivFactor *= DEC_DIGIT_NUM;
-			++counter;
-		}
-		if (elementVal / checkDivFactor <= 0)
-		{
-			VectorAppend(_vecArray[0], (void*)elementPtr);
-		}
-		else
-		{	
-			while(divRound < _curDigit)
-			{
-				elementVal /= (DEC_DIGIT_NUM * _curDigit - 1);		
-				++divRound;
-			}
-			digitVal = elementVal % DEC_DIGIT_NUM;
-			VectorAppend(_vecArray[digitVal], (void*)elementPtr);
-		}
-	}
-	*/
+	
 	for (index = 0; index < DEC_DIGIT_NUM; ++index)
 	{
 		vecNumOfItems = VectorItemsNum(_vecArray[index]);
