@@ -5,9 +5,9 @@
 #include "Vector.h"
 
 typedef struct Heap Heap;
-typedef int (*ShouldSwapFunc)(void*, void*);
+typedef int (*IsLeftBigger)(void*, void*);
 
-Heap* HeapBuild(Vector* _vec, ShouldSwapFunc _shouldSwapFunc);
+Heap* HeapBuild(Vector* _vec, IsLeftBigger _isLeftBiggerFunc);
 
 void HeapDestroy(Heap* _heap);
 
@@ -19,7 +19,7 @@ ADTErr HeapExtractMax(Heap* _heap, void** _maxElement);
 
 size_t HeapItemsNum(Heap* _heap);
 
-void HeapPrint(Heap* _heap);
+void HeapPrint(Heap* _heap, ElementFunc _printFunc);
 
 
 #endif /*#ifndef __HEAP_H__*/
