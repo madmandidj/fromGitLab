@@ -7,7 +7,7 @@
 
 #define INIT_VEC_CAP 10000
 #define VEC_BLOCK_SIZE 10000
-#define MAX_INT_VAL 10000
+#define MAX_INT_VAL 100
 /*
 AUX FUNCTIONS
 */
@@ -411,26 +411,92 @@ void Test_Counting_Average(size_t _numOfInts)
 	Vector* vector;
 	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
 	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	VectorPrint(vector, (ElementFunc)PrintInt);
+/*	VectorPrint(vector, (ElementFunc)PrintInt);*/
     printf("Time elapsed for Counting %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
+/*	VectorPrint(vector, (ElementFunc)PrintInt);*/
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+void Test_Counting_Best(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+/*	VectorPrint(vector, (ElementFunc)PrintInt);*/
+	QuickSort(vector);
+    printf("Time elapsed for Counting %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
+/*	VectorPrint(vector, (ElementFunc)PrintInt);*/
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+void Test_Counting_Worst(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+/*	VectorPrint(vector, (ElementFunc)PrintInt);*/
+	QuickSort(vector);
+	FlipVector(vector);
+    printf("Time elapsed for Counting %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
+/*	VectorPrint(vector, (ElementFunc)PrintInt);*/
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+
+/*
+RADIX TESTS
+*/
+void Test_Radix_Average(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+	VectorPrint(vector, (ElementFunc)PrintInt);
+    printf("Time elapsed for Radix %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
+	VectorPrint(vector, (ElementFunc)PrintInt);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+void Test_Radix_Best(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+	QuickSort(vector);
+	VectorPrint(vector, (ElementFunc)PrintInt);
+    printf("Time elapsed for Radix %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
+	VectorPrint(vector, (ElementFunc)PrintInt);
+	VectorDestroy(vector,NULL);
+	free(intArr);
+}
+
+void Test_Radix_Worst(size_t _numOfInts)
+{
+	int* intArr;
+	Vector* vector;
+	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
+	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
+	QuickSort(vector);
+	FlipVector(vector);
+	VectorPrint(vector, (ElementFunc)PrintInt);
+    printf("Time elapsed for Radix %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
 	VectorPrint(vector, (ElementFunc)PrintInt);
 	VectorDestroy(vector,NULL);
 	free(intArr);
 }
 
 
-
-
-
-
-
-
-
-
-
 int main()
 {
-	size_t numOfInts = 10;
+	size_t numOfInts = 9;
 	Vector* dummyVec;
 	dummyVec = VectorCreate(10,10);
 	VectorPrint(dummyVec, (ElementFunc)PrintInt); /* This is to silence warning of not using PrintInt())*/
@@ -441,38 +507,44 @@ int main()
 	AVERAGE
 	*/
 	printf("********************************************************AVERAGE CASE\n");
-	Test_Bubble_Average(numOfInts);
-	Test_Shake_Average(numOfInts);
-	Test_Insertion_Average(numOfInts);
-	Test_Shell_Average(numOfInts);
-	Test_Selection_Average(numOfInts);
-	Test_Quick_Average(numOfInts);
-	Test_Merge_Average(numOfInts);
-	Test_Counting_Average(numOfInts);
+/*	Test_Bubble_Average(numOfInts);*/
+/*	Test_Shake_Average(numOfInts);*/
+/*	Test_Insertion_Average(numOfInts);*/
+/*	Test_Shell_Average(numOfInts);*/
+/*	Test_Selection_Average(numOfInts);*/
+/*	Test_Quick_Average(numOfInts);*/
+/*	Test_Merge_Average(numOfInts);*/
+/*	Test_Counting_Average(numOfInts);*/
+	Test_Radix_Average(numOfInts);
 	
 	/*
 	BEST
 	*/
 	printf("********************************************************BEST CASE\n");
-	Test_Bubble_Best(numOfInts);
-	Test_Shake_Best(numOfInts);
-	Test_Insertion_Best(numOfInts);
-	Test_Shell_Best(numOfInts);
-	Test_Selection_Best(numOfInts);
-	Test_Quick_Best(numOfInts);
-	Test_Merge_Best(numOfInts);
+/*	Test_Bubble_Best(numOfInts);*/
+/*	Test_Shake_Best(numOfInts);*/
+/*	Test_Insertion_Best(numOfInts);*/
+/*	Test_Shell_Best(numOfInts);*/
+/*	Test_Selection_Best(numOfInts);*/
+/*	Test_Quick_Best(numOfInts);*/
+/*	Test_Merge_Best(numOfInts);*/
+/*	Test_Counting_Best(numOfInts);*/
+	Test_Radix_Best(numOfInts);
 	
 	/*
 	WORST
 	*/
 	printf("********************************************************WORST CASE\n");
-	Test_Bubble_Worst(numOfInts);
-	Test_Shake_Worst(numOfInts);
-	Test_Insertion_Worst(numOfInts);
-	Test_Shell_Worst(numOfInts);
-	Test_Selection_Worst(numOfInts);
-	Test_Quick_Worst(numOfInts);
-	Test_Merge_Worst(numOfInts);
+/*	Test_Bubble_Worst(numOfInts);*/
+/*	Test_Shake_Worst(numOfInts);*/
+/*	Test_Insertion_Worst(numOfInts);*/
+/*	Test_Shell_Worst(numOfInts);*/
+/*	Test_Selection_Worst(numOfInts);*/
+/*	Test_Quick_Worst(numOfInts);*/
+/*	Test_Merge_Worst(numOfInts);*/
+/*	Test_Counting_Worst(numOfInts);*/
+	Test_Radix_Worst(numOfInts);
+	
 	
 	VectorDestroy(dummyVec,NULL);
 	return 0;

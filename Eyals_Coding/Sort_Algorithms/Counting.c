@@ -33,7 +33,7 @@ static void MovingSumSet(unsigned int* _intSet, unsigned int _minVal, unsigned i
 {
 	size_t index;
 	
-	for (index = _minVal + 1; index < _maxVal; ++index)
+	for (index = _minVal + 1; index <= _maxVal; ++index)
 	{
 		_intSet[index] += _intSet[index - 1];
 	}
@@ -47,7 +47,7 @@ static void	PopulateResultVec(Vector* _vector, Vector* _resultVec, unsigned int*
 	for (index = 0; index < _numOfItems; ++index)
 	{
 		VectorGet(_vector, index, (void**)&element);
-		VectorSet(_resultVec, _intSet[*element], (void*)element);
+		VectorSet(_resultVec, _intSet[*element] - 1, (void*)element);
 		--_intSet[*element];
 	}
 }
@@ -72,7 +72,7 @@ void CountingSort(Vector* _vector)
 	}
 	FindMinAndMaxValues(_vector, numOfItems, &minVal, &maxVal);
 /*	intSetSize = maxVal - minVal + 1;*/
-	intSet = calloc(maxVal, sizeof(unsigned int));
+	intSet = calloc(maxVal + 1, sizeof(unsigned int));
 	if (!intSet)
 	{
 		return;

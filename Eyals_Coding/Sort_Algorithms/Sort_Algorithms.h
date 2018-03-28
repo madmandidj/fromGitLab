@@ -12,5 +12,6 @@ void SelectionSort(Vector* _vector);
 void QuickSort(Vector* _vector);
 void MergeSort(Vector* _vector);
 void CountingSort(Vector* _vector);
+void RadixSort(Vector* _vector);
 
 #endif/*#ifndef __SORT_ALGORITHMS_H__*/
