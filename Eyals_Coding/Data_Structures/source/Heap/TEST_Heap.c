@@ -1,6 +1,8 @@
 #include "../../inc/Vector.h"
 #include "../../inc/VectorFunctions.h"
 #include "../../inc/Heap.h"
+#include "../../inc/HeapFunctions.h"
+#include "../../../Sort_Algorithms/Sort_Algorithms.h"
 #include "../../inc/mu_test.h"
 #include "../../inc/ADTErr.h"
 #include <stdio.h>
@@ -45,7 +47,6 @@ UNIT(Heap_Build_1_item)
 	srand ((unsigned int)time(NULL));
 	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
-/*	HeapPrint(heap, (ElementFunc)PrintInt);*/
     ASSERT_THAT(heap);
 	HeapDestroy(heap);
 	DestroyRandomIntVector(vector, intArr);
@@ -62,7 +63,6 @@ UNIT(Heap_Build_10_item)
 	srand ((unsigned int)time(NULL));
 	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
-/*	HeapPrint(heap, (ElementFunc)PrintInt);*/
     ASSERT_THAT(heap);
 	HeapDestroy(heap);
 	DestroyRandomIntVector(vector, intArr);
@@ -79,10 +79,29 @@ UNIT(Heap_Build_100_item)
 	srand ((unsigned int)time(NULL));
 	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
-/*	HeapPrint(heap, (ElementFunc)PrintInt);*/
     ASSERT_THAT(heap);
 	HeapDestroy(heap);
 	DestroyRandomIntVector(vector, intArr);
+END_UNIT
+
+UNIT(Heap_Build_100_item_Is_Sorted_Ascending)
+	int* intArr;
+	Vector* vector;
+	Vector* sortedVector;
+	Heap* heap;
+	size_t numOfInts = 100;
+	int maxVal = 100;
+	size_t blockSize = 10;
+
+	srand ((unsigned int)time(NULL));
+	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr);
+	sortedVector = CopyCreateVector(vector);
+	MergeSort(sortedVector); 
+	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
+    ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
+	HeapDestroy(heap);
+	DestroyRandomIntVector(vector, intArr);
+	VectorDestroy(sortedVector, NULL);
 END_UNIT
 
 TEST_SUITE(HEAP TESTS)
@@ -92,4 +111,5 @@ TEST_SUITE(HEAP TESTS)
 	TEST(Heap_Build_1_item)
 	TEST(Heap_Build_10_item)
 	TEST(Heap_Build_100_item)
+	TEST(Heap_Build_100_item_Is_Sorted_Ascending)
 END_SUITE

@@ -26,13 +26,6 @@ void Merge(Vector* _vector, Vector* _resultVec, size_t _lowL, size_t _highL, siz
 			VectorSet(_resultVec, curResultIndex++, (void*) itemL);
 			++indexL;
 		}
-/*		else*/
-/*		{*/
-/*			VectorSet(_resultVec, curResultIndex++, (void*) itemL);*/
-/*			VectorSet(_resultVec, curResultIndex++, (void*) itemR);*/
-/*			++indexL;*/
-/*			++indexR;*/
-/*		}*/
 	}
 	while (indexL <= _highL)
 	{

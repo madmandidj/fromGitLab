@@ -49,6 +49,27 @@ void DestroyRandomIntVector(Vector* _vector, int* _intArr)
 	free(_intArr);
 }
 
+Vector* CopyCreateVector(Vector* _vector)
+{
+	Vector* newVector;
+	size_t numOfItems;
+	size_t index;
+	void* element;
+	
+	if (!_vector)
+	{
+		return NULL;
+	}
+	numOfItems = VectorItemsNum(_vector);
+	newVector = VectorCreate(numOfItems, 10 > numOfItems ? 10 : numOfItems/2);
+	for (index = 0; index < numOfItems; ++index)
+	{
+		VectorGet(_vector, index, &element);
+		VectorAppend(newVector, element);
+	}
+	return newVector;
+}
+
 void FlipVector(Vector* _vector)
 {
 	int* LeftInt;
@@ -78,7 +99,7 @@ void FlipVector(Vector* _vector)
 	return;
 }
 
-int IsVectorSortedAscending(Vector* _isSortedVector, Vector* _sortedVector)
+int AreVectorsEqual(Vector* _isSortedVector, Vector* _sortedVector)
 {
 	size_t index;
 	int* item_L;
@@ -103,7 +124,7 @@ int IsVectorSortedAscending(Vector* _isSortedVector, Vector* _sortedVector)
 	{
 		VectorGet(_isSortedVector, index, (void**)&item_L);
 		VectorGet(_sortedVector, index, (void**)&item_R);
-		if (*item_L != *item_R)
+		if (*item_L != *item_R) /*TODO: replace this condition with user shouldswap func */
 		{
 			return 0;
 		}

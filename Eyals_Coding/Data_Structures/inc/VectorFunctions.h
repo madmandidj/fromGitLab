@@ -6,19 +6,11 @@ Vector* CreateRandomIntVector(size_t _numOfInts, int _maxVal, size_t _blockSize,
 
 void DestroyRandomIntVector(Vector* _vector, int* _intArr);
 
+Vector* CopyCreateVector(Vector* _vector);
+
 void FlipVector(Vector* _vector);
 
-int IsVectorSortedAscending(Vector* _isSortedVector, Vector* _sortedVector);
-
-
-
-
-
-
-
-
-
-
+int AreVectorsEqual(Vector* _isSortedVector, Vector* _sortedVector);
 
 
 

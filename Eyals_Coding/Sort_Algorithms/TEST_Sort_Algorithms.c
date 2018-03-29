@@ -472,7 +472,7 @@ void Test_Radix_Worst(size_t _numOfInts)
 
 int main()
 {
-	size_t numOfInts = 10000;
+	size_t numOfInts = 50000;
 	Vector* dummyVec;
 	dummyVec = VectorCreate(10,10);
 	VectorPrint(dummyVec, (ElementFunc)PrintInt); /* This is to silence warning of not using PrintInt())*/
