@@ -101,6 +101,10 @@ Heap* HeapBuild(Vector* _vector, IsLeftBigger _isLeftBigger)
 		return NULL;
 	}
 	numOfItems = VectorItemsNum(_vector);
+	if (0 == numOfItems)
+	{
+		return NULL;
+	}
 	if (!(heap = malloc(sizeof(Heap))))
 	{
 		return NULL;
@@ -115,6 +119,10 @@ Heap* HeapBuild(Vector* _vector, IsLeftBigger _isLeftBigger)
 	{
 		VectorGet(_vector, index, &element);
 		VectorAppend(heap->m_vector, element);
+	}
+	if (1 == numOfItems)
+	{
+		return heap;
 	}
 	for (index = (numOfItems/2)-1; index > 0; --index)
 	{

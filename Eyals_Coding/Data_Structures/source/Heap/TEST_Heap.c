@@ -1,8 +1,11 @@
-#include <stdio.h>
 #include "../../inc/Vector.h"
+#include "../../inc/VectorFunctions.h"
 #include "../../inc/Heap.h"
 #include "../../inc/mu_test.h"
 #include "../../inc/ADTErr.h"
+#include <stdio.h>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
 int IsIntLeftBigger(int* _leftInt, int* _rightInt)
 {
@@ -14,45 +17,79 @@ void PrintInt(int* _element)
 	printf("%d\n", *_element);
 }
 
-UNIT(Heap_Create)
-	int intArr[] = {70, 17, 20, 80, 30, 25, 100};
-	int another1 = 45;
-	int another2 = 800;
-	int another3 = 16;
-	Vector* vector;
+UNIT(Heap_Build_NULLVec)
 	Heap* heap;
-	size_t index;
-	int* element;
-	
-	vector = VectorCreate(10, 2);
-	for (index = 0; index < 7; ++index)
-	{
-		VectorAppend(vector, intArr + index);
-	}
-	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
-	HeapPrint(heap, (ElementFunc)PrintInt);
-	printf("****\n");
-	HeapExtractMax(heap, (void**)&element);
-	HeapPrint(heap, (ElementFunc)PrintInt);
-	printf("****\n");
-	HeapExtractMax(heap, (void**)&element);
-	HeapPrint(heap, (ElementFunc)PrintInt);
-	printf("****\n");
-	HeapInsert(heap, &another1);
-	HeapPrint(heap, (ElementFunc)PrintInt);
-	printf("****\n");
-	HeapInsert(heap, &another2);
-	HeapPrint(heap, (ElementFunc)PrintInt);
-	printf("****\n");
-	HeapInsert(heap, &another3);	
-	HeapPrint(heap, (ElementFunc)PrintInt);
-	
-	HeapDestroy(heap);
-    ASSERT_THAT(1);
+	heap = HeapBuild(NULL, (IsLeftBigger)IsIntLeftBigger);
+    ASSERT_THAT(!heap);
 END_UNIT
 
+UNIT(Heap_Build_EmptyVec)
+	Vector* vector;
+	Heap* heap;
+	size_t numOfInts = 10;
+	size_t blockSize = 10;
+	
+	vector = VectorCreate(numOfInts, blockSize);
+	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
+    ASSERT_THAT(!heap);
+END_UNIT
 
+UNIT(Heap_Build_1_item)
+	int* intArr;
+	Vector* vector;
+	Heap* heap;
+	size_t numOfInts = 1;
+	int maxVal = 100;
+	size_t blockSize = 10;
+
+	srand ((unsigned int)time(NULL));
+	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
+	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
+/*	HeapPrint(heap, (ElementFunc)PrintInt);*/
+    ASSERT_THAT(heap);
+	HeapDestroy(heap);
+	DestroyRandomIntVector(vector, intArr);
+END_UNIT
+
+UNIT(Heap_Build_10_item)
+	int* intArr;
+	Vector* vector;
+	Heap* heap;
+	size_t numOfInts = 10;
+	int maxVal = 100;
+	size_t blockSize = 10;
+
+	srand ((unsigned int)time(NULL));
+	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
+	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
+/*	HeapPrint(heap, (ElementFunc)PrintInt);*/
+    ASSERT_THAT(heap);
+	HeapDestroy(heap);
+	DestroyRandomIntVector(vector, intArr);
+END_UNIT
+
+UNIT(Heap_Build_100_item)
+	int* intArr;
+	Vector* vector;
+	Heap* heap;
+	size_t numOfInts = 100;
+	int maxVal = 100;
+	size_t blockSize = 10;
+
+	srand ((unsigned int)time(NULL));
+	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
+	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
+/*	HeapPrint(heap, (ElementFunc)PrintInt);*/
+    ASSERT_THAT(heap);
+	HeapDestroy(heap);
+	DestroyRandomIntVector(vector, intArr);
+END_UNIT
 
 TEST_SUITE(HEAP TESTS)
-	TEST(Heap_Create)
+	
+	TEST(Heap_Build_NULLVec)
+	TEST(Heap_Build_EmptyVec)
+	TEST(Heap_Build_1_item)
+	TEST(Heap_Build_10_item)
+	TEST(Heap_Build_100_item)
 END_SUITE

@@ -19,5 +19,6 @@ ADTErr VectorSet(Vector* _vector, size_t _index, void* _element);
 ADTErr VectorGet(Vector* _vector, size_t _index, void** _gotElement);
 size_t VectorItemsNum(Vector* _vector);
 void VectorPrint(Vector* _vector, ElementFunc _elemPrintfunc);
+/*void** VectorGetContainer(Vector* _vector);*/
 
 #endif/*#ifndef __VECTOR_H__*/
