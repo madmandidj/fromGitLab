@@ -1,100 +1,28 @@
 #include "Sort_Algorithms.h"
 #include "../Data_Structures/inc/Vector.h"
+#include "../Data_Structures/inc/VectorFunctions.h"
+#include "../Data_Structures/inc/Heap.h"
+#include "../Data_Structures/inc/HeapFunctions.h"
+#include "../Data_Structures/inc/mu_test.h"
+#include "../Data_Structures/inc/ADTErr.h"
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <stdio.h>
 #include <math.h>
 
-#define INIT_VEC_CAP 10000
+#define NUM_OF_INTS 10000
 #define VEC_BLOCK_SIZE 10000
-#define MAX_INT_VAL 10000
-/*
-AUX FUNCTIONS
-*/
+#define MAX_INT_VAL 100000
+
+Vector* g_vector;
+int* g_intArr;
+
 static void PrintInt(int* _elem)
 {
 	printf("%d\n", *_elem);
 }
 
-static int* CreateRandomIntArray(size_t _size, int _maxVal)
-{
-	size_t index;
-	int* intArr;
-	intArr = malloc(_size * sizeof(int));
-	if (!intArr)
-	{
-		return NULL;
-	}
-	for (index = 0; index < _size; ++index)
-	{
-		intArr[index] = rand() % _maxVal;
-	}
-	return intArr;
-}
-
-static Vector* CreateRandomIntVector(int* _intArr, size_t _numOfInts, size_t _cap, size_t _block)
-{
-	size_t index;
-	Vector* vector;
-	vector = VectorCreate(_cap, _block);
-	if (!vector)
-	{
-		return NULL;
-	}
-	for (index = 0; index < _numOfInts; ++index)
-	{
-		VectorAppend(vector, _intArr + index);
-	}
-	return vector;
-}
-
-static void FlipVector(Vector* _vector)
-{
-	int* LeftInt;
-	int* RightInt;
-	size_t index = 0;
-	size_t itemsNum;
-	size_t numOfSwaps;
-	
-	itemsNum = VectorItemsNum(_vector);
-	numOfSwaps = itemsNum/2;
-	if (1 >= itemsNum)
-	{
-		return;
-	}
-	for (index = 0; index < numOfSwaps; ++index)
-	{
-		VectorGet(_vector, index, (void**)&LeftInt);
-		VectorGet(_vector, itemsNum - 1 - index, (void**)&RightInt);
-		VectorSet(_vector, index, (void*)RightInt);
-		VectorSet(_vector, itemsNum - 1 - index, (void*)LeftInt);
-	}
-	return;
-}
-
-int PrintIsVectorSorted(Vector* _vector)
-{
-	size_t vecItemsNum;
-	size_t index;
-	int* item_L;
-	int* item_R;
-	
-	vecItemsNum = VectorItemsNum(_vector);
-	for (index = 0; index < vecItemsNum - 1; ++index)
-	{
-		VectorGet(_vector, index, (void**)&item_L);
-		VectorGet(_vector, index + 1, (void**)&item_R);
-		if (*item_L > *item_R)
-		{
-			printf("Vector IS NOT sorted : ( \n");
-			return 0;
-		}
-	}
-	printf("Vector IS sorted : ) \n");
-	return 1;
-}
-
-clock_t ExecuteTest(void(*TestMethod)(Vector*), Vector* _vector)
+static clock_t ExecuteTest(void(*TestMethod)(Vector*), Vector* _vector)
 {
 	clock_t start_t;
     clock_t end_t;
@@ -103,427 +31,567 @@ clock_t ExecuteTest(void(*TestMethod)(Vector*), Vector* _vector)
 	TestMethod(_vector);
     end_t = clock();
     total_t = (end_t - start_t);
-	PrintIsVectorSorted(_vector);
+	return total_t;
+}
+
+static int IsIntLeftBigger(int* _leftInt, int* _rightInt)
+{
+	return *_leftInt > *_rightInt;
+}
+
+static clock_t ExecuteHeapSortTest(Heap*(*TestMethod)(Vector*, IsLeftBigger), Vector* _vector, Heap** _heap)
+{
+	clock_t start_t;
+    clock_t end_t;
+    clock_t total_t;
+    start_t = clock();
+	*_heap = TestMethod(_vector, (IsLeftBigger)IsIntLeftBigger);
+    end_t = clock();
+    total_t = (end_t - start_t);
 	return total_t;
 }
 
 
 
-
-/*
-BUBBLE TESTS
-*/
-void Test_Bubble_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Bubble %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Bubble_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Bubble %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Bubble_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Bubble %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-
-/*
-SHAKE TESTS
-*/
-void Test_Shake_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Shake %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Shake_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Shake %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Shake_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Shake %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-/*
-INSERTION TESTS
-*/
-void Test_Insertion_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Insertion %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Insertion_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Insertion %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Insertion_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Insertion %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-
-/*
-SHELL TESTS
-*/
-void Test_Shell_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Shell %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Shell_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Shell %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Shell_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Shell %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-
-/*
-SELECTION TESTS
-*/
-void Test_Selection_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Selection %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Selection_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Selection %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Selection_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Selection %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-/*
-QUICK TESTS
-NOTE: best,worst and average case scenarios are setup different for quick sort than previous sort algorithms
-*/
-
-void Test_Quick_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Quick %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Quick_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Quick %u SortedAscending:\t %f\n", _numOfInts,((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Quick_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Quick %u SortedDescending:\t %f\n", _numOfInts,((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-
-/*
-MERGE TESTS
-*/
-void Test_Merge_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Merge %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Merge_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Merge %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Merge_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Merge %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-
-/*
-COUNTING TESTS
-*/
-void Test_Counting_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Counting %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Counting_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Counting %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Counting_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Counting %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-
-/*
-RADIX TESTS
-*/
-void Test_Radix_Average(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-    printf("Time elapsed for Radix %u Average:\t %f\n", _numOfInts,((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Radix_Best(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-    printf("Time elapsed for Radix %u Best:\t %f\n", _numOfInts,((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-void Test_Radix_Worst(size_t _numOfInts)
-{
-	int* intArr;
-	Vector* vector;
-	intArr = CreateRandomIntArray(_numOfInts, MAX_INT_VAL);
-	vector = CreateRandomIntVector(intArr, _numOfInts, INIT_VEC_CAP, VEC_BLOCK_SIZE);
-	QuickSort(vector);
-	FlipVector(vector);
-    printf("Time elapsed for Radix %u Worst:\t %f\n", _numOfInts,((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
-	VectorDestroy(vector,NULL);
-	free(intArr);
-}
-
-
-int main()
-{
-	size_t numOfInts = 50000;
-	Vector* dummyVec;
-	dummyVec = VectorCreate(10,10);
-	VectorPrint(dummyVec, (ElementFunc)PrintInt); /* This is to silence warning of not using PrintInt())*/
-	
+/*******************
+*******************
+AUX TESTS TO SETUP PROGRAM
+*******************
+*******************/
+UNIT(Initialize_Test)
+	printf("Sort Tests for %d elements\n", NUM_OF_INTS);
+	printf("*********************\n");
 	srand ((unsigned int)time(NULL));
+	g_vector = CreateRandomIntVector(NUM_OF_INTS, MAX_INT_VAL, VEC_BLOCK_SIZE, &g_intArr);
+	ASSERT_THAT(1);
+END_UNIT
+
+UNIT(End_Test)
+	printf("*********************\n");
+	DestroyRandomIntVector(g_vector, g_intArr);	
+	ASSERT_THAT(1);
+END_UNIT
+
+/*******************
+*******************
+BUBBLE
+*******************
+*******************/
+
+UNIT(Bubble_Average)
+	Vector* vector = NULL;
+	Vector* sortedVector;
+	VectorPrint(vector, (ElementFunc)PrintInt);
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Bubble_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Bubble_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+/*******************
+*******************
+SHAKE
+*******************
+*******************/
+
+UNIT(Shake_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Shake_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Shake_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+
+/*******************
+*******************
+INSERT
+*******************
+*******************/
+
+UNIT(Insert_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Insert_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Insert_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+/*******************
+*******************
+SHELL
+*******************
+*******************/
+UNIT(Shell_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Shell_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Shell_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+/*******************
+*******************
+SELECTION
+*******************
+*******************/
+UNIT(Selection_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Selection_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Selection_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+/*******************
+*******************
+QUICK
+*******************
+*******************/
+UNIT(Quick_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Quick_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Quick_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+
+/*******************
+*******************
+MERGE
+*******************
+*******************/
+UNIT(Merge_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	QuickSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Merge_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	QuickSort(sortedVector); 
+	QuickSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Merge_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	QuickSort(sortedVector); 
+	QuickSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+/*******************
+*******************
+COUNTING
+*******************
+*******************/
+UNIT(Counting_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Counting_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Counting_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+/*******************
+*******************
+RADIX
+*******************
+*******************/
+UNIT(Radix_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Radix_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Radix_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector); 
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+
+/*******************
+*******************
+HEAP
+*******************
+*******************/
+UNIT(Heap_Average)
+	Vector* vector;
+	Vector* sortedVector;
+	Heap* heap;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	printf("*********************\n"); 
+	printf("Total sort time = %f\n", ((float)ExecuteHeapSortTest(HeapBuild, vector, &heap)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
+	HeapDestroy(heap);
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Heap_Best)
+	Vector* vector;
+	Vector* sortedVector;
+	Heap* heap;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	MergeSort(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteHeapSortTest(HeapBuild, vector, &heap)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
+	HeapDestroy(heap);
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+UNIT(Heap_Worst)
+	Vector* vector;
+	Vector* sortedVector;
+	Heap* heap;
+	vector = CopyCreateVector(g_vector);
+	sortedVector = CopyCreateVector(g_vector);
+	MergeSort(sortedVector);
+	MergeSort(vector);
+	FlipVector(vector);
+	printf("Total sort time = %f\n", ((float)ExecuteHeapSortTest(HeapBuild, vector, &heap)) / CLOCKS_PER_SEC);
+	ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
+	HeapDestroy(heap);
+	VectorDestroy(vector, NULL);
+	VectorDestroy(sortedVector, NULL);
+END_UNIT
+
+
+
+
+/*******************
+*******************
+MAIN SUITE
+*******************
+*******************/
+TEST_SUITE(SORT ALGORITHM TESTS)
+
+	TEST(Initialize_Test)
 	
-	/*
-	AVERAGE
-	*/
-	printf("********************************************************AVERAGE CASE\n");
-	Test_Bubble_Average(numOfInts);
-	Test_Shake_Average(numOfInts);
-	Test_Insertion_Average(numOfInts);
-	Test_Shell_Average(numOfInts);
-	Test_Selection_Average(numOfInts);
-	Test_Quick_Average(numOfInts);
-	Test_Merge_Average(numOfInts);
-	Test_Counting_Average(numOfInts);
-	Test_Radix_Average(numOfInts);
+	TEST(Bubble_Average)
+	TEST(Bubble_Best)
+	TEST(Bubble_Worst)
 	
-	/*
-	BEST
-	*/
-	printf("********************************************************BEST CASE\n");
-	Test_Bubble_Best(numOfInts);
-	Test_Shake_Best(numOfInts);
-	Test_Insertion_Best(numOfInts);
-	Test_Shell_Best(numOfInts);
-	Test_Selection_Best(numOfInts);
-	Test_Quick_Best(numOfInts);
-	Test_Merge_Best(numOfInts);
-	Test_Counting_Best(numOfInts);
-	Test_Radix_Best(numOfInts);
+	TEST(Shake_Average)
+	TEST(Shake_Best)
+	TEST(Shake_Worst)
 	
-	/*
-	WORST
-	*/
-	printf("********************************************************WORST CASE\n");
-	Test_Bubble_Worst(numOfInts);
-	Test_Shake_Worst(numOfInts);
-	Test_Insertion_Worst(numOfInts);
-	Test_Shell_Worst(numOfInts);
-	Test_Selection_Worst(numOfInts);
-	Test_Quick_Worst(numOfInts);
-	Test_Merge_Worst(numOfInts);
-	Test_Counting_Worst(numOfInts);
-	Test_Radix_Worst(numOfInts);
+	TEST(Insert_Average)
+	TEST(Insert_Best)
+	TEST(Insert_Worst)
 	
+	TEST(Shell_Average)
+	TEST(Shell_Best)
+	TEST(Shell_Worst)
 	
-	VectorDestroy(dummyVec,NULL);
-	return 0;
-}
+	TEST(Selection_Average)
+	TEST(Selection_Best)
+	TEST(Selection_Worst)
+	
+	TEST(Quick_Average)
+	TEST(Quick_Best)
+	TEST(Quick_Worst)
+	
+	TEST(Merge_Average)
+	TEST(Merge_Best)
+	TEST(Merge_Worst)
+	
+	TEST(Counting_Average)
+	TEST(Counting_Best)
+	TEST(Counting_Worst)
+	
+	TEST(Radix_Average)
+	TEST(Radix_Best)
+	TEST(Radix_Worst)
+	
+	TEST(Heap_Average)
+	TEST(Heap_Best)
+	TEST(Heap_Worst)
+	
+	TEST(End_Test)
+
+END_SUITE
+
+
+
 
 

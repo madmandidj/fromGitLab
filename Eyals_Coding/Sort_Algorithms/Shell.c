@@ -36,6 +36,7 @@ void ShellSort(Vector* _vector)
 					if (*item_R < *item_L)
 					{
 						VectorSet(_vector, index_R, item_L);
+						VectorSet(_vector, index_L, item_R);
 						index_L -= gap;
 						index_R -= gap;
 						continue;

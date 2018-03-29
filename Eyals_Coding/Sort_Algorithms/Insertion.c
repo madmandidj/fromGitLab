@@ -30,6 +30,7 @@ void InsertionSort(Vector* _vector)
 				VectorGet(_vector, index_L, (void**)&item_L);
 				if (*item_R < *item_L)
 				{
+					VectorSet(_vector, index_L, item_R);
 					VectorSet(_vector, index_R, item_L);
 					--index_L;
 					--index_R;
