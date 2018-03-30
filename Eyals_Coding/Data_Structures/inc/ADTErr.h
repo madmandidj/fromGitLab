@@ -12,7 +12,9 @@ typedef enum ADTErr
     ERR_OK,
     ERR_NOMEM,
     ERR_INVARG,
-    ERR_VEC_ZEROBLOCKSIZE
+    ERR_VEC_ZEROBLOCKSIZE,
+    ERR_QUEUE_FULL,
+    ERR_QUEUE_EMPTY
 }ADTErr;
 
 #endif/*#ifndef __ADTERR_H__*/

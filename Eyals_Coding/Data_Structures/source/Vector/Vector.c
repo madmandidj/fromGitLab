@@ -169,6 +169,10 @@ ADTErr VectorRemove(Vector* _vector, void** _removedElement)
     ADTErr err = ERR_OK;
     if (ERR_OK != (err = AreRemoveParamsValid(_vector, _removedElement)))
     {
+    	if (_removedElement)
+    	{
+    		*_removedElement = NULL;
+    	}
         return err;
     }
     DoRemove(_vector, _removedElement);
