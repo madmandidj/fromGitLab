@@ -215,7 +215,6 @@ UNIT(List_Remove)
     List* list;
     ListItr itr;
     int intArr[10] = {0,1,2,3,4,5,6,7,8,9};
-	void* poppedTail;
 	void* removedElem;
     list = ListCreate();
     ListPushTail(list, &intArr[1]);

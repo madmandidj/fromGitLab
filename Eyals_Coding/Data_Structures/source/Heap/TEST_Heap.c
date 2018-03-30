@@ -48,7 +48,7 @@ UNIT(Heap_Build_1_item)
 	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(heap);
-	HeapDestroy(heap);
+	HeapDestroy(heap, NULL);
 	DestroyRandomIntVector(vector, intArr);
 END_UNIT
 
@@ -64,7 +64,7 @@ UNIT(Heap_Build_10_item)
 	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(heap);
-	HeapDestroy(heap);
+	HeapDestroy(heap, NULL);
 	DestroyRandomIntVector(vector, intArr);
 END_UNIT
 
@@ -80,7 +80,7 @@ UNIT(Heap_Build_100_item)
 	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(heap);
-	HeapDestroy(heap);
+	HeapDestroy(heap, NULL);
 	DestroyRandomIntVector(vector, intArr);
 END_UNIT
 
@@ -99,7 +99,7 @@ UNIT(Heap_Build_100_item_Is_Sorted_Ascending)
 	MergeSort(sortedVector); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
-	HeapDestroy(heap);
+	HeapDestroy(heap, NULL);
 	DestroyRandomIntVector(vector, intArr);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT

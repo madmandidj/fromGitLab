@@ -5,7 +5,10 @@
 typedef struct List List;
 typedef struct Node Node;
 typedef Node* ListItr;
-typedef void(*ElementFunc)(void*);
+#ifndef __ELEMENT_FUNC__
+#define __ELEMENT_FUNC__
+	typedef void(*ElementFunc)(void*);
+#endif /*__ELEMENT_FUNC__*/
 
 List* ListCreate();
 void ListDestroy(List* _list, ElementFunc _elemDestroyFunc);

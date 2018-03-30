@@ -65,9 +65,6 @@ static void BubbleUp(Heap* _heap, size_t _index)
 	void* sonPtr = NULL;
 	void* fatherPtr = NULL;
 	size_t fatherIndex;
-/*	size_t itemsNum;*/
-	
-/*	itemsNum = ;*/
 		
 	if (_index == 0 || _index >= HeapItemsNum(_heap))
 	{
@@ -109,7 +106,7 @@ Heap* HeapBuild(Vector* _vector, IsLeftBigger _isLeftBigger)
 	{
 		return NULL;
 	}
-	if (!(heap->m_vector = VectorCreate(numOfItems + MIN_HEAP_CAPACITY, VEC_BLOCK_SIZE)))
+	if (!(heap->m_vector = VectorCreate(numOfItems + MIN_HEAP_CAPACITY, VEC_BLOCK_SIZE))) /*TODO: add element destroy and isleftbig to vector*/
 	{
 		free(heap);
 		return NULL;
@@ -132,13 +129,13 @@ Heap* HeapBuild(Vector* _vector, IsLeftBigger _isLeftBigger)
 	return heap;
 }
 
-void HeapDestroy(Heap* _heap)
+void HeapDestroy(Heap* _heap, ElementFunc _elementDestroyFunc)
 {
 	if (!_heap)
 	{
 		return;
 	}
-	VectorDestroy(_heap->m_vector, NULL);
+	VectorDestroy(_heap->m_vector, _elementDestroyFunc);
 	free(_heap);
 }
 

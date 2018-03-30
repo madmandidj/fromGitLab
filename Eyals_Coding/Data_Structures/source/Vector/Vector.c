@@ -235,10 +235,5 @@ void VectorPrint(Vector* _vector, ElementFunc _elemPrintfunc)
 }
 
 
-/*void** VectorGetContainer(Vector* _vector)*/
-/*{*/
-/*	return !_vector ? NULL : _vector->m_array;*/
-/*}*/
-
 
 

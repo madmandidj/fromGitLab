@@ -499,7 +499,7 @@ UNIT(Heap_Average)
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteHeapSortTest(HeapBuild, vector, &heap)) / CLOCKS_PER_SEC);
 	ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
-	HeapDestroy(heap);
+	HeapDestroy(heap, NULL);
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -514,7 +514,7 @@ UNIT(Heap_Best)
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteHeapSortTest(HeapBuild, vector, &heap)) / CLOCKS_PER_SEC);
 	ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
-	HeapDestroy(heap);
+	HeapDestroy(heap, NULL);
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -530,7 +530,7 @@ UNIT(Heap_Worst)
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteHeapSortTest(HeapBuild, vector, &heap)) / CLOCKS_PER_SEC);
 	ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
-	HeapDestroy(heap);
+	HeapDestroy(heap, NULL);
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT

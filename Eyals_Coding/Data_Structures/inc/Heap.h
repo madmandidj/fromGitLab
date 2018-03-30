@@ -9,7 +9,7 @@ typedef int (*IsLeftBigger)(void*, void*);
 
 Heap* HeapBuild(Vector* _vec, IsLeftBigger _isLeftBiggerFunc);
 
-void HeapDestroy(Heap* _heap);
+void HeapDestroy(Heap* _heap, ElementFunc _elementDestroyFunc);
 
 ADTErr HeapInsert(Heap* _heap, void* _element);
 
