@@ -19,6 +19,7 @@ typedef enum
 typedef void(*ElementFunc)(void*);
 typedef int(*IsLeftBigger)(void*, void*);
 typedef int(*PredicateFunc)(void* _element, void* _context);
+typedef int(*TraverseAction)(void* _element, void* _context);
 
 BSTree* BSTreeCreate(IsLeftBigger _isLeftBiggerFunc);
 void BSTreeDestroy(BSTree* _tree, ElementFunc _elementDestroyFunc);
