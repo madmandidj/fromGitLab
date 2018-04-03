@@ -9,15 +9,15 @@ struct Person
 {
     size_t m_age;
     size_t m_gender;
-    Person* m_mother;   
+    Person* m_mother;  
 };
 
-void DeletePerson(void* _personPtr)
+void DeletePerson(Person* _personPtr)
 {
     free(((Person*)_personPtr)->m_mother);
 }
 
-void PrintInt(void* _intPtr)
+void PrintInt(int* _intPtr)
 {
     printf("%u\n", *(size_t*)_intPtr);
 }
@@ -236,6 +236,19 @@ UNIT(List_Remove)
 END_UNIT
 
 
+UNIT(List_PushHead_Person)
+    List* list;
+    Person* person;
+	ADTErr err;
+    person  = malloc(sizeof(Person));
+    person->m_mother = malloc(sizeof(Person));
+    list = ListCreate();
+    err = ListPushHead(list, person);
+    ASSERT_THAT(ERR_OK == err);
+    ListDestroy(list, (ElementFunc)DeletePerson);
+END_UNIT
+
+
 
 TEST_SUITE(List tests)
 	/*
@@ -261,6 +274,10 @@ TEST_SUITE(List tests)
 	TEST(List_InsertAfter)
 	TEST(List_InsertBefore)
 	TEST(List_Remove)
+	
+	TEST(List_PushHead_Person)
+	
+	
 END_SUITE
 
 
