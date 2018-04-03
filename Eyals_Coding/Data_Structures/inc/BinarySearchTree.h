@@ -18,14 +18,15 @@ typedef enum
 
 typedef void(*ElementFunc)(void*);
 typedef int(*IsLeftBigger)(void*, void*);
+typedef int(*AreEqual)(void*, void*);
 typedef int(*PredicateFunc)(void* _element, void* _context);
 typedef int(*TraverseAction)(void* _element, void* _context);
 
-BSTree* BSTreeCreate(IsLeftBigger _isLeftBiggerFunc);
+BSTree* BSTreeCreate(IsLeftBigger _isLeftBiggerFunc, AreEqual _areEqualFunc);
 void BSTreeDestroy(BSTree* _tree, ElementFunc _elementDestroyFunc);
 ADTErr BSTreeInsert(BSTree* _tree, void* _element);
-int BSTreeIsElementFound(BSTree* _tree, void* _element);
-void BSTreePrint(BSTree* _tree, BSTTraverseMode _traverseMode);
+BSTreeItr BSTreeIsElementFound(BSTree* _tree, void* _element);
+void BSTreePrint(BSTree* _tree, BSTTraverseMode _traverseMode, ElementFunc _printFunc);
 
 BSTreeItr BSTreeItrBegin(BSTree* _tree);
 BSTreeItr BSTreeItrEnd(BSTree* _tree);

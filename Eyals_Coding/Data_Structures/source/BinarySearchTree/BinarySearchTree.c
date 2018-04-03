@@ -16,7 +16,7 @@ NODE MACROS
 ITERATOR MACROS
 *****/
 #define ITR_DATA(I)		(((BSTnode*)I)->m_data)
-#define ITR_FATER(I)	(((BSTnode*)I)->m_father)
+#define ITR_FATHER(I)	(((BSTnode*)I)->m_father)
 #define ITR_LEFT(I)		(((BSTnode*)I)->m_left)
 #define ITR_RIGHT(I)	(((BSTnode*)I)->m_right)
 
@@ -36,6 +36,7 @@ struct BSTree
 	BSTnode* 		m_sentinel;
 	size_t			m_numOfElements;
 	IsLeftBigger 	m_isLeftBiggerFunc;
+	AreEqual		m_areEqual;
 };
 
 /*STATIC FUNCTIONS*/
@@ -84,19 +85,22 @@ static void TraverseTree(BSTree* _tree, BSTTraverseMode _traverseMode, TraverseA
 	{
 		return;
 	}
-	switch (_traverseMode)
+	if (TREE_ROOT(_tree))
 	{
-		case PREORDER:
-			TraversePreOrder(TREE_ROOT(_tree), _actionFunc, _context);
-			break;
-		case INORDER:
-			TraverseInOrder(TREE_ROOT(_tree), _actionFunc, _context);
-			break;
-		case POSTORDER:
-			TraversePostOrder(TREE_ROOT(_tree), _actionFunc, _context);
-			break;
-		default:
-			return;
+		switch (_traverseMode)
+		{
+			case PREORDER:
+				TraversePreOrder(TREE_ROOT(_tree), _actionFunc, _context);
+				break;
+			case INORDER:
+				TraverseInOrder(TREE_ROOT(_tree), _actionFunc, _context);
+				break;
+			case POSTORDER:
+				TraversePostOrder(TREE_ROOT(_tree), _actionFunc, _context);
+				break;
+			default:
+				return;
+		}
 	}
 }
 
@@ -118,11 +122,11 @@ static BSTnode* CreateBSTnodeWithData(void* _data)
 
 
 /*API FUNCTIONS*/
-BSTree* BSTreeCreate(IsLeftBigger _isLeftBiggerFunc)
+BSTree* BSTreeCreate(IsLeftBigger _isLeftBiggerFunc, AreEqual _areEqualFunc)
 {
 	BSTree* tree;
 	
-	if (!_isLeftBiggerFunc)
+	if (!_isLeftBiggerFunc || !_areEqualFunc)
 	{
 		return NULL;
 	}
@@ -137,6 +141,7 @@ BSTree* BSTreeCreate(IsLeftBigger _isLeftBiggerFunc)
 	}
 	tree->m_numOfElements = 0;
 	tree->m_isLeftBiggerFunc = _isLeftBiggerFunc;
+	tree->m_areEqual = _areEqualFunc;
 	tree->m_sentinel->m_father = tree->m_sentinel->m_right = NULL;
 	tree->m_sentinel->m_data = NULL;
 	return tree;
@@ -150,24 +155,72 @@ void BSTreeDestroy(BSTree* _tree, ElementFunc _elementDestroyFunc)
 	}
 	if(_elementDestroyFunc)
 	{	
-		TraverseTree(_tree, POSTORDER, _elementDestroyFunc, NULL);
+		TraverseTree(_tree, POSTORDER, (TraverseAction)_elementDestroyFunc, NULL);
 	}
-	TraverseTree(_tree, POSTORDER, DestroyBSTnode, NULL);
+	TraverseTree(_tree, POSTORDER, (TraverseAction)DestroyBSTnode, NULL); /*Cant use this because the function sends the node data to the action function, where here you actually wnat to free the node. Use iterators for next next blah blah*/
 	free(_tree->m_sentinel);
 	free(_tree);
 }
 
+static ADTErr DoInsert(BSTree* _tree, BSTreeItr _itr, void* _element)
+{
+	BSTnode* node;
+	
+	if (_tree->m_areEqual(ITR_DATA(_itr), _element))
+	{
+		return ERR_BST_ELEMENT_FOUND;
+	}
+	if (_tree->m_isLeftBiggerFunc(ITR_DATA(_itr), _element))
+	{
+		if (!ITR_LEFT(_itr))
+		{
+			if (!(node = CreateBSTnodeWithData(_element)))
+			{
+				return ERR_NOMEM;
+			}
+			ITR_LEFT(_itr) = node;
+			NODE_FATHER(node) = (BSTnode*)_itr;
+			return ERR_OK;
+		}
+		 return DoInsert(_tree, ITR_LEFT(_itr), _element);
+	}
+	else
+	{
+		if (!ITR_RIGHT(_itr))
+		{
+			if (!(node = CreateBSTnodeWithData(_element)))
+			{
+				return ERR_NOMEM;
+			}
+			ITR_RIGHT(_itr) = node;
+			NODE_FATHER(node) = (BSTnode*)_itr;
+			return ERR_OK;
+		}
+		return DoInsert(_tree, ITR_RIGHT(_itr), _element);
+	}
+}
+
 ADTErr BSTreeInsert(BSTree* _tree, void* _element)
 {
-	int isElementFound = 0;
+	BSTreeItr itr;
+	BSTnode* node;
 	
 	if (!_tree || !_element)
 	{
 		return ERR_INVARG;
 	}
-	
-	
-	
+	itr = BSTreeItrBegin(_tree);
+	if (itr)
+	{
+		return DoInsert(_tree, itr, _element);
+	}
+	if (!(node = CreateBSTnodeWithData(_element)))
+	{
+		return ERR_NOMEM;
+	}
+	TREE_ROOT(_tree) = node;
+	NODE_FATHER(node) = TREE_ROOT(_tree);
+	return ERR_OK;
 }
 
 void BSTreePrint(BSTree* _tree, BSTTraverseMode _traverseMode, ElementFunc _printFunc)
@@ -176,17 +229,56 @@ void BSTreePrint(BSTree* _tree, BSTTraverseMode _traverseMode, ElementFunc _prin
 	{
 		return;
 	}
-	TraverseTree(_tree, _traverseMode, _printFunc, NULL);
+	TraverseTree(_tree, _traverseMode, (TraverseAction)_printFunc, NULL);
+}
+
+static BSTreeItr DoIsElementFound(BSTree* _tree, BSTreeItr _itr, void* _element)
+{
+	BSTreeItr isLeftFoundItr = NULL;
+	BSTreeItr isRightFoundItr = NULL;
+	
+	if (_tree->m_areEqual(ITR_DATA(_itr), _element))
+	{
+		return _itr;
+	}
+	if (ITR_RIGHT(_itr))
+	{
+		isRightFoundItr = DoIsElementFound(_tree, ITR_RIGHT(_itr), _element);
+	}
+	if (ITR_LEFT(_itr))
+	{
+		isLeftFoundItr = DoIsElementFound(_tree, ITR_LEFT(_itr), _element);
+	}
+	return isLeftFoundItr ? isLeftFoundItr : (isRightFoundItr ? isRightFoundItr : NULL);
+}
+
+BSTreeItr BSTreeIsElementFound(BSTree* _tree, void* _element)
+{
+	BSTreeItr itr = NULL;
+	BSTreeItr itrFound = NULL;
+	if (!_tree || !_element)
+	{
+		return NULL;
+	}
+	itr = TREE_ROOT(_tree);
+	if (itr)
+	{	
+		itrFound = DoIsElementFound(_tree, itr, _element);
+	}
+	return itrFound;
 }
 
 BSTreeItr BSTreeItrBegin(BSTree* _tree)
 {
-	BSTreeItr itr;
+	BSTreeItr itr = NULL;
 	
 	itr = TREE_ROOT(_tree);
-	while (NULL != ITR_LEFT(itr))
+	if (itr)
 	{
-		itr = ITR_LEFT(itr);
+		while (NULL != ITR_LEFT(itr))
+		{
+			itr = ITR_LEFT(itr);
+		}	
 	}
 	return itr;
 }
