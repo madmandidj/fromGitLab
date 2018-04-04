@@ -30,6 +30,7 @@ struct List
 {
     Node m_head;
     Node m_tail;
+    size_t m_numOfElements;
 };
 
 List* ListCreate()
@@ -43,24 +44,30 @@ List* ListCreate()
     LIST_LAST(list) = LIST_BEGIN(list);
     list->m_head.m_prev = NULL;
     list->m_tail.m_next= NULL;
+    list->m_numOfElements = 0;
     return list;
 }
 
 void ListDestroy(List* _list, ElementFunc _elemDestroyFunc)
 {
     ListItr iterator;
+    size_t numOfElements;
+    size_t index;
+    void* poppedData;
     if (!_list)
     {
         return;
     }
-    if (_elemDestroyFunc)
+    
+    numOfElements = ListItemsNum(_list);
+    for (index = 0; index < numOfElements; ++index)
     {
-        iterator = LIST_FIRST(_list);
-        while(LIST_END(_list) != iterator)
-        {
-            _elemDestroyFunc(ITR_DATA(iterator));
-            iterator = ITR_NEXT(iterator);
-        }
+	    iterator = LIST_FIRST(_list);
+		if (_elemDestroyFunc)
+		{
+		        _elemDestroyFunc(ITR_DATA(iterator));
+		}
+		ListPopHead(_list, &poppedData);
     }
     free(_list);
 }
@@ -81,24 +88,30 @@ ADTErr ListPushHead(List* _list, void* _element)
     NODE_PREV(newNode) = LIST_BEGIN(_list);
     NODE_PREV(LIST_FIRST(_list)) = newNode;
     LIST_FIRST(_list) = newNode;
+    ++_list->m_numOfElements;
     return ERR_OK;
 }
 
 ADTErr ListPopHead(List* _list, void** _removedElement)
 {
+	Node* poppedNode;
     if (!_list || !_removedElement)
     {
         return ERR_INVARG;
     }
+    
     if (LIST_FIRST(_list) == LIST_END(_list))
     {
     	*_removedElement = NULL;
     }
     else
     {
+    	poppedNode = LIST_FIRST(_list);
 		*_removedElement = NODE_DATA((LIST_FIRST(_list)));
 		NODE_PREV(NODE_NEXT(LIST_FIRST(_list))) = LIST_BEGIN(_list);
 		LIST_FIRST(_list) = NODE_NEXT(LIST_FIRST(_list));
+		--_list->m_numOfElements;
+		free(poppedNode);
     }
     return ERR_OK;
 }
@@ -119,26 +132,38 @@ ADTErr ListPushTail(List* _list, void* _element)
     NODE_PREV(newNode) = LIST_LAST(_list);
     NODE_NEXT(LIST_LAST(_list)) = newNode;
     LIST_LAST(_list) = newNode;
+    ++_list->m_numOfElements;
     return ERR_OK;
 }
 
 ADTErr ListPopTail(List* _list, void** _removedElement)
 {
+	Node* poppedNode;
 	if (!_list || !_removedElement)
     {
         return ERR_INVARG;
     }
+    
     if (LIST_LAST(_list) == LIST_BEGIN(_list))
     {
     	*_removedElement = NULL;
     }
     else
     {
+    	poppedNode = LIST_LAST(_list);
 		*_removedElement = NODE_DATA((LIST_LAST(_list)));
 		NODE_NEXT(NODE_PREV(LIST_LAST(_list))) = LIST_END(_list);
 		LIST_LAST(_list) = NODE_PREV(LIST_LAST(_list));
+		--_list->m_numOfElements;
+		free(poppedNode);
 	}
     return ERR_OK;
+}
+
+size_t ListItemsNum(List* _list)
+{
+
+	return !_list ? 0 : _list->m_numOfElements;
 }
 
 void ListPrint(List* _list, ElementFunc _elemPrintFunc)
@@ -227,7 +252,7 @@ ListItr ListItrNext(ListItr _itr)
     {
         return NULL;
     }
-    if (ITR_NEXT(_itr) == 0)
+    if (!ITR_NEXT(_itr))
     {
     	return _itr;
     }
@@ -240,17 +265,17 @@ ListItr ListItrPrev(ListItr _itr)
     {
         return NULL;
     }
-    if (ITR_PREV(_itr) == 0)
+    if (!ITR_PREV(_itr))
     {
     	return _itr;
     }
     return (ListItr) ITR_PREV(_itr);
 }
 
-ListItr ListItrInsertAfter(ListItr _itr, void* _element)
+ListItr ListItrInsertAfter(List* _list, ListItr _itr, void* _element)
 {
 	Node* newNode;
-    if (!_itr || !_element || ListItrNext(_itr) == 0)
+    if (!_list || !_itr || !_element || ListItrNext(_itr) == 0)
     {
         return _itr;
     }
@@ -263,13 +288,14 @@ ListItr ListItrInsertAfter(ListItr _itr, void* _element)
     NODE_PREV(newNode) = (Node*) _itr;
     NODE_PREV(ITR_NEXT(_itr)) = newNode;
     NODE_NEXT((Node*)_itr) = newNode;
+    ++_list->m_numOfElements;
 	return (ListItr) newNode;
 }
 
-ListItr ListItrInsertBefore(ListItr _itr, void* _element)
+ListItr ListItrInsertBefore(List* _list, ListItr _itr, void* _element)
 {
 	Node* newNode;
-    if (!_itr || !_element || ListItrPrev(_itr) == 0)
+    if (!_list || !_itr || !_element || ListItrPrev(_itr) == 0)
     {
         return _itr;
     }
@@ -282,22 +308,25 @@ ListItr ListItrInsertBefore(ListItr _itr, void* _element)
     NODE_PREV(newNode) = ITR_PREV(_itr);
     NODE_NEXT(ITR_PREV(_itr)) = newNode;
     NODE_PREV((Node*)_itr) = newNode;
+    ++_list->m_numOfElements;
 	return (ListItr) newNode;
 }
 
 ListItr ListItrRemove(List* _list, ListItr _itr, void** _removedElement)
 {
-	if (!_itr || !_removedElement || (Node*) _itr == LIST_BEGIN(_list) || (Node*) _itr == LIST_END(_list) )
+	ListItr prevItr;
+	if (!_list || !_itr || !_removedElement || (Node*) _itr == LIST_BEGIN(_list) || (Node*) _itr == LIST_END(_list) )
     {
     	*_removedElement = NULL;
         return _itr;
     }
+    prevItr = ITR_PREV(_itr);
 	*_removedElement = ITR_DATA(_itr);
 	NODE_PREV(ITR_NEXT(_itr)) = ITR_PREV(_itr);
 	NODE_NEXT(ITR_PREV(_itr)) = ITR_NEXT(_itr);
-/*	_itr = ITR_PREV(_itr);*/
-	return ITR_PREV(_itr);
-    
+	--_list->m_numOfElements;
+	free(_itr);
+	return prevItr;
 }
 
 
