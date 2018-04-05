@@ -1,5 +1,7 @@
 #ifndef __HASHMAP_H__
 #define __HASHMAP_H__
+#include "ADTErr.h"
+#include <stddef.h>
 
 typedef void* Key_t;
 typedef void* Value_t;
@@ -18,7 +20,7 @@ ADTErr HashMapInsert(HashMap* _hashMap, const Key_t _key, const Value_t _value);
 
 ADTErr HashMapRemove(HashMap* _hashMap, const Key_t _searchKey, Key_t* _removedKey, Value_t* _removedValue);
 
-ADTErr HashMapRehash(HashMap* _hashMap, size_t newCapacity);
+ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity);
 
 ADTErr HashMapFind(HashMap* _hashMap, const Key_t _searchKey, Value_t* _foundValue);
 
@@ -35,9 +37,9 @@ typedef struct MapStats
 	size_t m_buckets;             /* total number of buckets */
 	size_t m_chains;              /* none empty buckets (having non zero length list) */
 	size_t m_maxChainLength;      /* length of longest chain */
-	size_t m_averageChainLength;  /* average length of none empty chains */
+	float m_averageChainLength;  /* average length of none empty chains */
 }MapStats;
-MapStats HashMapGetStatistics(const HashMap* _map);
+MapStats HashMapGetStatistics(const HashMap* _hashMap);
 #endif /* NDEBUG */
 
 

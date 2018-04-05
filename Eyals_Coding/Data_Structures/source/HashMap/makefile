@@ -1,2 +1,22 @@
-blah
+FLAGS = -g -ansi -pedantic -Wall -Wconversion -m32
+INC_PATH = ../../inc/
+LIST_PATH = ../../source/List/
+objects = List.o HashMap.o TEST_HashMap.o
+
+
+TEST_HashMap.out: $(objects) 
+	gcc $(FLAGS) -o TEST_HashMap.out  $(objects) -lm
+
+TEST_HashMap.o: TEST_HashMap.c $(INC_PATH)List.h $(INC_PATH)mu_test.h $(INC_PATH)ADTErr.h
+	gcc $(FLAGS) -c TEST_HashMap.c
+
+HashMap.o: HashMap.c $(INC_PATH)List.h $(INC_PATH)ADTErr.h
+	gcc $(FLAGS) -c HashMap.c
+
+List.o: $(LIST_PATH)List.c $(INC_PATH)List.h $(INC_PATH)ADTErr.h
+	gcc $(FLAGS) -c $(LIST_PATH)List.c
+	
+clean:
+	rm $(objects) TEST_List.out
+
 
