@@ -3,11 +3,12 @@
 #include "../../inc/ADTErr.h"
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
 
 typedef struct KeyAndVal_t
 {
-	Key_t	m_key;
-	Value_t	m_value;
+	Key_t*	m_key;
+	Value_t*	m_value;
 }KeyAndVal_t;
 
 struct HashMap
@@ -102,8 +103,8 @@ void HashMapDestroy(HashMap* _hashMap, KeyDestroyFunc _keyDestroyFunc, ValueDest
 /*	ListItr listEnd;*/
 /*	size_t numOfActions = 0;*/
 	KeyAndVal_t* keyAndValPair;
-	Key_t curKey;
-	Value_t curVal;
+	Key_t* curKey;
+	Value_t* curVal;
 	if (!_hashMap)
 	{
 		return;
@@ -135,7 +136,7 @@ void HashMapDestroy(HashMap* _hashMap, KeyDestroyFunc _keyDestroyFunc, ValueDest
 }
 
 
-ADTErr HashMapInsert(HashMap* _hashMap, const Key_t _key, const Value_t _value)
+ADTErr HashMapInsert(HashMap* _hashMap, const Key_t* _key, const Value_t* _value)
 {
 /*	size_t index;*/
 	size_t insertionIndex;
@@ -157,7 +158,7 @@ ADTErr HashMapInsert(HashMap* _hashMap, const Key_t _key, const Value_t _value)
 		while (itr != listEnd)
 		{		
 			returnedKeyValPair = (KeyAndVal_t*) ListItrGet(itr);
-			if (_hashMap->m_equalFunc(_key, returnedKeyValPair->m_key))
+			if (returnedKeyValPair && _hashMap->m_equalFunc(_key, returnedKeyValPair->m_key))
 			{
 				return ERR_MAP_KEY_FOUND;
 			}
@@ -181,8 +182,8 @@ ADTErr HashMapInsert(HashMap* _hashMap, const Key_t _key, const Value_t _value)
 	{
 		return ERR_NOMEM;
 	}
-	newKeyValPair->m_key = _key;
-	newKeyValPair->m_value = _value;
+	newKeyValPair->m_key = (Key_t*)_key;
+	newKeyValPair->m_value = (Value_t*)_value;
 	ListPushTail(_hashMap->m_buckets[insertionIndex], (void*)newKeyValPair);
 	++_hashMap->m_numOfElements;
 	#ifndef NDEBUG
@@ -192,13 +193,14 @@ ADTErr HashMapInsert(HashMap* _hashMap, const Key_t _key, const Value_t _value)
 	return ERR_OK;
 }
 
-ADTErr HashMapRemove(HashMap* _hashMap, const Key_t _searchKey, Key_t* _removedKey, Value_t* _removedValue)
+ADTErr HashMapRemove(HashMap* _hashMap, const Key_t* _searchKey, Key_t** _removedKey, Value_t** _removedValue)
 {
 /*	size_t index;*/
 	size_t insertionIndex;
 	ListItr itr;
 	ListItr listEnd;
 	KeyAndVal_t* foundKeyValPair = NULL;
+	KeyAndVal_t* dummyPair = NULL;
 	if (!_hashMap || !_searchKey || !_removedKey || !_removedValue)
 	{
 		return ERR_INVARG;
@@ -217,8 +219,8 @@ ADTErr HashMapRemove(HashMap* _hashMap, const Key_t _searchKey, Key_t* _removedK
 			{
 				*_removedKey = foundKeyValPair->m_key;
 				*_removedValue = foundKeyValPair->m_value;				
-				itr = ListItrRemove(_hashMap->m_buckets[insertionIndex], itr, (void**)&foundKeyValPair);
-				free(foundKeyValPair);
+				itr = ListItrRemove(_hashMap->m_buckets[insertionIndex], itr, (void**)&dummyPair);
+				free(dummyPair);
 				if (0 == ListItemsNum(_hashMap->m_buckets[insertionIndex]))
 				{
 					ListDestroy(_hashMap->m_buckets[insertionIndex], NULL);
@@ -227,31 +229,32 @@ ADTErr HashMapRemove(HashMap* _hashMap, const Key_t _searchKey, Key_t* _removedK
 					--_hashMap->m_mapStats->m_chains;
 					#endif /* NDEBUG */
 				}
-				--_hashMap->m_numOfElements;
 				#ifndef NDEBUG
-				if (1 <= ListItemsNum(_hashMap->m_buckets[insertionIndex]))
+				else if (1 <= ListItemsNum(_hashMap->m_buckets[insertionIndex]))
 				{
 					--_hashMap->m_mapStats->m_collisions;
 				}
 				--_hashMap->m_mapStats->m_pairs;
 				#endif /* NDEBUG */
+				--_hashMap->m_numOfElements;
 				return ERR_OK;
 			}
 			itr = ListItrNext(itr);
 		}
 	}
+	*_removedKey = NULL;
+	*_removedValue = NULL;
 	return ERR_MAP_KEY_NOT_FOUND;	
 }
 
+/*
 ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity)
 {
 	HashMap* hashMap;
-/*	size_t bucketIndex;*/
 	ListItr itr;
-/*	ListItr listEnd;*/
 	KeyAndVal_t* curKeyAndVal;
-	Key_t curKey;
-	Value_t curVal;
+	Key_t* curKey;
+	Value_t* curVal;
 	size_t index;
 	
 	if (!_hashMap || 0 == _newCapacity)
@@ -259,16 +262,10 @@ ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity)
 		return ERR_INVARG;
 	}
 	
-	if (!(hashMap = malloc(sizeof(HashMap))))
+	if (!(hashMap = HashMapCreate(_newCapacity, _hashMap->m_hashFunc, _hashMap->m_equalFunc)))
 	{
 		return ERR_NOMEM;
 	}
-	hashMap->m_hashFunc = _hashMap->m_hashFunc;
-	hashMap->m_equalFunc = _hashMap->m_equalFunc;
-	hashMap->m_numOfElements = _hashMap->m_numOfElements;
-	hashMap->m_userCapacity = _newCapacity;
-	hashMap->m_actualCapacity = CalcHashSize(hashMap->m_userCapacity);
-	hashMap->m_buckets = calloc(hashMap->m_actualCapacity, sizeof(List*));
 	for (index = 0; index < _hashMap->m_actualCapacity; ++index)
 	{
 		while (_hashMap->m_buckets[index])
@@ -283,8 +280,114 @@ ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity)
 	_hashMap = hashMap;
 	return ERR_OK;
 }
+*/
+ADTErr HashMapRehash(HashMap** _hashMap, size_t _newCapacity)
+{
+	HashMap* hashMap;
+	ListItr itr;
+	KeyAndVal_t* curKeyAndVal;
+	Key_t* curKey;
+	Value_t* curVal;
+	size_t index;
+	
+	if (!_hashMap || !*_hashMap || 0 == _newCapacity)
+	{
+		return ERR_INVARG;
+	}
+	
+	if (!(hashMap = HashMapCreate(_newCapacity, (*_hashMap)->m_hashFunc, (*_hashMap)->m_equalFunc)))
+	{
+		return ERR_NOMEM;
+	}
+	for (index = 0; index < (*_hashMap)->m_actualCapacity; ++index)
+	{
+		while ((*_hashMap)->m_buckets[index])
+		{
+			itr = ListItrFirst((*_hashMap)->m_buckets[index]);
+			curKeyAndVal = ListItrGet(itr);
+			HashMapRemove((*_hashMap), curKeyAndVal->m_key, &curKey, &curVal);
+			HashMapInsert(hashMap, curKey, curVal);
+		}
+	}
+	HashMapDestroy(*_hashMap, NULL, NULL);
+	*_hashMap = hashMap;
+	return ERR_OK;
+}
 
-ADTErr HashMapFind(HashMap* _hashMap, const Key_t _searchKey, Value_t* _foundValue)
+
+
+/*
+ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity)
+{
+	List** buckets;
+	ListItr itr;
+	KeyAndVal_t* curKeyAndVal;
+	Key_t* curKey = NULL;
+	Value_t* curVal = NULL;
+	Key_t** keyArr = NULL;
+	Value_t** valArr = NULL;
+	size_t index;
+	size_t oldCapacity;
+	size_t numOfPairs;
+	size_t newActualCap;
+	size_t curPairNum = 0;
+	
+	if (!_hashMap || 0 == _newCapacity)
+	{
+		return ERR_INVARG;
+	}
+	
+	numOfPairs = _hashMap->m_numOfElements;
+	
+	if (!(keyArr = malloc(numOfPairs* sizeof(Key_t*))))
+	{
+		return ERR_NOMEM;
+	}
+	
+	if (!(valArr = malloc(numOfPairs* sizeof(Value_t*))))
+	{
+		return ERR_NOMEM;
+	}
+	
+	oldCapacity = _hashMap->m_actualCapacity;
+	
+	for (index = 0; index < oldCapacity; ++index)
+	{
+		while (_hashMap->m_buckets[index])
+		{
+			itr = ListItrFirst(_hashMap->m_buckets[index]);
+			curKeyAndVal = (KeyAndVal_t*)ListItrGet(itr);
+			keyArr[curPairNum] = curKeyAndVal->m_key;
+			valArr[curPairNum] = curKeyAndVal->m_value;			
+			HashMapRemove(_hashMap, keyArr[curPairNum], &curKey, &curVal);
+			++curPairNum;
+		}
+	}
+	#ifndef NDEBUG
+	printf("%u\n", _hashMap->m_mapStats->m_pairs);
+	#endif
+	newActualCap = CalcHashSize(_newCapacity);
+	if (!(buckets = realloc(_hashMap->m_buckets, newActualCap * sizeof(List*))))
+	{
+		return ERR_NOMEM;
+	}
+	_hashMap->m_buckets = buckets;
+	_hashMap->m_userCapacity = _newCapacity;
+	_hashMap->m_actualCapacity = newActualCap;
+	for (index = 0; index < numOfPairs; ++index)
+	{
+		HashMapInsert(_hashMap, keyArr[index], valArr[index]);
+		#ifndef NDEBUG
+		printf("%u\n", _hashMap->m_mapStats->m_pairs);
+		#endif 
+	}
+	free(keyArr);
+	free(valArr);
+	return ERR_OK;
+}
+*/
+
+ADTErr HashMapFind(HashMap* _hashMap, const Key_t* _searchKey, Value_t** _foundValue)
 {
 /*	size_t index;*/
 	size_t insertionIndex;
@@ -313,10 +416,7 @@ ADTErr HashMapFind(HashMap* _hashMap, const Key_t _searchKey, Value_t* _foundVal
 			itr = ListItrNext(itr);
 		}
 	}
-	else
-	{
-		*_foundValue = NULL;
-	}
+	*_foundValue = NULL;
 	return ERR_MAP_KEY_NOT_FOUND;
 }
 

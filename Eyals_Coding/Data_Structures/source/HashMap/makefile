@@ -1,7 +1,8 @@
 FLAGS = -g -ansi -pedantic -Wall -Wconversion -m32
 INC_PATH = ../../inc/
 LIST_PATH = ../../source/List/
-objects = List.o HashMap.o TEST_HashMap.o
+GEN_FUNC_PATH = ../../../GeneralFunctions/
+objects = GeneralFunctions.o List.o HashMap.o TEST_HashMap.o
 
 
 TEST_HashMap.out: $(objects) 
@@ -16,7 +17,10 @@ HashMap.o: HashMap.c $(INC_PATH)List.h $(INC_PATH)ADTErr.h
 List.o: $(LIST_PATH)List.c $(INC_PATH)List.h $(INC_PATH)ADTErr.h
 	gcc $(FLAGS) -c $(LIST_PATH)List.c
 	
+GeneralFunctions.o: $(GEN_FUNC_PATH)GeneralFunctions.c $(GEN_FUNC_PATH)GeneralFunctions.h
+	gcc $(FLAGS) -c $(GEN_FUNC_PATH)GeneralFunctions.c
+	
 clean:
-	rm $(objects) TEST_List.out
+	rm $(objects) TEST_HashMap.out
 
 
