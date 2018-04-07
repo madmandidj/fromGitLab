@@ -128,6 +128,40 @@ UNIT(CreateRandomIntArray_100Int_OnlyMinus1)
 	DestroyIntArray(intArr);
 END_UNIT
 
+UNIT(CreateAscendingIntVector_100Int)
+	Vector* vector;
+	int* intArr;
+	size_t numOfInts = 100;
+	size_t index;
+	int* curItem;
+	vector = CreateAscendingIntVector(numOfInts, 0, &intArr);
+	for (index = 0; index < numOfInts; ++index)
+	{
+		VectorGet(vector, index, (void**)&curItem);
+		ASSERT_THAT(*curItem == index);
+	}
+	ASSERT_THAT(VectorItemsNum(vector) == numOfInts);
+	DestroyIntVector(vector, intArr);
+END_UNIT
+
+UNIT(CreateRandomIntVector_100Int_minus10TOplus10)
+	Vector* vector;
+	int* intArr;
+	size_t numOfInts = 100;
+	int minVal = -10;
+	int maxVal = 10;
+	size_t index;
+	int* curItem;
+	vector = CreateRandomIntVector(numOfInts, minVal, maxVal, 0, &intArr);
+	for (index = 0; index < numOfInts; ++index)
+	{
+		VectorGet(vector, index, (void**)&curItem);
+		ASSERT_THAT(*curItem >= minVal && *curItem <= maxVal);
+	}
+	ASSERT_THAT(VectorItemsNum(vector) == numOfInts);
+	DestroyIntVector(vector, intArr);
+END_UNIT
+
 
 TEST_SUITE(General Functions)
 
@@ -141,7 +175,8 @@ TEST_SUITE(General Functions)
     TEST(CreateRandomIntArray_100Int_plus10TOplus14)
     TEST(CreateRandomIntArray_100Int_Only0)
     TEST(CreateRandomIntArray_100Int_OnlyMinus1)
-    
+    TEST(CreateAscendingIntVector_100Int)
+    TEST(CreateRandomIntVector_100Int_minus10TOplus10)
 END_SUITE
 
 

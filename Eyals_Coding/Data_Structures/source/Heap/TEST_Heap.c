@@ -34,6 +34,7 @@ UNIT(Heap_Build_EmptyVec)
 	vector = VectorCreate(numOfInts, blockSize);
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(!heap);
+    VectorDestroy(vector, NULL);
 END_UNIT
 
 UNIT(Heap_Build_1_item)

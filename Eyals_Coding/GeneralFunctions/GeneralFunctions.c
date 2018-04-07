@@ -4,6 +4,10 @@
 #include <math.h>
 #include <limits.h>
 
+
+/******
+Integer Array Functions
+******/
 int* CreateAscendingIntArray(size_t _numOfInts)
 {
 	int* intArr;
@@ -60,6 +64,133 @@ void DestroyIntArray(int* _intArr)
 }
 
 
+
+
+/******
+Vector Functions
+******/
+Vector* CreateAscendingIntVector(size_t _numOfInts, size_t _blockSize, int** _intArr)
+{
+	Vector* vector;
+	size_t index;
+	if (0 == _numOfInts || !_intArr)
+	{
+		return NULL;
+	}
+	
+	if (!(*_intArr = CreateAscendingIntArray(_numOfInts)))
+	{
+		return NULL;
+	}
+	if (!(vector = VectorCreate(_numOfInts, _blockSize)))
+	{
+		DestroyIntArray(*_intArr);
+		return NULL;
+	}
+	for (index = 0; index < _numOfInts; ++index)
+	{
+		VectorAppend(vector, (*_intArr) + index);
+	}
+	return vector;
+}
+Vector* CreateRandomIntVector(size_t _numOfInts, int _minVal, int _maxVal, size_t _blockSize, int** _intArr)
+{
+	Vector* vector;
+	size_t index;
+	if (0 == _numOfInts || _minVal > _maxVal || !_intArr)
+	{
+		return NULL;
+	}
+	
+	if (!(*_intArr = CreateRandomIntArray(_numOfInts, _minVal, _maxVal)))
+	{
+		return NULL;
+	}
+	if (!(vector = VectorCreate(_numOfInts, _blockSize)))
+	{
+		DestroyIntArray(*_intArr);
+		return NULL;
+	}
+	for (index = 0; index < _numOfInts; ++index)
+	{
+		VectorAppend(vector, (*_intArr) + index);
+	}
+	return vector;
+}
+void DestroyIntVector(Vector* _vector, int* _intArr)
+{
+	if (!_vector || !_intArr)
+	{
+		return;
+	}
+	DestroyIntArray(_intArr);
+	VectorDestroy(_vector, NULL);
+}
+
+Vector* CopyCreateVector(Vector* _vector)
+{
+	Vector* newVector;
+	size_t numOfItems;
+	size_t index;
+	void* element;
+	
+	if (!_vector)
+	{
+		return NULL;
+	}
+	numOfItems = VectorItemsNum(_vector);
+	newVector = VectorCreate(numOfItems, 10 > numOfItems ? 10 : numOfItems/2);
+	for (index = 0; index < numOfItems; ++index)
+	{
+		VectorGet(_vector, index, &element);
+		VectorAppend(newVector, element);
+	}
+	return newVector;
+}
+
+int AreVectorsEqual(Vector* _isSortedVector, Vector* _sortedVector)
+{
+	size_t index;
+	int* item_L;
+	int* item_R;
+	size_t isSortedItemsNum;
+	size_t sortedItemsNum;
+	
+	if (!_isSortedVector || !_sortedVector)
+	{
+		return 0;
+	}
+	
+	isSortedItemsNum = VectorItemsNum(_isSortedVector);
+	sortedItemsNum = VectorItemsNum(_sortedVector);
+	
+	if (isSortedItemsNum != sortedItemsNum)
+	{
+		return 0;
+	}
+	
+	for (index = 0; index < isSortedItemsNum; ++index)
+	{
+		VectorGet(_isSortedVector, index, (void**)&item_L);
+		VectorGet(_sortedVector, index, (void**)&item_R);
+		if (*item_L != *item_R) /*TODO: replace this condition with user shouldswap func */
+		{
+			return 0;
+		}
+	}	
+	return 1;
+}
+
+
+/*void FlipVector(Vector* _vector)*/
+/*int AreVectorsEqual(Vector* _isSortedVector, Vector* _sortedVector)*/
+
+
+
+
+/******
+Print Functions
+******/
 void PrintSingleInt(int _int)
 {
 	printf("%d\n", _int);

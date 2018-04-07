@@ -11,6 +11,7 @@ int IsHeapSortedAscending(Heap* _heap, Vector* _sortedVector)
 	size_t index;
 	size_t numOfItems;
 	int* curElem;
+	int areVectorsEqual;
 	
 	if (!_heap)
 	{
@@ -29,7 +30,9 @@ int IsHeapSortedAscending(Heap* _heap, Vector* _sortedVector)
 		VectorAppend(vector, (void*)curElem);
 	}
 	FlipVector(vector);
-	return AreVectorsEqual(vector, _sortedVector);
+	areVectorsEqual = AreVectorsEqual(vector, _sortedVector);
+	VectorDestroy(vector, NULL);
+	return areVectorsEqual;
 }
 
 

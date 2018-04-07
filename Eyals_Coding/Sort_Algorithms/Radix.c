@@ -101,6 +101,7 @@ static void DoRadixSort(Vector* _vector, Vector** _vecArray, size_t _numOfItems,
 		{
 			VectorRemove(_vecArray[index], (void**)&elementPtr);
 		}
+/*		VectorDestroy(_vecArray[index], NULL);*/
 	}
 }
 
@@ -110,6 +111,7 @@ void RadixSort(Vector* _vector)
 	size_t numOfItems;
 	int curDigit;
 	size_t maxNumOfDigits;
+	size_t index;
 	Vector** vecArray;
 	if (!_vector || 1 >= VectorItemsNum(_vector))
 	{
@@ -119,7 +121,7 @@ void RadixSort(Vector* _vector)
 	{
 		numOfItems = VectorItemsNum(_vector);
 	}
-	if (!(vecArray = CreateVectorArray(numOfItems)))
+	if (!(vecArray = CreateVectorArray(DEC_DIGIT_NUM)))
 	{
 		return;
 	}
@@ -128,4 +130,9 @@ void RadixSort(Vector* _vector)
 	{
 		DoRadixSort(_vector, vecArray, numOfItems, curDigit, maxNumOfDigits);
 	}
+	for (index = 0; index < DEC_DIGIT_NUM; ++index)
+	{
+		VectorDestroy(vecArray[index], NULL);
+	}
+	free(vecArray);
 }
