@@ -21,7 +21,7 @@ ADTErr HashMapInsert(HashMap* _hashMap, const Key_t* _key, const Value_t* _value
 
 ADTErr HashMapRemove(HashMap* _hashMap, const Key_t* _searchKey, Key_t** _removedKey, Value_t** _removedValue);
 
-ADTErr HashMapRehash(HashMap** _hashMap, size_t _newCapacity);
+ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity);
 
 ADTErr HashMapFind(HashMap* _hashMap, const Key_t* _searchKey, Value_t** _foundValue);
 

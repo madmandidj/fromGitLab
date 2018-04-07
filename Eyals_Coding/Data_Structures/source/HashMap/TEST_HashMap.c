@@ -364,7 +364,7 @@ UNIT(HashMap_Rehash_33Pair33_11buckets22_22Collisions11_IntKey)
     ASSERT_THAT(11 == mapStats.m_chains);
     ASSERT_THAT(3 == mapStats.m_maxChainLength);
     #endif /* NDEBUG */
-    HashMapRehash(&hashMap, reHashCap);
+    HashMapRehash(hashMap, reHashCap);
     #ifndef NDEBUG
     mapStats = HashMapGetStatistics(hashMap);
     ASSERT_THAT(33 == mapStats.m_pairs);

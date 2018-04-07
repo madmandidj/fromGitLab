@@ -246,41 +246,7 @@ ADTErr HashMapRemove(HashMap* _hashMap, const Key_t* _searchKey, Key_t** _remove
 	*_removedValue = NULL;
 	return ERR_MAP_KEY_NOT_FOUND;	
 }
-
 /*
-ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity)
-{
-	HashMap* hashMap;
-	ListItr itr;
-	KeyAndVal_t* curKeyAndVal;
-	Key_t* curKey;
-	Value_t* curVal;
-	size_t index;
-	
-	if (!_hashMap || 0 == _newCapacity)
-	{
-		return ERR_INVARG;
-	}
-	
-	if (!(hashMap = HashMapCreate(_newCapacity, _hashMap->m_hashFunc, _hashMap->m_equalFunc)))
-	{
-		return ERR_NOMEM;
-	}
-	for (index = 0; index < _hashMap->m_actualCapacity; ++index)
-	{
-		while (_hashMap->m_buckets[index])
-		{
-			itr = ListItrFirst(_hashMap->m_buckets[index]);
-			curKeyAndVal = ListItrGet(itr);
-			HashMapRemove(_hashMap, curKeyAndVal->m_key, &curKey, &curVal);
-			HashMapInsert(hashMap, curKey, curVal);
-		}
-	}
-	HashMapDestroy(_hashMap, NULL, NULL);
-	_hashMap = hashMap;
-	return ERR_OK;
-}
-*/
 ADTErr HashMapRehash(HashMap** _hashMap, size_t _newCapacity)
 {
 	HashMap* hashMap;
@@ -313,79 +279,81 @@ ADTErr HashMapRehash(HashMap** _hashMap, size_t _newCapacity)
 	*_hashMap = hashMap;
 	return ERR_OK;
 }
+*/
 
-
-
-/*
 ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity)
 {
-	List** buckets;
-	ListItr itr;
+	List** newBuckets;
+	size_t newActualCapacity;
+	size_t numOfItems;
+	size_t curItemNum = 0;
+	
+/*	HashMap* hashMap;*/
+/*	ListItr itr;*/
 	KeyAndVal_t* curKeyAndVal;
-	Key_t* curKey = NULL;
-	Value_t* curVal = NULL;
-	Key_t** keyArr = NULL;
-	Value_t** valArr = NULL;
+	Key_t** keyArr;
+	Value_t** valArr;
 	size_t index;
-	size_t oldCapacity;
-	size_t numOfPairs;
-	size_t newActualCap;
-	size_t curPairNum = 0;
 	
 	if (!_hashMap || 0 == _newCapacity)
 	{
 		return ERR_INVARG;
 	}
 	
-	numOfPairs = _hashMap->m_numOfElements;
-	
-	if (!(keyArr = malloc(numOfPairs* sizeof(Key_t*))))
+	newActualCapacity = CalcHashSize(_newCapacity);
+	numOfItems = _hashMap->m_numOfElements;
+	if (!(newBuckets = calloc(newActualCapacity, sizeof(List*))))
 	{
 		return ERR_NOMEM;
 	}
-	
-	if (!(valArr = malloc(numOfPairs* sizeof(Value_t*))))
+	if (!(keyArr = malloc(numOfItems * sizeof(Key_t*))))
 	{
+		free(newBuckets);
+		return ERR_NOMEM;
+	}
+	if (!(valArr = malloc(numOfItems * sizeof(Key_t*))))
+	{
+		free(keyArr);
+		free(newBuckets);
 		return ERR_NOMEM;
 	}
 	
-	oldCapacity = _hashMap->m_actualCapacity;
-	
-	for (index = 0; index < oldCapacity; ++index)
+	for (index = 0; index < _hashMap->m_actualCapacity; ++index)
 	{
-		while (_hashMap->m_buckets[index])
+		if (_hashMap->m_buckets[index])
 		{
-			itr = ListItrFirst(_hashMap->m_buckets[index]);
-			curKeyAndVal = (KeyAndVal_t*)ListItrGet(itr);
-			keyArr[curPairNum] = curKeyAndVal->m_key;
-			valArr[curPairNum] = curKeyAndVal->m_value;			
-			HashMapRemove(_hashMap, keyArr[curPairNum], &curKey, &curVal);
-			++curPairNum;
+			while(0 != ListItemsNum(_hashMap->m_buckets[index]))
+			{
+				ListPopHead(_hashMap->m_buckets[index], (void**)&curKeyAndVal);
+				keyArr[curItemNum] = curKeyAndVal->m_key;
+				valArr[curItemNum] = curKeyAndVal->m_value;
+				free(curKeyAndVal);
+				++curItemNum;
+			}
+			ListDestroy(_hashMap->m_buckets[index], NULL);
 		}
 	}
-	#ifndef NDEBUG
-	printf("%u\n", _hashMap->m_mapStats->m_pairs);
-	#endif
-	newActualCap = CalcHashSize(_newCapacity);
-	if (!(buckets = realloc(_hashMap->m_buckets, newActualCap * sizeof(List*))))
-	{
-		return ERR_NOMEM;
-	}
-	_hashMap->m_buckets = buckets;
+	free(_hashMap->m_buckets);
+	_hashMap->m_buckets = newBuckets;
+	_hashMap->m_numOfElements = 0;
 	_hashMap->m_userCapacity = _newCapacity;
-	_hashMap->m_actualCapacity = newActualCap;
-	for (index = 0; index < numOfPairs; ++index)
+	_hashMap->m_actualCapacity = newActualCapacity;
+	#ifndef NDEBUG
+	_hashMap->m_mapStats->m_pairs = 0;
+	_hashMap->m_mapStats->m_collisions = 0;
+	_hashMap->m_mapStats->m_buckets = _hashMap->m_actualCapacity;
+	_hashMap->m_mapStats->m_chains = 0;
+	_hashMap->m_mapStats->m_maxChainLength = 0;
+	_hashMap->m_mapStats->m_averageChainLength = 0;
+	#endif /* NDEBUG */
+	for (index = 0; index < numOfItems; ++index)
 	{
 		HashMapInsert(_hashMap, keyArr[index], valArr[index]);
-		#ifndef NDEBUG
-		printf("%u\n", _hashMap->m_mapStats->m_pairs);
-		#endif 
 	}
 	free(keyArr);
 	free(valArr);
 	return ERR_OK;
 }
-*/
 
 ADTErr HashMapFind(HashMap* _hashMap, const Key_t* _searchKey, Value_t** _foundValue)
 {
