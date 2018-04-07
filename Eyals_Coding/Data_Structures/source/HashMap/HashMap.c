@@ -21,8 +21,12 @@ struct HashMap
 	size_t			m_actualCapacity;
 	#ifndef NDEBUG
 	MapStats* 		m_mapStats;
-	#endif /* NDEBUG */
+	#endif
 };
+
+/*******
+STATIC FUNCTIONS
+*******/
 
 static size_t CalcHashSize(size_t _num)
 {
@@ -55,6 +59,30 @@ static size_t CalcHashSize(size_t _num)
     return _num;
 }
 
+static void SetHashMapAttributes(HashMap* _hashMap, size_t _numOfElements, size_t _userCapacity, size_t _actualCapacity)
+{
+	_hashMap->m_numOfElements = _numOfElements;
+	_hashMap->m_userCapacity = _userCapacity;
+	_hashMap->m_actualCapacity = _actualCapacity;
+}
+
+#ifndef NDEBUG
+static void SetMapStatsAttributes(MapStats* _mapStats, size_t _pairs, size_t _collisions, size_t _buckets,
+									 size_t _chains, size_t _maxChainLength, float _avgChainLength)
+{
+	_mapStats->m_pairs = _pairs;
+	_mapStats->m_collisions = _collisions;
+	_mapStats->m_buckets = _buckets;
+	_mapStats->m_chains = _chains;
+	_mapStats->m_maxChainLength = _maxChainLength;
+	_mapStats->m_averageChainLength = _avgChainLength;
+}
+#endif
+
+/*******
+API FUNCTIONS
+*******/
+
 HashMap* HashMapCreate(size_t _capacity, HashFunc _hashFunc, EqualityFunc _equalFunc)
 {
 	HashMap* hashMap;
@@ -69,28 +97,21 @@ HashMap* HashMapCreate(size_t _capacity, HashFunc _hashFunc, EqualityFunc _equal
 	}
 	hashMap->m_hashFunc = _hashFunc;
 	hashMap->m_equalFunc = _equalFunc;
-	hashMap->m_numOfElements = 0;
-	hashMap->m_userCapacity = _capacity;
-	hashMap->m_actualCapacity = CalcHashSize(hashMap->m_userCapacity);
+	SetHashMapAttributes(hashMap, 0, _capacity, CalcHashSize(_capacity));
 	if (!(hashMap->m_buckets = calloc(hashMap->m_actualCapacity, sizeof(List*))))
 	{
 		free(hashMap);
 		return NULL;
 	}
 	#ifndef NDEBUG
-	if (!(hashMap->m_mapStats = malloc(sizeof(MapStats))))
-	{
-		free(hashMap->m_buckets);
-		free(hashMap);
-		return NULL;
-	}
-	hashMap->m_mapStats->m_pairs = 0;
-	hashMap->m_mapStats->m_collisions = 0;
-	hashMap->m_mapStats->m_buckets = hashMap->m_actualCapacity;
-	hashMap->m_mapStats->m_chains = 0;
-	hashMap->m_mapStats->m_maxChainLength = 0;
-	hashMap->m_mapStats->m_averageChainLength = 0;
-	#endif /* NDEBUG */
+		if (!(hashMap->m_mapStats = malloc(sizeof(MapStats))))
+		{
+			free(hashMap->m_buckets);
+			free(hashMap);
+			return NULL;
+		}
+		SetMapStatsAttributes(hashMap->m_mapStats, 0, 0, hashMap->m_actualCapacity, 0, 0, 0);
+	#endif 
 	return hashMap;
 }
 
@@ -124,8 +145,8 @@ void HashMapDestroy(HashMap* _hashMap, KeyDestroyFunc _keyDestroyFunc, ValueDest
 		}
 	}
 	#ifndef NDEBUG
-	free(_hashMap->m_mapStats);
-	#endif /* NDEBUG */
+		free(_hashMap->m_mapStats);
+	#endif 
 	free(_hashMap->m_buckets);
 	free(_hashMap);
 	return;
@@ -159,23 +180,10 @@ ADTErr HashMapInsert(HashMap* _hashMap, const Key_t* _key, const Value_t* _value
 			}
 			itr = ListItrNext(itr);
 		}
-		/*
-		#ifndef NDEBUG
-		if (1 <= ListItemsNum(_hashMap->m_buckets[insertionIndex]))
-		{
-			++_hashMap->m_mapStats->m_collisions;
-		}
-		#endif
-		*/
 	}
 	else
 	{		
 		_hashMap->m_buckets[insertionIndex] = ListCreate();
-		/*
-		#ifndef NDEBUG
-		++_hashMap->m_mapStats->m_chains;
-		#endif
-		*/
 	}
 	if (!(newKeyValPair = malloc(sizeof(KeyAndVal_t))))
 	{
@@ -185,10 +193,6 @@ ADTErr HashMapInsert(HashMap* _hashMap, const Key_t* _key, const Value_t* _value
 	newKeyValPair->m_value = (Value_t*)_value;
 	ListPushTail(_hashMap->m_buckets[insertionIndex], (void*)newKeyValPair);
 	++_hashMap->m_numOfElements;
-	/*
-	#ifndef NDEBUG
-	++_hashMap->m_mapStats->m_pairs;
-	#endif */
 	
 	return ERR_OK;
 }
@@ -224,18 +228,7 @@ ADTErr HashMapRemove(HashMap* _hashMap, const Key_t* _searchKey, Key_t** _remove
 				{
 					ListDestroy(_hashMap->m_buckets[insertionIndex], NULL);
 					_hashMap->m_buckets[insertionIndex] = NULL;
-					/*
-					#ifndef NDEBUG
-					--_hashMap->m_mapStats->m_chains;
-					#endif */
 				}
-				/* #ifndef NDEBUG
-				else if (1 <= ListItemsNum(_hashMap->m_buckets[insertionIndex]))
-				{
-					--_hashMap->m_mapStats->m_collisions;
-				}
-				--_hashMap->m_mapStats->m_pairs;
-				#endif */
 				--_hashMap->m_numOfElements;
 				return ERR_OK;
 			}
@@ -299,17 +292,10 @@ ADTErr HashMapRehash(HashMap* _hashMap, size_t _newCapacity)
 	}
 	free(_hashMap->m_buckets);
 	_hashMap->m_buckets = newBuckets;
-	_hashMap->m_numOfElements = 0;
-	_hashMap->m_userCapacity = _newCapacity;
-	_hashMap->m_actualCapacity = newActualCapacity;
+	SetHashMapAttributes(_hashMap, 0, _newCapacity, newActualCapacity);
 	#ifndef NDEBUG
-	_hashMap->m_mapStats->m_pairs = 0;
-	_hashMap->m_mapStats->m_collisions = 0;
-	_hashMap->m_mapStats->m_buckets = _hashMap->m_actualCapacity;
-	_hashMap->m_mapStats->m_chains = 0;
-	_hashMap->m_mapStats->m_maxChainLength = 0;
-	_hashMap->m_mapStats->m_averageChainLength = 0;
-	#endif /* NDEBUG */
+		SetMapStatsAttributes(_hashMap->m_mapStats, 0, 0, _hashMap->m_actualCapacity, 0, 0, 0);
+	#endif 
 	for (index = 0; index < numOfItems; ++index)
 	{
 		HashMapInsert(_hashMap, keyArr[index], valArr[index]);
@@ -433,7 +419,7 @@ MapStats HashMapGetStatistics(const HashMap* _hashMap)
 	_hashMap->m_mapStats->m_maxChainLength = maxChainLength;
 	return *(_hashMap->m_mapStats);
 }
-#endif /* NDEBUG */
+#endif 
 
 
 

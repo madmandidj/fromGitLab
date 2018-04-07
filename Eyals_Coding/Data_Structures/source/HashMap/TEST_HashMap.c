@@ -372,12 +372,51 @@ UNIT(HashMap_Rehash_33Pair33_11buckets22_22Collisions11_IntKey)
     ASSERT_THAT(25 == mapStats.m_buckets);
     ASSERT_THAT(25 == mapStats.m_chains);
     ASSERT_THAT(2 == mapStats.m_maxChainLength);
-    #endif /* NDEBUG */
+    #endif /* NDEBUG */ 
     HashMapDestroy(hashMap, NULL, NULL);
     DestroyIntArray(keyArr);
     DestroyIntArray(valArr);
 END_UNIT
 
+
+UNIT(HashMap_Find_21Pair_11buckets_10Collisions_IntKey)
+    HashMap* hashMap;
+    size_t capacity = 10;
+    size_t numOfPairs = 22;
+    int* keyArr;
+    int* valArr;
+    size_t index;
+    int* removedKey;
+    int* removedVal;
+    int* foundVal;
+    MapStats mapStats;
+    
+    keyArr = CreateAscendingIntArray(numOfPairs);
+    valArr = CreateRandomIntArray(numOfPairs, -1000, 1000);
+    hashMap = HashMapCreate(capacity, (HashFunc)MySizetHashFunc, (EqualityFunc)MySizetEqualFunc);
+    for (index = 0; index < numOfPairs; ++index)
+    {	
+		HashMapInsert(hashMap, (Key_t*)(keyArr + index), (Value_t*)(valArr + index));
+    }
+    HashMapRemove(hashMap, (Key_t*)(keyArr + 14), (Key_t*)&removedKey, (Value_t*)&removedVal);
+    ASSERT_THAT(14 == *removedKey);
+    ASSERT_THAT(valArr[14] == *removedVal);
+    #ifndef NDEBUG
+    mapStats = HashMapGetStatistics(hashMap);
+    ASSERT_THAT(21 == mapStats.m_pairs);
+    ASSERT_THAT(10 == mapStats.m_collisions);
+    ASSERT_THAT(11 == mapStats.m_buckets);
+    ASSERT_THAT(11 == mapStats.m_chains);
+    ASSERT_THAT(2 == mapStats.m_maxChainLength);
+    #endif /* NDEBUG */
+    HashMapFind(hashMap, keyArr + 14, (Value_t**)&foundVal);
+    ASSERT_THAT(NULL == foundVal);
+    HashMapFind(hashMap, keyArr + 15, (Value_t**)&foundVal);
+    ASSERT_THAT(foundVal);
+    HashMapDestroy(hashMap, NULL, NULL);
+    DestroyIntArray(keyArr);
+    DestroyIntArray(valArr);
+END_UNIT
 
 TEST_SUITE(HashMap Tests)
 
@@ -392,6 +431,7 @@ TEST_SUITE(HashMap Tests)
 	TEST(HashMap_Remove_21Pair_11buckets_10Collisions_IntKey)
 	TEST(HashMap_Remove_21Pair_11buckets_10Collisions_IntKey_NotFound)
 	TEST(HashMap_Rehash_33Pair33_11buckets22_22Collisions11_IntKey)
+	TEST(HashMap_Find_21Pair_11buckets_10Collisions_IntKey)
 	
 END_SUITE
 
