@@ -1,6 +1,7 @@
 #include "../../inc/Heap.h"
 #include "../../inc/ADTErr.h"
-#include "../../inc/VectorFunctions.h"
+/*#include "../../inc/VectorFunctions.h"*/
+#include "../../../GeneralFunctions/GeneralFunctions.h"
 #include <stdlib.h>
 
 
@@ -30,7 +31,7 @@ int IsHeapSortedAscending(Heap* _heap, Vector* _sortedVector)
 		VectorAppend(vector, (void*)curElem);
 	}
 	FlipVector(vector);
-	areVectorsEqual = AreVectorsEqual(vector, _sortedVector);
+	areVectorsEqual = AreVectorsEqual(vector, _sortedVector, (IsEqualFunc)IsIntEqual);
 	VectorDestroy(vector, NULL);
 	return areVectorsEqual;
 }

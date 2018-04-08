@@ -1,5 +1,6 @@
 #include "../../inc/Vector.h"
-#include "../../inc/VectorFunctions.h"
+/*#include "../../inc/VectorFunctions.h"*/
+#include "../../../GeneralFunctions/GeneralFunctions.h"
 #include "../../inc/Heap.h"
 #include "../../inc/HeapFunctions.h"
 #include "../../../Sort_Algorithms/Sort_Algorithms.h"
@@ -9,10 +10,13 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
-int IsIntLeftBigger(int* _leftInt, int* _rightInt)
-{
-	return *_leftInt > *_rightInt;
-}
+#define MAX_INT_VAL 1000
+#define MIN_INT_VAL 0
+
+/*int IsIntLeftBigger(int* _leftInt, int* _rightInt)*/
+/*{*/
+/*	return *_leftInt > *_rightInt;*/
+/*}*/
 
 void PrintInt(int* _element)
 {
@@ -42,15 +46,16 @@ UNIT(Heap_Build_1_item)
 	Vector* vector;
 	Heap* heap;
 	size_t numOfInts = 1;
-	int maxVal = 100;
+/*	int maxVal = 100;*/
+/*	int minVal = 100;*/
 	size_t blockSize = 10;
 
 	srand ((unsigned int)time(NULL));
-	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
+	vector = CreateRandomIntVector(numOfInts, MIN_INT_VAL, MAX_INT_VAL, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(heap);
 	HeapDestroy(heap, NULL);
-	DestroyRandomIntVector(vector, intArr);
+	DestroyIntVector(vector, intArr);
 END_UNIT
 
 UNIT(Heap_Build_10_item)
@@ -58,15 +63,15 @@ UNIT(Heap_Build_10_item)
 	Vector* vector;
 	Heap* heap;
 	size_t numOfInts = 10;
-	int maxVal = 100;
+/*	int maxVal = 100;*/
 	size_t blockSize = 10;
 
 	srand ((unsigned int)time(NULL));
-	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
+	vector = CreateRandomIntVector(numOfInts, MIN_INT_VAL, MAX_INT_VAL, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(heap);
 	HeapDestroy(heap, NULL);
-	DestroyRandomIntVector(vector, intArr);
+	DestroyIntVector(vector, intArr);
 END_UNIT
 
 UNIT(Heap_Build_100_item)
@@ -74,15 +79,15 @@ UNIT(Heap_Build_100_item)
 	Vector* vector;
 	Heap* heap;
 	size_t numOfInts = 100;
-	int maxVal = 100;
+/*	int maxVal = 100;*/
 	size_t blockSize = 10;
 
 	srand ((unsigned int)time(NULL));
-	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr); 
+	vector = CreateRandomIntVector(numOfInts, MIN_INT_VAL, MAX_INT_VAL, blockSize, &intArr); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(heap);
 	HeapDestroy(heap, NULL);
-	DestroyRandomIntVector(vector, intArr);
+	DestroyIntVector(vector, intArr);
 END_UNIT
 
 UNIT(Heap_Build_100_item_Is_Sorted_Ascending)
@@ -91,17 +96,17 @@ UNIT(Heap_Build_100_item_Is_Sorted_Ascending)
 	Vector* sortedVector;
 	Heap* heap;
 	size_t numOfInts = 100;
-	int maxVal = 100;
+/*	int maxVal = 100;*/
 	size_t blockSize = 10;
 
 	srand ((unsigned int)time(NULL));
-	vector = CreateRandomIntVector(numOfInts, maxVal, blockSize, &intArr);
+	vector = CreateRandomIntVector(numOfInts, MIN_INT_VAL, MAX_INT_VAL, blockSize, &intArr);
 	sortedVector = CopyCreateVector(vector);
 	MergeSort(sortedVector); 
 	heap = HeapBuild(vector, (IsLeftBigger)IsIntLeftBigger);
     ASSERT_THAT(IsHeapSortedAscending(heap, sortedVector));
 	HeapDestroy(heap, NULL);
-	DestroyRandomIntVector(vector, intArr);
+	DestroyIntVector(vector, intArr);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
 

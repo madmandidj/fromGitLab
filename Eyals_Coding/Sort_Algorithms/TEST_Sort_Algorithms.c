@@ -1,6 +1,7 @@
 #include "Sort_Algorithms.h"
 #include "../Data_Structures/inc/Vector.h"
-#include "../Data_Structures/inc/VectorFunctions.h"
+/*#include "../Data_Structures/inc/VectorFunctions.h"*/
+#include "../GeneralFunctions/GeneralFunctions.h"
 #include "../Data_Structures/inc/Heap.h"
 #include "../Data_Structures/inc/HeapFunctions.h"
 #include "../Data_Structures/inc/mu_test.h"
@@ -12,7 +13,8 @@
 
 #define NUM_OF_INTS 10000
 #define VEC_BLOCK_SIZE 10000
-#define MAX_INT_VAL 100000
+#define MAX_INT_VAL 1000
+#define MIN_INT_VAL 0
 
 Vector* g_vector;
 int* g_intArr;
@@ -34,10 +36,10 @@ static clock_t ExecuteTest(void(*TestMethod)(Vector*), Vector* _vector)
 	return total_t;
 }
 
-static int IsIntLeftBigger(int* _leftInt, int* _rightInt)
-{
-	return *_leftInt > *_rightInt;
-}
+/*static int IsIntLeftBigger(int* _leftInt, int* _rightInt)*/
+/*{*/
+/*	return *_leftInt > *_rightInt;*/
+/*}*/
 
 static clock_t ExecuteHeapSortTest(Heap*(*TestMethod)(Vector*, IsLeftBigger), Vector* _vector, Heap** _heap)
 {
@@ -62,13 +64,13 @@ UNIT(Initialize_Test)
 	printf("Sort Tests for %d elements\n", NUM_OF_INTS);
 	printf("*********************\n");
 	srand ((unsigned int)time(NULL));
-	g_vector = CreateRandomIntVector(NUM_OF_INTS, MAX_INT_VAL, VEC_BLOCK_SIZE, &g_intArr);
+	g_vector = CreateRandomIntVector(NUM_OF_INTS, MIN_INT_VAL, MAX_INT_VAL, VEC_BLOCK_SIZE, &g_intArr);
 	ASSERT_THAT(1);
 END_UNIT
 
 UNIT(End_Test)
 	printf("*********************\n");
-	DestroyRandomIntVector(g_vector, g_intArr);	
+	DestroyIntVector(g_vector, g_intArr);	
 	ASSERT_THAT(1);
 END_UNIT
 
@@ -87,7 +89,7 @@ UNIT(Bubble_Average)
 	MergeSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -100,7 +102,7 @@ UNIT(Bubble_Best)
 	MergeSort(sortedVector); 
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -114,7 +116,7 @@ UNIT(Bubble_Worst)
 	MergeSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(BubbleSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -133,7 +135,7 @@ UNIT(Shake_Average)
 	MergeSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -146,7 +148,7 @@ UNIT(Shake_Best)
 	MergeSort(sortedVector); 
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -160,7 +162,7 @@ UNIT(Shake_Worst)
 	MergeSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(ShakeSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -180,7 +182,7 @@ UNIT(Insert_Average)
 	MergeSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -193,7 +195,7 @@ UNIT(Insert_Best)
 	MergeSort(sortedVector); 
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -207,7 +209,7 @@ UNIT(Insert_Worst)
 	MergeSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(InsertionSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -225,7 +227,7 @@ UNIT(Shell_Average)
 	MergeSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -238,7 +240,7 @@ UNIT(Shell_Best)
 	MergeSort(sortedVector); 
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -252,7 +254,7 @@ UNIT(Shell_Worst)
 	MergeSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(ShellSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -270,7 +272,7 @@ UNIT(Selection_Average)
 	MergeSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -283,7 +285,7 @@ UNIT(Selection_Best)
 	MergeSort(sortedVector); 
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -297,7 +299,7 @@ UNIT(Selection_Worst)
 	MergeSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(SelectionSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -315,7 +317,7 @@ UNIT(Quick_Average)
 	MergeSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -328,7 +330,7 @@ UNIT(Quick_Best)
 	MergeSort(sortedVector); 
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -342,7 +344,7 @@ UNIT(Quick_Worst)
 	MergeSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(QuickSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -361,7 +363,7 @@ UNIT(Merge_Average)
 	QuickSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -374,7 +376,7 @@ UNIT(Merge_Best)
 	QuickSort(sortedVector); 
 	QuickSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -388,7 +390,7 @@ UNIT(Merge_Worst)
 	QuickSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(MergeSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -406,7 +408,7 @@ UNIT(Counting_Average)
 	MergeSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -419,7 +421,7 @@ UNIT(Counting_Best)
 	MergeSort(sortedVector); 
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -433,7 +435,7 @@ UNIT(Counting_Worst)
 	MergeSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(CountingSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -451,7 +453,7 @@ UNIT(Radix_Average)
 	MergeSort(sortedVector);
 	printf("*********************\n"); 
 	printf("Total sort time = %f\n", ((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -464,7 +466,7 @@ UNIT(Radix_Best)
 	MergeSort(sortedVector); 
 	MergeSort(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT
@@ -478,7 +480,7 @@ UNIT(Radix_Worst)
 	MergeSort(vector);
 	FlipVector(vector);
 	printf("Total sort time = %f\n", ((float)ExecuteTest(RadixSort, vector)) / CLOCKS_PER_SEC);
-	ASSERT_THAT(AreVectorsEqual(vector, sortedVector));
+	ASSERT_THAT(AreVectorsEqual(vector, sortedVector, (IsEqualFunc)IsIntEqual));
 	VectorDestroy(vector, NULL);
 	VectorDestroy(sortedVector, NULL);
 END_UNIT

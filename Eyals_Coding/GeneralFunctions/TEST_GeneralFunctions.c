@@ -162,6 +162,43 @@ UNIT(CreateRandomIntVector_100Int_minus10TOplus10)
 	DestroyIntVector(vector, intArr);
 END_UNIT
 
+UNIT(CopyCreateVector_100RandomInts)
+	Vector* vector;
+	Vector* copyVector;
+	int* intArr;
+	size_t numOfInts = 100;
+	int minVal = -10;
+	int maxVal = 10;
+	vector = CreateRandomIntVector(numOfInts, minVal, maxVal, 0, &intArr);
+	copyVector = CopyCreateVector(vector);
+	ASSERT_THAT(1 == AreVectorsEqual(vector, copyVector, (IsEqualFunc)IsIntEqual));
+	VectorDestroy(copyVector, NULL);
+	DestroyIntVector(vector, intArr);
+END_UNIT
+
+UNIT(FlipVector_Ascending_100Int)
+	Vector* vector;
+	Vector* flippedVector;
+	int* intArr;
+	size_t numOfInts = 100;
+	size_t indexVec = 0;
+	size_t indexFlippedVec = numOfInts-1;
+	int* curItem;
+	int* curFlippedItem;
+	vector = CreateAscendingIntVector(numOfInts, 0, &intArr);
+	flippedVector = CopyCreateVector(vector);
+	FlipVector(flippedVector);
+	for (indexVec = 0; indexVec < numOfInts; ++indexVec)
+	{
+		VectorGet(vector, indexVec, (void**)&curItem);
+		VectorGet(flippedVector, indexFlippedVec, (void**)&curFlippedItem);
+		--indexFlippedVec;
+		ASSERT_THAT(*curItem == *curFlippedItem);
+	}
+	DestroyIntVector(vector, intArr);
+	VectorDestroy(flippedVector, NULL);
+END_UNIT
+
 
 TEST_SUITE(General Functions)
 
@@ -177,6 +214,8 @@ TEST_SUITE(General Functions)
     TEST(CreateRandomIntArray_100Int_OnlyMinus1)
     TEST(CreateAscendingIntVector_100Int)
     TEST(CreateRandomIntVector_100Int_minus10TOplus10)
+    TEST(CopyCreateVector_100RandomInts)
+    TEST(FlipVector_Ascending_100Int)
 END_SUITE
 
 
