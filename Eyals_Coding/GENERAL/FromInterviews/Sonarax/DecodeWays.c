@@ -1,169 +1,90 @@
 #include <stddef.h>
 #include <stdio.h>
-#include <stddef.h>
-#include <stddef.h>
-static int GetNumOfRemainingChars(char* s)
+static int GetNumOfRemainingChars(char* _s)
 {
     int strLength = 0;
-    if (!s || *s == '\0' )
+    if (!_s || *_s == '\0' )
     {
         return 0;
     }
-    while (*s != '\0')
+    while (*_s != '\0')
     {
         ++strLength;
-        ++s;
+        ++_s;
     }
     return strLength;
 }
 
-static int IsValidString(char* s)
+static int IsValidString(char* _s)
 {
-/*
-Two sequential zeros is also not allowed
-*/
-    if (!s || *s == '\0' || *s == '0')
+	/*Check NULL string, empty string, leading '0'*/
+    if (!_s || *_s == '\0' || *_s == '0')
     {
         return 0;
     }
-    while (*s != '\0')
+    while (*_s != '\0')
     {
-        if ('0' > *s || '9' < *s)
+    	/*Check valid char*/
+        if ('0' > *_s || '9' < *_s)
         {
             return 0;
         }
-        ++s;
+        /*Check no sequential zero pair*/
+        if (*_s == '0' && *(_s+1) =='0')
+        {
+        	return 0;
+        }
+        ++_s;
     }
     return 1;
 }
 
-/*
-static int numDecodingsRec(char* s)
+static int numDecodingsRec(char* _s, size_t _numRemaining)
 {
     int result = 0;
-    size_t numRemaining; 
-    numRemaining = GetNumOfRemainingChars(s);
-    switch (numRemaining)
+    
+    switch (_numRemaining)
     {
         case 2:
-            if (*s == '0')
-            {
-                return 0;
-            }
-            if ((*s == '2' && *(s+1) <= '6') || (*s == '1'))
-            {
-                ++result;
-            }
-            return result += numDecodingsRec(s + 1);
-        case 1:
-            if (*s != '0')
-            {
-                return 1;   
-            }
-            return 0;
-        default:
-            if (*s == '0')
-            {
-                return 0;
-            }
-            else
-            {
-                if ((*s == '2' && *(s+1) <= '6') || (*s == '1'))
-                {
-                    result += numDecodingsRec(s + 1);
-                }
-                result += numDecodingsRec(s + 2);
-            }  
-            break;    
-    }
-    return result;
-}
-*/
-
-
-static int numDecodingsRec(char* s)
-{
-    int result = 0;
-    size_t numRemaining; 
-    numRemaining = GetNumOfRemainingChars(s); /* Can replace this with additional function parameter*/
-    switch (numRemaining)
-    {
-        case 2:
-			if (*s == '0')
+			if (*_s == '0')
 			{
-				result = 0;
+				return 0;
 			}
-        	else if( (*s == '2' && *(s+1) <= '6')  || (*s == '1') ) 
+        	else if( (*_s == '2' && *(_s+1) <= '6')  || (*_s == '1') ) 
 			{
 				++result;
 			}
-			if (*(s+1) != 0)
-			{
-				++result;
-			}
-/*			else if (*/
-/*			*/
-/*			else*/
-/*			{*/
-/*				++result;*/
-/*			}*/
-/*			result += (*s) == '0' ? 0 : 1; */
+			result += numDecodingsRec(_s+1, _numRemaining-1);
 			return result;
         case 1:
-			return (*s) == '0' ? 0 : 1;
+			return (*_s) == '0' ? 0 : 1;
         default:
-			if(*s != '0')
+			if (*_s == '0')
 			{
-				result = numDecodingsRec(s+1);
+				return 0;
 			}
-			if( (*s != '0') && ((*s == '2' && *(s+1) <= '6')  || (*s == '1')) )
+			result = numDecodingsRec(_s+1, _numRemaining-1);
+			if( (*_s == '2' && *(_s+1) <= '6')  || (*_s == '1') )
 			{
-				result += numDecodingsRec(s+2);
+				result += numDecodingsRec(_s+2, _numRemaining-2);
 			}
             break;    
     }
     return result;
 }
 
-
-int numDecodings(char* s) 
+int numDecodings(char* _s) 
 {
     int isValidString = 1;
-    isValidString = IsValidString(s);
+    size_t numRemaining; 
+    isValidString = IsValidString(_s);
     if (!isValidString)
     {
         return 0;
     }
-    return numDecodingsRec(s);
+    numRemaining = GetNumOfRemainingChars(_s);
+    return numDecodingsRec(_s, numRemaining);
 }
-
-
-
-
-
-
-
-
-/*
-"11111"
-"12345"
-"01"
-"10"
-"101"
-"301"
-"611"
-
-
-Answers should be:
-8
-3
-0
-1
-1
-0
-2
-*/
-
 
 int main()
 {
