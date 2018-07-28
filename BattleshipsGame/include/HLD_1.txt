@@ -1,0 +1,73 @@
+GameManager
+-------------
+
+
+
+
+UIManager
+-------------
+
+
+
+
+ConfigLoader
+-------------
+
+
+
+
+PlayerLoader
+-------------
+
+
+
+
+Player
+-------------
+BTL_Error PlaceShips(BTL_GAME_MODE _gamemode);
+BTL_Error Attack(BoardCoordinate_t _attackCoordinate, HitOrMissed_t _hitOrMissed);
+static BoardStatus_t GetMyStatus(); /* can be protected */
+***************Individual Implementation required for:
+/* This function is called in PlaceShips */
+ShipPosition_t CalculateShipPlacement(Ship_t _ship); 
+/* This function is called in Attack */
+BoardCoordinate_t CalculateAttackCoordinate(HitOrMissed_t _hitOrMissed); 
+
+
+
+
+HitOrMissed_t
+{
+	unsigned int
+};
+
+
+Board_t
+{
+	unsigned int 	m_xLength;
+	unsigned int 	m_yLength;
+	BoardStatus_t 	m_boardStatus;
+};
+
+BoardStatus_t
+{
+	unsigned int					m_numOfShips;
+	unsigned int					m_numOfDestroyedShips;
+	std::vector<ShipPosition_t*>	m_ShipPositionsVec;
+	std::vector<BoardCoordinate_t*> m_HitCoordinatesVec;
+	std::vector<BoardCoordinate_t*> m_MissCoordinatesVec;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
