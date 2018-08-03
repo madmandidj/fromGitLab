@@ -1,4 +1,5 @@
-function [result] = AnalyzeAVSLog (_fileNameString, _triggerWord, 
+%%function [recognizedCells, partialCells, unrecognizedCells, resultsWithTriggerID, resultsStats] = AnalyzeAVSLog (_fileNameString, _triggerWord, _noiseTotalNum, _distInNoiseNum, _trigInDistNum)
+function [recognizedCells, partialCells, unrecognizedCells, resultsWithTriggerID, resultsStats] = AnalyzeAVSLog (_fileNameString, _triggerWord, 
                         _noiseTotalNum, _distInNoiseNum, _trigInDistNum)
                         
   detectionColumnNum = 5;
@@ -27,6 +28,6 @@ function [result] = AnalyzeAVSLog (_fileNameString, _triggerWord,
   
   resultsWithTriggerID = AddIDToResults(trimmedResults, _noiseTotalNum, _distInNoiseNum, _trigInDistNum);
   
-  result = resultsWithTriggerID;
+  resultsStats = GenerateResultsStats(resultsWithTriggerID, _noiseTotalNum, _distInNoiseNum, _trigInDistNum);
   
 endfunction

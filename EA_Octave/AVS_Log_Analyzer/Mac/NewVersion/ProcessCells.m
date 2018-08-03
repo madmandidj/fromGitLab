@@ -3,9 +3,9 @@ function [recognizedCells, partialCells, unrecognizedCells] = ProcessCells(_dete
   curRecognizedRow = 1;
   curPartialRow = 1;
   curUnrecognizedRow = 1;
-  recognizedCells = {"";};
-  partialCells = {"";};
-  unrecognizedCells ={"";};
+  recognizedCells = cell(0,0);
+  partialCells = cell(0,0);
+  unrecognizedCells = cell(0,0);
   
   for curRow = 1:numOfRows
     curDetectionStatus = str2num(char(_detectedNumCells(curRow, _detectionColumnNum)));
@@ -21,9 +21,4 @@ function [recognizedCells, partialCells, unrecognizedCells] = ProcessCells(_dete
         ++curRecognizedRow;
     endswitch
   endfor
-  
-%  isRecognizedVar = isvarname(recognizedCells);
-%  isPartialVar = isvarname(partialCells);
-%  isUnrecognizedVar = isvarname(unrecognizedCells);
-  
 endfunction
