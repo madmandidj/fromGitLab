@@ -12,7 +12,7 @@ function verifiedTrigTable = CreateSingleRowTrigCellArray(_trigCells, _triggerWo
     nextRowStr = char(_trigCells(curRow + 1, 1));
     if (isempty(strfind(curRowStr, _triggerWord)))
       if(!strcmp(nextRowStr,_triggerWord))
-        error(printf("\n\nNo trigger word detected for 2 consecutive rows, numbers: %d, %d\n\n\n", curRow, curRow + 1));
+        error(printf("\n\n CreateSingleRowTrigCellArray Cant create verifCells, problem in _trigCells row-numbers: %d, %d\n\n\n", curRow, curRow + 1));
       endif
       verifiedTrigTable(curVerTrigTabRow, 1) = cellstr(cstrcat(nextRowStr, " ", curRowStr));
       verifiedTrigTable(curVerTrigTabRow, 2) = _trigCells(curRow + 1, 2);

@@ -2,7 +2,7 @@ function triggerTable = CreateMultiRowTrigCellArray(_strCells)
   numOfRows = rows(_strCells);
   curTrigTableRow = 1;
   if (!strcmp(char(_strCells(1,1)), "Home"))
-    error("Amazon.Alexa.com website format has probably changed!");
+    error("\n\n\nCreateMultiRowTrigCellArray Cant create trigCells: Alexa.Amazon.com website format has probably changed!\n\n\n");
   endif
   for curRow = 2:numOfRows
     curRowStr = char(_strCells(curRow, 1));

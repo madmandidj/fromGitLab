@@ -1,5 +1,5 @@
 %%function [recognizedCells, partialCells, unrecognizedCells, resultsWithTriggerID, resultsStats] = AnalyzeAVSLog (_fileNameString, _triggerWord, _noiseTotalNum, _distInNoiseNum, _trigInDistNum)
-function [recognizedCells, partialCells, unrecognizedCells, resultsWithTriggerID, resultsStats] = AnalyzeAVSLog (_fileNameString, _triggerWord, 
+function [recognizedCells, partialCells, unrecognizedCells, duplicateCells, resultsWithTriggerID, resultsStats] = AnalyzeAVSLog (_fileNameString, _triggerWord, 
                         _noiseTotalNum, _distInNoiseNum, _trigInDistNum)
                         
   detectionColumnNum = 5;
@@ -22,7 +22,7 @@ function [recognizedCells, partialCells, unrecognizedCells, resultsWithTriggerID
   
   [recognizedCells, partialCells, unrecognizedCells] = ProcessCells(detectedNumCells, detectionColumnNum);
   
-  resultsHashMap = CreateResultsHashMap(recognizedCells, totalNumOfTriggers, detectionColumnNum);
+  [resultsHashMap, duplicateCells] = CreateResultsHashMap(recognizedCells, totalNumOfTriggers, detectionColumnNum);
   
   trimmedResults = TrimHashMap(resultsHashMap);
   

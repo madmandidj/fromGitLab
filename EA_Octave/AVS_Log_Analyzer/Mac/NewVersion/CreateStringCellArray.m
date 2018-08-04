@@ -13,7 +13,6 @@ function cellStrLines = CreateStringCellArray(_pathToFile)
     ++curLineNum;
   endwhile
   CloseReadFile(fid);
-  %% remember that Still need to flip upside down for alexa recognitions
 endfunction
 
 %%%%%%%%%%%%%%%%%%
