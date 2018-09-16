@@ -54,7 +54,7 @@ namespace openglEA
 
     void Vertex_t::Print() const
     {
-        cout << m_x << endl << m_y << endl << m_z << endl;
+        cout << m_x << ", " << m_y << ", " << m_z << endl;
     }
 
 }//namespace openglEA

@@ -1,8 +1,14 @@
 FLAGS = -ansi -pedantic -lglfw -lGL -lGLEW -g
-NAME = Vertex_t
+objects = Vertex_t.o Test_Vertex_t.o
 
-Test_$(NAME).out: Test_$(NAME).cpp $(NAME).cpp $(NAME).hpp
-	g++ Test_$(NAME).cpp $(NAME).cpp $(FLAGS) -o Test_$(NAME).out
+Test_Vertex_t.out: $(objects)
+	g++ $(objects) -o Test_Vertex_t.out
+
+Test_Vertex_t.o: Test_Vertex_t.cpp Vertex_t.hpp
+	g++ Test_Vertex_t.cpp  -c $(FLAGS) -o Test_Vertex_t.o
+
+Vertex_t.o: Vertex_t.cpp Vertex_t.hpp
+	g++ Vertex_t.cpp  -c $(FLAGS) -o Vertex_t.o
 
 clean:
-	rm Test_$(NAME).out
+	rm $(objects) Test_Vertex_t.out

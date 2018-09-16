@@ -7,7 +7,7 @@ namespace openglEA
 class Vertex_t 
 {
 public:
-    ~Vertex_t(){}
+    virtual ~Vertex_t(){}
     Vertex_t();
     Vertex_t(GLfloat _x, GLfloat _y, GLfloat _z);
     Vertex_t(const Vertex_t& _vertex);
@@ -20,6 +20,7 @@ public:
 protected:
 
 private:
+    // Vertex_t(); //Default CTOR not allowed
     GLfloat m_x;
     GLfloat m_y;
     GLfloat m_z;
