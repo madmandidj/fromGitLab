@@ -11,7 +11,8 @@ public:
     typedef enum
     {
         BRICK_BOTTOM = 0,
-        BRICK_TOP = 1
+        BRICK_TOP = 1,
+        NO_ID
     }TriangleID;
     virtual ~Triangle_t(){}
     Triangle_t(Vertex_t& _v1, Vertex_t& _v2, Vertex_t& _v3, TriangleID _id);
