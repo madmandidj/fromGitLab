@@ -1,6 +1,6 @@
 #ifndef __VERTEX_T_HPP__
 #define __VERTEX_T_HPP__
-#include <GL/glew.h>
+#include <OpenGL/glu.h>
 
 namespace openglEA
 {
